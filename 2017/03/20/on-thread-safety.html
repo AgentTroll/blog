@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="en">
+
+  <head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <title>On Thread Safety</title>
+  <meta name="description" content="# AUDIENCE">
+
+  <link rel="stylesheet" href="/blog/assets/main.css">
+  <link rel="canonical" href="https://agenttroll.github.io/blog/2017/03/20/on-thread-safety.html">
+  <link rel="alternate" type="application/rss+xml" title="Inside a Troll" href="/blog/feed.xml">
+  
+  
+</head>
+
+
+  <body>
+
+    <header class="site-header" role="banner">
+
+  <div class="wrapper">
+    
+    
+    <a class="site-title" href="/blog/">Inside a Troll</a>
+  
+    
+      <nav class="site-nav">
+        <input type="checkbox" id="nav-trigger" class="nav-trigger" />
+        <label for="nav-trigger">
+          <span class="menu-icon">
+            <svg viewBox="0 0 18 15" width="18px" height="15px">
+              <path fill="#424242" d="M18,1.484c0,0.82-0.665,1.484-1.484,1.484H1.484C0.665,2.969,0,2.304,0,1.484l0,0C0,0.665,0.665,0,1.484,0 h15.031C17.335,0,18,0.665,18,1.484L18,1.484z"/>
+              <path fill="#424242" d="M18,7.516C18,8.335,17.335,9,16.516,9H1.484C0.665,9,0,8.335,0,7.516l0,0c0-0.82,0.665-1.484,1.484-1.484 h15.031C17.335,6.031,18,6.696,18,7.516L18,7.516z"/>
+              <path fill="#424242" d="M18,13.516C18,14.335,17.335,15,16.516,15H1.484C0.665,15,0,14.335,0,13.516l0,0 c0-0.82,0.665-1.484,1.484-1.484h15.031C17.335,12.031,18,12.696,18,13.516L18,13.516z"/>
+            </svg>
+          </span>
+        </label>
+
+        <div class="trigger">
+          
+            
+            
+          
+            
+            
+            <a class="page-link" href="/blog/about/">About</a>
+            
+          
+            
+            
+          
+            
+            
+          
+            
+            
+          
+        </div>
+      </nav>
+    
+  </div>
+</header>
+
+
+    <main class="page-content" aria-label="Content">
+      <div class="wrapper">
+        <article class="post" itemscope itemtype="http://schema.org/BlogPosting">
+
+  <header class="post-header">
+    <h1 class="post-title" itemprop="name headline">On Thread Safety</h1>
+    <p class="post-meta">
+      <time datetime="2017-03-20T18:21:17-07:00" itemprop="datePublished">
+        
+        Mar 20, 2017
+      </time>
+      </p>
+  </header>
+
+  <div class="post-content" itemprop="articleBody">
+    <p><a name="audience"></a></p>
+<h1 id="-audience"><a href="#audience">#</a> AUDIENCE</h1>
+
+<p>A quick warning: I express a lot of liberty in choosing my word choice. I may insert some non-family-friendly/swear/curse words here and there for the entertainment of the reader or to express a strong point. If you are not allowed to read that type of thing, or are uncomfortable consuming them, please stop reading here. I will consider to write a cleaned-up version and post it sometime in the future.</p>
+
+<p>While I attempt to do my best to explain as many of the concepts as possible in layman terms, it may become very difficult to follow along with what I say if you have no prior programming experience. I recommend being a proficient programmer before reading this.</p>
+
+<p>I have also specifically targeted this post to Java. Whether or not what I say applies to other languages or concepts, I do not care nor do I intend to make those connections.</p>
+
+<p>I go from the very basics to some quite high-level topics in this post. If you are a professional dev who has worked in the industry for decades and already know how to write thread-safe code, good for you. I do not intend the beginning few sections to be targeted for you. If you are a beginner, you might find some of the concepts difficult to comprehend. That’s OK. If you need a break, go ahead and take one and let the information you’ve learned sink in.</p>
+
+<p>Finally, I really do try to my best of my ability to avoid making erreneous or overly biased, opininated claims. However, I am a human. I make mistakes. I have opinions. I am not responsible for your losses due to you using what I write to write your own code. Your code is your responsibility. My opinions do not represent those who I am associated with whether they be my (currently nonexistant) employer, my friends, etc. They are my own opinions only. I do not portray myself as superior in skill, age, or whatever in anyway to the reader. If you interpret what I write as so, feel free to stop reading and be a dick to me in retaliation (or politely call me out).</p>
+
+<p>With that said, I do hope that you will learn something out of reading what I have written.</p>
+
+<hr />
+
+<p><a name="introduction"></a></p>
+<h1 id="-introduction"><a href="#introduction">#</a> INTRODUCTION</h1>
+
+<ul>
+  <li>Asynchronous</li>
+  <li>Multithreaded</li>
+  <li>Scalable</li>
+  <li>Parallel</li>
+  <li>Concurrent</li>
+</ul>
+
+<p>Heard of these words before?</p>
+
+<p>In case you’ve been living under a rock for over a (few) decade(s), or you are not a programmer, these are quite important concepts to understand in the modern world of computing. Parallelization is absolutely one of the most important ways that computers have become more and more powerful over the years, and the time has come for people to understand how to build software that truly takes advantage of parallelism rather than processor clock speeds.</p>
+
+<blockquote>
+  <p>serial programs run on modern computers “waste” potential computing power.</p>
+</blockquote>
+
+<blockquote>
+  <p>During the past 20+ years, the trends indicated by ever faster networks, distributed systems, and multi-processor computer architectures (even at the desktop level) clearly show that parallelism is the future of computing.</p>
+</blockquote>
+
+<p>(<a href="https://computing.llnl.gov/tutorials/parallel_comp/#WhyUse">Introduction to Parallel Computing, Lawrence Livermore National Labratory</a>)</p>
+
+<blockquote>
+  <p>This changeover [from favoring high clock speeds to favoring multicore processors instead] had a profound impact on software performance. Previously, faster hardware speeds translated directly into faster software computation. Afterwards, only software that could take advantage of multiple processors would get this benefit – and not all of them could</p>
+</blockquote>
+
+<p>(<a href="http://funginstitute.berkeley.edu/wp-content/uploads/2013/12/Neil_Thompson-27s_Moore-27s_Law_Paper_-_Summary.pdf">Moore’s Law Goes Multicore, Berkeley Haas School of Business</a>)</p>
+
+<p>It turns out that the benefit that comes from exploiting multiprocessors is a double-edged blade. We find that there is a <em>minor</em> difficulty with developing software that is capable of multithreading, that is, ensuring that these applications are <strong>thread-safe</strong>.</p>
+
+<p>(Quick side note: multithreading is an extremely difficult topic to organize and talk about. Ideas jump all over the place and there are many different things that all contribute to fully understanding one big thing, and the little things cannot be organized into different, larger subgroups)</p>
+
+<hr />
+
+<p><a name="what-is-thread-safety"></a></p>
+<h1 id="-what-is-thread-safety"><a href="#what-is-thread-safety">#</a> WHAT IS THREAD-SAFETY?</h1>
+
+<p>When sharing data between threads, it is vitally important to realize that the same assumptions about the ordering of operations cannot be held true for multithreaded programs as they are for single-threaded ones.</p>
+
+<blockquote>
+  <p>As a small side note, single-threaded programs are not truly single-threaded. While what the programmer does is single-threaded - things like the <code class="highlighter-rouge">main</code> method - the program as a whole is not. There are threads managed by the JVM in the background, such as the GC thread(s), the JIT thread(s), maybe RMI threads or Ctrl-Break monitor threads if applicable, among others. This means that while there are never truly “single-threaded” programs in the strictest definition of the term, it is important to realise that threads in the JVM sub-system do not interfere or comprimise the thread-safety of a “single-threaded” program. If the programmer does not interact with additional threads other than the main thread which runs the <code class="highlighter-rouge">main</code> method, <strong>there are no thread-safety issues with the code. In the absence of program-level threads, it is <em>impossible</em> for thread-safety to be a problem</strong>.</p>
+</blockquote>
+
+<p>The idea of making a program thread-safe is the same as making what is arbitrary predictable. The nature of threads is that they run independently of each other. In doing so, it is impossible to determine the timing between operations or the effects of a read or write on a state variable.</p>
+
+<blockquote>
+  <p><strong>State</strong>: When I use “state” or “shared state,” I refer to data to which a thread might be able to read or write. It is a general term used to describe whatever is made available to threads to access. This may be an instance object that is passed around, a global variable, a class field. For example, I can say that a thread will mutate a state by incrementing it, or a thread can mutate a state by setting its value, because the “state” is the data that the thread is accessing and mutating, or changing in some way. I can also say that a thread will read the state of an object to say that the thread will be able to use the object’s getters to obtain the value of its fields.</p>
+</blockquote>
+
+<p><strong>While the issues relating to thread-safety are diverse and expansive, most issues can be boiled down to either an ordering or visibility issue.</strong></p>
+
+<p>The nature of <em>most</em> programs is that they must enforce a relationship between its threads in order to calculate a result, to report back the status of an operation, to listen to events, etc… All of these require threads to be dependent on each other, against their independent nature:</p>
+
+<p>If it were possible to isolate visibility issues, then surprising behavior that results from this can be seen in the following diagram of two threads accessing a shared state:</p>
+
+<p><img src="https://agenttroll.github.io/blog/img/Visibility.jpg" alt="Visbility" /></p>
+
+<p>In the absence of adequate synchronization, the above diagram demonstrates how <code class="highlighter-rouge">Thread 1</code> continued to read a “stale” value of <code class="highlighter-rouge">4</code> from a shared state, before but also after <code class="highlighter-rouge">Thread 2</code> has set it to <code class="highlighter-rouge">5</code>. The effect of writing <code class="highlighter-rouge">5</code> to the shared variable was therefore not visible to <code class="highlighter-rouge">Thread 1</code>.</p>
+
+<p>Also consider the following code:</p>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">MutableState</span> <span class="n">state</span> <span class="o">=</span> <span class="c1">// ...</span>
+<span class="n">Thread</span> <span class="n">t1</span> <span class="o">=</span> <span class="k">new</span> <span class="n">Thread</span><span class="o">(()</span> <span class="o">-&gt;</span> <span class="o">{</span>
+    <span class="n">state</span><span class="o">.</span><span class="na">mutate</span><span class="o">();</span>
+    <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="n">state</span><span class="o">.</span><span class="na">read</span><span class="o">());</span>
+<span class="o">});</span>
+<span class="n">Thread</span> <span class="n">t2</span> <span class="o">=</span> <span class="k">new</span> <span class="n">Thread</span><span class="o">(()</span> <span class="o">-&gt;</span> <span class="o">{</span>
+    <span class="n">state</span><span class="o">.</span><span class="na">mutate</span><span class="o">();</span>
+    <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="n">state</span><span class="o">.</span><span class="na">read</span><span class="o">());</span>
+<span class="o">});</span>
+<span class="n">t1</span><span class="o">.</span><span class="na">start</span><span class="o">();</span>
+<span class="n">t2</span><span class="o">.</span><span class="na">start</span><span class="o">();</span>
+</code></pre></div></div>
+
+<p>In the absence of adequate synchronization between threads, there can be no correct assumptions about the order of operations. Recalling that threads are arbitrary and independent, it is entirely possible for <code class="highlighter-rouge">t1</code> to start AFTER <code class="highlighter-rouge">t2</code>. It is also possible for <code class="highlighter-rouge">t1</code> to run as expected before <code class="highlighter-rouge">t2</code>, but there are no guarantees here. It is even possible for <code class="highlighter-rouge">t1</code> to <code class="highlighter-rouge">state.mutate()</code> <em>simultaneously</em> with <code class="highlighter-rouge">t2</code>. To further our visibility example, it is further possible for <code class="highlighter-rouge">t2</code> to not even see what changes have been made by <code class="highlighter-rouge">t1</code>. In effect, the results of running these two threads are then arbitrary and indeterminate as well.</p>
+
+<p>This is the heart of thread-safety. Through using tools such as locks, synchronization tools, atomic variables and others, code that is not thread-safe can be tamed and used to exploit modern multiprocessors.</p>
+
+<hr />
+
+<p><a name="what-causes-threads-to-behave-this-way"></a></p>
+<h1 id="-what-causes-threads-to-behave-this-way"><a href="#what-causes-threads-to-behave-this-way">#</a> WHAT CAUSES THREADS TO BEHAVE THIS WAY?</h1>
+
+<p>Having some basic idea of what “thread-safety” is, I believe that there is benefit in discussing the nitty gritty details of why threads behave in this “independent” manner. There tends to be a lot of widespread use of mere analogies in order to explain why thread-safety is a problem and this in itself has caused issues on its own, much like how parents might avoid talking about sexual intercourse with their children until they are older.</p>
+
+<p>Going along the same vein with the “messy details” of multithreading, I think now would be a good time to also discuss some drawbacks of writing multithreaded programs:</p>
+
+<ul>
+  <li>They are difficult to write correctly</li>
+  <li>They are difficult to test for correctness</li>
+  <li>They are difficult to test for performance</li>
+  <li>They are difficult to understand multithreaded code</li>
+  <li>It is difficult to distribute work and tasks amongst threads</li>
+  <li>It is difficult to do resource management - deadlocks, livelocks, starvation</li>
+  <li>Coercing system resources to initialize a thread is relatively expensive</li>
+  <li>Locking, memory barriers, mutexes and other synchronization primitives add housekeeping overhead</li>
+  <li>Ordering and fencing memory access are not free</li>
+  <li>Distributing processor time by the thread scheduler comes with overhead</li>
+  <li>They sometimes cause degredation in performance due to poor implementaiton</li>
+  <li>They are prone to interfering with other threads or other programs</li>
+</ul>
+
+<p><img src="https://agenttroll.github.io/blog/img/CPU.jpg" alt="CPU" /></p>
+
+<!-- TODO -->
+
+<p>Sources used:</p>
+
+<ul>
+  <li><a href="https://mechanical-sympathy.blogspot.com/2013/02/cpu-cache-flushing-fallacy.html">CPU Cache Flushing Fallacy, Mechanical Sympathy</a></li>
+  <li><a href="https://mechanical-sympathy.blogspot.com/2011/07/memory-barriersfences.html">Memory Barriers/Fences, Mechanical Sympathy</a></li>
+  <li><a href="http://www.javamex.com/tutorials/threads/thread_scheduling_java.shtml">Thread scheduling implications in Java, Javamex</a></li>
+  <li><a href="http://www.javamex.com/tutorials/threads/context_switch.shtml">Context and process switching, Javamex</a></li>
+  <li><a href="https://www.cs.cmu.edu/~fp/courses/15213-s06/lectures/27-multicore.pdf">Multi-core architectures, Carnegie Mellon University</a></li>
+  <li><a href="https://www.cs.cmu.edu/afs/cs/academic/class/15418-s12/www/lectures/10_coherence.pdf">Lecture 10: Cache Coherence: Part I, Carnegie Mellon University</a></li>
+  <li><a href="https://www.scss.tcd.ie/Jeremy.Jones/vivio/caches/MESIHelp.htm">MESI Cache Coherency Protocol, Trinity College Dublin, the University of Dublin, Ireland</a></li>
+  <li><a href="http://web.cecs.pdx.edu/~alaa/ece587/notes/memory-ordering.pdf">Memory Ordering, Portland State University</a></li>
+</ul>
+
+<hr />
+
+<p><a name="how-to-write-thread-safe-code"></a></p>
+<h1 id="-how-to-write-thread-safe-code"><a href="#how-to-write-thread-safe-code">#</a> HOW TO WRITE THREAD-SAFE CODE?</h1>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nd">@ThreadSafe</span>
+<span class="kd">public</span> <span class="kd">class</span> <span class="nc">ThreadNotUnsafe</span> <span class="o">{</span>
+    <span class="c1">// Add 'volatile'</span>
+    <span class="kd">private</span> <span class="kd">volatile</span> <span class="kt">int</span> <span class="n">state</span> <span class="o">=</span> <span class="mi">4</span><span class="o">;</span>
+    
+    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">setState</span><span class="o">(</span><span class="kt">int</span> <span class="n">newState</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">this</span><span class="o">.</span><span class="na">state</span> <span class="o">=</span> <span class="n">newState</span><span class="o">;</span>
+    <span class="o">}</span>
+    
+    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">getState</span><span class="o">()</span> <span class="o">{</span>
+        <span class="k">return</span> <span class="k">this</span><span class="o">.</span><span class="na">state</span><span class="o">;</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+</code></pre></div></div>
+
+<p>One of the primitives that the Java language gives developers is the <code class="highlighter-rouge">volatile</code> keyword. This keyword is only applicable to fields.</p>
+
+  </div>
+
+  
+</article>
+
+      </div>
+    </main>
+
+    <footer class="site-footer">
+
+  <div class="wrapper">
+
+    <h2 class="footer-heading">Inside a Troll</h2>
+
+    <div class="footer-col-wrapper">
+      <div class="footer-col footer-col-1">
+        <ul class="contact-list">
+          <li>
+            
+              Inside a Troll
+            
+            </li>
+            
+            <li><a href="mailto:woodyc40@gmail.com">woodyc40@gmail.com</a></li>
+            
+        </ul>
+      </div>
+
+      <div class="footer-col footer-col-2">
+        <ul class="social-media-list">
+          
+          <li>
+            <a href="https://github.com/AgentTroll"><span class="icon icon--github"><svg viewBox="0 0 16 16" width="16px" height="16px"><path fill="#828282" d="M7.999,0.431c-4.285,0-7.76,3.474-7.76,7.761 c0,3.428,2.223,6.337,5.307,7.363c0.388,0.071,0.53-0.168,0.53-0.374c0-0.184-0.007-0.672-0.01-1.32 c-2.159,0.469-2.614-1.04-2.614-1.04c-0.353-0.896-0.862-1.135-0.862-1.135c-0.705-0.481,0.053-0.472,0.053-0.472 c0.779,0.055,1.189,0.8,1.189,0.8c0.692,1.186,1.816,0.843,2.258,0.645c0.071-0.502,0.271-0.843,0.493-1.037 C4.86,11.425,3.049,10.76,3.049,7.786c0-0.847,0.302-1.54,0.799-2.082C3.768,5.507,3.501,4.718,3.924,3.65 c0,0,0.652-0.209,2.134,0.796C6.677,4.273,7.34,4.187,8,4.184c0.659,0.003,1.323,0.089,1.943,0.261 c1.482-1.004,2.132-0.796,2.132-0.796c0.423,1.068,0.157,1.857,0.077,2.054c0.497,0.542,0.798,1.235,0.798,2.082 c0,2.981-1.814,3.637-3.543,3.829c0.279,0.24,0.527,0.713,0.527,1.437c0,1.037-0.01,1.874-0.01,2.129 c0,0.208,0.14,0.449,0.534,0.373c3.081-1.028,5.302-3.935,5.302-7.362C15.76,3.906,12.285,0.431,7.999,0.431z"/></svg>
+</span><span class="username">AgentTroll</span></a>
+
+          </li>
+          
+
+          
+          <li>
+            <a href="https://twitter.com/AgentTrolldude"><span class="icon icon--twitter"><svg viewBox="0 0 16 16" width="16px" height="16px"><path fill="#828282" d="M15.969,3.058c-0.586,0.26-1.217,0.436-1.878,0.515c0.675-0.405,1.194-1.045,1.438-1.809c-0.632,0.375-1.332,0.647-2.076,0.793c-0.596-0.636-1.446-1.033-2.387-1.033c-1.806,0-3.27,1.464-3.27,3.27 c0,0.256,0.029,0.506,0.085,0.745C5.163,5.404,2.753,4.102,1.14,2.124C0.859,2.607,0.698,3.168,0.698,3.767 c0,1.134,0.577,2.135,1.455,2.722C1.616,6.472,1.112,6.325,0.671,6.08c0,0.014,0,0.027,0,0.041c0,1.584,1.127,2.906,2.623,3.206 C3.02,9.402,2.731,9.442,2.433,9.442c-0.211,0-0.416-0.021-0.615-0.059c0.416,1.299,1.624,2.245,3.055,2.271 c-1.119,0.877-2.529,1.4-4.061,1.4c-0.264,0-0.524-0.015-0.78-0.046c1.447,0.928,3.166,1.469,5.013,1.469 c6.015,0,9.304-4.983,9.304-9.304c0-0.142-0.003-0.283-0.009-0.423C14.976,4.29,15.531,3.714,15.969,3.058z"/></svg>
+</span><span class="username">AgentTrolldude</span></a>
+
+          </li>
+          
+        </ul>
+      </div>
+
+      <div class="footer-col footer-col-3">
+        <p>Thoughts of a Java developer</p>
+      </div>
+    </div>
+
+  </div>
+
+</footer>
+
+
+  </body>
+
+</html>
