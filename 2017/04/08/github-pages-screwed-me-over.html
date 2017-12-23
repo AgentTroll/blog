@@ -10,7 +10,7 @@
   <meta name="description" content="So I restarted my blog for like the 13th time or whatever and ran into a few minor issues…">
 
   <link rel="stylesheet" href="/blog/assets/main.css">
-  <link rel="canonical" href="http://localhost:4000/blog/2017/04/08/github-pages-screwed-me-over.html">
+  <link rel="canonical" href="https://agenttroll.github.io/blog/2017/04/08/github-pages-screwed-me-over.html">
   <link rel="alternate" type="application/rss+xml" title="Inside a Troll" href="/blog/feed.xml">
   
   
@@ -112,7 +112,7 @@ minor issues…</p>
 
 <p>BONUS EDIT:</p>
 
-<p>After reading through my blog, I found that Octopress <strong>DOES NOT</strong> rebuild your pages when you do <code class="highlighter-rouge">octopress deploy</code>. What essentially happened was because I was using <code class="highlighter-rouge">jekyll serve</code> to preview the blog before publishing it, all the <code class="highlighter-rouge">http://localhost:4000</code> tags resolved to <code class="highlighter-rouge">localhost</code> instead of the intended page URL. Therefore, if you want to get all the right page variables, use:</p>
+<p>After reading through my blog, I found that Octopress <strong>DOES NOT</strong> rebuild your pages when you do <code class="highlighter-rouge">octopress deploy</code>. What essentially happened was because I was using <code class="highlighter-rouge">jekyll serve</code> to preview the blog before publishing it, all the <code class="highlighter-rouge">https://agenttroll.github.io</code> tags resolved to <code class="highlighter-rouge">localhost</code> instead of the intended page URL. Therefore, if you want to get all the right page variables, use:</p>
 
 <div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$ </span>jekyll build <span class="o">&amp;&amp;</span> octopress deploy
 </code></pre></div></div>

@@ -10,7 +10,7 @@
   <meta name="description" content="# AUDIENCE">
 
   <link rel="stylesheet" href="/blog/assets/main.css">
-  <link rel="canonical" href="http://localhost:4000/blog/2017/03/20/on-thread-safety.html">
+  <link rel="canonical" href="https://agenttroll.github.io/blog/2017/03/20/on-thread-safety.html">
   <link rel="alternate" type="application/rss+xml" title="Inside a Troll" href="/blog/feed.xml">
   
   
@@ -155,7 +155,7 @@
 
 <p>If it were possible to isolate visibility issues, then surprising behavior that results from this can be seen in the following diagram of two threads accessing a shared state:</p>
 
-<p><img src="http://localhost:4000/blog/img/Visibility.jpg" alt="Visbility" /></p>
+<p><img src="https://agenttroll.github.io/blog/img/Visibility.jpg" alt="Visbility" /></p>
 
 <p>In the absence of adequate synchronization, the above diagram demonstrates how <code class="highlighter-rouge">Thread 1</code> continued to read a “stale” value of <code class="highlighter-rouge">4</code> from a shared state, before but also after <code class="highlighter-rouge">Thread 2</code> has set it to <code class="highlighter-rouge">5</code>. The effect of writing <code class="highlighter-rouge">5</code> to the shared variable was therefore not visible to <code class="highlighter-rouge">Thread 1</code>.</p>
 
@@ -202,7 +202,7 @@
   <li>They are prone to interfering with other threads or other programs</li>
 </ul>
 
-<p><img src="http://localhost:4000/blog/img/CPU.jpg" alt="CPU" /></p>
+<p><img src="https://agenttroll.github.io/blog/img/CPU.jpg" alt="CPU" /></p>
 
 <!-- TODO -->
 

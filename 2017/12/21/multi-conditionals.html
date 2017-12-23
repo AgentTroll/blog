@@ -10,7 +10,7 @@
   <meta name="description" content="There have been actually serveral times as I’m writing servers in things like my JDB project and the TridentSDK project in which the following scenario pops ...">
 
   <link rel="stylesheet" href="/blog/assets/main.css">
-  <link rel="canonical" href="http://localhost:4000/blog/2017/12/21/multi-conditionals.html">
+  <link rel="canonical" href="https://agenttroll.github.io/blog/2017/12/21/multi-conditionals.html">
   <link rel="alternate" type="application/rss+xml" title="Inside a Troll" href="/blog/feed.xml">
   
   
@@ -325,6 +325,8 @@
 <p>I  haven’t deeply investigated the performance of this method over perhaps timed busy waiting, but from testing, a blocked read can respond to signals in sub-millisecond times even when saturated with messages between “10 nanosecond intervals” on an i3-3240. A <code class="highlighter-rouge">while</code> loop probably takes more than 10ns to run which is why I mention that rate in quotes, but again, this time is very impressive even if it’s off by a bit. You wouldn’t want to be waking a thread every 1 millisecond in order to check for the other condition, which is why I say that it’s good in comparison with the alternative.</p>
 
 <p>Unfortunately, this technique is risky in many ways, first of all, because it depends on there being the AbstractInterruptibleChannel SPI class being available, as well as the field being available. The field probably won’t be going away because caching is required, but the class itself might. Additionally, the interrupt status of the thread is risky to play around with and requires <code class="highlighter-rouge">Thread.interrupted()</code> to be called each time either Signal is thrown or InterruptedException is captured if the <code class="highlighter-rouge">signal(Thread)</code> method misses the I/O portion. Otherwise, the thread itself might die. Finally, the only possible way to exit directly out of a blocking <code class="highlighter-rouge">read(...)</code> is to throw the exception, but if a read is halfway done, then the behavior may be undefined. I will need to test further in order to determine what happens, but until then, this class still remains a very risky hack. I would highly advise against using it in a production environment, regardless of whatever performance gains may bear fruit through event-driven notifications rather than spurious wakeups. I have included a warning in the class javadoc comment to cover my ass, so please don’t push it :)</p>
+
+<p>In the end, even though I have acheived what I was hoping for, even if it isn’t really viable in the real-world, I guess I will just have to keep searching for a better solution.</p>
 
 <h1 id="closing-words">Closing Words</h1>
 
