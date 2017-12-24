@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.6.2">Jekyll</generator><link href="https://agenttroll.github.io/blog/feed.xml" rel="self" type="application/atom+xml" /><link href="https://agenttroll.github.io/blog/" rel="alternate" type="text/html" /><updated>2017-12-22T21:25:54-08:00</updated><id>https://agenttroll.github.io/blog/</id><title type="html">Inside a Troll</title><subtitle>Thoughts of a Java developer</subtitle><entry><title type="html">Multi Conditionals</title><link href="https://agenttroll.github.io/blog/2017/12/21/multi-conditionals.html" rel="alternate" type="text/html" title="Multi Conditionals" /><published>2017-12-21T01:25:00-08:00</published><updated>2017-12-21T01:25:00-08:00</updated><id>https://agenttroll.github.io/blog/2017/12/21/multi-conditionals</id><content type="html" xml:base="https://agenttroll.github.io/blog/2017/12/21/multi-conditionals.html">&lt;p&gt;There have been actually serveral times as I’m writing servers in things like my JDB project and the TridentSDK project in which the following scenario pops up: there is a single thread that manages incoming and outgoing messages. I need to block on an outgoing queue, as well as block until some bytes off the network are read.&lt;/p&gt;
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.6.2">Jekyll</generator><link href="https://agenttroll.github.io/blog/feed.xml" rel="self" type="application/atom+xml" /><link href="https://agenttroll.github.io/blog/" rel="alternate" type="text/html" /><updated>2017-12-23T17:21:27-08:00</updated><id>https://agenttroll.github.io/blog/</id><title type="html">Inside a Troll</title><subtitle>Thoughts of a Java developer</subtitle><entry><title type="html">Multi Conditionals</title><link href="https://agenttroll.github.io/blog/2017/12/21/multi-conditionals.html" rel="alternate" type="text/html" title="Multi Conditionals" /><published>2017-12-21T01:25:00-08:00</published><updated>2017-12-21T01:25:00-08:00</updated><id>https://agenttroll.github.io/blog/2017/12/21/multi-conditionals</id><content type="html" xml:base="https://agenttroll.github.io/blog/2017/12/21/multi-conditionals.html">&lt;p&gt;There have been actually serveral times as I’m writing servers in things like my JDB project and the TridentSDK project in which the following scenario pops up: there is a single thread that manages incoming and outgoing messages. I need to block on an outgoing queue, as well as block until some bytes off the network are read.&lt;/p&gt;
 
 &lt;p&gt;My situation looks something like the following:&lt;/p&gt;
 
@@ -623,7 +623,7 @@ index f94fdbe..cfc8a61 100755
   &lt;p&gt;As a small side note, single-threaded programs are not truly single-threaded. While what the programmer does is single-threaded - things like the &lt;code class=&quot;highlighter-rouge&quot;&gt;main&lt;/code&gt; method - the program as a whole is not. There are threads managed by the JVM in the background, such as the GC thread(s), the JIT thread(s), maybe RMI threads or Ctrl-Break monitor threads if applicable, among others. This means that while there are never truly “single-threaded” programs in the strictest definition of the term, it is important to realise that threads in the JVM sub-system do not interfere or comprimise the thread-safety of a “single-threaded” program. If the programmer does not interact with additional threads other than the main thread which runs the &lt;code class=&quot;highlighter-rouge&quot;&gt;main&lt;/code&gt; method, &lt;strong&gt;there are no thread-safety issues with the code. In the absence of program-level threads, it is &lt;em&gt;impossible&lt;/em&gt; for thread-safety to be a problem&lt;/strong&gt;.&lt;/p&gt;
 &lt;/blockquote&gt;
 
-&lt;p&gt;The idea of making a program thread-safe is the same as making what is arbitrary predictable. The nature of threads is that they run independently of each other. In doing so, it is impossible to determine the timing between operations or the effects of a read or write on a state variable.&lt;/p&gt;
+&lt;p&gt;The idea of making a program thread-safe is the same as making what is arbitrary predictable. &lt;strong&gt;The nature of threads is that they run independently of each other&lt;/strong&gt;. In doing so, it is impossible to determine the timing between operations or the effects of a read or write on a state variable.&lt;/p&gt;
 
 &lt;blockquote&gt;
   &lt;p&gt;&lt;strong&gt;State&lt;/strong&gt;: When I use “state” or “shared state,” I refer to data to which a thread might be able to read or write. It is a general term used to describe whatever is made available to threads to access. This may be an instance object that is passed around, a global variable, a class field. For example, I can say that a thread will mutate a state by incrementing it, or a thread can mutate a state by setting its value, because the “state” is the data that the thread is accessing and mutating, or changing in some way. I can also say that a thread will read the state of an object to say that the thread will be able to use the object’s getters to obtain the value of its fields.&lt;/p&gt;
@@ -682,7 +682,43 @@ index f94fdbe..cfc8a61 100755
   &lt;li&gt;They are prone to interfering with other threads or other programs&lt;/li&gt;
 &lt;/ul&gt;
 
+&lt;p&gt;All these different things you have to consider!&lt;/p&gt;
+
+&lt;p&gt;What’s more, almost all of those issues can be attributed to thread safety! If it were possible to implement threading for free, none of these issues would exist at all! Which brings us to our next point of discussion: why threads cannot be free.&lt;/p&gt;
+
+&lt;p&gt;Housekeeping overhead is easy - starting a new thread must coalesce resources such as memory in order to manage the thread state, allocate a stack to execute the provided task, initialize the internal state in order handle synchronization primitives etc… However, dealing with issues relating to thread-safety itself - visibility, ordering, and how different primitives are able to get around these problems - are a little more tricky.&lt;/p&gt;
+
+&lt;p&gt;Recall again, that threads have the tendency to behave independently. This is so because an isolated thread is able to make certain optimizations and allow the CPU to execute instructions without having to worry about ordering read/write instructions. Thread independence makes single-threaded programs faster. This is the entire point: simpler programs are single-threaded, and thus the programmer should not have to worry about enabling optimizations that would have been disabled if threads were &lt;em&gt;not&lt;/em&gt; independent by default. In other words, single threaded is the default, and single-thread optimized instructions are the default.&lt;/p&gt;
+
+&lt;p&gt;This becomes a problem when working with shared data because these optimizations are fundamentally incompatible and produce nondeterministic results unless the program is correctly synchronized. Specifically, when we refer to “single-thread optimizations,” we are referring to those done by the CPU cache subsystem. It is useful to learn a some background before moving on because it will help in understanding the how/why explanations I have provided. Fortunately, I have done most of the research for you here.&lt;/p&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;As a minor aside, pretty much all explanations regarding internals of anything pertaining to Java is an “analogy” of some sort. The whole idea of Java is that it is such a high level language that you would not need to worry about all the hardware details in order to make your program portable. It is a lot more useful to think in terms of theoretical systems that “kind of resemble” real world hardware, but at the same time, it’s important to realize that the actual hardware running the program is probably slightly different, if not entirely different depending on the vendor, the model, the architecture, etc…&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;To start with, here is a generic CPU that might look something like an Intel quad-core that you might find in a typical desktop:&lt;/p&gt;
+
 &lt;p&gt;&lt;img src=&quot;https://agenttroll.github.io/blog/img/CPU.jpg&quot; alt=&quot;CPU&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;In order of access latency, a CPU deals with memory by storing and caching in following spaces:&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;Register(s) (Core-local)&lt;/li&gt;
+  &lt;li&gt;L1 Cache (Core-local)&lt;/li&gt;
+  &lt;li&gt;L2 Cache (Core-local)&lt;/li&gt;
+  &lt;li&gt;L3 Cache&lt;/li&gt;
+  &lt;li&gt;RAM/Main memory&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;A few interesting details to also note is that as access latency increases to successive memory spaces is firstly, that memory capacity increases (that is, registers can hold the smallest amount of memory while RAM can hold the greatest), and secondly, that they are increasingly further away from the ALU/FPU/Ctl units.&lt;/p&gt;
+
+&lt;p&gt;In regards to memory capacity, it makes sense that the fastest memory is also the smallest because firstly, memory access will only need to traverse a short memory space in order to find the target register, and secondly, because low-latency memory is fucking expensive. A single gigabyte of SRAM memory costs &lt;em&gt;$5000 USD&lt;/em&gt;, so DRAM memory is used for larger memory spaces. In the end, faster memory is kept small in order to reduce access time and production cost.&lt;/p&gt;
+
+&lt;p&gt;In regards to memory distance, this also makes sense because communicating between the calculation units and the memory space is not instantaneous, and that physical distance does in fact have an effect on memory access latency: the more distance, the more time it will take to contact and receive a response.&lt;/p&gt;
+
+&lt;p&gt;All this is interesting and all… But how does it apply to threads specifically?&lt;/p&gt;
+
+&lt;p&gt;Firstly, threads are scheduled to run on a specific core. While the thread is running, it occupies the entire core (or perhaps shares with only one other thread when using Hyperthreading or whatever AMD uses. Again, recall the “analogy” aside from above) and another core may not access the thread while it is being used by another. The number one optimization that will be done is to retain memory accessed by a single thread as closely to the core that is currently running that thread as possible. So ideally, a thread will write to the registers, and failing that, the local caches and continues to look for the fastest possible cache and only resorts to writing to RAM if absolutely necessary. By keeping data local to the core, should the thread reuse the same value again (which is not an unlikely event in a single-threaded program), it will pull from the cache rather than going straight to main memory. Because main memory is &lt;em&gt;excedingly&lt;/em&gt; expensive, at least relative to the prior caches, a single-threaded program can save a significant number of cycles from being wasted on going back to RAM in order to find that value.&lt;/p&gt;
 
 &lt;!-- TODO --&gt;
 
@@ -708,11 +744,11 @@ index f94fdbe..cfc8a61 100755
 &lt;span class=&quot;kd&quot;&gt;public&lt;/span&gt; &lt;span class=&quot;kd&quot;&gt;class&lt;/span&gt; &lt;span class=&quot;nc&quot;&gt;ThreadNotUnsafe&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
     &lt;span class=&quot;c1&quot;&gt;// Add 'volatile'&lt;/span&gt;
     &lt;span class=&quot;kd&quot;&gt;private&lt;/span&gt; &lt;span class=&quot;kd&quot;&gt;volatile&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;int&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;state&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;4&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;;&lt;/span&gt;
-    
+
     &lt;span class=&quot;kd&quot;&gt;public&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;void&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;setState&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;kt&quot;&gt;int&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;newState&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
         &lt;span class=&quot;k&quot;&gt;this&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;state&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;newState&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;;&lt;/span&gt;
     &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
-    
+
     &lt;span class=&quot;kd&quot;&gt;public&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;void&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;getState&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;()&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
         &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;this&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;state&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;;&lt;/span&gt;
     &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
