@@ -1,4 +1,93 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.6.2">Jekyll</generator><link href="https://agenttroll.github.io/blog/feed.xml" rel="self" type="application/atom+xml" /><link href="https://agenttroll.github.io/blog/" rel="alternate" type="text/html" /><updated>2018-01-01T02:17:56-08:00</updated><id>https://agenttroll.github.io/blog/</id><title type="html">Inside a Troll</title><subtitle>Thoughts of a Java developer</subtitle><entry><title type="html">New Years: Productivity</title><link href="https://agenttroll.github.io/blog/2017/12/31/new-years-productivity.html" rel="alternate" type="text/html" title="New Years: Productivity" /><published>2017-12-31T00:28:00-08:00</published><updated>2017-12-31T00:28:00-08:00</updated><id>https://agenttroll.github.io/blog/2017/12/31/new-years-productivity</id><content type="html" xml:base="https://agenttroll.github.io/blog/2017/12/31/new-years-productivity.html">&lt;p&gt;Perhaps we can take some time to look at productivity, in spirit of the (Eve of) New Year.&lt;/p&gt;
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.6.2">Jekyll</generator><link href="https://agenttroll.github.io/blog/feed.xml" rel="self" type="application/atom+xml" /><link href="https://agenttroll.github.io/blog/" rel="alternate" type="text/html" /><updated>2018-01-06T11:50:55-08:00</updated><id>https://agenttroll.github.io/blog/</id><title type="html">Inside a Troll</title><subtitle>Thoughts of a Java developer</subtitle><entry><title type="html">Status Update: Installing Arch for The First Time</title><link href="https://agenttroll.github.io/blog/2018/01/06/status-update-installing-arch-for-the-first-time.html" rel="alternate" type="text/html" title="Status Update: Installing Arch for The First Time" /><published>2018-01-05T23:46:00-08:00</published><updated>2018-01-05T23:46:00-08:00</updated><id>https://agenttroll.github.io/blog/2018/01/06/status-update-installing-arch-for-the-first-time</id><content type="html" xml:base="https://agenttroll.github.io/blog/2018/01/06/status-update-installing-arch-for-the-first-time.html">&lt;p&gt;It’s been draining on the soul, but luckily coming up with a “unique” title has been rejuvenating (rejuvinatig? rejuvenating? whatever).&lt;/p&gt;
+
+&lt;p&gt;I don’t profess to be an expert on ArchLinux, or even Linux in general but based on my experience installing Arch on my MacBook Pro 11.something, I’d be even more wary of following a random blog post (because it probably won’t work). I don’t think any of the issues that I encountered were unique by any means, but I believe my own little successes are the result of the wealth of mainly online resources. I’m therefore very keen to share my own experience and perhaps someone might come along and save a few hours of their lifetime and hair-tearing.&lt;/p&gt;
+
+&lt;h1 id=&quot;getting-over-the-hurdle&quot;&gt;Getting Over the Hurdle&lt;/h1&gt;
+
+&lt;p&gt;For me, the primary challenge in the first place was connecting to the Internet. To go along with that, my MacBook carries with it a Broadcom Wireless interface, which requires a proprietary driver in order to work correctly. Fortunately, it was just the right hardware that happened to work with the proprietary driver. Unfortunately, the driver requires the Internet to obtain, and my USB was all occupied with carrying the bootable ISO. Therefore, the only way I can get the required packages is by exiting the Arch CLI and manually downloading on macOS, then going back and mounting whatever partition on which I downloaded the package.&lt;/p&gt;
+
+&lt;p&gt;First lesson here: it is impossible to install Arch without access to another installation with Internet. Let me repeat that: &lt;strong&gt;IMPOSSIBLE&lt;/strong&gt;. If you are rich and can buy an ethernet/thunderbolt adapter, go nuts, save yourself some time. Otherwise, you must at least have a VM that boots the Arch ISO in order to download the packages. I’ll spare the gory details of trying to compile &lt;code class=&quot;highlighter-rouge&quot;&gt;broadcom-wl&lt;/code&gt;, which consisted of failing to compile due to Internet requirements, not realizing that you can’t get the right kernel version without rebooting, and thinking that &lt;code class=&quot;highlighter-rouge&quot;&gt;mkinitcpio&lt;/code&gt; will save my butt (It didn’t).&lt;/p&gt;
+
+&lt;p&gt;Secondly, to install packages on a different computer, you must A) Know how how to install Arch B) Get the built packages and C) Get those packages onto the laptop. Honestly, I messed up enough times without Internet access in the first place just dealing with A: formatting the wrong partition (luckily the USB /dev/sdb) multiple times before I figured out why my bootable USB wasn’t bootable anymore, dealing with &lt;code class=&quot;highlighter-rouge&quot;&gt;mount -o force ...&lt;/code&gt; in order to be able to write, and forgetting to mount the target partition. Needless to say, there was lots of &lt;code class=&quot;highlighter-rouge&quot;&gt;rm -fR /&lt;/code&gt;, but at the same time, the repetition drilled in deep the commands required, so I got faster and faster at failing. Better to fail quickly than slowly I suppose.&lt;/p&gt;
+
+&lt;p&gt;In short, the process went something like so for me: mount temp partition from the VirtualBox “disk,” then run the following:&lt;/p&gt;
+
+&lt;div class=&quot;language-shell highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;pacman &lt;span class=&quot;nt&quot;&gt;-Sy&lt;/span&gt;
+pacman &lt;span class=&quot;nt&quot;&gt;-S&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;--cachdir&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;.&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;--dbpath&lt;/span&gt; /tmp base base-devel linux-headers broadcom-wl-dkms wpa_supplicant
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;And then transfer the all the &lt;code class=&quot;highlighter-rouge&quot;&gt;.pkg&lt;/code&gt; files onto macOS using &lt;code class=&quot;highlighter-rouge&quot;&gt;nc&lt;/code&gt;. Once I have them, I can then put them on a mounted transfer partition that I used to access those files more easily from the boot CLI.&lt;/p&gt;
+
+&lt;h1 id=&quot;finally-installation&quot;&gt;Finally, Installation&lt;/h1&gt;
+
+&lt;p&gt;The truth is that in order to install the base system, one only needs the &lt;code class=&quot;highlighter-rouge&quot;&gt;base&lt;/code&gt; package, and that’s it. In short, you need to do the following in order to “install” Arch:&lt;/p&gt;
+
+&lt;ol&gt;
+  &lt;li&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;cgdisk&lt;/code&gt; and format the partition&lt;/li&gt;
+  &lt;li&gt;Mount desired partition&lt;/li&gt;
+  &lt;li&gt;Mount the &lt;code class=&quot;highlighter-rouge&quot;&gt;/boot&lt;/code&gt; partition&lt;/li&gt;
+  &lt;li&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;pacstrap&lt;/code&gt; the desired repo with the &lt;code class=&quot;highlighter-rouge&quot;&gt;base&lt;/code&gt; arg&lt;/li&gt;
+  &lt;li&gt;Chroot into the mount dir&lt;/li&gt;
+  &lt;li&gt;Create &lt;code class=&quot;highlighter-rouge&quot;&gt;systemd-boot&lt;/code&gt; entry for the correct partition&lt;/li&gt;
+  &lt;li&gt;Reboot&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;I won’t go into specifics here, since firstly I’m not a very good source of info and secondly, because these are quite easy steps that you can find on the Internet. Again, needless to say, I messed up on multiple occaisions here: &lt;code class=&quot;highlighter-rouge&quot;&gt;cgdisk&lt;/code&gt; on the wrong disk, forgetting to mount &lt;code class=&quot;highlighter-rouge&quot;&gt;/boot&lt;/code&gt; and ending up with an unbootable system, writing the wrong partition UUID to &lt;code class=&quot;highlighter-rouge&quot;&gt;systemd-boot&lt;/code&gt;, etc…&lt;/p&gt;
+
+&lt;p&gt;It is absolutely vital that you are able to reboot. This is the only way that you can update to the correct kernel version and access your modules, and I guarantee that a successful boot is the most important milestone here, even if you aren’t able to connect to the WiFi quite yet.&lt;/p&gt;
+
+&lt;h1 id=&quot;the-wifi-problem&quot;&gt;The WiFi Problem&lt;/h1&gt;
+
+&lt;p&gt;Back to our initial issue, although we have Arch installed without using the Internet on the target machine, we still do not have Internet access. Luckily, having the &lt;code class=&quot;highlighter-rouge&quot;&gt;broadcom-wl-dkms&lt;/code&gt; file on our transfer partition, we can &lt;code class=&quot;highlighter-rouge&quot;&gt;pacman -S&lt;/code&gt; that very easily. Having already confirmed that the kernel has been updated, we can safely restart and see through &lt;code class=&quot;highlighter-rouge&quot;&gt;ip a&lt;/code&gt; that the driver has successfully detected the network interface - a good sign.&lt;/p&gt;
+
+&lt;p&gt;For me, this all happened at school, where the WiFi setup was a little more complicated since we used WPA Enterprise, so I had to wait until I got home.&lt;/p&gt;
+
+&lt;p&gt;The good news came late at night, when I was toying with &lt;code class=&quot;highlighter-rouge&quot;&gt;wpa_supplicant&lt;/code&gt;. I was able to use &lt;code class=&quot;highlighter-rouge&quot;&gt;wpa_password&lt;/code&gt; to generate the config, but not realizing that I needed to also set the &lt;code class=&quot;highlighter-rouge&quot;&gt;ap_scan&lt;/code&gt; and ssid scan in order to detect my network (which had SSID masking enabled), I was finally able to connect to the Internet. Content with Internet access for the time being, I got to installing and setting up a few other personal neccessities:&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;Xorg&lt;/li&gt;
+  &lt;li&gt;Display Manager (LightDM)
+    &lt;ul&gt;
+      &lt;li&gt;Careful, you also need the locker (I used gtk) for it to work!&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+  &lt;li&gt;i3wm, dmenu&lt;/li&gt;
+  &lt;li&gt;Users&lt;/li&gt;
+  &lt;li&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;chromium&lt;/code&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;xfce4-terminal&lt;/code&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;But since the entire idea of my laptop was that it was portable, and I already had a well-established Debain computer at home, I was bent on getting WiFi to work at my school. That wouldn’t happen for another several weeks though; it was winter break, and I didn’t plan on going to school at all to test whether or not my config worked.&lt;/p&gt;
+
+&lt;h1 id=&quot;the-breakthrough&quot;&gt;The Breakthrough&lt;/h1&gt;
+
+&lt;p&gt;It takes only a few seconds to look at the massive variety in responses to the “proper” config for WPA Enterprise one can find on Google, but as it turns out, whatever people say “works for them” is very blatantly BS. The config depends entirely on the network, and there is no way around having to try out different combinations of “WPA-EAP/IEEE801X…” and “CCMP/TKIP/…” and other options that I still have no interest in. However, recalling that I have a handy MacBook, I booted into macOS to see if I can get some hints by connecting to the WiFi, which I already knew worked splendidly without any hassle. From there, I knew that I could use “WPA-EAP” and “PEAP” options, and the rest goes guess-and-check.&lt;/p&gt;
+
+&lt;p&gt;For my own future reference, this is what I used:&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;Description='Automatically generated profile by wifi-menu'
+Interface=wlp2s0
+Connection=wireless
+Security=wpa-configsection
+ESSID=$SSID
+IP=dhcp
+WPAConfigSection=(
+        'ssid=&quot;$SSID&quot;'
+        'proto=RSN'
+        'key_mgmt=WPA-EAP'
+        'eap=PEAP'
+        'identity=&quot;$USERNAME&quot;'
+        'password=&quot;$PASSWORD&quot;'
+        'phase1=&quot;peaplabel=auto peapver=0&quot;'
+        'phase2=&quot;auth=MSCHAPV2&quot;'
+)
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h1 id=&quot;final-thoughts&quot;&gt;Final Thoughts&lt;/h1&gt;
+
+&lt;p&gt;Although trying a CLI-based install for the first time was an interesting experience, and I felt like I learned a lot from it compared to a more graphical nod that Debian takes, it still was frustrating and uncooperative even at the best of times. I’m happy with the end result, even if it’s not perfect though, and as always, the pleasure and satisfaction that comes with finally wrangling something to work is much more powerful than the ordeal that it takes to acheive that.&lt;/p&gt;
+
+&lt;p&gt;Although it &lt;em&gt;would&lt;/em&gt; be nice if I could actually see anything, I still haven’t figured out that HiDPI thing yet…&lt;/p&gt;</content><author><name></name></author><summary type="html">It’s been draining on the soul, but luckily coming up with a “unique” title has been rejuvenating (rejuvinatig? rejuvenating? whatever).</summary></entry><entry><title type="html">New Years: Productivity</title><link href="https://agenttroll.github.io/blog/2017/12/31/new-years-productivity.html" rel="alternate" type="text/html" title="New Years: Productivity" /><published>2017-12-31T00:28:00-08:00</published><updated>2017-12-31T00:28:00-08:00</updated><id>https://agenttroll.github.io/blog/2017/12/31/new-years-productivity</id><content type="html" xml:base="https://agenttroll.github.io/blog/2017/12/31/new-years-productivity.html">&lt;p&gt;Perhaps we can take some time to look at productivity, in spirit of the (Eve of) New Year.&lt;/p&gt;
 
 &lt;p&gt;Probably the most ironic thing about productivity is that discussing productivity is unproductive in itself. Sure, it’s great food for thought, but at the same time, let us consider that 1) you will read this and do nothing about it and 2) productivity is subjective. In fact, #1 probably isn’t even your fault; maybe you’ve already fixed whatever issue arose from that facet of productivity, or maybe it doesn’t even apply to you. I’m not saying that you aren’t lazy and stubborn, because you probably are as well. At least something might occur to you that has not before even if you won’t do anything about your own productivity after reading.&lt;/p&gt;
 
