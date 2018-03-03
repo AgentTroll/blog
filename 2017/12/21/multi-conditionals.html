@@ -7,7 +7,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
   <title>Multi Conditionals</title>
-  <meta name="description" content="There have been actually serveral times as I’m writing servers in things like my JDB project and the TridentSDK project in which the following scenario pops ...">
+  <meta name="description" content="There have been actually several times as I’m writing servers in things like my JDB project and the TridentSDK project in which the following scenario pops u...">
 
   <link rel="stylesheet" href="/blog/assets/main.css">
   <link rel="canonical" href="https://agenttroll.github.io/blog/2017/12/21/multi-conditionals.html">
@@ -43,9 +43,6 @@
           
             
             
-          
-            
-            
             <a class="page-link" href="/blog/about/">About</a>
             
           
@@ -72,7 +69,7 @@
   <header class="post-header">
     <h1 class="post-title" itemprop="name headline">Multi Conditionals</h1>
     <p class="post-meta">
-      <time datetime="2017-12-21T01:25:00-08:00" itemprop="datePublished">
+      <time datetime="2017-12-21T00:00:00-08:00" itemprop="datePublished">
         
         Dec 21, 2017
       </time>
@@ -80,7 +77,7 @@
   </header>
 
   <div class="post-content" itemprop="articleBody">
-    <p>There have been actually serveral times as I’m writing servers in things like my JDB project and the TridentSDK project in which the following scenario pops up: there is a single thread that manages incoming and outgoing messages. I need to block on an outgoing queue, as well as block until some bytes off the network are read.</p>
+    <p>There have been actually several times as I’m writing servers in things like my JDB project and the TridentSDK project in which the following scenario pops up: there is a single thread that manages incoming and outgoing messages. I need to block on an outgoing queue, as well as block until some bytes off the network are read.</p>
 
 <p>My situation looks something like the following:</p>
 
@@ -123,7 +120,7 @@
 
 <p>So it can be seen that this method both does not work as intended and will cause risks with client-server deadlock.</p>
 
-<h1 id="naive-solution-single-lockcondition">Naive Solution: Single lock/<code class="highlighter-rouge">Condition</code></h1>
+<h1 id="naive-solution-single-lockcondition">Naive Solution: Single lock/Condition</h1>
 
 <p>A second tempting solution is to protect the <code class="highlighter-rouge">incoming</code> queue and the <code class="highlighter-rouge">outgoing</code> queue with a single lock/<code class="highlighter-rouge">Condition</code>.</p>
 
@@ -169,7 +166,7 @@
 
 <p>In truth, we can try all different kinds of combinations of switching different <code class="highlighter-rouge">Condition</code>s and different mechanisms of all sorts without succeeding, there is simply no way to wait on both the reading from socket and simultaneously the outgoing queue. Further, a thread blocked on network input is not blocked on a lock or <code class="highlighter-rouge">Condition</code> or whatever - it remains in <code class="highlighter-rouge">RUNNABLE</code> mode, so it might as well be busy waiting for all other observers can care. After exhausting these ideas, I too thought that it would be impossible to act on events rather than having to use a timer and step over the other blocked method in order to check either input or output depending on what is blocked.</p>
 
-<p>Fortunately, there <em>is</em> a way.</p>
+<p>Fortunately, there is a way.</p>
 
 <h1 id="the-solution">The Solution</h1>
 
@@ -320,16 +317,15 @@
 
 <h1 id="discussion">Discussion</h1>
 
-<p>In order for this to work, I made a slightly (OK, <em>really</em>) hacky solution to default <code class="highlighter-rouge">InterruptibleChannel</code> functionality. I found that what <code class="highlighter-rouge">InterruptibleChannel</code> did was put an interrupt listener before every single blocking call in order to close the socket if either the blocked thread is interrupted or if the socket was closed. I couldn’t put in my own handler because I can only override before or after the blocking method, in which my own handler would be overridden by the interrupt handler provided by the method itself. Therefore, I went one step deeper and overrode the cached instance of the interrupt handler inside of <code class="highlighter-rouge">InterruptibleChannel</code> to exit early and throw my own Signal which can be caught by the I/O thread.</p>
+<p>In order for this to work, I made a slightly (OK, really) hacky solution to default <code class="highlighter-rouge">InterruptibleChannel</code> functionality. I found that what <code class="highlighter-rouge">InterruptibleChannel</code> did was put an interrupt listener before every single blocking call in order to close the socket if either the blocked thread is interrupted or if the socket was closed. I couldn’t put in my own handler because I can only override before or after the blocking method, in which my own handler would be overridden by the interrupt handler provided by the method itself. Therefore, I went one step deeper and overrode the cached instance of the interrupt handler inside of <code class="highlighter-rouge">InterruptibleChannel</code> to exit early and throw my own Signal which can be caught by the I/O thread.</p>
 
-<p>I  haven’t deeply investigated the performance of this method over perhaps timed busy waiting, but from testing, a blocked read can respond to signals in sub-millisecond times even when saturated with messages between “10 nanosecond intervals” on an i3-3240. A <code class="highlighter-rouge">while</code> loop probably takes more than 10ns to run which is why I mention that rate in quotes, but again, this time is very impressive even if it’s off by a bit. You wouldn’t want to be waking a thread every 1 millisecond in order to check for the other condition, which is why I say that it’s good in comparison with the alternative.</p>
+<p>I haven’t deeply investigated the performance of this method over perhaps timed busy waiting, but from testing, a blocked read can respond to signals in sub-millisecond times even when saturated with messages between “10 nanosecond intervals” on an i3-3240. A <code class="highlighter-rouge">while</code> loop probably takes more than 10ns to run which is why I mention that rate in quotes, but again, this time is very impressive even if it’s off by a bit. You wouldn’t want to be waking a thread every 1 millisecond in order to check for the other condition, which is why I say that it’s good in comparison with the alternative.</p>
 
-<p>Unfortunately, this technique is risky in many ways, first of all, because it depends on there being the AbstractInterruptibleChannel SPI class being available, as well as the field being available. The field probably won’t be going away because caching is required, but the class itself might. Additionally, the interrupt status of the thread is risky to play around with and requires <code class="highlighter-rouge">Thread.interrupted()</code> to be called each time either Signal is thrown or InterruptedException is captured if the <code class="highlighter-rouge">signal(Thread)</code> method misses the I/O portion. Otherwise, the thread itself might die. Finally, the only possible way to exit directly out of a blocking <code class="highlighter-rouge">read(...)</code> is to throw the exception, but if a read is halfway done, then the behavior may be undefined. I will need to test further in order to determine what happens, but until then, this class still remains a very risky hack. I would highly advise against using it in a production environment, regardless of whatever performance gains may bear fruit through event-driven notifications rather than spurious wakeups. I have included a warning in the class javadoc comment to cover my ass, so please don’t push it :)</p>
+<p>Unfortunately, this technique is risky in many ways, first of all, because it depends on there being the <code class="highlighter-rouge">AbstractInterruptibleChannel</code><code class="highlighter-rouge"> SPI class being available, as well as the field being available. The field probably won’t be going away because caching is required, but the class itself might. Additionally, the interrupt status of the thread is risky to play around with and requires </code>Thread.interrupted()<code class="highlighter-rouge"> to be called each time either Signal is thrown or InterruptedException is captured if the </code>signal(Thread)<code class="highlighter-rouge"> method misses the I/O portion. Otherwise, the thread itself might die. Finally, the only possible way to exit directly out of a blocking </code>read(…)` is to throw the exception, but if a read is halfway done, then the behavior may be undefined. I will need to test further in order to determine what happens, but until then, this class still remains a very risky hack. I would highly advise against using it in a production environment, regardless of whatever performance gains may bear fruit through event-driven notifications rather than spurious wakeups. I have included a warning in the class javadoc comment to cover my ass, so please don’t push it :)</p>
 
 <p>In the end, even though I have acheived what I was hoping for, even if it isn’t really viable in the real-world, I guess I will just have to keep searching for a better solution.</p>
 
 <h1 id="closing-words">Closing Words</h1>
-
 <p>Figuring this all out was an interesting use of 3 hours. I’m completely done with this though, I’m not looking to play around anymore with it, but anyone else can feel free to do so themself. My plan is to update the “On Thread Safety” post very soon though, and there is more to come over winter break. Take care everyone!</p>
 
   </div>

@@ -43,9 +43,6 @@
           
             
             
-          
-            
-            
             <a class="page-link" href="/blog/about/">About</a>
             
           
@@ -143,7 +140,7 @@
   <p>As a small side note, single-threaded programs are not truly single-threaded. While what the programmer does is single-threaded - things like the <code class="highlighter-rouge">main</code> method - the program as a whole is not. There are threads managed by the JVM in the background, such as the GC thread(s), the JIT thread(s), maybe RMI threads or Ctrl-Break monitor threads if applicable, among others. This means that while there are never truly “single-threaded” programs in the strictest definition of the term, it is important to realise that threads in the JVM sub-system do not interfere or comprimise the thread-safety of a “single-threaded” program. If the programmer does not interact with additional threads other than the main thread which runs the <code class="highlighter-rouge">main</code> method, <strong>there are no thread-safety issues with the code. In the absence of program-level threads, it is <em>impossible</em> for thread-safety to be a problem</strong>.</p>
 </blockquote>
 
-<p>The idea of making a program thread-safe is the same as making what is arbitrary predictable. <strong>The nature of threads is that they run independently of each other</strong>. In doing so, it is impossible to determine the timing between operations or the effects of a read or write on a state variable.</p>
+<p>The idea of making a program thread-safe is the same as making what is arbitrary predictable. The nature of threads is that they run independently of each other. In doing so, it is impossible to determine the timing between operations or the effects of a read or write on a state variable.</p>
 
 <blockquote>
   <p><strong>State</strong>: When I use “state” or “shared state,” I refer to data to which a thread might be able to read or write. It is a general term used to describe whatever is made available to threads to access. This may be an instance object that is passed around, a global variable, a class field. For example, I can say that a thread will mutate a state by incrementing it, or a thread can mutate a state by setting its value, because the “state” is the data that the thread is accessing and mutating, or changing in some way. I can also say that a thread will read the state of an object to say that the thread will be able to use the object’s getters to obtain the value of its fields.</p>
@@ -202,53 +199,9 @@
   <li>They are prone to interfering with other threads or other programs</li>
 </ul>
 
-<p>All these different things you have to consider!</p>
-
-<p>What’s more, almost all of those issues can be attributed to thread safety! If it were possible to implement threading for free, none of these issues would exist at all! Which brings us to our next point of discussion: why threads cannot be free.</p>
-
-<p>Housekeeping overhead is easy - starting a new thread must coalesce resources such as memory in order to manage the thread state, allocate a stack to execute the provided task, initialize the internal state in order handle synchronization primitives etc… However, dealing with issues relating to thread-safety itself - visibility, ordering, and how different primitives are able to get around these problems - are a little more tricky.</p>
-
-<p>Recall again, that threads have the tendency to behave independently. This is so because an isolated thread is able to make certain optimizations and allow the CPU to execute instructions without having to worry about ordering read/write instructions. Thread independence makes single-threaded programs faster. This is the entire point: simpler programs are single-threaded, and thus the programmer should not have to worry about enabling optimizations that would have been disabled if threads were <em>not</em> independent by default. In other words, single threaded is the default, and single-thread optimized instructions are the default.</p>
-
-<p>This becomes a problem when working with shared data because these optimizations are fundamentally incompatible and produce nondeterministic results unless the program is correctly synchronized. Specifically, when we refer to “single-thread optimizations,” we are referring to those done by the CPU cache subsystem. It is useful to learn a some background before moving on because it will help in understanding the how/why explanations I have provided. Fortunately, I have done most of the research for you here.</p>
-
-<blockquote>
-  <p>As a minor aside, pretty much all explanations regarding internals of anything pertaining to Java is an “analogy” of some sort. The whole idea of Java is that it is such a high level language that you would not need to worry about all the hardware details in order to make your program portable. It is a lot more useful to think in terms of theoretical systems that “kind of resemble” real world hardware, but at the same time, it’s important to realize that the actual hardware running the program is probably slightly different, if not entirely different depending on the vendor, the model, the architecture, etc…</p>
-</blockquote>
-
-<p>To start with, here is a generic CPU that might look something like an Intel quad-core that you might find in a typical desktop:</p>
-
 <p><img src="https://agenttroll.github.io/blog/img/CPU.jpg" alt="CPU" /></p>
 
-<p>In order of access latency, a CPU deals with memory by storing and caching in following spaces:</p>
-
-<ul>
-  <li>Register(s) (Core-local)</li>
-  <li>L1 Cache (Core-local)</li>
-  <li>L2 Cache (Core-local)</li>
-  <li>L3 Cache</li>
-  <li>RAM/Main memory</li>
-</ul>
-
-<p>A few interesting details to also note is that as access latency increases to successive memory spaces is firstly, that memory capacity increases (that is, registers can hold the smallest amount of memory while RAM can hold the greatest), and secondly, that they are increasingly further away from the ALU/FPU/Ctl units.</p>
-
-<p>In regards to memory capacity, it makes sense that the fastest memory is also the smallest because firstly, memory access will only need to traverse a short memory space in order to find the target register, and secondly, because low-latency memory is fucking expensive. A single gigabyte of SRAM memory costs <em>$5000 USD</em>, so DRAM memory is used for larger memory spaces. In the end, faster memory is kept small in order to reduce access time and production cost.</p>
-
-<p>In regards to memory distance, this also makes sense because communicating between the calculation units and the memory space is not instantaneous, and that physical distance does in fact have an effect on memory access latency: the more distance, the more time it will take to contact and receive a response.</p>
-
-<p>All this is interesting and all… But how does it apply to threads specifically?</p>
-
-<p>Threads are scheduled to run on a specific core. While the thread is running, it occupies the entire core (or perhaps shares with only one other thread when using Hyperthreading or whatever AMD uses. Again, recall the “analogy” aside from above) and another core may not access the thread while it is being used by another. The number one optimization that will be done is to retain memory accessed by a single thread as closely to the core that is currently running that thread as possible. So ideally, a thread will write to the registers, and failing that, the local caches and continues to look for the fastest possible cache and only resorts to writing to RAM if absolutely necessary. By keeping data local to the core, should the thread reuse the same value again (which is not an unlikely event in a single-threaded program), it will pull from the cache rather than going straight to main memory. Because main memory is <em>excedingly</em> expensive, at least relative to the prior caches, a single-threaded program can save a significant number of cycles from being wasted on going back to RAM in order to find that value.</p>
-
-<p>It is the selfish, cache hoarding done by the core currently running the thread that causes threads to exhibit their independent behavior. By making this selfishness the default, single-threaded programs will run faster and will have more access to CPU pipeline optimizations as well as make time for the processor to proceed with other tasks rather than wasting time publishing variables across the shared memory bus that will never be used by any other core anyways. For example, a program might want to look up some variable <code class="highlighter-rouge">a</code> that is set to <code class="highlighter-rouge">4</code> in main memory. The first time around, the lookup for <code class="highlighter-rouge">a</code> will result in a cache miss, and the core will load <code class="highlighter-rouge">a</code> into, say, the L2 cache space. The next time <code class="highlighter-rouge">a</code> is referenced, the core can simply lookup from the L2 rather than having to make another expensive lookup to main memory. As it relates specifically to visibility, cache coherency becomes important for multithreaded programs because another thread might want to access to <code class="highlighter-rouge">a</code> as well, and rather than going back to main memory, it’s very much possible for a second core to hop the memory bus instead. The different local cache spaces in the CPU are then subject to their own rules on data visibility in order to propagate to the program, laid out by such protocols as the MESI or MOESI models.</p>
-
-<p>Again, speaking in terms of cache mechanics, it is possible for a thread to be run by multiple cores over its lifetime (although not simultaneously by two cores). When threads are relinquished from one core and passed to the next, it is possible for the second core to take the cache as the truth, and in the case that our <code class="highlighter-rouge">a</code> state was stored in a local register or L1/2 cache, a lookup by the second core will lead to a cache miss as the state was updated in only the first core’s caches. Another scenario could take place on a CPU using the write-through policy in which main memory is the “source of truth” rather than the local caches. In this case, the second core would travel to main memory to load the “truth” value into its cache, but there’s a catch: on our hypothetical CPU, a write-through policy will propagate randomly, and it just so happens that our second core will read a stale value of <code class="highlighter-rouge">4</code> because the first core’s write to <code class="highlighter-rouge">5</code> has not propagated yet.</p>
-
-<p>Ordering, on the other hand, has to do with buffering stores and loads on the local core. On processors that perform pipelining, yet another optimization can be done to put reads and writes on a buffer since memory lookups take time to complete while instructions are being cycled through the pipeline. This is the reason behind the “optimization” done which produces results that appear seemingly out of order. Operating sequentially, instructions will finish before the next buffered load/store operation, but when introducing other threads, an uneven number of reads and writes could cause reads to be processed before the write in the case that the write buffer has been polluted, and vice versa. Using memory ordering devices such as barriers or fences, preceding operations would be finished upon reaching the fence such that the two buffers are synchronized with each other at the point of the fence, and that instructions would not “flow past the fence” in that the core would stall on an instruction that could possibly be pipelined rather than executing it prematurely and in effect causing it to seem as if the instruction was reordered before its counterpart. Again, recall that memory fencing is yet another analogy; for the most part, x86 CPUs that do have these buffers do in fact use memory fencing, but some CPUs cannot rely on just fencing to produce the correct ordering. The JVM handles these other architectures already, so as to make unnecessary the programmer having to reason about where to put those barriers and any extra instructions needed to correctly synchronize the caches.</p>
-
-<p>In truth, we can continue to speak about hypothetical processors and waving our hands in the air as we speak passionately about cache misses and such. Different processors handle caching in different ways, and it is simply best to leave the underlying systems as a black box that act on higher-level rules and paradigms instead. There are lots of smart people working on solutions to these problems, and lots of people who spend lots of time thinking and reasoning about how their hardware interacts with their programs, but in the end, the goal of the Java language is the same: write once, run anywhere. The Java Memory Model sets standards for compilers and JVMs to adhere, and these higher-level rules that deal with <em>happens-before</em> ordering, synchronization ordering and the like are significantly easier for programmers to understand and write adherent code.</p>
-
-<p>I’ve said before that understanding these nuances between architectures simply isn’t useful to just about everyone, save for those who work with designing compilers and JVMs. You do not need to understand the hardware in order to understand the memory model, and even if you did understand these little details, they are of little use to other systems that might be running your program, they are prone to failing, they make programs more difficult to write and understand, and they are not concrete. You cannot rely on the same guarantees to hold true for the hardware that you can when running code that uses more robust tools such as <code class="highlighter-rouge">volatile</code>, <code class="highlighter-rouge">final</code>, <code class="highlighter-rouge">java.util.concurrent</code>, and others which are designed as building blocks to write thread-safe programs. In the end, the idea is that the hardware has been dealt with already, so you do not have to.</p>
+<!-- TODO -->
 
 <p>Sources used:</p>
 
@@ -268,8 +221,22 @@
 <p><a name="how-to-write-thread-safe-code"></a></p>
 <h1 id="-how-to-write-thread-safe-code"><a href="#how-to-write-thread-safe-code">#</a> HOW TO WRITE THREAD-SAFE CODE?</h1>
 
-<p>Having a little background information on the subject of thread-safety, it’s now a good time to deal with the elephant in the room. How are thread-safe programs built and written? What kind of reasoning needs to be used? What are you supposed to even do in order to adhere to the memory model?</p>
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nd">@ThreadSafe</span>
+<span class="kd">public</span> <span class="kd">class</span> <span class="nc">ThreadNotUnsafe</span> <span class="o">{</span>
+    <span class="c1">// Add 'volatile'</span>
+    <span class="kd">private</span> <span class="kd">volatile</span> <span class="kt">int</span> <span class="n">state</span> <span class="o">=</span> <span class="mi">4</span><span class="o">;</span>
+    
+    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">setState</span><span class="o">(</span><span class="kt">int</span> <span class="n">newState</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">this</span><span class="o">.</span><span class="na">state</span> <span class="o">=</span> <span class="n">newState</span><span class="o">;</span>
+    <span class="o">}</span>
+    
+    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">getState</span><span class="o">()</span> <span class="o">{</span>
+        <span class="k">return</span> <span class="k">this</span><span class="o">.</span><span class="na">state</span><span class="o">;</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+</code></pre></div></div>
 
+<p>One of the primitives that the Java language gives developers is the <code class="highlighter-rouge">volatile</code> keyword. This keyword is only applicable to fields.</p>
 
   </div>
 

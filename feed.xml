@@ -1,4 +1,104 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.6.2">Jekyll</generator><link href="https://agenttroll.github.io/blog/feed.xml" rel="self" type="application/atom+xml" /><link href="https://agenttroll.github.io/blog/" rel="alternate" type="text/html" /><updated>2018-01-06T11:50:55-08:00</updated><id>https://agenttroll.github.io/blog/</id><title type="html">Inside a Troll</title><subtitle>Thoughts of a Java developer</subtitle><entry><title type="html">Status Update: Installing Arch for The First Time</title><link href="https://agenttroll.github.io/blog/2018/01/06/status-update-installing-arch-for-the-first-time.html" rel="alternate" type="text/html" title="Status Update: Installing Arch for The First Time" /><published>2018-01-05T23:46:00-08:00</published><updated>2018-01-05T23:46:00-08:00</updated><id>https://agenttroll.github.io/blog/2018/01/06/status-update-installing-arch-for-the-first-time</id><content type="html" xml:base="https://agenttroll.github.io/blog/2018/01/06/status-update-installing-arch-for-the-first-time.html">&lt;p&gt;It’s been draining on the soul, but luckily coming up with a “unique” title has been rejuvenating (rejuvinatig? rejuvenating? whatever).&lt;/p&gt;
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.6.2">Jekyll</generator><link href="https://agenttroll.github.io/blog/feed.xml" rel="self" type="application/atom+xml" /><link href="https://agenttroll.github.io/blog/" rel="alternate" type="text/html" /><updated>2018-03-03T15:49:25-08:00</updated><id>https://agenttroll.github.io/blog/</id><title type="html">Inside a Troll</title><subtitle>Thoughts of a Java developer</subtitle><entry><title type="html">Increasing The Player Count</title><link href="https://agenttroll.github.io/blog/2018/03/03/increasing-the-player-count.html" rel="alternate" type="text/html" title="Increasing The Player Count" /><published>2018-03-03T00:19:40-08:00</published><updated>2018-03-03T00:19:40-08:00</updated><id>https://agenttroll.github.io/blog/2018/03/03/increasing-the-player-count</id><content type="html" xml:base="https://agenttroll.github.io/blog/2018/03/03/increasing-the-player-count.html">&lt;p&gt;Gosh its been a while actually for a 2 things: firstly, the 1 year anniversary of the first post on this blog is fast approaching, and two, I’ve been with Intermissum for around 6 months now.&lt;/p&gt;
+
+&lt;p&gt;Speaking of Intermissum, we’ve been growing well over the past month and some that we’ve released. The player average is a good 550 to 600 depending on the day and and the time, and the most recent 2 realms, Western and Jurassic have been at absolute capacity almost every day for the past week or so. Which brings me to my next point…&lt;/p&gt;
+
+&lt;p&gt;We’ve been asked MULTITUDES of times to increase the player count on the Western realm, the most popular server:&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;https://agenttroll.github.io/blog/img/increasing-player-count-1.png&quot; alt=&quot;more slots&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;https://agenttroll.github.io/blog/img/increasing-player-count-2.png&quot; alt=&quot;more slots&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;https://agenttroll.github.io/blog/img/increasing-player-count-3.png&quot; alt=&quot;more slots&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;https://agenttroll.github.io/blog/img/increasing-player-count-4.png&quot; alt=&quot;more slots&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;https://agenttroll.github.io/blog/img/increasing-player-count-5.png&quot; alt=&quot;more slots&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;https://agenttroll.github.io/blog/img/increasing-player-count-6.png&quot; alt=&quot;more slots&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;https://agenttroll.github.io/blog/img/increasing-player-count-7.png&quot; alt=&quot;more slots&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;https://agenttroll.github.io/blog/img/increasing-player-count-8.png&quot; alt=&quot;more slots&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;https://agenttroll.github.io/blog/img/increasing-player-count-9.png&quot; alt=&quot;more slots&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;No means no you guys.&lt;/p&gt;
+
+&lt;h1 id=&quot;performance&quot;&gt;Performance&lt;/h1&gt;
+
+&lt;p&gt;What some people have a hard time understanding is that the player count is basically the root of all performance problems on a server. The reason why the server experiences lag and missed ticks is because there are too many people online at a time. What makes this issue even worse is that the Western realm is a farm/crop based economy, which means that on top of all the players, the server must also handle the monolithic farms that people are building.&lt;/p&gt;
+
+&lt;p&gt;Our first important point: &lt;strong&gt;The effect of adding more slots amplifies the strain on the server produced by resources associated with that player&lt;/strong&gt;&lt;/p&gt;
+
+&lt;p&gt;The slot limit on each realm is not “just a number.” A player joining a server is not as simple as incrementing some imaginary counter. Each player consumes a LARGE amount of resources needed to support the experience provided by the server: chunks loaded, net IO handled, ALL crops on that player’s island being ticked, etc…&lt;/p&gt;
+
+&lt;p&gt;Since I do not have exact chunk-loading stats on hand at the time of writing, I’ll use a very conservative figure of entities produced by all the islands to estimate the impact of adding more slots. At any given time, the Western &lt;code class=&quot;highlighter-rouge&quot;&gt;Islands&lt;/code&gt; world contains around 16,000 entities, which might not sound like much (indeed, as it is not much at all), but hang with me here. Given the 200 player capacity, that’s 80 entities loaded per player, the conservative estimate compensating for players loading the same entities (i.e. players on the same island).&lt;/p&gt;
+
+&lt;p&gt;Say that we bump up a “small” 25 additional slots. That means loading an additional 2000 entities on the server - and that’s just 25 players!&lt;/p&gt;
+
+&lt;p&gt;The point I’m trying to communicate here is that if the server load is thought of in terms of resources that each player takes up, instead of the “few slots” increase, we are actually compounding the increase by a factor of 80 for each additional player.&lt;/p&gt;
+
+&lt;p&gt;Now again, we are just estimating here, and each player does not actually amplify the load placed on the server by a factor of 80 (it is much less). However, it goes to show my point that players are expensive not in themselves, but rather in their effects.&lt;/p&gt;
+
+&lt;p&gt;In fact, to further demonstrate my point, let us not use entities (which are a better representation of the resources associated with a player because players are a subset of entities), but rather blocks. A chunk consists of a 16x16x256 section of blocks, 65536 in total. To make our calculations easier, let us assume that only about 1/12 of those blocks are actually cacti, making a single chunk require 5461 cacti to tick. A player loads around 150 chunks on a server, depending on the limits set by the owner, but for ease of calcualation, let us assume that a player only loads 25 chunks worth of cactus farm. Then, adding a single player will not only require the server to handle an additional player, but also 136525 worth of cacti to grow, 20 times in a single second! Accounting for players who are not loading their whole cactus farm and those whose farms are far larger, a reasonable estimate for the number of cacti to process comes out to about 100k times 225, or about 22,500,000 blocks.&lt;/p&gt;
+
+&lt;h1 id=&quot;user-experience&quot;&gt;User Experience&lt;/h1&gt;
+
+&lt;p&gt;Secondly, while I am not going to disclose exact stats, the server for sure does not run at 20 TPS, even capped at 200 players. There is a very simple reason here:&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;The server has a limited amount of time to complete tasks&lt;/strong&gt;&lt;/p&gt;
+
+&lt;p&gt;The age of cacti is incrememnted randomly 20 times per second, each tick that the server runs. If all the cacti on the server have been processed before the end of the tick, that’s good! The server will in fact, pause and not do anything until the beginning of the next tick, where all the cacti will again be processed, and so on.&lt;/p&gt;
+
+&lt;p&gt;Things get a little more complicated when the amount of time needed to complete the task overruns the time allocated to the tick. In the space of 20 seconds, 400 ticks &lt;em&gt;should&lt;/em&gt; be run. However, if each tick overruns itself by, oh, an extra tick, then only 200 ticks will be run in that same amount of time. This means that 200 ticks are “lost” because there was only enough time to increase the age of each block the first 200 times.&lt;/p&gt;
+
+&lt;p&gt;Why is this important?&lt;/p&gt;
+
+&lt;p&gt;The crops are already growing at about half speed.&lt;/p&gt;
+
+&lt;p&gt;By adding more players, the effect is that crops will slow down. There is no limit to the amount of slowdown that can be acheived as long as no player disconnects from the server. As each tick takes longer and longer, it is possible for it to overrun 1 second, 2 seconds, etc…&lt;/p&gt;
+
+&lt;p&gt;The argument here is that your crops all seem to grow slowly because all the other players are taking care of and loading in these humongous farms (22,500,000 blocks to be more preceise). Adding more players will also slow down your crops even more.&lt;/p&gt;
+
+&lt;p&gt;When people think selfishly and want only their singular goal to be fulfilled, it detriments the experience of others who are waiting for their crops to grow, and eventaully, when you yourself finally do join the server thanks to the 500 player cap, you will be complaining about how the crops don’t grow at all.&lt;/p&gt;
+
+&lt;h1 id=&quot;server-hardware&quot;&gt;Server Hardware&lt;/h1&gt;
+
+&lt;p&gt;So why not get a better computer?&lt;/p&gt;
+
+&lt;p&gt;Unfortunately &lt;strong&gt;the server runs on the highest tier hardware available to us&lt;/strong&gt;.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;https://agenttroll.github.io/blog/img/increasing-player-count-10.png&quot; alt=&quot;less slots&quot; /&gt;&lt;/p&gt;
+
+&lt;h1 id=&quot;queueing&quot;&gt;Queueing&lt;/h1&gt;
+
+&lt;p&gt;People have been having problems joining full realms because, well, they’re full &lt;em&gt;all the time&lt;/em&gt;.&lt;/p&gt;
+
+&lt;p&gt;So instead of having people stand and try to spam click on the Western NPC, a queue was implemented to allow players to wait to be teleported to the realm.&lt;/p&gt;
+
+&lt;p&gt;Now, the problem isn’t that the server is full all the time, it’s that peoples’ place in the queue don’t change, or even go up.&lt;/p&gt;
+
+&lt;p&gt;Then there’s people who buy the Buckaroo rank and think they’re supposed to be 1st in the queue.&lt;/p&gt;
+
+&lt;p&gt;The queue prioritizes staff members, youtubers, donators &lt;em&gt;descending by rank&lt;/em&gt;, and finally regular players. Bought a rank but not 1st in line? Thanks for supporting us. But you’ll have to wait your turn. This order helps benefit &lt;em&gt;all parties&lt;/em&gt; involved:&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;Owners/developers/admins/most lower-level staff do not play the game, we’re here purely to help people and to moderate&lt;/li&gt;
+  &lt;li&gt;YouTubers bring content to the community and bring the community to us, growing our own revenue base and supporting content that goes directly back to players&lt;/li&gt;
+  &lt;li&gt;Donators are in the same deal as with YouTubers&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;Donators are also queued by rank as well. I’m not an economist, but this is just basic economic theory: scarcity of resources (i.e. player slots), money is a medium through which access to limited resources is controlled. It sounds P2W and all, but it is not; everyone is paying to wait in line (“except” for upper-level staff). Those who have more money gain access to the “limited resource” (i.e. player slot) first, because they have helped support the server more. In the end, everyone has the chance to access the server. On top of that, Western is not a donator-only realm. There are several non-ranked players who play on Western even at peak hours, which means that even the lowest ranked players have the opportunity to join the server.&lt;/p&gt;
+
+&lt;p&gt;Finally, a kick-based model will never be used in the forseeable future. In this model, players are kicked out rather than having to wait if there are not enough slots. This is a horrendous and unfair system that makes joining the server totally P2W. Based on the number of donators on Western, it would be easy to kick out ALL non-ranked players, if not a large number of the lower-ranked players as well. Then, the complaint will not be that the queue is too long; it will be that people are getting “randomly kicked” and that the system is “unfair” because rich people still have the advantage. If the queue model is P2W, then the kick model will be even more so.&lt;/p&gt;
+
+&lt;p&gt;Yeah, we’re sticking with the queue system.&lt;/p&gt;
+
+&lt;h1 id=&quot;closing-thoughts&quot;&gt;Closing Thoughts&lt;/h1&gt;
+
+&lt;p&gt;I hoped that through my endless rambling and criticism that I’ve cleared up some thoughts that people have had regarding the slot availability on MineSaga. We are not going to increase the slots or get rid of the queue because it is simply the most effective way that we have so far to manage the limited resources availible to the server.&lt;/p&gt;
+
+&lt;p&gt;There have been multiple discussions privately about how to distribute computing power and divide up how the different realms and islands are managed. I do not feel comfortable sharing those details without approval so they remain purely for speculation at the moment. Stay tuned! :)&lt;/p&gt;</content><author><name></name></author><summary type="html">Gosh its been a while actually for a 2 things: firstly, the 1 year anniversary of the first post on this blog is fast approaching, and two, I’ve been with Intermissum for around 6 months now.</summary></entry><entry><title type="html">Status Update: Installing Arch for the First Time</title><link href="https://agenttroll.github.io/blog/2018/03/03/status-update-installing-arch-for-the-first-time.html" rel="alternate" type="text/html" title="Status Update: Installing Arch for the First Time" /><published>2018-03-03T00:19:40-08:00</published><updated>2018-03-03T00:19:40-08:00</updated><id>https://agenttroll.github.io/blog/2018/03/03/status-update-installing-arch-for-the-first-time</id><content type="html" xml:base="https://agenttroll.github.io/blog/2018/03/03/status-update-installing-arch-for-the-first-time.html">&lt;p&gt;It’s been draining on the soul, but luckily coming up with a “unique” title has been rejuvenating (rejuvinatig? rejuvenating? whatever).&lt;/p&gt;
 
 &lt;p&gt;I don’t profess to be an expert on ArchLinux, or even Linux in general but based on my experience installing Arch on my MacBook Pro 11.something, I’d be even more wary of following a random blog post (because it probably won’t work). I don’t think any of the issues that I encountered were unique by any means, but I believe my own little successes are the result of the wealth of mainly online resources. I’m therefore very keen to share my own experience and perhaps someone might come along and save a few hours of their lifetime and hair-tearing.&lt;/p&gt;
 
@@ -16,17 +116,16 @@
 pacman &lt;span class=&quot;nt&quot;&gt;-S&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;--cachdir&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;.&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;--dbpath&lt;/span&gt; /tmp base base-devel linux-headers broadcom-wl-dkms wpa_supplicant
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
 
-&lt;p&gt;And then transfer the all the &lt;code class=&quot;highlighter-rouge&quot;&gt;.pkg&lt;/code&gt; files onto macOS using &lt;code class=&quot;highlighter-rouge&quot;&gt;nc&lt;/code&gt;. Once I have them, I can then put them on a mounted transfer partition that I used to access those files more easily from the boot CLI.&lt;/p&gt;
+&lt;p&gt;And then transfer the all the .pkg files onto macOS using nc. Once I have them, I can then put them on a mounted transfer partition that I used to access those files more easily from the boot CLI.&lt;/p&gt;
 
 &lt;h1 id=&quot;finally-installation&quot;&gt;Finally, Installation&lt;/h1&gt;
-
-&lt;p&gt;The truth is that in order to install the base system, one only needs the &lt;code class=&quot;highlighter-rouge&quot;&gt;base&lt;/code&gt; package, and that’s it. In short, you need to do the following in order to “install” Arch:&lt;/p&gt;
+&lt;p&gt;The truth is that in order to install the base system, one only needs the base package, and that’s it. In short, you need to do the following in order to “install” Arch:&lt;/p&gt;
 
 &lt;ol&gt;
   &lt;li&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;cgdisk&lt;/code&gt; and format the partition&lt;/li&gt;
   &lt;li&gt;Mount desired partition&lt;/li&gt;
   &lt;li&gt;Mount the &lt;code class=&quot;highlighter-rouge&quot;&gt;/boot&lt;/code&gt; partition&lt;/li&gt;
-  &lt;li&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;pacstrap&lt;/code&gt; the desired repo with the &lt;code class=&quot;highlighter-rouge&quot;&gt;base&lt;/code&gt; arg&lt;/li&gt;
+  &lt;li&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;pacstrap&lt;/code&gt; the desired repo with the base arg&lt;/li&gt;
   &lt;li&gt;Chroot into the mount dir&lt;/li&gt;
   &lt;li&gt;Create &lt;code class=&quot;highlighter-rouge&quot;&gt;systemd-boot&lt;/code&gt; entry for the correct partition&lt;/li&gt;
   &lt;li&gt;Reboot&lt;/li&gt;
@@ -87,7 +186,7 @@ WPAConfigSection=(
 
 &lt;p&gt;Although trying a CLI-based install for the first time was an interesting experience, and I felt like I learned a lot from it compared to a more graphical nod that Debian takes, it still was frustrating and uncooperative even at the best of times. I’m happy with the end result, even if it’s not perfect though, and as always, the pleasure and satisfaction that comes with finally wrangling something to work is much more powerful than the ordeal that it takes to acheive that.&lt;/p&gt;
 
-&lt;p&gt;Although it &lt;em&gt;would&lt;/em&gt; be nice if I could actually see anything, I still haven’t figured out that HiDPI thing yet…&lt;/p&gt;</content><author><name></name></author><summary type="html">It’s been draining on the soul, but luckily coming up with a “unique” title has been rejuvenating (rejuvinatig? rejuvenating? whatever).</summary></entry><entry><title type="html">New Years: Productivity</title><link href="https://agenttroll.github.io/blog/2017/12/31/new-years-productivity.html" rel="alternate" type="text/html" title="New Years: Productivity" /><published>2017-12-31T00:28:00-08:00</published><updated>2017-12-31T00:28:00-08:00</updated><id>https://agenttroll.github.io/blog/2017/12/31/new-years-productivity</id><content type="html" xml:base="https://agenttroll.github.io/blog/2017/12/31/new-years-productivity.html">&lt;p&gt;Perhaps we can take some time to look at productivity, in spirit of the (Eve of) New Year.&lt;/p&gt;
+&lt;p&gt;Although it &lt;em&gt;would&lt;/em&gt; be nice if I could actually see anything, I still haven’t figured out that HiDPI thing yet…&lt;/p&gt;</content><author><name></name></author><summary type="html">It’s been draining on the soul, but luckily coming up with a “unique” title has been rejuvenating (rejuvinatig? rejuvenating? whatever).</summary></entry><entry><title type="html">New Years: Productivity</title><link href="https://agenttroll.github.io/blog/2018/03/03/new-years-productivity.html" rel="alternate" type="text/html" title="New Years: Productivity" /><published>2018-03-03T00:19:40-08:00</published><updated>2018-03-03T00:19:40-08:00</updated><id>https://agenttroll.github.io/blog/2018/03/03/new-years-productivity</id><content type="html" xml:base="https://agenttroll.github.io/blog/2018/03/03/new-years-productivity.html">&lt;p&gt;Perhaps we can take some time to look at productivity, in spirit of the (Eve of) New Year.&lt;/p&gt;
 
 &lt;p&gt;Probably the most ironic thing about productivity is that discussing productivity is unproductive in itself. Sure, it’s great food for thought, but at the same time, let us consider that 1) you will read this and do nothing about it and 2) productivity is subjective. In fact, #1 probably isn’t even your fault; maybe you’ve already fixed whatever issue arose from that facet of productivity, or maybe it doesn’t even apply to you. I’m not saying that you aren’t lazy and stubborn, because you probably are as well. At least something might occur to you that has not before even if you won’t do anything about your own productivity after reading.&lt;/p&gt;
 
@@ -110,7 +209,6 @@ WPAConfigSection=(
 &lt;p&gt;The ultimate limit to how quickly you can write code is your typing speed. You cannot get faster at actually writing code if you can’t type very quickly. While autocomplete is a godsend to those who cannot type as quickly, it still pays to type more quickly and get what little you are typing in the first place done quickly. There are numerous online programs and websites that can help a slow typist, whether it be 10fastfingers or keybr or others. It also helps to type special symbols, such as in Java: &lt;code class=&quot;highlighter-rouge&quot;&gt;(){}&quot;\^&amp;amp;*+-&lt;/code&gt; and others.&lt;/p&gt;
 
 &lt;h1 id=&quot;monitor-size&quot;&gt;Monitor Size&lt;/h1&gt;
-
 &lt;p&gt;There’s also lots of debate on the best size of monitor, the best multi-monitor setup, etc…&lt;/p&gt;
 
 &lt;p&gt;However, there is a lot of data that support the idea that humans are terrible multitaskers. The thing is that if you want to write code faster, you must be in your editor as much as possible, that means no browser open with the docs, your StackOverflow question, your GitHub milestone, whatever. If you work sequentially, as in you exclusively process what you have to do, then exclusively work on writing code, and then switching as necessary, you will find that you will be able to work much more quickly than if you looked through, say, the StackOverflow question as you forget key details while within your editor.&lt;/p&gt;
@@ -148,8 +246,7 @@ WPAConfigSection=(
 &lt;p&gt;Indeed, it may seem like a loss and counterproductive - exactly what we are fighting here - but trust me when I say that breaks are necessary to be productive. The hardest part about taking breaks is making sure you get back after treating yourself a bit. If you can at least keep yourself disciplined, then it should be no problem, incorporating breaks into your schedule should slowly, but surely improve your productivity.&lt;/p&gt;
 
 &lt;h1 id=&quot;final-word&quot;&gt;Final Word&lt;/h1&gt;
-
-&lt;p&gt;I’m sure there are many other factors that I’ve missed which could be vital to productivity, and I acknowledge that “programming productivity” isn’t the entire story. However, with the above noted thoughts on how I improved my own productivity over the years, perhaps the reader might at least have some background on how (yet another) developer works.&lt;/p&gt;</content><author><name></name></author><summary type="html">Perhaps we can take some time to look at productivity, in spirit of the (Eve of) New Year.</summary></entry><entry><title type="html">Multi Conditionals</title><link href="https://agenttroll.github.io/blog/2017/12/21/multi-conditionals.html" rel="alternate" type="text/html" title="Multi Conditionals" /><published>2017-12-21T01:25:00-08:00</published><updated>2017-12-21T01:25:00-08:00</updated><id>https://agenttroll.github.io/blog/2017/12/21/multi-conditionals</id><content type="html" xml:base="https://agenttroll.github.io/blog/2017/12/21/multi-conditionals.html">&lt;p&gt;There have been actually serveral times as I’m writing servers in things like my JDB project and the TridentSDK project in which the following scenario pops up: there is a single thread that manages incoming and outgoing messages. I need to block on an outgoing queue, as well as block until some bytes off the network are read.&lt;/p&gt;
+&lt;p&gt;I’m sure there are many other factors that I’ve missed which could be vital to productivity, and I acknowledge that “programming productivity” isn’t the entire story. However, with the above noted thoughts on how I improved my own productivity over the years, perhaps the reader might at least have some background on how (yet another) developer works.&lt;/p&gt;</content><author><name></name></author><summary type="html">Perhaps we can take some time to look at productivity, in spirit of the (Eve of) New Year.</summary></entry><entry><title type="html">Multi Conditionals</title><link href="https://agenttroll.github.io/blog/2017/12/21/multi-conditionals.html" rel="alternate" type="text/html" title="Multi Conditionals" /><published>2017-12-21T00:00:00-08:00</published><updated>2017-12-21T00:00:00-08:00</updated><id>https://agenttroll.github.io/blog/2017/12/21/multi-conditionals</id><content type="html" xml:base="https://agenttroll.github.io/blog/2017/12/21/multi-conditionals.html">&lt;p&gt;There have been actually several times as I’m writing servers in things like my JDB project and the TridentSDK project in which the following scenario pops up: there is a single thread that manages incoming and outgoing messages. I need to block on an outgoing queue, as well as block until some bytes off the network are read.&lt;/p&gt;
 
 &lt;p&gt;My situation looks something like the following:&lt;/p&gt;
 
@@ -192,7 +289,7 @@ WPAConfigSection=(
 
 &lt;p&gt;So it can be seen that this method both does not work as intended and will cause risks with client-server deadlock.&lt;/p&gt;
 
-&lt;h1 id=&quot;naive-solution-single-lockcondition&quot;&gt;Naive Solution: Single lock/&lt;code class=&quot;highlighter-rouge&quot;&gt;Condition&lt;/code&gt;&lt;/h1&gt;
+&lt;h1 id=&quot;naive-solution-single-lockcondition&quot;&gt;Naive Solution: Single lock/Condition&lt;/h1&gt;
 
 &lt;p&gt;A second tempting solution is to protect the &lt;code class=&quot;highlighter-rouge&quot;&gt;incoming&lt;/code&gt; queue and the &lt;code class=&quot;highlighter-rouge&quot;&gt;outgoing&lt;/code&gt; queue with a single lock/&lt;code class=&quot;highlighter-rouge&quot;&gt;Condition&lt;/code&gt;.&lt;/p&gt;
 
@@ -238,7 +335,7 @@ WPAConfigSection=(
 
 &lt;p&gt;In truth, we can try all different kinds of combinations of switching different &lt;code class=&quot;highlighter-rouge&quot;&gt;Condition&lt;/code&gt;s and different mechanisms of all sorts without succeeding, there is simply no way to wait on both the reading from socket and simultaneously the outgoing queue. Further, a thread blocked on network input is not blocked on a lock or &lt;code class=&quot;highlighter-rouge&quot;&gt;Condition&lt;/code&gt; or whatever - it remains in &lt;code class=&quot;highlighter-rouge&quot;&gt;RUNNABLE&lt;/code&gt; mode, so it might as well be busy waiting for all other observers can care. After exhausting these ideas, I too thought that it would be impossible to act on events rather than having to use a timer and step over the other blocked method in order to check either input or output depending on what is blocked.&lt;/p&gt;
 
-&lt;p&gt;Fortunately, there &lt;em&gt;is&lt;/em&gt; a way.&lt;/p&gt;
+&lt;p&gt;Fortunately, there is a way.&lt;/p&gt;
 
 &lt;h1 id=&quot;the-solution&quot;&gt;The Solution&lt;/h1&gt;
 
@@ -389,17 +486,16 @@ WPAConfigSection=(
 
 &lt;h1 id=&quot;discussion&quot;&gt;Discussion&lt;/h1&gt;
 
-&lt;p&gt;In order for this to work, I made a slightly (OK, &lt;em&gt;really&lt;/em&gt;) hacky solution to default &lt;code class=&quot;highlighter-rouge&quot;&gt;InterruptibleChannel&lt;/code&gt; functionality. I found that what &lt;code class=&quot;highlighter-rouge&quot;&gt;InterruptibleChannel&lt;/code&gt; did was put an interrupt listener before every single blocking call in order to close the socket if either the blocked thread is interrupted or if the socket was closed. I couldn’t put in my own handler because I can only override before or after the blocking method, in which my own handler would be overridden by the interrupt handler provided by the method itself. Therefore, I went one step deeper and overrode the cached instance of the interrupt handler inside of &lt;code class=&quot;highlighter-rouge&quot;&gt;InterruptibleChannel&lt;/code&gt; to exit early and throw my own Signal which can be caught by the I/O thread.&lt;/p&gt;
+&lt;p&gt;In order for this to work, I made a slightly (OK, really) hacky solution to default &lt;code class=&quot;highlighter-rouge&quot;&gt;InterruptibleChannel&lt;/code&gt; functionality. I found that what &lt;code class=&quot;highlighter-rouge&quot;&gt;InterruptibleChannel&lt;/code&gt; did was put an interrupt listener before every single blocking call in order to close the socket if either the blocked thread is interrupted or if the socket was closed. I couldn’t put in my own handler because I can only override before or after the blocking method, in which my own handler would be overridden by the interrupt handler provided by the method itself. Therefore, I went one step deeper and overrode the cached instance of the interrupt handler inside of &lt;code class=&quot;highlighter-rouge&quot;&gt;InterruptibleChannel&lt;/code&gt; to exit early and throw my own Signal which can be caught by the I/O thread.&lt;/p&gt;
 
-&lt;p&gt;I  haven’t deeply investigated the performance of this method over perhaps timed busy waiting, but from testing, a blocked read can respond to signals in sub-millisecond times even when saturated with messages between “10 nanosecond intervals” on an i3-3240. A &lt;code class=&quot;highlighter-rouge&quot;&gt;while&lt;/code&gt; loop probably takes more than 10ns to run which is why I mention that rate in quotes, but again, this time is very impressive even if it’s off by a bit. You wouldn’t want to be waking a thread every 1 millisecond in order to check for the other condition, which is why I say that it’s good in comparison with the alternative.&lt;/p&gt;
+&lt;p&gt;I haven’t deeply investigated the performance of this method over perhaps timed busy waiting, but from testing, a blocked read can respond to signals in sub-millisecond times even when saturated with messages between “10 nanosecond intervals” on an i3-3240. A &lt;code class=&quot;highlighter-rouge&quot;&gt;while&lt;/code&gt; loop probably takes more than 10ns to run which is why I mention that rate in quotes, but again, this time is very impressive even if it’s off by a bit. You wouldn’t want to be waking a thread every 1 millisecond in order to check for the other condition, which is why I say that it’s good in comparison with the alternative.&lt;/p&gt;
 
-&lt;p&gt;Unfortunately, this technique is risky in many ways, first of all, because it depends on there being the AbstractInterruptibleChannel SPI class being available, as well as the field being available. The field probably won’t be going away because caching is required, but the class itself might. Additionally, the interrupt status of the thread is risky to play around with and requires &lt;code class=&quot;highlighter-rouge&quot;&gt;Thread.interrupted()&lt;/code&gt; to be called each time either Signal is thrown or InterruptedException is captured if the &lt;code class=&quot;highlighter-rouge&quot;&gt;signal(Thread)&lt;/code&gt; method misses the I/O portion. Otherwise, the thread itself might die. Finally, the only possible way to exit directly out of a blocking &lt;code class=&quot;highlighter-rouge&quot;&gt;read(...)&lt;/code&gt; is to throw the exception, but if a read is halfway done, then the behavior may be undefined. I will need to test further in order to determine what happens, but until then, this class still remains a very risky hack. I would highly advise against using it in a production environment, regardless of whatever performance gains may bear fruit through event-driven notifications rather than spurious wakeups. I have included a warning in the class javadoc comment to cover my ass, so please don’t push it :)&lt;/p&gt;
+&lt;p&gt;Unfortunately, this technique is risky in many ways, first of all, because it depends on there being the &lt;code class=&quot;highlighter-rouge&quot;&gt;AbstractInterruptibleChannel&lt;/code&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt; SPI class being available, as well as the field being available. The field probably won’t be going away because caching is required, but the class itself might. Additionally, the interrupt status of the thread is risky to play around with and requires &lt;/code&gt;Thread.interrupted()&lt;code class=&quot;highlighter-rouge&quot;&gt; to be called each time either Signal is thrown or InterruptedException is captured if the &lt;/code&gt;signal(Thread)&lt;code class=&quot;highlighter-rouge&quot;&gt; method misses the I/O portion. Otherwise, the thread itself might die. Finally, the only possible way to exit directly out of a blocking &lt;/code&gt;read(…)` is to throw the exception, but if a read is halfway done, then the behavior may be undefined. I will need to test further in order to determine what happens, but until then, this class still remains a very risky hack. I would highly advise against using it in a production environment, regardless of whatever performance gains may bear fruit through event-driven notifications rather than spurious wakeups. I have included a warning in the class javadoc comment to cover my ass, so please don’t push it :)&lt;/p&gt;
 
 &lt;p&gt;In the end, even though I have acheived what I was hoping for, even if it isn’t really viable in the real-world, I guess I will just have to keep searching for a better solution.&lt;/p&gt;
 
 &lt;h1 id=&quot;closing-words&quot;&gt;Closing Words&lt;/h1&gt;
-
-&lt;p&gt;Figuring this all out was an interesting use of 3 hours. I’m completely done with this though, I’m not looking to play around anymore with it, but anyone else can feel free to do so themself. My plan is to update the “On Thread Safety” post very soon though, and there is more to come over winter break. Take care everyone!&lt;/p&gt;</content><author><name></name></author><summary type="html">There have been actually serveral times as I’m writing servers in things like my JDB project and the TridentSDK project in which the following scenario pops up: there is a single thread that manages incoming and outgoing messages. I need to block on an outgoing queue, as well as block until some bytes off the network are read.</summary></entry><entry><title type="html">Happy December</title><link href="https://agenttroll.github.io/blog/2017/12/17/happy-december.html" rel="alternate" type="text/html" title="Happy December" /><published>2017-12-17T22:55:00-08:00</published><updated>2017-12-17T22:55:00-08:00</updated><id>https://agenttroll.github.io/blog/2017/12/17/happy-december</id><content type="html" xml:base="https://agenttroll.github.io/blog/2017/12/17/happy-december.html">&lt;p&gt;I suppose it’s been a while.&lt;/p&gt;
+&lt;p&gt;Figuring this all out was an interesting use of 3 hours. I’m completely done with this though, I’m not looking to play around anymore with it, but anyone else can feel free to do so themself. My plan is to update the “On Thread Safety” post very soon though, and there is more to come over winter break. Take care everyone!&lt;/p&gt;</content><author><name></name></author><summary type="html">There have been actually several times as I’m writing servers in things like my JDB project and the TridentSDK project in which the following scenario pops up: there is a single thread that manages incoming and outgoing messages. I need to block on an outgoing queue, as well as block until some bytes off the network are read.</summary></entry><entry><title type="html">Happy December</title><link href="https://agenttroll.github.io/blog/2017/12/17/happy-december.html" rel="alternate" type="text/html" title="Happy December" /><published>2017-12-17T10:55:00-08:00</published><updated>2017-12-17T10:55:00-08:00</updated><id>https://agenttroll.github.io/blog/2017/12/17/happy-december</id><content type="html" xml:base="https://agenttroll.github.io/blog/2017/12/17/happy-december.html">&lt;p&gt;I suppose it’s been a while.&lt;/p&gt;
 
 &lt;p&gt;I think for lack of a better subject to write about, I may have put blogging by the wayside. I mean, 2/4 posts so far have been how I fixed some problem so the next time my computer breaks, I know what to install…&lt;/p&gt;
 
@@ -774,7 +870,7 @@ index f94fdbe..cfc8a61 100755
   &lt;p&gt;As a small side note, single-threaded programs are not truly single-threaded. While what the programmer does is single-threaded - things like the &lt;code class=&quot;highlighter-rouge&quot;&gt;main&lt;/code&gt; method - the program as a whole is not. There are threads managed by the JVM in the background, such as the GC thread(s), the JIT thread(s), maybe RMI threads or Ctrl-Break monitor threads if applicable, among others. This means that while there are never truly “single-threaded” programs in the strictest definition of the term, it is important to realise that threads in the JVM sub-system do not interfere or comprimise the thread-safety of a “single-threaded” program. If the programmer does not interact with additional threads other than the main thread which runs the &lt;code class=&quot;highlighter-rouge&quot;&gt;main&lt;/code&gt; method, &lt;strong&gt;there are no thread-safety issues with the code. In the absence of program-level threads, it is &lt;em&gt;impossible&lt;/em&gt; for thread-safety to be a problem&lt;/strong&gt;.&lt;/p&gt;
 &lt;/blockquote&gt;
 
-&lt;p&gt;The idea of making a program thread-safe is the same as making what is arbitrary predictable. &lt;strong&gt;The nature of threads is that they run independently of each other&lt;/strong&gt;. In doing so, it is impossible to determine the timing between operations or the effects of a read or write on a state variable.&lt;/p&gt;
+&lt;p&gt;The idea of making a program thread-safe is the same as making what is arbitrary predictable. The nature of threads is that they run independently of each other. In doing so, it is impossible to determine the timing between operations or the effects of a read or write on a state variable.&lt;/p&gt;
 
 &lt;blockquote&gt;
   &lt;p&gt;&lt;strong&gt;State&lt;/strong&gt;: When I use “state” or “shared state,” I refer to data to which a thread might be able to read or write. It is a general term used to describe whatever is made available to threads to access. This may be an instance object that is passed around, a global variable, a class field. For example, I can say that a thread will mutate a state by incrementing it, or a thread can mutate a state by setting its value, because the “state” is the data that the thread is accessing and mutating, or changing in some way. I can also say that a thread will read the state of an object to say that the thread will be able to use the object’s getters to obtain the value of its fields.&lt;/p&gt;
@@ -833,53 +929,9 @@ index f94fdbe..cfc8a61 100755
   &lt;li&gt;They are prone to interfering with other threads or other programs&lt;/li&gt;
 &lt;/ul&gt;
 
-&lt;p&gt;All these different things you have to consider!&lt;/p&gt;
-
-&lt;p&gt;What’s more, almost all of those issues can be attributed to thread safety! If it were possible to implement threading for free, none of these issues would exist at all! Which brings us to our next point of discussion: why threads cannot be free.&lt;/p&gt;
-
-&lt;p&gt;Housekeeping overhead is easy - starting a new thread must coalesce resources such as memory in order to manage the thread state, allocate a stack to execute the provided task, initialize the internal state in order handle synchronization primitives etc… However, dealing with issues relating to thread-safety itself - visibility, ordering, and how different primitives are able to get around these problems - are a little more tricky.&lt;/p&gt;
-
-&lt;p&gt;Recall again, that threads have the tendency to behave independently. This is so because an isolated thread is able to make certain optimizations and allow the CPU to execute instructions without having to worry about ordering read/write instructions. Thread independence makes single-threaded programs faster. This is the entire point: simpler programs are single-threaded, and thus the programmer should not have to worry about enabling optimizations that would have been disabled if threads were &lt;em&gt;not&lt;/em&gt; independent by default. In other words, single threaded is the default, and single-thread optimized instructions are the default.&lt;/p&gt;
-
-&lt;p&gt;This becomes a problem when working with shared data because these optimizations are fundamentally incompatible and produce nondeterministic results unless the program is correctly synchronized. Specifically, when we refer to “single-thread optimizations,” we are referring to those done by the CPU cache subsystem. It is useful to learn a some background before moving on because it will help in understanding the how/why explanations I have provided. Fortunately, I have done most of the research for you here.&lt;/p&gt;
-
-&lt;blockquote&gt;
-  &lt;p&gt;As a minor aside, pretty much all explanations regarding internals of anything pertaining to Java is an “analogy” of some sort. The whole idea of Java is that it is such a high level language that you would not need to worry about all the hardware details in order to make your program portable. It is a lot more useful to think in terms of theoretical systems that “kind of resemble” real world hardware, but at the same time, it’s important to realize that the actual hardware running the program is probably slightly different, if not entirely different depending on the vendor, the model, the architecture, etc…&lt;/p&gt;
-&lt;/blockquote&gt;
-
-&lt;p&gt;To start with, here is a generic CPU that might look something like an Intel quad-core that you might find in a typical desktop:&lt;/p&gt;
-
 &lt;p&gt;&lt;img src=&quot;https://agenttroll.github.io/blog/img/CPU.jpg&quot; alt=&quot;CPU&quot; /&gt;&lt;/p&gt;
 
-&lt;p&gt;In order of access latency, a CPU deals with memory by storing and caching in following spaces:&lt;/p&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;Register(s) (Core-local)&lt;/li&gt;
-  &lt;li&gt;L1 Cache (Core-local)&lt;/li&gt;
-  &lt;li&gt;L2 Cache (Core-local)&lt;/li&gt;
-  &lt;li&gt;L3 Cache&lt;/li&gt;
-  &lt;li&gt;RAM/Main memory&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;A few interesting details to also note is that as access latency increases to successive memory spaces is firstly, that memory capacity increases (that is, registers can hold the smallest amount of memory while RAM can hold the greatest), and secondly, that they are increasingly further away from the ALU/FPU/Ctl units.&lt;/p&gt;
-
-&lt;p&gt;In regards to memory capacity, it makes sense that the fastest memory is also the smallest because firstly, memory access will only need to traverse a short memory space in order to find the target register, and secondly, because low-latency memory is fucking expensive. A single gigabyte of SRAM memory costs &lt;em&gt;$5000 USD&lt;/em&gt;, so DRAM memory is used for larger memory spaces. In the end, faster memory is kept small in order to reduce access time and production cost.&lt;/p&gt;
-
-&lt;p&gt;In regards to memory distance, this also makes sense because communicating between the calculation units and the memory space is not instantaneous, and that physical distance does in fact have an effect on memory access latency: the more distance, the more time it will take to contact and receive a response.&lt;/p&gt;
-
-&lt;p&gt;All this is interesting and all… But how does it apply to threads specifically?&lt;/p&gt;
-
-&lt;p&gt;Threads are scheduled to run on a specific core. While the thread is running, it occupies the entire core (or perhaps shares with only one other thread when using Hyperthreading or whatever AMD uses. Again, recall the “analogy” aside from above) and another core may not access the thread while it is being used by another. The number one optimization that will be done is to retain memory accessed by a single thread as closely to the core that is currently running that thread as possible. So ideally, a thread will write to the registers, and failing that, the local caches and continues to look for the fastest possible cache and only resorts to writing to RAM if absolutely necessary. By keeping data local to the core, should the thread reuse the same value again (which is not an unlikely event in a single-threaded program), it will pull from the cache rather than going straight to main memory. Because main memory is &lt;em&gt;excedingly&lt;/em&gt; expensive, at least relative to the prior caches, a single-threaded program can save a significant number of cycles from being wasted on going back to RAM in order to find that value.&lt;/p&gt;
-
-&lt;p&gt;It is the selfish, cache hoarding done by the core currently running the thread that causes threads to exhibit their independent behavior. By making this selfishness the default, single-threaded programs will run faster and will have more access to CPU pipeline optimizations as well as make time for the processor to proceed with other tasks rather than wasting time publishing variables across the shared memory bus that will never be used by any other core anyways. For example, a program might want to look up some variable &lt;code class=&quot;highlighter-rouge&quot;&gt;a&lt;/code&gt; that is set to &lt;code class=&quot;highlighter-rouge&quot;&gt;4&lt;/code&gt; in main memory. The first time around, the lookup for &lt;code class=&quot;highlighter-rouge&quot;&gt;a&lt;/code&gt; will result in a cache miss, and the core will load &lt;code class=&quot;highlighter-rouge&quot;&gt;a&lt;/code&gt; into, say, the L2 cache space. The next time &lt;code class=&quot;highlighter-rouge&quot;&gt;a&lt;/code&gt; is referenced, the core can simply lookup from the L2 rather than having to make another expensive lookup to main memory. As it relates specifically to visibility, cache coherency becomes important for multithreaded programs because another thread might want to access to &lt;code class=&quot;highlighter-rouge&quot;&gt;a&lt;/code&gt; as well, and rather than going back to main memory, it’s very much possible for a second core to hop the memory bus instead. The different local cache spaces in the CPU are then subject to their own rules on data visibility in order to propagate to the program, laid out by such protocols as the MESI or MOESI models.&lt;/p&gt;
-
-&lt;p&gt;Again, speaking in terms of cache mechanics, it is possible for a thread to be run by multiple cores over its lifetime (although not simultaneously by two cores). When threads are relinquished from one core and passed to the next, it is possible for the second core to take the cache as the truth, and in the case that our &lt;code class=&quot;highlighter-rouge&quot;&gt;a&lt;/code&gt; state was stored in a local register or L1/2 cache, a lookup by the second core will lead to a cache miss as the state was updated in only the first core’s caches. Another scenario could take place on a CPU using the write-through policy in which main memory is the “source of truth” rather than the local caches. In this case, the second core would travel to main memory to load the “truth” value into its cache, but there’s a catch: on our hypothetical CPU, a write-through policy will propagate randomly, and it just so happens that our second core will read a stale value of &lt;code class=&quot;highlighter-rouge&quot;&gt;4&lt;/code&gt; because the first core’s write to &lt;code class=&quot;highlighter-rouge&quot;&gt;5&lt;/code&gt; has not propagated yet.&lt;/p&gt;
-
-&lt;p&gt;Ordering, on the other hand, has to do with buffering stores and loads on the local core. On processors that perform pipelining, yet another optimization can be done to put reads and writes on a buffer since memory lookups take time to complete while instructions are being cycled through the pipeline. This is the reason behind the “optimization” done which produces results that appear seemingly out of order. Operating sequentially, instructions will finish before the next buffered load/store operation, but when introducing other threads, an uneven number of reads and writes could cause reads to be processed before the write in the case that the write buffer has been polluted, and vice versa. Using memory ordering devices such as barriers or fences, preceding operations would be finished upon reaching the fence such that the two buffers are synchronized with each other at the point of the fence, and that instructions would not “flow past the fence” in that the core would stall on an instruction that could possibly be pipelined rather than executing it prematurely and in effect causing it to seem as if the instruction was reordered before its counterpart. Again, recall that memory fencing is yet another analogy; for the most part, x86 CPUs that do have these buffers do in fact use memory fencing, but some CPUs cannot rely on just fencing to produce the correct ordering. The JVM handles these other architectures already, so as to make unnecessary the programmer having to reason about where to put those barriers and any extra instructions needed to correctly synchronize the caches.&lt;/p&gt;
-
-&lt;p&gt;In truth, we can continue to speak about hypothetical processors and waving our hands in the air as we speak passionately about cache misses and such. Different processors handle caching in different ways, and it is simply best to leave the underlying systems as a black box that act on higher-level rules and paradigms instead. There are lots of smart people working on solutions to these problems, and lots of people who spend lots of time thinking and reasoning about how their hardware interacts with their programs, but in the end, the goal of the Java language is the same: write once, run anywhere. The Java Memory Model sets standards for compilers and JVMs to adhere, and these higher-level rules that deal with &lt;em&gt;happens-before&lt;/em&gt; ordering, synchronization ordering and the like are significantly easier for programmers to understand and write adherent code.&lt;/p&gt;
-
-&lt;p&gt;I’ve said before that understanding these nuances between architectures simply isn’t useful to just about everyone, save for those who work with designing compilers and JVMs. You do not need to understand the hardware in order to understand the memory model, and even if you did understand these little details, they are of little use to other systems that might be running your program, they are prone to failing, they make programs more difficult to write and understand, and they are not concrete. You cannot rely on the same guarantees to hold true for the hardware that you can when running code that uses more robust tools such as &lt;code class=&quot;highlighter-rouge&quot;&gt;volatile&lt;/code&gt;, &lt;code class=&quot;highlighter-rouge&quot;&gt;final&lt;/code&gt;, &lt;code class=&quot;highlighter-rouge&quot;&gt;java.util.concurrent&lt;/code&gt;, and others which are designed as building blocks to write thread-safe programs. In the end, the idea is that the hardware has been dealt with already, so you do not have to.&lt;/p&gt;
+&lt;!-- TODO --&gt;
 
 &lt;p&gt;Sources used:&lt;/p&gt;
 
@@ -899,4 +951,19 @@ index f94fdbe..cfc8a61 100755
 &lt;p&gt;&lt;a name=&quot;how-to-write-thread-safe-code&quot;&gt;&lt;/a&gt;&lt;/p&gt;
 &lt;h1 id=&quot;-how-to-write-thread-safe-code&quot;&gt;&lt;a href=&quot;#how-to-write-thread-safe-code&quot;&gt;#&lt;/a&gt; HOW TO WRITE THREAD-SAFE CODE?&lt;/h1&gt;
 
-&lt;p&gt;Having a little background information on the subject of thread-safety, it’s now a good time to deal with the elephant in the room. How are thread-safe programs built and written? What kind of reasoning needs to be used? What are you supposed to even do in order to adhere to the memory model?&lt;/p&gt;</content><author><name></name></author><summary type="html"># AUDIENCE</summary></entry></feed>
+&lt;div class=&quot;language-java highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;nd&quot;&gt;@ThreadSafe&lt;/span&gt;
+&lt;span class=&quot;kd&quot;&gt;public&lt;/span&gt; &lt;span class=&quot;kd&quot;&gt;class&lt;/span&gt; &lt;span class=&quot;nc&quot;&gt;ThreadNotUnsafe&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+    &lt;span class=&quot;c1&quot;&gt;// Add 'volatile'&lt;/span&gt;
+    &lt;span class=&quot;kd&quot;&gt;private&lt;/span&gt; &lt;span class=&quot;kd&quot;&gt;volatile&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;int&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;state&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;4&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;;&lt;/span&gt;
+    
+    &lt;span class=&quot;kd&quot;&gt;public&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;void&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;setState&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;kt&quot;&gt;int&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;newState&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+        &lt;span class=&quot;k&quot;&gt;this&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;state&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;newState&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;;&lt;/span&gt;
+    &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
+    
+    &lt;span class=&quot;kd&quot;&gt;public&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;void&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;getState&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;()&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+        &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;this&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;state&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;;&lt;/span&gt;
+    &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;One of the primitives that the Java language gives developers is the &lt;code class=&quot;highlighter-rouge&quot;&gt;volatile&lt;/code&gt; keyword. This keyword is only applicable to fields.&lt;/p&gt;</content><author><name></name></author><summary type="html"># AUDIENCE</summary></entry></feed>
