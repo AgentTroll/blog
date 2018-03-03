@@ -1,0 +1,83 @@
+<p>It’s really not something I do everyday, but apparently, since I’ve broken my Debian computer so many damn times that I kinda have a routine of what programs to install and what packages to use. There were a few interesting changes and things that I’ve learned from my most recent failure (see <a href="http://localhost:4000/blog/2017/04/04/i-finally-figured-out-how-to-get-ffmpeg-to-work-on-mixed-jessie-sid.html">my previous post for the retardation</a>).</p>
+
+<h1 id="initial-setup">Initial Setup</h1>
+
+<p>I’m forever in love with 3 tools in particular, <a href="https://github.com/albertlauncher/albert">Albert Launcher</a>, tmux, and <a href="https://github.com/Valloric/YouCompleteMe/wiki/Building-Vim-from-source">compiled Vim</a> (which I should note also requires Ruby and Python, which I use <a href="https://github.com/rbenv/rbenv">rbenv</a> and <a href="https://github.com/pyenv/pyenv">pyenv</a> respectively).</p>
+
+<p>I had no issues installing Albert, for it was a precompiled package. However, I had considerable trouble trying to get tmux to play nicely with <a href="https://github.com/powerline/powerline">powerline</a>. One of the confusing things was the way you install powerline is actually using python’s pip, which came bundled with the <code class="highlighter-rouge">2.7.9</code> version that I was using from <code class="highlighter-rouge">pyenv</code>. Depending on what you used to install powerline, the <code class="highlighter-rouge">--user</code> flag was used in the official documentation, which placed the package in a different directory than if you had installed it without (the <code class="highlighter-rouge">--user</code> flag would place it in <code class="highlighter-rouge">.local</code>, while without the flag, it would place the package in <code class="highlighter-rouge">~/.pyenv/versions/2.7.9/...</code>). Using <code class="highlighter-rouge">pip show powerline-status</code> will show you where the powerline directory is stored, and I finished the rest after finding this <a href="https://askubuntu.com/a/283909">well-written post on AskUbuntu</a>.</p>
+
+<p>Further, another little quirk about pyenv is that it does not automatically install its dependencies, you must look at what you need to install <a href="https://github.com/pyenv/pyenv/wiki/Common-build-problems">here</a>. The same cannot be said for <code class="highlighter-rouge">rbenv</code>, however you must also (ironically) <a href="https://github.com/rbenv/ruby-build">install the <code class="highlighter-rouge">install</code></a> command in order to install it in the first place.</p>
+
+<p>So back to actually installing tmux itself, the issue was trying to get the command prompt to render correctly, as it would be cut off after my username. I later also got the classic “everything is bold” bug in tmux, but both were fixed by adding the following to my <code class="highlighter-rouge">.bashrc</code>:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">export </span><span class="nv">TERM</span><span class="o">=</span>xterm-256color
+</code></pre></div></div>
+
+<p>After that, everything worked like charm. I then installed vim and XFCE, removing all the GNOME packages except for the theme (I like the theme actually).</p>
+
+<h1 id="nvidia-drivers">NVIDIA drivers</h1>
+
+<p>Ah, the bane of linux gaming, installing GPU drivers. For the past few years, I’ve used the proprietary ones off of the Nvidia site, but I decided to take the ones packaged in <code class="highlighter-rouge">jessie-backports</code> for a spin this time (the reason being that they have the new 375 drivers). I ran into the same roadblock a few dozen times, when DKMS and the <code class="highlighter-rouge">xorg</code> nvidia package kept getting stuck. Evidently, the way to fix this was actually to stop XDM, but my intuition was uh… Not exactly up to par the few dozen times that I did it. I even went so far as to attempt to build from source using the <code class="highlighter-rouge">deb-src</code> repository for <code class="highlighter-rouge">jessie-backports</code>, again getting stuck with the dependencies issue. However, just remember to shutoff your window manager for like 15 minutes while it installs, and then when <code class="highlighter-rouge">apt-get</code> finishes with an error on the <code class="highlighter-rouge">xorg</code> package, just reboot and the problem should be solved (<code class="highlighter-rouge">sudo dpkg --configure -a</code> may be needed). The NVIDIA drivers are exceptionally awkward to resolve because one needs to keep rebooting and repeating the reconfiguration until the dependencies are resolved.</p>
+
+<p>As with the classic setup, I also <a href="https://askubuntu.com/questions/481414/install-nvidia-driver-instead-nouveau">blacklisted <code class="highlighter-rouge">nouveau</code></a> as well.</p>
+
+<h1 id="other-things-i-install">Other things I install</h1>
+
+<p>Some of the other packages I install are Google Chrome, Jetbrains Toolbox (along with a few IDEs), and <a href="https://github.com/cmpitg/infinality-debian-package">Infinality</a>. I also use <a href="http://sdkman.io/">sdkman</a> for quite a few different things such as Java/Maven. I also do quite a bit of customization on other things such as installing a solarized-light theme for xfce-terminal, and other font related changes.</p>
+
+<h1 id="back-to-the-ffmpeg-problem">Back to the FFmpeg problem…</h1>
+
+<p>After breaking my system after that episode, I was eagar to reinstall FFmpeg and OBS the correct way this time. Ironically, I AGAIN broke my system in the process of writing this blog post by removing all the GNOME packages and borking with <code class="highlighter-rouge">polkit</code>. So in fact, I had to redo everything previously written in the process of describing my installation process, and again got close to breaking the DM by forgetting to reconfigure.</p>
+
+<p>Anyways, with that debacle over, I found to my surprise that using <a href="https://github.com/lutris/ffmpeg-nvenc">the script</a> I had used in the previous article did not work. However, with some digging around, I was finally able to get it to work after about a week:</p>
+
+<ol>
+  <li>The first problem was dependency conflicts. <code class="highlighter-rouge">libvdpau-dev</code> and <code class="highlighter-rouge">libva-dev</code> and any other libraries that conflict with the <code class="highlighter-rouge">jessie</code> packages need to be removed from the installer script and installed using:</li>
+</ol>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">sudo </span>apt-get install <span class="nt">-t</span> jessie-backports libvdpau-dev libva-dev <span class="c"># And any other conflicts</span>
+</code></pre></div></div>
+
+<ol>
+  <li>
+    <p>Run the script: <code class="highlighter-rouge">sudo ./build.sh -o -d /usr/local</code>. No problems here.</p>
+  </li>
+  <li>
+    <p>Optional: I replaced the NVENC header files with a newer version that I downloaded off the NVIDIA site.</p>
+  </li>
+  <li>
+    <p>Starting both <code class="highlighter-rouge">ffmpeg</code> and <code class="highlighter-rouge">obs</code> should produce an error that looks something like:</p>
+  </li>
+</ol>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>error <span class="k">while </span>loading shared libraries: libavdevice.so.57: cannot open shared object file
+</code></pre></div></div>
+
+<ol>
+  <li>Open up <code class="highlighter-rouge">/etc/ld.so.conf</code> and use the following lines (libav and nvenc links) - <a href="https://forum.ivorde.com/ffmpeg-error-while-loading-shared-libraries-libavdevice-so-52-cannot-open-shared-object-file-no-t129.html">Source</a>:</li>
+</ol>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>include /etc/ld.so.conf.d/*.conf
+/usr/local/lib
+/usr/lib/x86_64-linux-gnu/nvidia/current
+</code></pre></div></div>
+
+<ol>
+  <li>OBS should have an error having to do with not being able to find <code class="highlighter-rouge">libcuda.so</code> and <code class="highlighter-rouge">libnvidia-encode.so</code>. These files are provided by installing the following libraries:</li>
+</ol>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">sudo </span>apt-get install <span class="nt">-t</span> jessie-backports libnvidia-encode1 libcuda1
+</code></pre></div></div>
+
+<ol>
+  <li>
+    <p>Run <code class="highlighter-rouge">sudo ldconfig</code> to create the links</p>
+  </li>
+  <li>
+    <p>Open up OBS and profit</p>
+  </li>
+</ol>
+
+<h1 id="conclusion">Conclusion</h1>
+
+<p>Getting myself up to speed was a hell of a joyride…</p>

@@ -1,0 +1,36 @@
+<p>So I restarted my blog for like the 13th time or whatever and ran into a few
+minor issues…</p>
+
+<h1 id="octopress-3">Octopress 3</h1>
+
+<p>Some good stuff. I actually kinda liked the old design, but some things about the new stock theme such as the About page in the top right corner, as well as the feature to add custom pages rather than to have just blog posts is nice (although I myself do not have any particular use for them).</p>
+
+<p>The new Octopress gem is also a nice addition instead of having to use <code class="highlighter-rouge">rake</code> to do whatever I needed. The only thing about it is that you cannot convert posts to drafts, for it throws an odd exception along the lines of:</p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">unpublish</span><span class="p">.</span><span class="nf">rb</span><span class="p">:</span><span class="mi">28</span><span class="ss">:in</span> <span class="sb">`require': cannot load such file -- octopress/post (LoadError)
+</span></code></pre></div></div>
+
+<p>I don’t know ruby so there’s nothing I can do about that ¯\_(ツ)_/¯</p>
+
+<p>Anyways, you might see that my huge “<a href="https://agenttroll.github.io/blog/2017/03/20/on-thread-safety.html">On Thread Safety</a>” post is incomplete, so if you were wondering why, blame Octopress’s non-functional <code class="highlighter-rouge">unpublish</code> command.</p>
+
+<p>Other than that, it’s the same old Octopress. Good stuff.</p>
+
+<h1 id="github-pages-integration">GitHub Pages integration</h1>
+
+<p>Just a minor technicality, an <code class="highlighter-rouge">index.html</code> file <strong>WILL NOT</strong> be loaded if the site is pushed to <code class="highlighter-rouge">master</code>. It took about 10 minutes for me realize that my blog was not loading due to it being on <code class="highlighter-rouge">master</code>, rather than GitHub Pages just updating the page.</p>
+
+<p>Even though a GitHub Pages site works on <code class="highlighter-rouge">master</code>, if you want your index.html to show up on the root URL, then you must use <code class="highlighter-rouge">gh-pages</code>.</p>
+
+<p>Had I pushed to <code class="highlighter-rouge">master</code>, I would need to use the URL <code class="highlighter-rouge">https://agenttroll.github.io/blog/index.html</code>, rather than <code class="highlighter-rouge">https://agenttroll.github.io/blog</code>.</p>
+
+<h1 id="conclusion">Conclusion</h1>
+
+<p>Anyways, its just me complaining about a minor quirk with GitHub Pages and the way it resolves URLs and some updates with Octopress.</p>
+
+<p>BONUS EDIT:</p>
+
+<p>After reading through my blog, I found that Octopress <strong>DOES NOT</strong> rebuild your pages when you do <code class="highlighter-rouge">octopress deploy</code>. What essentially happened was because I was using <code class="highlighter-rouge">jekyll serve</code> to preview the blog before publishing it, all the <code class="highlighter-rouge">http://localhost:4000</code> tags resolved to <code class="highlighter-rouge">localhost</code> instead of the intended page URL. Therefore, if you want to get all the right page variables, use:</p>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$ </span>jekyll build <span class="o">&amp;&amp;</span> octopress deploy
+</code></pre></div></div>
