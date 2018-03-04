@@ -1,7 +1,7 @@
 ---
 layout: post
 title: "Status Update: Installing Arch for the First Time"
-date: 2018-03-03T01:19:40-07:00
+date: 2018-01-06T00:00:00-07:00
 ---
 
 It’s been draining on the soul, but luckily coming up with a “unique” title has been rejuvenating (rejuvinatig? rejuvenating? whatever).

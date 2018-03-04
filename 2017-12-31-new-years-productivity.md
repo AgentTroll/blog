@@ -1,7 +1,7 @@
 ---
 layout: post
 title: "New Years: Productivity"
-date: 2018-03-03T01:19:40-07:00
+date: 2017-12-31T00:00:00-07:00
 ---
 
 Perhaps we can take some time to look at productivity, in spirit of the (Eve of) New Year.
