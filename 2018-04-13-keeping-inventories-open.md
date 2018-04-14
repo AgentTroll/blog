@@ -54,7 +54,6 @@ public void onPlayerCloseInventory(InventoryCloseEvent event) {
         });
     }
 }
-```
 
 @EventHandler
 public void onPlayerLeaveServer(PlayerQuitEvent event) {
@@ -78,11 +77,11 @@ I then dug into the code to see what was going on behind-the-scenes. I wanted to
 +        // CraftBukkit end
 +
          this.savePlayerFile(entityplayer);
-		 if (entityplayer.isPassenger()) {
-		     Entity entity = entityplayer.getVehicle();
+         if (entityplayer.isPassenger()) {
+             Entity entity = entityplayer.getVehicle();
 @@ -318,17 +421,67 @@
 
-		 if (entityplayer1 == entityplayer) {
+         if (entityplayer1 == entityplayer) {
              this.j.remove(uuid);
 ```
 
