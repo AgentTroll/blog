@@ -220,6 +220,10 @@
 
 <p>I don’t know. It’s ironic because solving this bug creates an even harder problem: how to prevent it. And I have a sneaking feeling that I will need to get around to solving it soon.</p>
 
+<h1 id="additional-edit-2018-04-14-004005">Additional Edit (2018-04-14 00:40:05)</h1>
+
+<p>Some readers may be confused as to how <code class="highlighter-rouge">InventoryCloseEvent</code> ends up in the same scheduling loop at all if the first instance that it is called is through <code class="highlighter-rouge">PlayerList#disconnect(...)</code>. They reason that since <code class="highlighter-rouge">runTask</code> already schedules for the next tick, all the cleanup would be done and the cycle would never start. The answer to that is: I really have no idea. I know that Essentials kicks players from within a task, so it’s possible that an AFK kick could be causing this, but AFK timers are disabled so I doubt that. I doubt that it is a problem from within the server, because the server doesn’t use the scheduler to process async tasks. Either way, it doesn’t matter what would cause the the loop because whatever is kicking the player is doing it correctly; the inventory itself is not being handled correctly and that is what got fixed.</p>
+
   </div>
 
   
