@@ -127,20 +127,19 @@
         <span class="o">});</span>
     <span class="o">}</span>
 <span class="o">}</span>
+
+<span class="nd">@EventHandler</span>
+<span class="kd">public</span> <span class="kt">void</span> <span class="nf">onPlayerLeaveServer</span><span class="o">(</span><span class="n">PlayerQuitEvent</span> <span class="n">event</span><span class="o">)</span> <span class="o">{</span>
+    <span class="c1">// Do not allow the menu to open</span>
+    <span class="k">this</span><span class="o">.</span><span class="na">menuIsCoinflip</span> <span class="o">=</span> <span class="kc">false</span><span class="o">;</span>
+<span class="o">}</span>
 </code></pre></div></div>
 
-<p>@EventHandler
-public void onPlayerLeaveServer(PlayerQuitEvent event) {
-    // Do not allow the menu to open
-    this.menuIsCoinflip = false;
-}</p>
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>
-However, this also did not work. The next morning, we found that the server crashed from the same recursive loop somehow.
+<p>However, this also did not work. The next morning, we found that the server crashed from the same recursive loop somehow.</p>
 
-I then dug into the code to see what was going on behind-the-scenes. I wanted to find out why the player is still allowed to open the inventory even when they are offline. This is a snippet of code that handles the [player's disconnect](https://hub.spigotmc.org/stash/projects/SPIGOT/repos/craftbukkit/browse/nms-patches/PlayerList.patch#281):
+<p>I then dug into the code to see what was going on behind-the-scenes. I wanted to find out why the player is still allowed to open the inventory even when they are offline. This is a snippet of code that handles the <a href="https://hub.spigotmc.org/stash/projects/SPIGOT/repos/craftbukkit/browse/nms-patches/PlayerList.patch#281">player’s disconnect</a>:</p>
 
-``` patch
-+        org.bukkit.craftbukkit.event.CraftEventFactory.handleInventoryCloseEvent(entityplayer);
+<div class="language-patch highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="gi">+        org.bukkit.craftbukkit.event.CraftEventFactory.handleInventoryCloseEvent(entityplayer);
 +
 +        PlayerQuitEvent playerQuitEvent = new PlayerQuitEvent(cserver.getPlayer(entityplayer), "\u00A7e" + entityplayer.getName() + " left the game");
 +        cserver.getPluginManager().callEvent(playerQuitEvent);
@@ -149,12 +148,12 @@ I then dug into the code to see what was going on behind-the-scenes. I wanted to
 +        entityplayer.playerTick();// SPIGOT-924
 +        // CraftBukkit end
 +
-         this.savePlayerFile(entityplayer);
-		 if (entityplayer.isPassenger()) {
-		     Entity entity = entityplayer.getVehicle();
-@@ -318,17 +421,67 @@
-
-		 if (entityplayer1 == entityplayer) {
+</span>         this.savePlayerFile(entityplayer);
+         if (entityplayer.isPassenger()) {
+             Entity entity = entityplayer.getVehicle();
+<span class="gu">@@ -318,17 +421,67 @@
+</span>
+         if (entityplayer1 == entityplayer) {
              this.j.remove(uuid);
 </code></pre></div></div>
 

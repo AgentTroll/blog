@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.6.2">Jekyll</generator><link href="https://agenttroll.github.io/blog/feed.xml" rel="self" type="application/atom+xml" /><link href="https://agenttroll.github.io/blog/" rel="alternate" type="text/html" /><updated>2018-04-13T23:44:36-07:00</updated><id>https://agenttroll.github.io/blog/</id><title type="html">Inside a Troll</title><subtitle>Thoughts of a Java developer</subtitle><entry><title type="html">Keeping Inventories Open</title><link href="https://agenttroll.github.io/blog/2018/04/13/keeping-inventories-open.html" rel="alternate" type="text/html" title="Keeping Inventories Open" /><published>2018-04-13T21:38:10-07:00</published><updated>2018-04-13T21:38:10-07:00</updated><id>https://agenttroll.github.io/blog/2018/04/13/keeping-inventories-open</id><content type="html" xml:base="https://agenttroll.github.io/blog/2018/04/13/keeping-inventories-open.html">&lt;p&gt;&lt;em&gt;Note: Code samples in this post have been slightly altered. I have not leaked any information from our plugins in the writing of this post&lt;/em&gt;&lt;/p&gt;
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.6.2">Jekyll</generator><link href="https://agenttroll.github.io/blog/feed.xml" rel="self" type="application/atom+xml" /><link href="https://agenttroll.github.io/blog/" rel="alternate" type="text/html" /><updated>2018-04-13T23:47:35-07:00</updated><id>https://agenttroll.github.io/blog/</id><title type="html">Inside a Troll</title><subtitle>Thoughts of a Java developer</subtitle><entry><title type="html">Keeping Inventories Open</title><link href="https://agenttroll.github.io/blog/2018/04/13/keeping-inventories-open.html" rel="alternate" type="text/html" title="Keeping Inventories Open" /><published>2018-04-13T21:38:10-07:00</published><updated>2018-04-13T21:38:10-07:00</updated><id>https://agenttroll.github.io/blog/2018/04/13/keeping-inventories-open</id><content type="html" xml:base="https://agenttroll.github.io/blog/2018/04/13/keeping-inventories-open.html">&lt;p&gt;&lt;em&gt;Note: Code samples in this post have been slightly altered. I have not leaked any information from our plugins in the writing of this post&lt;/em&gt;&lt;/p&gt;
 
 &lt;p&gt;Over the past week or two, we’ve been working hard to get the gambling plugin fixed up for you guys to use. Unfortunately, there were a few interesting bumps in the road.&lt;/p&gt;
 
@@ -48,20 +48,19 @@
         &lt;span class=&quot;o&quot;&gt;});&lt;/span&gt;
     &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
 &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
+
+&lt;span class=&quot;nd&quot;&gt;@EventHandler&lt;/span&gt;
+&lt;span class=&quot;kd&quot;&gt;public&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;void&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;onPlayerLeaveServer&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;PlayerQuitEvent&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;event&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+    &lt;span class=&quot;c1&quot;&gt;// Do not allow the menu to open&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;this&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;menuIsCoinflip&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;kc&quot;&gt;false&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;;&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
 
-&lt;p&gt;@EventHandler
-public void onPlayerLeaveServer(PlayerQuitEvent event) {
-    // Do not allow the menu to open
-    this.menuIsCoinflip = false;
-}&lt;/p&gt;
-&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;
-However, this also did not work. The next morning, we found that the server crashed from the same recursive loop somehow.
+&lt;p&gt;However, this also did not work. The next morning, we found that the server crashed from the same recursive loop somehow.&lt;/p&gt;
 
-I then dug into the code to see what was going on behind-the-scenes. I wanted to find out why the player is still allowed to open the inventory even when they are offline. This is a snippet of code that handles the [player's disconnect](https://hub.spigotmc.org/stash/projects/SPIGOT/repos/craftbukkit/browse/nms-patches/PlayerList.patch#281):
+&lt;p&gt;I then dug into the code to see what was going on behind-the-scenes. I wanted to find out why the player is still allowed to open the inventory even when they are offline. This is a snippet of code that handles the &lt;a href=&quot;https://hub.spigotmc.org/stash/projects/SPIGOT/repos/craftbukkit/browse/nms-patches/PlayerList.patch#281&quot;&gt;player’s disconnect&lt;/a&gt;:&lt;/p&gt;
 
-``` patch
-+        org.bukkit.craftbukkit.event.CraftEventFactory.handleInventoryCloseEvent(entityplayer);
+&lt;div class=&quot;language-patch highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;gi&quot;&gt;+        org.bukkit.craftbukkit.event.CraftEventFactory.handleInventoryCloseEvent(entityplayer);
 +
 +        PlayerQuitEvent playerQuitEvent = new PlayerQuitEvent(cserver.getPlayer(entityplayer), &quot;\u00A7e&quot; + entityplayer.getName() + &quot; left the game&quot;);
 +        cserver.getPluginManager().callEvent(playerQuitEvent);
@@ -70,12 +69,12 @@ I then dug into the code to see what was going on behind-the-scenes. I wanted to
 +        entityplayer.playerTick();// SPIGOT-924
 +        // CraftBukkit end
 +
-         this.savePlayerFile(entityplayer);
-		 if (entityplayer.isPassenger()) {
-		     Entity entity = entityplayer.getVehicle();
-@@ -318,17 +421,67 @@
-
-		 if (entityplayer1 == entityplayer) {
+&lt;/span&gt;         this.savePlayerFile(entityplayer);
+         if (entityplayer.isPassenger()) {
+             Entity entity = entityplayer.getVehicle();
+&lt;span class=&quot;gu&quot;&gt;@@ -318,17 +421,67 @@
+&lt;/span&gt;
+         if (entityplayer1 == entityplayer) {
              this.j.remove(uuid);
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
 
