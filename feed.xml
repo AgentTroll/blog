@@ -1,4 +1,146 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.6.2">Jekyll</generator><link href="https://agenttroll.github.io/blog/feed.xml" rel="self" type="application/atom+xml" /><link href="https://agenttroll.github.io/blog/" rel="alternate" type="text/html" /><updated>2018-03-28T01:08:25-07:00</updated><id>https://agenttroll.github.io/blog/</id><title type="html">Inside a Troll</title><subtitle>Thoughts of a Java developer</subtitle><entry><title type="html">Those Mistakes Are Mine</title><link href="https://agenttroll.github.io/blog/2018/03/25/those-mistakes-are-mine.html" rel="alternate" type="text/html" title="Those Mistakes Are Mine" /><published>2018-03-25T01:19:25-07:00</published><updated>2018-03-25T01:19:25-07:00</updated><id>https://agenttroll.github.io/blog/2018/03/25/those-mistakes-are-mine</id><content type="html" xml:base="https://agenttroll.github.io/blog/2018/03/25/those-mistakes-are-mine.html">&lt;blockquote&gt;
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.6.2">Jekyll</generator><link href="https://agenttroll.github.io/blog/feed.xml" rel="self" type="application/atom+xml" /><link href="https://agenttroll.github.io/blog/" rel="alternate" type="text/html" /><updated>2018-04-13T23:44:36-07:00</updated><id>https://agenttroll.github.io/blog/</id><title type="html">Inside a Troll</title><subtitle>Thoughts of a Java developer</subtitle><entry><title type="html">Keeping Inventories Open</title><link href="https://agenttroll.github.io/blog/2018/04/13/keeping-inventories-open.html" rel="alternate" type="text/html" title="Keeping Inventories Open" /><published>2018-04-13T21:38:10-07:00</published><updated>2018-04-13T21:38:10-07:00</updated><id>https://agenttroll.github.io/blog/2018/04/13/keeping-inventories-open</id><content type="html" xml:base="https://agenttroll.github.io/blog/2018/04/13/keeping-inventories-open.html">&lt;p&gt;&lt;em&gt;Note: Code samples in this post have been slightly altered. I have not leaked any information from our plugins in the writing of this post&lt;/em&gt;&lt;/p&gt;
+
+&lt;p&gt;Over the past week or two, we’ve been working hard to get the gambling plugin fixed up for you guys to use. Unfortunately, there were a few interesting bumps in the road.&lt;/p&gt;
+
+&lt;h1 id=&quot;crashing-issue&quot;&gt;Crashing Issue&lt;/h1&gt;
+
+&lt;p&gt;One of the features of coinflips was that once the inventory that flips between the heads opens, it will not close until the coinflip is over. We did this by re-opening the inventory whenever it was closed. It basically looked something like this:&lt;/p&gt;
+
+&lt;div class=&quot;language-java highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;nd&quot;&gt;@EventHandler&lt;/span&gt;
+&lt;span class=&quot;kd&quot;&gt;public&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;void&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;onPlayerCloseInventory&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;InventoryCloseEvent&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;event&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;this&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;menuIsCoinflip&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+        &lt;span class=&quot;c1&quot;&gt;// Schedule the inventory to be opened after the next tick&lt;/span&gt;
+        &lt;span class=&quot;n&quot;&gt;Bukkit&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;getScheduler&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;().&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;runTask&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;this&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;plugin&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;()&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;-&amp;gt;&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+            &lt;span class=&quot;c1&quot;&gt;// Tell the player to open the inventory that they closed&lt;/span&gt;
+            &lt;span class=&quot;n&quot;&gt;event&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;getPlayer&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;().&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;openInventory&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;event&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;getInventory&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;());&lt;/span&gt;
+        &lt;span class=&quot;o&quot;&gt;});&lt;/span&gt;
+    &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;What we found, however, was that for some reason, this handler would become stuck in a loop and prevent the main thread from proceeding. There is nothing overtly wrong about this method, really, it literally performs the correct handling for it after “the next tick.”&lt;/p&gt;
+
+&lt;p&gt;From the &lt;a href=&quot;https://hub.spigotmc.org/javadocs/spigot/org/bukkit/scheduler/BukkitScheduler.html#runTask-org.bukkit.plugin.Plugin-java.lang.Runnable-&quot;&gt;Bukkit Scheduler javadoc&lt;/a&gt;:&lt;/p&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;BukkitTask runTask(Plugin plugin,
+                   java.lang.Runnable task)
+            throws java.lang.IllegalArgumentException&lt;/p&gt;
+
+  &lt;p&gt;Returns a task that will run on the next server tick.&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;In fact, it was even more confusing because we had no clue how a scheduled task could possibly be creating an endless loop, much less how players could get themselves into a situation that would cause the loop in the first place.&lt;/p&gt;
+
+&lt;h1 id=&quot;initial-attempts&quot;&gt;Initial attempts&lt;/h1&gt;
+
+&lt;p&gt;Since we already isolated the problem to the close event handler, we assumed that the problem would stem from the player being offline when they are told to re-open the coinflip inventory. We added in a check once the task gets run on the inside of the lambda, and then made sure that when a player leaves, they would be not be allowed to re-open the menu:&lt;/p&gt;
+
+&lt;div class=&quot;language-java highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;nd&quot;&gt;@EventHandler&lt;/span&gt;
+&lt;span class=&quot;kd&quot;&gt;public&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;void&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;onPlayerCloseInventory&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;InventoryCloseEvent&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;event&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;this&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;menuIsCoinflip&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+        &lt;span class=&quot;c1&quot;&gt;// Schedule the inventory to be opened after the next tick&lt;/span&gt;
+        &lt;span class=&quot;n&quot;&gt;Bukkit&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;getScheduler&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;().&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;runTask&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;this&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;plugin&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;()&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;-&amp;gt;&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+            &lt;span class=&quot;k&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;event&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;getPlayer&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;().&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;isOnline&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;())&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+                &lt;span class=&quot;c1&quot;&gt;// Tell the player to open the inventory that they closed&lt;/span&gt;
+                &lt;span class=&quot;n&quot;&gt;event&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;getPlayer&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;().&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;openInventory&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;event&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;getInventory&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;());&lt;/span&gt;
+            &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
+        &lt;span class=&quot;o&quot;&gt;});&lt;/span&gt;
+    &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;@EventHandler
+public void onPlayerLeaveServer(PlayerQuitEvent event) {
+    // Do not allow the menu to open
+    this.menuIsCoinflip = false;
+}&lt;/p&gt;
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;
+However, this also did not work. The next morning, we found that the server crashed from the same recursive loop somehow.
+
+I then dug into the code to see what was going on behind-the-scenes. I wanted to find out why the player is still allowed to open the inventory even when they are offline. This is a snippet of code that handles the [player's disconnect](https://hub.spigotmc.org/stash/projects/SPIGOT/repos/craftbukkit/browse/nms-patches/PlayerList.patch#281):
+
+``` patch
++        org.bukkit.craftbukkit.event.CraftEventFactory.handleInventoryCloseEvent(entityplayer);
++
++        PlayerQuitEvent playerQuitEvent = new PlayerQuitEvent(cserver.getPlayer(entityplayer), &quot;\u00A7e&quot; + entityplayer.getName() + &quot; left the game&quot;);
++        cserver.getPluginManager().callEvent(playerQuitEvent);
++        entityplayer.getBukkitEntity().disconnect(playerQuitEvent.getQuitMessage());
++
++        entityplayer.playerTick();// SPIGOT-924
++        // CraftBukkit end
++
+         this.savePlayerFile(entityplayer);
+		 if (entityplayer.isPassenger()) {
+		     Entity entity = entityplayer.getVehicle();
+@@ -318,17 +421,67 @@
+
+		 if (entityplayer1 == entityplayer) {
+             this.j.remove(uuid);
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;There are 3 things to note here:&lt;/p&gt;
+
+&lt;ol&gt;
+  &lt;li&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;handleInventoryCloseEvent&lt;/code&gt; is called very early when the player disconnects&lt;/li&gt;
+  &lt;li&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;PlayerQuitEvent&lt;/code&gt; gets fired after that&lt;/li&gt;
+  &lt;li&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;Player#isOnline()&lt;/code&gt; and &lt;code class=&quot;highlighter-rouge&quot;&gt;Bukkit.getPlayer(...)&lt;/code&gt; provided by the &lt;code class=&quot;highlighter-rouge&quot;&gt;j&lt;/code&gt; collection will be signalled last&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;This might make our online check seem useless, however, there shouldn’t be any cause for concern, because the scheduler should be scheduling the inventory close by the next tick, once the handler has fully completed and removed the player from the server… Right?&lt;/p&gt;
+
+&lt;h1 id=&quot;nitty-gritty-of-the-scheduler&quot;&gt;Nitty Gritty of the Scheduler&lt;/h1&gt;
+
+&lt;p&gt;We can theorize all we want. The code looks correct, but obviously that is not so because the server is still crashing for the same reason. Therefore, either we are wrong about our isolation of the problem, or our assumption about what the server is doing is wrong. However, given that the bug is very timing-dependent, and players are more likely to be leaving during the night, when the server is crashing, we concluded that our logic must have been wrong somewhere.&lt;/p&gt;
+
+&lt;p&gt;After some more pondering and searching through the Minecraft source code, I looked over the line that calls the &lt;code class=&quot;highlighter-rouge&quot;&gt;mainThreadHeartbeat&lt;/code&gt; method in &lt;code class=&quot;highlighter-rouge&quot;&gt;CraftScheduler&lt;/code&gt;. Piqued, I looked through the source of &lt;code class=&quot;highlighter-rouge&quot;&gt;CraftScheduler&lt;/code&gt; to see what I could find.&lt;/p&gt;
+
+&lt;p&gt;&lt;a href=&quot;https://hub.spigotmc.org/stash/projects/SPIGOT/repos/craftbukkit/browse/src/main/java/org/bukkit/craftbukkit/scheduler/CraftScheduler.java#91&quot;&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;runTask&lt;/code&gt;&lt;/a&gt;:&lt;/p&gt;
+
+&lt;div class=&quot;language-java highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;kd&quot;&gt;public&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;BukkitTask&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;runTask&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Plugin&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;plugin&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Runnable&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;runnable&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+	&lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;runTaskLater&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;plugin&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;runnable&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;0L&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;);&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;I thought to myself: when an inventory closes, I must be in the &lt;code class=&quot;highlighter-rouge&quot;&gt;disconnect&lt;/code&gt; method from &lt;code class=&quot;highlighter-rouge&quot;&gt;PlayerList&lt;/code&gt; above, so there can never be an instantaneous execution from this method. However, the fact that the server simply stops responding is completely contradictory to this.&lt;/p&gt;
+
+&lt;p&gt;Then it dawned upon me.&lt;/p&gt;
+
+&lt;p&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;openInventory&lt;/code&gt; must be immediately firing &lt;code class=&quot;highlighter-rouge&quot;&gt;InventoryCloseEvent&lt;/code&gt; when the player is offline, since it closes immediately; the player isn’t even there to open it in the first place. It doesn’t need to be going through &lt;code class=&quot;highlighter-rouge&quot;&gt;PlayerList#disconnect(...)&lt;/code&gt;. This basically invalidates all previous assumptions about the calling location of &lt;code class=&quot;highlighter-rouge&quot;&gt;InventoryCloseEvent&lt;/code&gt;…&lt;/p&gt;
+
+&lt;p&gt;If I immediately get back &lt;code class=&quot;highlighter-rouge&quot;&gt;InventoryCloseEvent&lt;/code&gt; from opening the inventory, then I am not getting the event from &lt;code class=&quot;highlighter-rouge&quot;&gt;PlayerList#disconnect(...)&lt;/code&gt;… I am getting it &lt;em&gt;directly from the scheduler&lt;/em&gt;. The scheduled task is causing it to schedule more tasks, which must execute, because the scheduling loop has not finished when I run another task! In other words, &lt;code class=&quot;highlighter-rouge&quot;&gt;InventoryCloseEvent&lt;/code&gt; causes another task to be added to the loop through the tasks in &lt;code class=&quot;highlighter-rouge&quot;&gt;mainThreadHeartbeat&lt;/code&gt;. Since we are still in a loop at this point, the loop will then come across the next task, which will then create another close event, endlessly adding tasks to the scheduling loop. &lt;code class=&quot;highlighter-rouge&quot;&gt;mainThreadHeartbeat&lt;/code&gt; never exits, and so the server doesn’t tick!&lt;/p&gt;
+
+&lt;h1 id=&quot;fixing-the-issue&quot;&gt;Fixing The Issue&lt;/h1&gt;
+
+&lt;p&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;runTask&lt;/code&gt; is a good, short method to use when not being called from within the scheduling loop. However, this risks creating an infinitely long task list. The fix to schedule for exactly 1 tick later like so:&lt;/p&gt;
+
+&lt;div class=&quot;language-java highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;nd&quot;&gt;@EventHandler&lt;/span&gt;
+&lt;span class=&quot;kd&quot;&gt;public&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;void&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;onPlayerCloseInventory&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;InventoryCloseEvent&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;event&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;this&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;menuIsCoinflip&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+        &lt;span class=&quot;c1&quot;&gt;// Schedule the inventory to be opened after the next tick&lt;/span&gt;
+        &lt;span class=&quot;n&quot;&gt;Bukkit&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;getScheduler&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;().&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;runTaskLater&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;this&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;plugin&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;()&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;-&amp;gt;&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+            &lt;span class=&quot;k&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;event&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;getPlayer&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;().&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;isOnline&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;())&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+                &lt;span class=&quot;c1&quot;&gt;// Tell the player to open the inventory that they closed&lt;/span&gt;
+                &lt;span class=&quot;n&quot;&gt;event&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;getPlayer&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;().&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;openInventory&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;event&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;getInventory&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;());&lt;/span&gt;
+            &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
+        &lt;span class=&quot;o&quot;&gt;},&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;1L&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;);&lt;/span&gt;
+    &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;This has virtually no impact on the previous functionality. By scheduling for 1 tick later instead of the 0 ticks that the &lt;code class=&quot;highlighter-rouge&quot;&gt;runTask&lt;/code&gt; method does, we ensure that even if &lt;code class=&quot;highlighter-rouge&quot;&gt;InventoryCloseEvent&lt;/code&gt; is fired from within the scheduling loop, it will not run within the loop that created it, but rather on the next tick. Since &lt;code class=&quot;highlighter-rouge&quot;&gt;runTask&lt;/code&gt; is usually never called from inside of the tick loop, 1 tick usually needs to pass anyways unless the task gets scheduled before the scheduling loop runs, so there’s really nothing to lose.&lt;/p&gt;
+
+&lt;h1 id=&quot;conclusion&quot;&gt;Conclusion&lt;/h1&gt;
+
+&lt;p&gt;The reason why it took so long for this bug to be discovered is because of the assumption I made that &lt;code class=&quot;highlighter-rouge&quot;&gt;BukkitScheduler#runTask(...)&lt;/code&gt; will always run in the tick after it is being called in. However, when the docs mention that a task will be run “run on the next server tick,” the next server tick may already be in progress, and therefore never allow for the task to leave.&lt;/p&gt;
+
+&lt;p&gt;In hindsight, it may seem like such a stupid assumption to make, that this particular event may be fired in only in one place. How can a problem that is so face-smackingly simple get past us? We were tied up for over a week trying to figure out what made the servers crash due to this bug. The server log gave a hint that the close event listener was being fired from within the scheduler, however, I did not pick up on this. Higher up the stack, the inventory was being closed already in the task, so why should I assume that the task list is growing? I just thought that it was being run in the tick right after the close event.&lt;/p&gt;
+
+&lt;p&gt;This little assumption, that the &lt;code class=&quot;highlighter-rouge&quot;&gt;runTask&lt;/code&gt; method would run the the tick after the task gets scheduled, led to over a week worth of head scratching and frustration. What can be done in the future about it?&lt;/p&gt;
+
+&lt;p&gt;We’ve already got reboot scripts ready to go so servers do not experience as long as a downtime. This only fixes the effects of such bugs; but at the moment, I have no solutions to how the development pipeline can be modified to avoid this in the future. Perhaps strong assumptions about the workings of the scheduler should not be so dearly held on to. Local tests could not have reproduced this bug, tests on production servers by Gullible only turned up the bug once or twice. Theoretically, this should always be turning up when the player that joins a coinflip gets kicked or leaves the server, so why wasn’t it more common during testing? How could it have been more adequately tested?&lt;/p&gt;
+
+&lt;p&gt;I don’t know. It’s ironic because solving this bug creates an even harder problem: how to prevent it. And I have a sneaking feeling that I will need to get around to solving it soon.&lt;/p&gt;</content><author><name></name></author><summary type="html">Note: Code samples in this post have been slightly altered. I have not leaked any information from our plugins in the writing of this post</summary></entry><entry><title type="html">Those Mistakes Are Mine</title><link href="https://agenttroll.github.io/blog/2018/03/25/those-mistakes-are-mine.html" rel="alternate" type="text/html" title="Those Mistakes Are Mine" /><published>2018-03-25T01:19:25-07:00</published><updated>2018-03-25T01:19:25-07:00</updated><id>https://agenttroll.github.io/blog/2018/03/25/those-mistakes-are-mine</id><content type="html" xml:base="https://agenttroll.github.io/blog/2018/03/25/those-mistakes-are-mine.html">&lt;blockquote&gt;
   &lt;p&gt;Minions is a shit plugin&lt;/p&gt;
 
   &lt;p&gt;- @GulliblexD&lt;/p&gt;
@@ -867,163 +1009,4 @@ index f94fdbe..cfc8a61 100755
 
 &lt;h1 id=&quot;conclusion&quot;&gt;&lt;del&gt;Conclusion&lt;/del&gt;&lt;/h1&gt;
 
-&lt;p&gt;&lt;del&gt;I was eventually able to install OBS using the &lt;code class=&quot;highlighter-rouge&quot;&gt;ffmpeg-static&lt;/code&gt; build script to build FFmpeg. Everything worked out in the end (except for one minor caveat that &lt;code class=&quot;highlighter-rouge&quot;&gt;ffplay&lt;/code&gt; is never compiled, I will need to figure that out). If OBS is missing an FFmpeg compile dependency, then use &lt;code class=&quot;highlighter-rouge&quot;&gt;--enable-shared&lt;/code&gt; to allow OBS to use them as well. Otherwise, errors such as missing &lt;code class=&quot;highlighter-rouge&quot;&gt;libswrescale&lt;/code&gt; can be fixed using the &lt;code class=&quot;highlighter-rouge&quot;&gt;sid&lt;/code&gt; packages.&lt;/del&gt;&lt;/p&gt;</content><author><name></name></author><summary type="html">MAJOR EDIT: DO NOT DO THIS!!</summary></entry><entry><title type="html">On Thread Safety</title><link href="https://agenttroll.github.io/blog/2017/03/20/on-thread-safety.html" rel="alternate" type="text/html" title="On Thread Safety" /><published>2017-03-20T18:21:17-07:00</published><updated>2017-03-20T18:21:17-07:00</updated><id>https://agenttroll.github.io/blog/2017/03/20/on-thread-safety</id><content type="html" xml:base="https://agenttroll.github.io/blog/2017/03/20/on-thread-safety.html">&lt;p&gt;&lt;a name=&quot;audience&quot;&gt;&lt;/a&gt;&lt;/p&gt;
-&lt;h1 id=&quot;-audience&quot;&gt;&lt;a href=&quot;#audience&quot;&gt;#&lt;/a&gt; AUDIENCE&lt;/h1&gt;
-
-&lt;p&gt;A quick warning: I express a lot of liberty in choosing my word choice. I may insert some non-family-friendly/swear/curse words here and there for the entertainment of the reader or to express a strong point. If you are not allowed to read that type of thing, or are uncomfortable consuming them, please stop reading here. I will consider to write a cleaned-up version and post it sometime in the future.&lt;/p&gt;
-
-&lt;p&gt;While I attempt to do my best to explain as many of the concepts as possible in layman terms, it may become very difficult to follow along with what I say if you have no prior programming experience. I recommend being a proficient programmer before reading this.&lt;/p&gt;
-
-&lt;p&gt;I have also specifically targeted this post to Java. Whether or not what I say applies to other languages or concepts, I do not care nor do I intend to make those connections.&lt;/p&gt;
-
-&lt;p&gt;I go from the very basics to some quite high-level topics in this post. If you are a professional dev who has worked in the industry for decades and already know how to write thread-safe code, good for you. I do not intend the beginning few sections to be targeted for you. If you are a beginner, you might find some of the concepts difficult to comprehend. That’s OK. If you need a break, go ahead and take one and let the information you’ve learned sink in.&lt;/p&gt;
-
-&lt;p&gt;Finally, I really do try to my best of my ability to avoid making erreneous or overly biased, opininated claims. However, I am a human. I make mistakes. I have opinions. I am not responsible for your losses due to you using what I write to write your own code. Your code is your responsibility. My opinions do not represent those who I am associated with whether they be my (currently nonexistant) employer, my friends, etc. They are my own opinions only. I do not portray myself as superior in skill, age, or whatever in anyway to the reader. If you interpret what I write as so, feel free to stop reading and be a dick to me in retaliation (or politely call me out).&lt;/p&gt;
-
-&lt;p&gt;With that said, I do hope that you will learn something out of reading what I have written.&lt;/p&gt;
-
-&lt;hr /&gt;
-
-&lt;p&gt;&lt;a name=&quot;introduction&quot;&gt;&lt;/a&gt;&lt;/p&gt;
-&lt;h1 id=&quot;-introduction&quot;&gt;&lt;a href=&quot;#introduction&quot;&gt;#&lt;/a&gt; INTRODUCTION&lt;/h1&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;Asynchronous&lt;/li&gt;
-  &lt;li&gt;Multithreaded&lt;/li&gt;
-  &lt;li&gt;Scalable&lt;/li&gt;
-  &lt;li&gt;Parallel&lt;/li&gt;
-  &lt;li&gt;Concurrent&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;Heard of these words before?&lt;/p&gt;
-
-&lt;p&gt;In case you’ve been living under a rock for over a (few) decade(s), or you are not a programmer, these are quite important concepts to understand in the modern world of computing. Parallelization is absolutely one of the most important ways that computers have become more and more powerful over the years, and the time has come for people to understand how to build software that truly takes advantage of parallelism rather than processor clock speeds.&lt;/p&gt;
-
-&lt;blockquote&gt;
-  &lt;p&gt;serial programs run on modern computers “waste” potential computing power.&lt;/p&gt;
-&lt;/blockquote&gt;
-
-&lt;blockquote&gt;
-  &lt;p&gt;During the past 20+ years, the trends indicated by ever faster networks, distributed systems, and multi-processor computer architectures (even at the desktop level) clearly show that parallelism is the future of computing.&lt;/p&gt;
-&lt;/blockquote&gt;
-
-&lt;p&gt;(&lt;a href=&quot;https://computing.llnl.gov/tutorials/parallel_comp/#WhyUse&quot;&gt;Introduction to Parallel Computing, Lawrence Livermore National Labratory&lt;/a&gt;)&lt;/p&gt;
-
-&lt;blockquote&gt;
-  &lt;p&gt;This changeover [from favoring high clock speeds to favoring multicore processors instead] had a profound impact on software performance. Previously, faster hardware speeds translated directly into faster software computation. Afterwards, only software that could take advantage of multiple processors would get this benefit – and not all of them could&lt;/p&gt;
-&lt;/blockquote&gt;
-
-&lt;p&gt;(&lt;a href=&quot;http://funginstitute.berkeley.edu/wp-content/uploads/2013/12/Neil_Thompson-27s_Moore-27s_Law_Paper_-_Summary.pdf&quot;&gt;Moore’s Law Goes Multicore, Berkeley Haas School of Business&lt;/a&gt;)&lt;/p&gt;
-
-&lt;p&gt;It turns out that the benefit that comes from exploiting multiprocessors is a double-edged blade. We find that there is a &lt;em&gt;minor&lt;/em&gt; difficulty with developing software that is capable of multithreading, that is, ensuring that these applications are &lt;strong&gt;thread-safe&lt;/strong&gt;.&lt;/p&gt;
-
-&lt;p&gt;(Quick side note: multithreading is an extremely difficult topic to organize and talk about. Ideas jump all over the place and there are many different things that all contribute to fully understanding one big thing, and the little things cannot be organized into different, larger subgroups)&lt;/p&gt;
-
-&lt;hr /&gt;
-
-&lt;p&gt;&lt;a name=&quot;what-is-thread-safety&quot;&gt;&lt;/a&gt;&lt;/p&gt;
-&lt;h1 id=&quot;-what-is-thread-safety&quot;&gt;&lt;a href=&quot;#what-is-thread-safety&quot;&gt;#&lt;/a&gt; WHAT IS THREAD-SAFETY?&lt;/h1&gt;
-
-&lt;p&gt;When sharing data between threads, it is vitally important to realize that the same assumptions about the ordering of operations cannot be held true for multithreaded programs as they are for single-threaded ones.&lt;/p&gt;
-
-&lt;blockquote&gt;
-  &lt;p&gt;As a small side note, single-threaded programs are not truly single-threaded. While what the programmer does is single-threaded - things like the &lt;code class=&quot;highlighter-rouge&quot;&gt;main&lt;/code&gt; method - the program as a whole is not. There are threads managed by the JVM in the background, such as the GC thread(s), the JIT thread(s), maybe RMI threads or Ctrl-Break monitor threads if applicable, among others. This means that while there are never truly “single-threaded” programs in the strictest definition of the term, it is important to realise that threads in the JVM sub-system do not interfere or comprimise the thread-safety of a “single-threaded” program. If the programmer does not interact with additional threads other than the main thread which runs the &lt;code class=&quot;highlighter-rouge&quot;&gt;main&lt;/code&gt; method, &lt;strong&gt;there are no thread-safety issues with the code. In the absence of program-level threads, it is &lt;em&gt;impossible&lt;/em&gt; for thread-safety to be a problem&lt;/strong&gt;.&lt;/p&gt;
-&lt;/blockquote&gt;
-
-&lt;p&gt;The idea of making a program thread-safe is the same as making what is arbitrary predictable. The nature of threads is that they run independently of each other. In doing so, it is impossible to determine the timing between operations or the effects of a read or write on a state variable.&lt;/p&gt;
-
-&lt;blockquote&gt;
-  &lt;p&gt;&lt;strong&gt;State&lt;/strong&gt;: When I use “state” or “shared state,” I refer to data to which a thread might be able to read or write. It is a general term used to describe whatever is made available to threads to access. This may be an instance object that is passed around, a global variable, a class field. For example, I can say that a thread will mutate a state by incrementing it, or a thread can mutate a state by setting its value, because the “state” is the data that the thread is accessing and mutating, or changing in some way. I can also say that a thread will read the state of an object to say that the thread will be able to use the object’s getters to obtain the value of its fields.&lt;/p&gt;
-&lt;/blockquote&gt;
-
-&lt;p&gt;&lt;strong&gt;While the issues relating to thread-safety are diverse and expansive, most issues can be boiled down to either an ordering or visibility issue.&lt;/strong&gt;&lt;/p&gt;
-
-&lt;p&gt;The nature of &lt;em&gt;most&lt;/em&gt; programs is that they must enforce a relationship between its threads in order to calculate a result, to report back the status of an operation, to listen to events, etc… All of these require threads to be dependent on each other, against their independent nature:&lt;/p&gt;
-
-&lt;p&gt;If it were possible to isolate visibility issues, then surprising behavior that results from this can be seen in the following diagram of two threads accessing a shared state:&lt;/p&gt;
-
-&lt;p&gt;&lt;img src=&quot;https://agenttroll.github.io/blog/img/Visibility.jpg&quot; alt=&quot;Visbility&quot; /&gt;&lt;/p&gt;
-
-&lt;p&gt;In the absence of adequate synchronization, the above diagram demonstrates how &lt;code class=&quot;highlighter-rouge&quot;&gt;Thread 1&lt;/code&gt; continued to read a “stale” value of &lt;code class=&quot;highlighter-rouge&quot;&gt;4&lt;/code&gt; from a shared state, before but also after &lt;code class=&quot;highlighter-rouge&quot;&gt;Thread 2&lt;/code&gt; has set it to &lt;code class=&quot;highlighter-rouge&quot;&gt;5&lt;/code&gt;. The effect of writing &lt;code class=&quot;highlighter-rouge&quot;&gt;5&lt;/code&gt; to the shared variable was therefore not visible to &lt;code class=&quot;highlighter-rouge&quot;&gt;Thread 1&lt;/code&gt;.&lt;/p&gt;
-
-&lt;p&gt;Also consider the following code:&lt;/p&gt;
-
-&lt;div class=&quot;language-java highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;n&quot;&gt;MutableState&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;state&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;c1&quot;&gt;// ...&lt;/span&gt;
-&lt;span class=&quot;n&quot;&gt;Thread&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;t1&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;new&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Thread&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(()&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;-&amp;gt;&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
-    &lt;span class=&quot;n&quot;&gt;state&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;mutate&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;();&lt;/span&gt;
-    &lt;span class=&quot;n&quot;&gt;System&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;out&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;println&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;state&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;read&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;());&lt;/span&gt;
-&lt;span class=&quot;o&quot;&gt;});&lt;/span&gt;
-&lt;span class=&quot;n&quot;&gt;Thread&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;t2&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;new&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Thread&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(()&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;-&amp;gt;&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
-    &lt;span class=&quot;n&quot;&gt;state&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;mutate&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;();&lt;/span&gt;
-    &lt;span class=&quot;n&quot;&gt;System&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;out&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;println&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;state&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;read&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;());&lt;/span&gt;
-&lt;span class=&quot;o&quot;&gt;});&lt;/span&gt;
-&lt;span class=&quot;n&quot;&gt;t1&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;start&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;();&lt;/span&gt;
-&lt;span class=&quot;n&quot;&gt;t2&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;start&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;();&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;In the absence of adequate synchronization between threads, there can be no correct assumptions about the order of operations. Recalling that threads are arbitrary and independent, it is entirely possible for &lt;code class=&quot;highlighter-rouge&quot;&gt;t1&lt;/code&gt; to start AFTER &lt;code class=&quot;highlighter-rouge&quot;&gt;t2&lt;/code&gt;. It is also possible for &lt;code class=&quot;highlighter-rouge&quot;&gt;t1&lt;/code&gt; to run as expected before &lt;code class=&quot;highlighter-rouge&quot;&gt;t2&lt;/code&gt;, but there are no guarantees here. It is even possible for &lt;code class=&quot;highlighter-rouge&quot;&gt;t1&lt;/code&gt; to &lt;code class=&quot;highlighter-rouge&quot;&gt;state.mutate()&lt;/code&gt; &lt;em&gt;simultaneously&lt;/em&gt; with &lt;code class=&quot;highlighter-rouge&quot;&gt;t2&lt;/code&gt;. To further our visibility example, it is further possible for &lt;code class=&quot;highlighter-rouge&quot;&gt;t2&lt;/code&gt; to not even see what changes have been made by &lt;code class=&quot;highlighter-rouge&quot;&gt;t1&lt;/code&gt;. In effect, the results of running these two threads are then arbitrary and indeterminate as well.&lt;/p&gt;
-
-&lt;p&gt;This is the heart of thread-safety. Through using tools such as locks, synchronization tools, atomic variables and others, code that is not thread-safe can be tamed and used to exploit modern multiprocessors.&lt;/p&gt;
-
-&lt;hr /&gt;
-
-&lt;p&gt;&lt;a name=&quot;what-causes-threads-to-behave-this-way&quot;&gt;&lt;/a&gt;&lt;/p&gt;
-&lt;h1 id=&quot;-what-causes-threads-to-behave-this-way&quot;&gt;&lt;a href=&quot;#what-causes-threads-to-behave-this-way&quot;&gt;#&lt;/a&gt; WHAT CAUSES THREADS TO BEHAVE THIS WAY?&lt;/h1&gt;
-
-&lt;p&gt;Having some basic idea of what “thread-safety” is, I believe that there is benefit in discussing the nitty gritty details of why threads behave in this “independent” manner. There tends to be a lot of widespread use of mere analogies in order to explain why thread-safety is a problem and this in itself has caused issues on its own, much like how parents might avoid talking about sexual intercourse with their children until they are older.&lt;/p&gt;
-
-&lt;p&gt;Going along the same vein with the “messy details” of multithreading, I think now would be a good time to also discuss some drawbacks of writing multithreaded programs:&lt;/p&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;They are difficult to write correctly&lt;/li&gt;
-  &lt;li&gt;They are difficult to test for correctness&lt;/li&gt;
-  &lt;li&gt;They are difficult to test for performance&lt;/li&gt;
-  &lt;li&gt;They are difficult to understand multithreaded code&lt;/li&gt;
-  &lt;li&gt;It is difficult to distribute work and tasks amongst threads&lt;/li&gt;
-  &lt;li&gt;It is difficult to do resource management - deadlocks, livelocks, starvation&lt;/li&gt;
-  &lt;li&gt;Coercing system resources to initialize a thread is relatively expensive&lt;/li&gt;
-  &lt;li&gt;Locking, memory barriers, mutexes and other synchronization primitives add housekeeping overhead&lt;/li&gt;
-  &lt;li&gt;Ordering and fencing memory access are not free&lt;/li&gt;
-  &lt;li&gt;Distributing processor time by the thread scheduler comes with overhead&lt;/li&gt;
-  &lt;li&gt;They sometimes cause degredation in performance due to poor implementaiton&lt;/li&gt;
-  &lt;li&gt;They are prone to interfering with other threads or other programs&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;&lt;img src=&quot;https://agenttroll.github.io/blog/img/CPU.jpg&quot; alt=&quot;CPU&quot; /&gt;&lt;/p&gt;
-
-&lt;!-- TODO --&gt;
-
-&lt;p&gt;Sources used:&lt;/p&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;&lt;a href=&quot;https://mechanical-sympathy.blogspot.com/2013/02/cpu-cache-flushing-fallacy.html&quot;&gt;CPU Cache Flushing Fallacy, Mechanical Sympathy&lt;/a&gt;&lt;/li&gt;
-  &lt;li&gt;&lt;a href=&quot;https://mechanical-sympathy.blogspot.com/2011/07/memory-barriersfences.html&quot;&gt;Memory Barriers/Fences, Mechanical Sympathy&lt;/a&gt;&lt;/li&gt;
-  &lt;li&gt;&lt;a href=&quot;http://www.javamex.com/tutorials/threads/thread_scheduling_java.shtml&quot;&gt;Thread scheduling implications in Java, Javamex&lt;/a&gt;&lt;/li&gt;
-  &lt;li&gt;&lt;a href=&quot;http://www.javamex.com/tutorials/threads/context_switch.shtml&quot;&gt;Context and process switching, Javamex&lt;/a&gt;&lt;/li&gt;
-  &lt;li&gt;&lt;a href=&quot;https://www.cs.cmu.edu/~fp/courses/15213-s06/lectures/27-multicore.pdf&quot;&gt;Multi-core architectures, Carnegie Mellon University&lt;/a&gt;&lt;/li&gt;
-  &lt;li&gt;&lt;a href=&quot;https://www.cs.cmu.edu/afs/cs/academic/class/15418-s12/www/lectures/10_coherence.pdf&quot;&gt;Lecture 10: Cache Coherence: Part I, Carnegie Mellon University&lt;/a&gt;&lt;/li&gt;
-  &lt;li&gt;&lt;a href=&quot;https://www.scss.tcd.ie/Jeremy.Jones/vivio/caches/MESIHelp.htm&quot;&gt;MESI Cache Coherency Protocol, Trinity College Dublin, the University of Dublin, Ireland&lt;/a&gt;&lt;/li&gt;
-  &lt;li&gt;&lt;a href=&quot;http://web.cecs.pdx.edu/~alaa/ece587/notes/memory-ordering.pdf&quot;&gt;Memory Ordering, Portland State University&lt;/a&gt;&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;hr /&gt;
-
-&lt;p&gt;&lt;a name=&quot;how-to-write-thread-safe-code&quot;&gt;&lt;/a&gt;&lt;/p&gt;
-&lt;h1 id=&quot;-how-to-write-thread-safe-code&quot;&gt;&lt;a href=&quot;#how-to-write-thread-safe-code&quot;&gt;#&lt;/a&gt; HOW TO WRITE THREAD-SAFE CODE?&lt;/h1&gt;
-
-&lt;div class=&quot;language-java highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;nd&quot;&gt;@ThreadSafe&lt;/span&gt;
-&lt;span class=&quot;kd&quot;&gt;public&lt;/span&gt; &lt;span class=&quot;kd&quot;&gt;class&lt;/span&gt; &lt;span class=&quot;nc&quot;&gt;ThreadNotUnsafe&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
-    &lt;span class=&quot;c1&quot;&gt;// Add 'volatile'&lt;/span&gt;
-    &lt;span class=&quot;kd&quot;&gt;private&lt;/span&gt; &lt;span class=&quot;kd&quot;&gt;volatile&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;int&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;state&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;4&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;;&lt;/span&gt;
-    
-    &lt;span class=&quot;kd&quot;&gt;public&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;void&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;setState&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;kt&quot;&gt;int&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;newState&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
-        &lt;span class=&quot;k&quot;&gt;this&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;state&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;newState&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;;&lt;/span&gt;
-    &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
-    
-    &lt;span class=&quot;kd&quot;&gt;public&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;void&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;getState&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;()&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
-        &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;this&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;state&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;;&lt;/span&gt;
-    &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
-&lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;One of the primitives that the Java language gives developers is the &lt;code class=&quot;highlighter-rouge&quot;&gt;volatile&lt;/code&gt; keyword. This keyword is only applicable to fields.&lt;/p&gt;</content><author><name></name></author><summary type="html"># AUDIENCE</summary></entry></feed>
+&lt;p&gt;&lt;del&gt;I was eventually able to install OBS using the &lt;code class=&quot;highlighter-rouge&quot;&gt;ffmpeg-static&lt;/code&gt; build script to build FFmpeg. Everything worked out in the end (except for one minor caveat that &lt;code class=&quot;highlighter-rouge&quot;&gt;ffplay&lt;/code&gt; is never compiled, I will need to figure that out). If OBS is missing an FFmpeg compile dependency, then use &lt;code class=&quot;highlighter-rouge&quot;&gt;--enable-shared&lt;/code&gt; to allow OBS to use them as well. Otherwise, errors such as missing &lt;code class=&quot;highlighter-rouge&quot;&gt;libswrescale&lt;/code&gt; can be fixed using the &lt;code class=&quot;highlighter-rouge&quot;&gt;sid&lt;/code&gt; packages.&lt;/del&gt;&lt;/p&gt;</content><author><name></name></author><summary type="html">MAJOR EDIT: DO NOT DO THIS!!</summary></entry></feed>
