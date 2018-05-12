@@ -1,4 +1,133 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.6.2">Jekyll</generator><link href="https://agenttroll.github.io/blog/feed.xml" rel="self" type="application/atom+xml" /><link href="https://agenttroll.github.io/blog/" rel="alternate" type="text/html" /><updated>2018-04-14T01:37:03-07:00</updated><id>https://agenttroll.github.io/blog/</id><title type="html">Inside a Troll</title><subtitle>Thoughts of a Java developer</subtitle><entry><title type="html">Keeping Inventories Open</title><link href="https://agenttroll.github.io/blog/2018/04/13/keeping-inventories-open.html" rel="alternate" type="text/html" title="Keeping Inventories Open" /><published>2018-04-13T21:38:10-07:00</published><updated>2018-04-13T21:38:10-07:00</updated><id>https://agenttroll.github.io/blog/2018/04/13/keeping-inventories-open</id><content type="html" xml:base="https://agenttroll.github.io/blog/2018/04/13/keeping-inventories-open.html">&lt;p&gt;&lt;em&gt;Note: Code samples in this post have been slightly altered. I have not leaked any information from our plugins in the writing of this post&lt;/em&gt;&lt;/p&gt;
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.6.2">Jekyll</generator><link href="https://agenttroll.github.io/blog/feed.xml" rel="self" type="application/atom+xml" /><link href="https://agenttroll.github.io/blog/" rel="alternate" type="text/html" /><updated>2018-05-11T23:54:20-07:00</updated><id>https://agenttroll.github.io/blog/</id><title type="html">Inside a Troll</title><subtitle>Thoughts of a Java developer</subtitle><entry><title type="html">JDB, But Not That One</title><link href="https://agenttroll.github.io/blog/2018/05/11/jdb-but-not-that-one.html" rel="alternate" type="text/html" title="JDB, But Not That One" /><published>2018-05-11T23:44:35-07:00</published><updated>2018-05-11T23:44:35-07:00</updated><id>https://agenttroll.github.io/blog/2018/05/11/jdb-but-not-that-one</id><content type="html" xml:base="https://agenttroll.github.io/blog/2018/05/11/jdb-but-not-that-one.html">&lt;h1 id=&quot;but-also-some-background&quot;&gt;But Also, Some Background&lt;/h1&gt;
+
+&lt;p&gt;I’ve been working on a school project for my CS Projects class for the past few months. Just a few days ago, I had a great opportunity to actually present it to a school staff meeting. I had mixed feelings about the overall success of my presentation, so instead of working on improving my prepardness for presentations that I might have later, I decided to write a rather unfaithful transcript of it here. I don’t fault the staff for being primarily non-technical, but I definitely would have enjoyed presenting to a more seasoned audience in the future.&lt;/p&gt;
+
+&lt;p&gt;But enough with my lamenting. Back in September, I had to make a decision on what kind of project I would work on for the rest of the year. Actually, I finished the project last month, so perhaps the rest of the year minus two months. I would have wanted to work on TridentSDK, but that wouldn’t have been very good material to present. There’s a ton of notable acheivements in TridentSDK that would be difficult to explain relative to an actual Minecraft server, so that got scrapped. My second-choice would be a debugger. I often used the IntelliJ IDEA debugger to work on TridentSDK, so I mean, why not? It really counldn’t be that difficult, can it? As it turns out, it really wasn’t &lt;em&gt;that&lt;/em&gt; difficult. I did deal with some interesting bugs, and developing it was difficult at times, but there wasn’t anything that I didn’t already know, save for the intricacies of the JDI.&lt;/p&gt;
+
+&lt;p&gt;By the end of my time developing JDB, I got really lazy and put off working on it a lot. It felt really complete after I solved &lt;a href=&quot;https://github.com/AgentTroll/jdb/commit/48483f6211cb5e67f81133b6a050dbc3151ad495&quot;&gt;the bug involving printing out multiple return values for the same variable&lt;/a&gt;. Thanks, laziness. &lt;a href=&quot;https://github.com/AgentTroll/jdb/blob/master/jdb.md&quot;&gt;This was the real planning document&lt;/a&gt; for JDB in the first place. As a matter of fact, I had no clue that there was &lt;a href=&quot;https://docs.oracle.com/javase/7/docs/technotes/tools/windows/jdb.html&quot;&gt;already a project&lt;/a&gt; in its namesake, but I haven’t been aware of it. That’s not the real takeaway from planning though, the real takeaway is that I was really ambitious at the start, but ended up with a lot simpler of a program than I had envisioned. In fact, when I took a look at it a few days ago, when I was making my presentation, I realized I basically got to none of the features in the Goals section. Thanks, laziness. Nevertheless, I still think I ended up with a very nifty program that did a lot more than I thought I could do.&lt;/p&gt;
+
+&lt;h1 id=&quot;slides&quot;&gt;Slides&lt;/h1&gt;
+
+&lt;p&gt;As a small side note, Pages sucked for converting slides to images. I used https://www.freepdfconvert.com/pdf-jpg. A few images that I got off the internet got removed from slides 2-3, I was too lazy to cite them and they didn’t have anything very useful anyways.&lt;/p&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;I’ve quoted approximately what I said&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;I’ll put some more stuff down below it or what I should have added.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;https://agenttroll.github.io/blog/img/jdb.odp.jpg&quot; alt=&quot;Slide 1&quot; /&gt;&lt;/p&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;Hi, I’m Johnny, I’ve been working on a debugger for the past year. If you don’t know what a debugger is, don’t worry. I’ll get to that in the next slide.&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;&lt;img src=&quot;https://agenttroll.github.io/blog/img/jdb.odp-2.jpg&quot; alt=&quot;Slide 2&quot; /&gt;&lt;/p&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;So what exactly is a debugger? What is debugging? What even is a bug in the first place? So a bug is basically an error; it’s a mistake made by the programmer when he is writing code. A bug is a glitch, and anomaly, or oversight that results in the program not working correctly. All programs contain bugs. Bugs aren’t good. When you’re writing software, you don’t want bugs. One of the tools that you might use to get rid of bugs (these errors in your code) is by using a debugger. So when a program runs, what the programmer sees on his screen, all the computer code, all of that becomes invisible. You can’t see what a program is doing when it runs, you can only see how it affects what the user sees. A debugger helps remove bugs because flaws in the code require you to see the state of the program, and when there is an error, there will be an inconsistency in the program’s state.&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;&lt;img src=&quot;https://agenttroll.github.io/blog/img/jdb.odp-3.jpg&quot; alt=&quot;Slide 3&quot; /&gt;&lt;/p&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;Now that we have that out of the way, what was I even thinking in the first place, why did I want to create a debugger? I work a lot in the backend, which is basically the behind-the-scenes role of writing software. I write infrastructure, so other people depend on me being right so that everything works. If my programs don’t work, everything comes crashing down with it. This was a big inspiration for me because a debugger would give a helping hand in removing bugs and errors from my program. Secondly, many debuggers are included in your text editor, called an IDE. So your debugger is often something that has buttons and stuff, that you click on. What I was looking for was a &lt;em&gt;CLI&lt;/em&gt;-based debugger, and a CLI is basically a big panel that doesn’t have buttons or anything on it, you have to type commands into it for it to do anything. So think of hacker movies and you see some guy typing away at his computer and a bunch of garbage text comes up on the screen and it magically does something - that was what I was looking for, to be able to use commands to control the debugger instead of clicking buttons. This just makes it more efficient to work with than having to move a mouse. Finally, I mean, why not? I needed a project to work on, why not make a debugger?&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;I had to spend a lot of time here trying to explain basic programming concepts like an IDE and a CLI. I would have liked more time getting into the actual meat of JDB in the first place, but alas, I had to spend my time explaining this to my audience!&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;https://agenttroll.github.io/blog/img/jdb.odp-4.jpg&quot; alt=&quot;Slide 4&quot; /&gt;&lt;/p&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;So to demonstrate what my debugger does, I’m going to use it to reverse engineer something, and that something will be a Minecraft server. Now, I chose the Minecraft server becuse it’s relatively simple to understand the function of it at its core, and it will really help me explain some of what it does. So what you see here is a function that gets run whenever the server stops, and you will also see a null-check that I have boxed near the bottom of your screen. What this does is it checks the value of the variable. When programming, you want to make sure that your values are initialized, that is that there is &lt;em&gt;something&lt;/em&gt; at that variable. Sometimes, the variable is null and void; there is nothing stored there. So to demonstrate how my debugger works, what I want to find out is when the server shuts down, is there a value at all at the &lt;code class=&quot;highlighter-rouge&quot;&gt;v&lt;/code&gt; variable. We know that it is a player list, and I can deduce that it stores players somehow. But what I want to know is even if players don’t join the server, will there the &lt;code class=&quot;highlighter-rouge&quot;&gt;v&lt;/code&gt; variable still be null, void, and have no value, or will there be &lt;em&gt;something&lt;/em&gt; at that variable when the server shutsdown?&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;Now admittedly, reverse engineering wasn’t a great demonstration of the debugger. My presentation focused very much on explaining the reverse engineering concepts that could have demonstrated better what my debugger does if I had used simple scenarios instead. But alas, I was also inspired to make the debugger because I had a hard time with getting a regular debugger connected to the Minecraft server to debug my plugins. It would also be great if I could demonstrate that JDB works outside of my own custom scenario programs and with other programs as well, but I’m not sure if my audience would have understood the significance of that for me, since I’ve only ever used the regular IntelliJ IDEA debugger to test code thath it runs intead. I also find it hard to believe that anyone followed along with the “null and void” idea of a value, but that should be expected at this point.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;https://agenttroll.github.io/blog/img/jdb.odp-5.jpg&quot; alt=&quot;Slide 5&quot; /&gt;&lt;/p&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;So what I’m doing here is trying to find the line number on which there is this check for the value of &lt;code class=&quot;highlighter-rouge&quot;&gt;v&lt;/code&gt;. So basically how debuggers work is, as a I said earlier, to stop and halt the program at specific points in the code. So as the code gets read by the computer, as it moves through each line of code, I want to stop the program right before that check and read the value at the &lt;code class=&quot;highlighter-rouge&quot;&gt;v&lt;/code&gt; variable. This is called a breakpoint, the place where you want the program to just halt for a sec so you can look at the program state. So here, in order to find the line number to put the breakpoint on, I will have to look for where that if check is. I’ve boxed it at #1 in the bottom left corner of the screen, you can see the ifnull check if you are close enough to the screen. You also might see that there are two other if checks, but I know that instruction #78 is the right one because in the code from the previous slide (scroll back one slide) you can see that there are 3 if checks here, and (scroll to slide #5) and there are 2 if checks above this one and the variable appears here where you can see the method being called where I have underlined by the bottom right. What I’ve decided to do is actually to pick the instruction at #38, labelled by the #2 box at the top left corner of the screen. This is because in order for the breakpoint to work, I must guarantee that the code is run in the first place, and if I accidentally put it in betwen the if checks, my breakpoint may not run. You can see on the line number table that #32 is located on line 482.&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;This was an extremely strenuous slide for me because I needed explain all these different concepts like breakpoints and the basic ideas of machine code to laymen.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;https://agenttroll.github.io/blog/img/jdb.odp-6.jpg&quot; alt=&quot;Slide 6&quot; /&gt;&lt;/p&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;Here I am going to start the debugger and you can see me using &lt;code class=&quot;highlighter-rouge&quot;&gt;ba&lt;/code&gt; which means put a breakpoint after line 482 in MinecraftServer.&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;At this point, my advisor has reminded me that I have 30 seconds left of presentation time. What I should have done was explain also the selection at the bottom and how I select from duplicate class names.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;https://agenttroll.github.io/blog/img/jdb.odp-7.jpg&quot; alt=&quot;Slide 7&quot; /&gt;&lt;/p&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;As it turns out, I get an error from the program stopping. This is ironic because there’s a bug in my program that I made to get rid of bugs (chuckles)&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;&lt;img src=&quot;https://agenttroll.github.io/blog/img/jdb.odp-8.jpg&quot; alt=&quot;Slide 8&quot; /&gt;&lt;/p&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;So, what happened? If you can see here, in my code, I am checking for a 0 and leaving the code. On the previous slide, you can see that 0 is an option, and the no option should be -1. Let’s change this to -1 and see what happens.&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;As I’m under time constraint, I’m unable to explain what the if and the comparison constructs mean.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;https://agenttroll.github.io/blog/img/jdb.odp-9.jpg&quot; alt=&quot;Slide 9&quot; /&gt;&lt;/p&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;Alright, so we can put a breakpoint in there, that’s good! No errors this time, what happens then, when I stop the server?&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;Here, I should have reminded my audience of what a breakpoint is and the meaning of what I’m doing, but alas, I was already cutting into meeting time after my presentation.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;https://agenttroll.github.io/blog/img/jdb.odp-10.jpg&quot; alt=&quot;Slide 10&quot; /&gt;&lt;/p&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;I can then inspect all the variables in the state of my program, and you can see at the bottom that I’ve highlighted the value that is located at the &lt;code class=&quot;highlighter-rouge&quot;&gt;v&lt;/code&gt; variable and it is not null. So what I’ve found is that even when there are no players in the first place, that there will be a value there.&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;The value at &lt;code class=&quot;highlighter-rouge&quot;&gt;v&lt;/code&gt; is present even if there are no players on the server. This is significant because out of this, I’ve learned that the MinecraftServer initializes this variable without any players on, when it starts off as null by default. Secondly, it is a type of DedicatedPlayerList, which is a type that tells me a lot about how the &lt;code class=&quot;highlighter-rouge&quot;&gt;v&lt;/code&gt; variable gets handled by the server.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;https://agenttroll.github.io/blog/img/jdb.odp-11.jpg&quot; alt=&quot;Slide 11&quot; /&gt;&lt;/p&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;So what exactly did I learn? So I learned a new API, which is a… (pause)&lt;/p&gt;
+
+  &lt;p&gt;I learned JDI, which is an API, which is in turn something that programmers use to write their apps faster, when I wasn’t really familiar with it before. In fact, the rest of this is garbage, it doesn’t mean anything to you guys (chuckles). Along the way I also ran into a bunch of issues, such as the one that I just showed you with the off-by-one thing that I fixed by switching the code to -1. I also uh (pause)&lt;/p&gt;
+
+  &lt;p&gt;I also got a bunch of output whenever I looked through the program state because the console had duplicate entries in it, so I could hardly read the log. This got fixed so I can actually read the console.&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;At this point, I was already 2 minutes over time and I needed to get done, but my brain was letting me down. I had two long pauses to stop and reconsider, but in my own defense, the API learning part was rather difficult to explain, and it is hard to quantify how difficult it is to work with a spammy console.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;https://agenttroll.github.io/blog/img/jdb.odp-12.jpg&quot; alt=&quot;Slide 12&quot; /&gt;&lt;/p&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;Thank you!&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;Right here, I should probably have talked a little bit more of my project, my project’s goals document and the development of it, but again, I’m out of time. I was really ready to present the GitHub it to others, but that will have to wait. Besides, who even cares about GitHub when it’s not even that useful to the audience anyways.&lt;/p&gt;
+
+&lt;h1 id=&quot;conclusion&quot;&gt;Conclusion&lt;/h1&gt;
+
+&lt;p&gt;Looking back on it, I would have certainly enjoyed presenting more if I had a more technical audience, and a larger time constraint. The whole presentation took actually about 10 minutes, and if I had more time, I would have gone a lot more in depth. The staff was not an enjoyable audience to speak to for me at least. I’m sure there are certain teachers who were interested in what I was talking about, but even they probably had trouble following what I was talking about. For the teachers themselves, they probably felt like their morning was wasted by what I thought was interesting but was pretty much useless to them. They aren’t interested in it, and they have a job to do. Yes, yes, teachers should care about students. But if I was a teacher, I would not have given a single damn about this computer science voodoo magic stuff, I have a staff meeting for crying out loud! I think debugging is an interesting art and science, but if I had more time, I would &lt;strong&gt;definitely&lt;/strong&gt; go more in depth with reverse engineering. I think that it is such an interesting thing to do, with not only the mystery of solving problems, but going deeper and deeper with our understanding of a code base, especially one that was meant to be challenging to read such as the Minecraft server has a certain thrill to it.&lt;/p&gt;
+
+&lt;p&gt;You know what else has a certain thrill to it though? Being done with reading this blog post. Until next time.&lt;/p&gt;
+
+&lt;h1 id=&quot;words-of-wisdom&quot;&gt;Words of Wisdom&lt;/h1&gt;
+
+&lt;p&gt;I found a piece of gold today in a compilation video:&lt;/p&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;It’s 2017, I mean we should have a lunar base by now… What the hell is going on?&lt;/p&gt;
+  &lt;ul&gt;
+    &lt;li&gt;Elon Musk&lt;/li&gt;
+  &lt;/ul&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;I think I’m going to start pasting this around like the gospel…&lt;/p&gt;</content><author><name></name></author><summary type="html">But Also, Some Background</summary></entry><entry><title type="html">Keeping Inventories Open</title><link href="https://agenttroll.github.io/blog/2018/04/13/keeping-inventories-open.html" rel="alternate" type="text/html" title="Keeping Inventories Open" /><published>2018-04-13T21:38:10-07:00</published><updated>2018-04-13T21:38:10-07:00</updated><id>https://agenttroll.github.io/blog/2018/04/13/keeping-inventories-open</id><content type="html" xml:base="https://agenttroll.github.io/blog/2018/04/13/keeping-inventories-open.html">&lt;p&gt;&lt;em&gt;Note: Code samples in this post have been slightly altered. I have not leaked any information from our plugins in the writing of this post&lt;/em&gt;&lt;/p&gt;
 
 &lt;p&gt;Over the past week or two, we’ve been working hard to get the gambling plugin fixed up for you guys to use. Unfortunately, there were a few interesting bumps in the road.&lt;/p&gt;
 
@@ -925,91 +1054,4 @@ minor issues…&lt;/p&gt;
 &lt;p&gt;After reading through my blog, I found that Octopress &lt;strong&gt;DOES NOT&lt;/strong&gt; rebuild your pages when you do &lt;code class=&quot;highlighter-rouge&quot;&gt;octopress deploy&lt;/code&gt;. What essentially happened was because I was using &lt;code class=&quot;highlighter-rouge&quot;&gt;jekyll serve&lt;/code&gt; to preview the blog before publishing it, all the &lt;code class=&quot;highlighter-rouge&quot;&gt;https://agenttroll.github.io&lt;/code&gt; tags resolved to &lt;code class=&quot;highlighter-rouge&quot;&gt;localhost&lt;/code&gt; instead of the intended page URL. Therefore, if you want to get all the right page variables, use:&lt;/p&gt;
 
 &lt;div class=&quot;language-sh highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;jekyll build &lt;span class=&quot;o&quot;&gt;&amp;amp;&amp;amp;&lt;/span&gt; octopress deploy
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;</content><author><name></name></author><summary type="html">So I restarted my blog for like the 13th time or whatever and ran into a few minor issues…</summary></entry><entry><title type="html">I Finally Figured Out How to Get FFmpeg to Work on Mixed Jessie/sid</title><link href="https://agenttroll.github.io/blog/2017/04/04/i-finally-figured-out-how-to-get-ffmpeg-to-work-on-mixed-jessie-sid.html" rel="alternate" type="text/html" title="I Finally Figured Out How to Get FFmpeg to Work on Mixed Jessie/sid" /><published>2017-04-04T23:42:58-07:00</published><updated>2017-04-04T23:42:58-07:00</updated><id>https://agenttroll.github.io/blog/2017/04/04/i-finally-figured-out-how-to-get-ffmpeg-to-work-on-mixed-jessie-sid</id><content type="html" xml:base="https://agenttroll.github.io/blog/2017/04/04/i-finally-figured-out-how-to-get-ffmpeg-to-work-on-mixed-jessie-sid.html">&lt;p&gt;&lt;strong&gt;MAJOR EDIT: &lt;a href=&quot;https://wiki.debian.org/DontBreakDebian&quot;&gt;DO NOT DO THIS&lt;/a&gt;!!&lt;/strong&gt;&lt;/p&gt;
-
-&lt;p&gt;PLEASE PLEASE avoid using sid/jessie repos at the same time, I SEVERELY broke the apt-get package manager by doing this and ended up not being able to recover. I ended up having to reinstall the entire Debian OS, lmao.&lt;/p&gt;
-
-&lt;p&gt;&lt;del&gt;Recently adding the &lt;a href=&quot;&quot;&gt;Debian sid&lt;/a&gt; repos to my &lt;code class=&quot;highlighter-rouge&quot;&gt;sources.list&lt;/code&gt;, I found that upgrading a certain few packages related to &lt;a href=&quot;https://wiki.debian.org/iPhone&quot;&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;libimobiledevice-dev&lt;/code&gt;&lt;/a&gt; (in order to transfer photos from my iPhone 6S to my computer) caused other libraries to be needed to be upated. Of course, out of all the possible libraries, one of the libraries that was updated broke FFmpeg.&lt;/del&gt;&lt;/p&gt;
-
-&lt;h1 id=&quot;background&quot;&gt;&lt;del&gt;Background&lt;del&gt;&lt;/del&gt;&lt;/del&gt;&lt;/h1&gt;
-
-&lt;p&gt;&lt;del&gt;I was led on this frustrating adventure by my desire to move pictures from my iPhone to my computer. I could have gone the simple way and just used iTunes or something on a Windows computer, but you know what? It just happens that I have a backup folder already with all my photos on my Debian computer.&lt;/del&gt;&lt;/p&gt;
-
-&lt;p&gt;&lt;del&gt;Simply the most magical thing about Debian is how I was able to USB transfer all the earlier photos from my phone to my computer without trouble, but I’d get Unhandled lockdown errors whenever I mount my iPhone this time around.&lt;/del&gt;&lt;/p&gt;
-
-&lt;p&gt;&lt;del&gt;Forgetting to read the portion about using the &lt;a href=&quot;https://wiki.debian.org/iPhone#backporting_libimobiledevice_1.1.1_to_Squeeze&quot;&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;jessie-backports&lt;/code&gt; workaround&lt;/a&gt;, I rashly went to use the &lt;code class=&quot;highlighter-rouge&quot;&gt;sid&lt;/code&gt; repos instead…&lt;/del&gt;&lt;/p&gt;
-
-&lt;h1 id=&quot;the-problem&quot;&gt;&lt;del&gt;The Problem&lt;/del&gt;&lt;/h1&gt;
-
-&lt;p&gt;&lt;del&gt;A few packages later (using &lt;code class=&quot;highlighter-rouge&quot;&gt;apt-get dist-upgrade&lt;/code&gt; I think?), I was rather surprised to find that &lt;a href=&quot;https://obsproject.com/&quot;&gt;OBS&lt;/a&gt; had stopped working. Whenever I’d enter &lt;code class=&quot;highlighter-rouge&quot;&gt;obs&lt;/code&gt; into terminal, it would spit out something like the following:&lt;/del&gt;&lt;/p&gt;
-
-&lt;div class=&quot;language-bash highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;obs: symbol lookup error: /usr/lib/x86_64-linux-gnu/libass.so.5
-undefined symbol: FT_Outline_EmboldenXY
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;&lt;del&gt;No problem. Can’t be part of the package update, right… (it was)? I do a quick google search and discovered the &lt;a href=&quot;http://askubuntu.com/a/659630&quot;&gt;following&lt;/a&gt;:&lt;/del&gt;&lt;/p&gt;
-
-&lt;ol&gt;
-  &lt;li&gt;&lt;del&gt;This was related to FFmpeg, not actually OBS&lt;/del&gt;&lt;/li&gt;
-  &lt;li&gt;&lt;del&gt;This works:&lt;/del&gt;&lt;/li&gt;
-&lt;/ol&gt;
-
-&lt;div class=&quot;language-bash highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;nb&quot;&gt;cd&lt;/span&gt; /usr/lib/x86_64-linux-gnu
-ffmpeg
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;&lt;del&gt;The latter point was in particular, the most baffling thing about the whole issue. I couldn’t comprehend how being in a specific library directory ended up allowing FFmpeg to work. I did not want to have to switch into this directory every time I needed to use FFmpeg, so I decided to attempted to fix the issue by compiling a new version of FFmpeg…&lt;/del&gt;&lt;/p&gt;
-
-&lt;h1 id=&quot;fixing-it&quot;&gt;&lt;del&gt;Fixing it&lt;/del&gt;&lt;/h1&gt;
-
-&lt;p&gt;&lt;del&gt;I decided to recompile FFmpeg to try my luck and see if it is simply a minor library error (?? not even sure what I was thinking at the time).&lt;/del&gt;&lt;/p&gt;
-
-&lt;p&gt;&lt;del&gt;Now I tried a wide variety of different compile options, including &lt;a href=&quot;https://github.com/lutris/ffmpeg-nvenc&quot;&gt;this nifty script&lt;/a&gt; which I used previously to install OBS and FFmpeg.&lt;/del&gt;&lt;/p&gt;
-
-&lt;p&gt;&lt;del&gt;Surprise, surprise. It didn’t work.&lt;/del&gt;&lt;/p&gt;
-
-&lt;p&gt;&lt;del&gt;Knowing that it was a problem with &lt;code class=&quot;highlighter-rouge&quot;&gt;libass&lt;/code&gt;, I was damned to find that even the FFmpeg build in the &lt;code class=&quot;highlighter-rouge&quot;&gt;sid&lt;/code&gt; repos did not even work with the &lt;code class=&quot;highlighter-rouge&quot;&gt;libass&lt;/code&gt; version packaged for that &lt;code class=&quot;highlighter-rouge&quot;&gt;jessie&lt;/code&gt; or &lt;code class=&quot;highlighter-rouge&quot;&gt;testing&lt;/code&gt;.&lt;/del&gt;&lt;/p&gt;
-
-&lt;p&gt;&lt;del&gt;Basically in order to fix the problem, I cannot use dynamic links to the new version of libass, but I needed to retain a static link to the previous one with the FFmpeg binary.&lt;/del&gt;&lt;/p&gt;
-
-&lt;p&gt;&lt;del&gt;I actually had modified the previous script exactly for this purpose, but in being new to this whole static thing, I mixed up &lt;code class=&quot;highlighter-rouge&quot;&gt;--enable-shared&lt;/code&gt; and &lt;code class=&quot;highlighter-rouge&quot;&gt;--enable-static&lt;/code&gt; flags multiple times. It turns out however, that the two don’t really have anything in particular that relates them. Unbeknownst to me, I kept trying different combinations of fruitlessly changing the flags only to get linking errors with &lt;code class=&quot;highlighter-rouge&quot;&gt;x264&lt;/code&gt; and &lt;code class=&quot;highlighter-rouge&quot;&gt;libass&lt;/code&gt;.&lt;/del&gt;&lt;/p&gt;
-
-&lt;p&gt;&lt;del&gt;In short, shared vs. static:&lt;/del&gt;&lt;/p&gt;
-
-&lt;ol&gt;
-  &lt;li&gt;&lt;del&gt;Shared flag - writes &lt;code class=&quot;highlighter-rouge&quot;&gt;.so&lt;/code&gt; files to the library path for other binaries that use dynamic libraries to load the library. Newer versions replace this &lt;code class=&quot;highlighter-rouge&quot;&gt;.so&lt;/code&gt; file with the newer version, thus updating for all binaries using this library.&lt;/del&gt;&lt;/li&gt;
-  &lt;li&gt;&lt;del&gt;Static flag - does not use &lt;code class=&quot;highlighter-rouge&quot;&gt;.so&lt;/code&gt; file, but rather an &lt;code class=&quot;highlighter-rouge&quot;&gt;.a&lt;/code&gt; file that is always the same. Updates do not affect static libraries, as the name “static” implies.&lt;/del&gt;&lt;/li&gt;
-&lt;/ol&gt;
-
-&lt;p&gt;&lt;del&gt;In the end, I went with using &lt;a href=&quot;https://github.com/zimbatm/ffmpeg-static&quot;&gt;this script&lt;/a&gt;, but with a few minor modifications:&lt;/del&gt;&lt;/p&gt;
-
-&lt;div class=&quot;language-patch highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;gh&quot;&gt;diff --git a/build.sh b/build.sh
-index f94fdbe..cfc8a61 100755
-&lt;/span&gt;&lt;span class=&quot;gd&quot;&gt;--- a/build.sh
-&lt;/span&gt;&lt;span class=&quot;gi&quot;&gt;+++ b/build.sh
-&lt;/span&gt;&lt;span class=&quot;gu&quot;&gt;@@ -160,7 +160,7 @@ make install
-&lt;/span&gt; echo &quot;*** Building libvpx ***&quot;
- cd $BUILD_DIR/libvpx*
- [ $rebuild -eq 1 -a -f Makefile ] &amp;amp;&amp;amp; make distclean || true
-&lt;span class=&quot;gd&quot;&gt;-[ ! -f config.status ] &amp;amp;&amp;amp; PATH=&quot;$BIN_DIR:$PATH&quot; ./configure --prefix=$TARGET_DIR --disable-examples --disable-unit-tests --enable-pic
-&lt;/span&gt;&lt;span class=&quot;gi&quot;&gt;+[ ! -f config.status ] &amp;amp;&amp;amp; PATH=&quot;$BIN_DIR:$PATH&quot; ./configure --prefix=$TARGET_DIR --disable-examples --disable-unit-tests --enable-shared --enable-pic
-&lt;/span&gt; PATH=&quot;$BIN_DIR:$PATH&quot; make -j $jval
- make install
- 
-&lt;span class=&quot;gu&quot;&gt;@@ -196,6 +196,7 @@ PKG_CONFIG_PATH=&quot;$TARGET_DIR/lib/pkgconfig&quot; ./configure \
-&lt;/span&gt;   --enable-libvpx \
-   --enable-libx264 \
-   --enable-libx265 \
-&lt;span class=&quot;gi&quot;&gt;+  --enable-nvenc \
-&lt;/span&gt;   --enable-nonfree
- PATH=&quot;$BIN_DIR:$PATH&quot; make -j$NPROC
- make install
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;&lt;del&gt;I made a minor fix to VPX not being able to detected, although I am not completely sure how that is supposed to work.&lt;/del&gt;&lt;/p&gt;
-
-&lt;p&gt;&lt;del&gt;(Quick note: NVENC capability dynamically loads files from the library path from the nVidia SDK, no compilation needed. I did not add a script to download the files because a) the toolkit requires signing in and b) I already have the files)&lt;/del&gt;&lt;/p&gt;
-
-&lt;h1 id=&quot;conclusion&quot;&gt;&lt;del&gt;Conclusion&lt;/del&gt;&lt;/h1&gt;
-
-&lt;p&gt;&lt;del&gt;I was eventually able to install OBS using the &lt;code class=&quot;highlighter-rouge&quot;&gt;ffmpeg-static&lt;/code&gt; build script to build FFmpeg. Everything worked out in the end (except for one minor caveat that &lt;code class=&quot;highlighter-rouge&quot;&gt;ffplay&lt;/code&gt; is never compiled, I will need to figure that out). If OBS is missing an FFmpeg compile dependency, then use &lt;code class=&quot;highlighter-rouge&quot;&gt;--enable-shared&lt;/code&gt; to allow OBS to use them as well. Otherwise, errors such as missing &lt;code class=&quot;highlighter-rouge&quot;&gt;libswrescale&lt;/code&gt; can be fixed using the &lt;code class=&quot;highlighter-rouge&quot;&gt;sid&lt;/code&gt; packages.&lt;/del&gt;&lt;/p&gt;</content><author><name></name></author><summary type="html">MAJOR EDIT: DO NOT DO THIS!!</summary></entry></feed>
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;</content><author><name></name></author><summary type="html">So I restarted my blog for like the 13th time or whatever and ran into a few minor issues…</summary></entry></feed>
