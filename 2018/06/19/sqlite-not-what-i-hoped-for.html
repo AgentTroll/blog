@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="en">
+
+  <head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <title>SQLite: Not What I Hoped For</title>
+  <meta name="description" content="An issue with one of the plugins on MineSaga has recently brought to my attention the rather poor decision of using SQLite to store player data. Now we’re no...">
+
+  <link rel="stylesheet" href="/blog/assets/main.css">
+  <link rel="canonical" href="https://agenttroll.github.io/blog/2018/06/19/sqlite-not-what-i-hoped-for.html">
+  <link rel="alternate" type="application/rss+xml" title="Inside a Troll" href="/blog/feed.xml">
+  
+  
+</head>
+
+
+  <body>
+
+    <header class="site-header" role="banner">
+
+  <div class="wrapper">
+    
+    
+    <a class="site-title" href="/blog/">Inside a Troll</a>
+  
+    
+      <nav class="site-nav">
+        <input type="checkbox" id="nav-trigger" class="nav-trigger" />
+        <label for="nav-trigger">
+          <span class="menu-icon">
+            <svg viewBox="0 0 18 15" width="18px" height="15px">
+              <path fill="#424242" d="M18,1.484c0,0.82-0.665,1.484-1.484,1.484H1.484C0.665,2.969,0,2.304,0,1.484l0,0C0,0.665,0.665,0,1.484,0 h15.031C17.335,0,18,0.665,18,1.484L18,1.484z"/>
+              <path fill="#424242" d="M18,7.516C18,8.335,17.335,9,16.516,9H1.484C0.665,9,0,8.335,0,7.516l0,0c0-0.82,0.665-1.484,1.484-1.484 h15.031C17.335,6.031,18,6.696,18,7.516L18,7.516z"/>
+              <path fill="#424242" d="M18,13.516C18,14.335,17.335,15,16.516,15H1.484C0.665,15,0,14.335,0,13.516l0,0 c0-0.82,0.665-1.484,1.484-1.484h15.031C17.335,12.031,18,12.696,18,13.516L18,13.516z"/>
+            </svg>
+          </span>
+        </label>
+
+        <div class="trigger">
+          
+            
+            
+            <a class="page-link" href="/blog/about/">About</a>
+            
+          
+            
+            
+          
+            
+            
+          
+            
+            
+          
+        </div>
+      </nav>
+    
+  </div>
+</header>
+
+
+    <main class="page-content" aria-label="Content">
+      <div class="wrapper">
+        <article class="post" itemscope itemtype="http://schema.org/BlogPosting">
+
+  <header class="post-header">
+    <h1 class="post-title" itemprop="name headline">SQLite: Not What I Hoped For</h1>
+    <p class="post-meta">
+      <time datetime="2018-06-19T19:14:10+00:00" itemprop="datePublished">
+        
+        Jun 19, 2018
+      </time>
+      </p>
+  </header>
+
+  <div class="post-content" itemprop="articleBody">
+    <p>An issue with one of the plugins on MineSaga has recently brought to my attention the rather poor decision of using SQLite to store player data. Now we’re not even doing anything complicated with SQLite, it’s literally just used for persistence to track player data that gets updated occasionally. Even factoring in network latency, I don’t believe that SQLite will outperform MySQL for our particular use case.</p>
+
+<p>In case you came here for the conclusion, and not the fluff, here’s what I learned:</p>
+
+<ul>
+  <li>SQLite scales terribly</li>
+  <li>MySQL outperforms SQLite in basically all cases</li>
+  <li>MySQL scales well with async requests</li>
+  <li>Index wherever it makes sense</li>
+  <li>Use <code class="highlighter-rouge">INSERT INTO … ON DUPLICATE KEY UPDATE</code> over <code class="highlighter-rouge">REPLACE</code></li>
+</ul>
+
+<h1 id="background">Background</h1>
+
+<p>I was actually planning on writing this post a while back, when Jurassic was just released. As it turns out, procrastination is a force to be reckoned with!</p>
+
+<p>I believe we actually had to reboot Jurassic several times in order to get rid of the lag problems. About 9 hours in, the console was flooded with exceptions thrown from 9k async threads, all with the same error: <code class="highlighter-rouge">SQLITE_BUSY</code> from my points plugin.</p>
+
+<p>I actually had a hard time believing that this was possible at first. I was in denial because how in the world could a database that is touted for its <a href="https://www.sqlite.org/hirely.html">reliability</a> fail in such a stupid way? Why did such an obscure problem come up after months of using points in production? How in the world could there have been 9k failures just waiting to happen, when there weren’t even 9k unique players even on the server yet? None of the pieces fit together and I was stumped for a few days. Since the points plugin was actually designed originally to interact with a MySQL database, I imagined there might have been some kind of discrepancy that I did not account for when adding the SQLite feature in order to meet a critical release requirement, considering my relative inexperience with databases.</p>
+
+<p>At the same time, there was a Minions issue that allowed players to use dropper blocks to duplicate minion eggs due to oversight when writing a dispense handler that was meant to be used for dispenser blocks only. I was dealing with 2 critical bugs at once, but I was told to put minions in the burner; points was kicking everyone off the server due to the laggy saves and minions wasn’t. Since I knew that the MySQL-enabled points worked fine, I decided to leave it with enabling MySQL and praying that the same issue doesn’t come up.</p>
+
+<h1 id="core-work">Core Work</h1>
+
+<p>On top of the 2 critical bugs affecting the server, I was also working on minor bug fixes for bosses (also put on the burner) as well as polishing up the safety framework (which I will talk about at a later time!) in the core plugin. I already had JUnit tests setup in the core plugin to test the sanity of the database APIs, so where better to start than there to figure out how to reproduce the <code class="highlighter-rouge">SQLITE_BUSY</code> error.</p>
+
+<p>After 24 hours of time to think after the initial crash, I was beginning to formulate a hypothesis on how the error could have occurred. I figured that with their experience in performance tuning, out good friends at Craftimize might have some ideas that I could work off of. I was fortunate to have them to bounce ideas off, and they suggested that there might have been a single event that spilled over and caused a chain reaction that led to the server eventually lagging out.</p>
+
+<p>Piqued, I turned this idea around my head for a few hours. I also browsed through the Xerial SQLite driver source, as well as through the SQLite official docs to figure out how this exception would be thrown anyways. Eventually, I was able to boil down the issue to two possible causes, either because the file handle on the SQLite database has not been released yet due to using HikariCP, or because some arbitrary time limit has been exceeded (perhaps being caused by the first cause).</p>
+
+<p>Since the Core unit test setup essentially used the same HikariCP configuration I used in points, I thought it might be a good idea actually to figure out the performance difference between MySQL and SQLite, seeing as we were using MySQL instead of SQLite now to store points data. The table schema for testing points is extremely simple, and it would make a perfect model to get a few ballpark numbers, as I was especially intrigued by the timeout.</p>
+
+<h1 id="the-results">The Results</h1>
+
+<p>Since the code is proprietary, you’ll just have to trust me blindly here.</p>
+
+<p>I decided to start out with around 9k rounds inserting just around 10 entries. This mimics what a server might see with the few players that were on compared to the amount of operations that were going on, also taking into consideration that players can join and leave multiple times and cause multiple database queries with for only a single player. I was hesitant to convert any of it into a transaction because that is simply not how most queries are going to work, they are mostly going to be quite sparse and not all clumped together until an autosave.</p>
+
+<p>I was mildly surprised to find that SQLite was slower than a local MySQL server. However, that was not entirely unexpected, since SQLite is writing directly to a file and MySQL probably just queues disk writes.</p>
+
+<p>What I was really surprised by, however, was how <em>fast</em> MySQL was. Using MySQL was several orders of a magnitude faster than SQLite was, by a factor of about 7x.</p>
+
+<p>All that said and done, I still was not able to reproduce the bug. Maybe I’ll just have to try harder? Oh well.</p>
+
+<p>I decided to actually compare both sync and async versions of writing to MySQL and SQLite and see how it might impact write throughput in an even more realistic scenario.</p>
+
+<p>MySQL async, then sync results got printed out, starting on SQLite async. I was prepared to wait for several minutes so that all 9k entries get processed by the sloth of a DB engine that is SQLite.</p>
+
+<p>What I was not prepared for was when it threw 9k <code class="highlighter-rouge">SQLITE_BUSY</code> exceptions…</p>
+
+<h1 id="found-the-problem">Found the Problem</h1>
+
+<p>Let’s put the two and two together now… SQLite worked fine synchronously, even though it took minutes to complete all of its writes. However, adding the async writes to the SQLite database causes the <code class="highlighter-rouge">SQLITE_BUSY</code> error. That can only mean one thing: my HikariCP pool to the SQLite DataSource is the cause of the error. Luckily, I knew the fix for this, having anticipated that this was the probable cause already. A simple call to <code class="highlighter-rouge">HikariConfig#setMaximumPoolSize(int)</code> will limit the pool and prevent additional connections from being created. When the pool was being used, the synchronization provided by the DataSource connection would have been useless because it wouldn’t be able to serialize access to the database from multiple connections.</p>
+
+<p>As amazingly stupid as the issue might seem, it is only a testament to my poor knowledge of databases. When a connection pool was used, it’s actually quite amazing how the SQLite database was able to protect itself from a potentially dangerous write from two different connections by throwing an error instead of potentially corrupting the database. By limiting the connections to the database to 1, I was able to rerun the test, which passed with flying colors.</p>
+
+<h1 id="taking-it-a-step-further">Taking It a Step Further</h1>
+
+<p>With all the tests already setup, and my excitement at its peak having solved the crashing issue, I turned my sights to how indexing and database queries might affect the performance of a realistic server scenario. I ended up doing 8 tests for indexed and non-indexed keys, for <code class="highlighter-rouge">REPLACE</code> and <code class="highlighter-rouge">INSERT INTO … ON DUPLICATE KEY UPDATE</code> queries, and for 300 and 30 queries, just for the hell of it.</p>
+
+<p>Here are the overall results.</p>
+
+<h4 id="indexing">Indexing</h4>
+
+<p>Indexing had honestly little effect on the results. I did not find any substantial difference between insertions of any volume or query that would have made indexing worthwhile. That said, I would still <strong>always</strong> add an index to my table because if it doesn’t hurt, might as well have it for the <code class="highlighter-rouge">SELECT</code> lookups.</p>
+
+<h4 id="queries">Queries</h4>
+
+<p>I only tested <code class="highlighter-rouge">INSERT INTO … ON DUPLICATE KEY UPDATE</code> on MySQL, as SQLite did not have an equivalent query. What I found was that at more realistic, i.e. lower volume queries, there could be a 2x-8x magnitude increase in insertions if the <code class="highlighter-rouge">INSERT INTO… ON DUPLICATE KEY UPDATE</code> was used over <code class="highlighter-rouge">REPLACE</code>. <a href="http://code.openark.org/blog/mysql/replace-into-think-twice">This article</a> seems to backup this claim as well. Therefore, <strong>always</strong> use <code class="highlighter-rouge">INSERT INTO … ON DUPLICATE KEY UPDATE</code> to perform upserts in MySQL.</p>
+
+<h4 id="async-vs-sync">Async vs Sync</h4>
+
+<p>Between all insertions done asynchronously in a 4 thread pool and synchronously, I found that although MySQL queries were consistently faster async than sync, except when at low volume. However, <strong>always</strong> use async firstly because it isn’t a good idea to run queries synchronously on a Bukkit server, and secondly because between 30 and 300 entries, async experiences only a 2x slowdown while sync experiences an 8x slowdown.</p>
+
+<p>Async and sync makes very little difference on SQLite since the insertions are limited by the fact that all threads share the same connection anyways, but again, <strong>always</strong> use async, else you will freeze the Bukkit main thread.</p>
+
+<h4 id="mysql-vs-sqlite">MySQL vs SQLite</h4>
+
+<p><strong>Always</strong> use MySQL when possible. Even at low volume of insertions, <code class="highlighter-rouge">INSERT INTO … ON DUPLICATE KEY UPDATE</code> still has a lower performance footprint than an SQLite <code class="highlighter-rouge">UPDATE</code>. At high volume, MySQL scales significantly better than SQLite, being up 5x faster than SQLite for 300 insertions.</p>
+
+<h1 id="closing-words">Closing Words</h1>
+
+<p>I definitely learned a lot about databases by going through this entire ordeal. While it was very frustrating to find out that my plugin was at fault for crashing, yet again (see my previous blog post for more about crashing), I would not have been motivated enough to go through and test for myself each of the little details involving databases. After all, it is the little details that separates the good from the great.</p>
+
+<p>There will be lots of exciting things to come, both for MineSaga and for my blog in the coming few weeks as summer commences, so I’m definitely very hyped about that! Stay tuned.</p>
+
+  </div>
+
+  
+</article>
+
+      </div>
+    </main>
+
+    <footer class="site-footer">
+
+  <div class="wrapper">
+
+    <h2 class="footer-heading">Inside a Troll</h2>
+
+    <div class="footer-col-wrapper">
+      <div class="footer-col footer-col-1">
+        <ul class="contact-list">
+          <li>
+            
+              Inside a Troll
+            
+            </li>
+            
+            <li><a href="mailto:woodyc40@gmail.com">woodyc40@gmail.com</a></li>
+            
+        </ul>
+      </div>
+
+      <div class="footer-col footer-col-2">
+        <ul class="social-media-list">
+          
+          <li>
+            <a href="https://github.com/AgentTroll"><span class="icon icon--github"><svg viewBox="0 0 16 16" width="16px" height="16px"><path fill="#828282" d="M7.999,0.431c-4.285,0-7.76,3.474-7.76,7.761 c0,3.428,2.223,6.337,5.307,7.363c0.388,0.071,0.53-0.168,0.53-0.374c0-0.184-0.007-0.672-0.01-1.32 c-2.159,0.469-2.614-1.04-2.614-1.04c-0.353-0.896-0.862-1.135-0.862-1.135c-0.705-0.481,0.053-0.472,0.053-0.472 c0.779,0.055,1.189,0.8,1.189,0.8c0.692,1.186,1.816,0.843,2.258,0.645c0.071-0.502,0.271-0.843,0.493-1.037 C4.86,11.425,3.049,10.76,3.049,7.786c0-0.847,0.302-1.54,0.799-2.082C3.768,5.507,3.501,4.718,3.924,3.65 c0,0,0.652-0.209,2.134,0.796C6.677,4.273,7.34,4.187,8,4.184c0.659,0.003,1.323,0.089,1.943,0.261 c1.482-1.004,2.132-0.796,2.132-0.796c0.423,1.068,0.157,1.857,0.077,2.054c0.497,0.542,0.798,1.235,0.798,2.082 c0,2.981-1.814,3.637-3.543,3.829c0.279,0.24,0.527,0.713,0.527,1.437c0,1.037-0.01,1.874-0.01,2.129 c0,0.208,0.14,0.449,0.534,0.373c3.081-1.028,5.302-3.935,5.302-7.362C15.76,3.906,12.285,0.431,7.999,0.431z"/></svg>
+</span><span class="username">AgentTroll</span></a>
+
+          </li>
+          
+
+          
+          <li>
+            <a href="https://twitter.com/AgentTrolldude"><span class="icon icon--twitter"><svg viewBox="0 0 16 16" width="16px" height="16px"><path fill="#828282" d="M15.969,3.058c-0.586,0.26-1.217,0.436-1.878,0.515c0.675-0.405,1.194-1.045,1.438-1.809c-0.632,0.375-1.332,0.647-2.076,0.793c-0.596-0.636-1.446-1.033-2.387-1.033c-1.806,0-3.27,1.464-3.27,3.27 c0,0.256,0.029,0.506,0.085,0.745C5.163,5.404,2.753,4.102,1.14,2.124C0.859,2.607,0.698,3.168,0.698,3.767 c0,1.134,0.577,2.135,1.455,2.722C1.616,6.472,1.112,6.325,0.671,6.08c0,0.014,0,0.027,0,0.041c0,1.584,1.127,2.906,2.623,3.206 C3.02,9.402,2.731,9.442,2.433,9.442c-0.211,0-0.416-0.021-0.615-0.059c0.416,1.299,1.624,2.245,3.055,2.271 c-1.119,0.877-2.529,1.4-4.061,1.4c-0.264,0-0.524-0.015-0.78-0.046c1.447,0.928,3.166,1.469,5.013,1.469 c6.015,0,9.304-4.983,9.304-9.304c0-0.142-0.003-0.283-0.009-0.423C14.976,4.29,15.531,3.714,15.969,3.058z"/></svg>
+</span><span class="username">AgentTrolldude</span></a>
+
+          </li>
+          
+        </ul>
+      </div>
+
+      <div class="footer-col footer-col-3">
+        <p>Thoughts of a Java developer</p>
+      </div>
+    </div>
+
+  </div>
+
+</footer>
+
+
+  </body>
+
+</html>
