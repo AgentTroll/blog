@@ -1,4 +1,201 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.6.2">Jekyll</generator><link href="https://agenttroll.github.io/blog/feed.xml" rel="self" type="application/atom+xml" /><link href="https://agenttroll.github.io/blog/" rel="alternate" type="text/html" /><updated>2018-06-19T19:20:39+00:00</updated><id>https://agenttroll.github.io/blog/</id><title type="html">Inside a Troll</title><subtitle>Thoughts of a Java developer</subtitle><entry><title type="html">SQLite: Not What I Hoped For</title><link href="https://agenttroll.github.io/blog/2018/06/19/sqlite-not-what-i-hoped-for.html" rel="alternate" type="text/html" title="SQLite: Not What I Hoped For" /><published>2018-06-19T19:14:10+00:00</published><updated>2018-06-19T19:14:10+00:00</updated><id>https://agenttroll.github.io/blog/2018/06/19/sqlite-not-what-i-hoped-for</id><content type="html" xml:base="https://agenttroll.github.io/blog/2018/06/19/sqlite-not-what-i-hoped-for.html">&lt;p&gt;An issue with one of the plugins on MineSaga has recently brought to my attention the rather poor decision of using SQLite to store player data. Now we’re not even doing anything complicated with SQLite, it’s literally just used for persistence to track player data that gets updated occasionally. Even factoring in network latency, I don’t believe that SQLite will outperform MySQL for our particular use case.&lt;/p&gt;
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.6.2">Jekyll</generator><link href="https://agenttroll.github.io/blog/feed.xml" rel="self" type="application/atom+xml" /><link href="https://agenttroll.github.io/blog/" rel="alternate" type="text/html" /><updated>2019-03-20T23:52:44-07:00</updated><id>https://agenttroll.github.io/blog/</id><title type="html">Inside a Troll</title><subtitle>Thoughts of a Java developer</subtitle><entry><title type="html">Lessons Learned Debugging: Part 1</title><link href="https://agenttroll.github.io/blog/2019/03/20/lessons-learned-debugging-part-1.html" rel="alternate" type="text/html" title="Lessons Learned Debugging: Part 1" /><published>2019-03-20T22:27:00-07:00</published><updated>2019-03-20T22:27:00-07:00</updated><id>https://agenttroll.github.io/blog/2019/03/20/lessons-learned-debugging-part-1</id><content type="html" xml:base="https://agenttroll.github.io/blog/2019/03/20/lessons-learned-debugging-part-1.html"></content><author><name></name></author><summary type="html"></summary></entry><entry><title type="html">My Biggest Mistake</title><link href="https://agenttroll.github.io/blog/2019/03/20/my-biggest-mistake.html" rel="alternate" type="text/html" title="My Biggest Mistake" /><published>2019-03-20T22:24:50-07:00</published><updated>2019-03-20T22:24:50-07:00</updated><id>https://agenttroll.github.io/blog/2019/03/20/my-biggest-mistake</id><content type="html" xml:base="https://agenttroll.github.io/blog/2019/03/20/my-biggest-mistake.html">&lt;p&gt;Quick note, this is NOT clickbait.&lt;/p&gt;
+
+&lt;p&gt;I’ve been around the Bukkit server-modding community for a
+while now. Not as long as some people, of course, but still
+a pretty long time nevertheless.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;https://agenttroll.github.io/blog/img/feb-28-2013.png&quot; alt=&quot;Bukkit Forums Member Since Feb 28, 2013&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;In the 6 years I’ve spent posting thousands of times on
+both the Bukkit Forums and the Spigot forums, I look back
+and regret one singular thing about myself: being a
+self-entitled brat.&lt;/p&gt;
+
+&lt;h1 id=&quot;aggressive-at-best-malicious-at-worst&quot;&gt;Aggressive At Best, Malicious At Worst&lt;/h1&gt;
+
+&lt;p&gt;I would say that a large majority of the posts I’ve made
+involved commenting on someone else’s code. In many, or
+even most of the threads I’ve posted on, I’ve found that
+my responses tend to assume the worst of intentions.
+Here’s just &lt;a href=&quot;https://bukkit.org/threads/exonrunnable-a-new-runnable.390040/#post-3251252&quot;&gt;one example&lt;/a&gt; from late 2015:&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;https://agenttroll.github.io/blog/img/mistake-exhibit-1.png&quot; alt=&quot;Mistake Exhibit 1&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;While I admit that even now I thought that the post to
+which I was responding sounded pretentious, that does not
+justify an equally aggressive response in return. For a
+developer who is not experienced in writing multithreaded
+code (the type of developer that tends to be commonly
+found more often than not), it is understandable that they
+do not understand the performance implications of Timer
+as someone like myself (which isn’t to say that I am an
+expert myself, mind you). In no way was it necessary for me
+to interject with “Oh.”  and “Oh wow!” and even saying
+“BIG performance penalty.” Not only did this kind of
+response bring me down to the level of the aforementioned
+user, it detracted away from the informative aspect of my
+post. It made me sound childish and juvenile, when the
+value of the advice I gave should have been given greater
+emphasis instead of the presentation of my opinion.&lt;/p&gt;
+
+&lt;p&gt;Here’s a continuation of the same post:&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;https://agenttroll.github.io/blog/img/mistake-exhibit-2.png&quot; alt=&quot;Mistake Exhibit 2&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;Again, for a novice user, it makes sense that they are
+making paradigm mistakes, that is simply the nature of
+learning programming. The fact that I latched on to their
+“stupidity” by saying “Just… What is this? You could quite literally […]”
+rather than simply correcting their error indicates that
+my criticism was not constructive by intention. It shows
+that I was more concerned with commenting on the developer
+rather than the code. It wasn’t necessary for me to
+add interjections such as “What is this?” and then
+leading myself into an example that would probably take up
+5 lines rather than the 2 lines that I claimed, assuming
+that the same brace style was used as the author (K&amp;amp;R? No
+clue honestly what you’re supposed to call it lol).&lt;/p&gt;
+
+&lt;p&gt;While the rest of the post is pretty flawed, here’s a
+golden nugget:&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;https://agenttroll.github.io/blog/img/mistake-exhibit-3.png&quot; alt=&quot;Mistake Exhibit 3&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;Goodness, the “WRONG WRONG WRONG WRONG WRONG WRONG WRONG”
+was not necessary at all. No information of use was
+communicated and it shows again that I was interested less
+in the information in the first place, and that I was more
+interested in deriding the “stupidity” of the author, when
+again, these are rookie mistakes. It is completely
+understandable to not be &lt;code class=&quot;highlighter-rouge&quot;&gt;final&lt;/code&gt;izing your fields and
+classes as a novice programmer. The fact that the author
+failed to do this indicated a lack of experience rather than
+ignorance or stupidity as I have portrayed him/her to be.&lt;/p&gt;
+
+&lt;p&gt;Lots of unnecessary information was written that would have
+gone over the author’s head at the end, not sure what
+exactly my intentions were there. I could honestly have
+just said “here’s a benchmark” and then posted results
+(which, as a matter of fact, I had failed to do) and then 
+explained the results rather than making further pretentious
+and unhelpful comments.&lt;/p&gt;
+
+&lt;h1 id=&quot;and-another&quot;&gt;And Another&lt;/h1&gt;
+
+&lt;p&gt;The examples of this same pretentious, bratty attitude
+continues even farther into the past.&lt;/p&gt;
+
+&lt;p&gt;&lt;a href=&quot;https://bukkit.org/threads/moving-packetplayoutparticles-with-entities.373750/#post-3172379&quot;&gt;Here’s another&lt;/a&gt; post.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;https://agenttroll.github.io/blog/img/mistake-exhibit-4.png&quot; alt=&quot;Mistake Exhibit 4&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;Again, I’m at it again with the long string of repeated
+words with the “NONONONONONONONONONONONONONONONOOONONONONONONONONONONONONO.”&lt;/p&gt;
+
+&lt;p&gt;Once again, adding interjections like this is for yet
+another novice mistake is completely unnecessary. Needing
+to even consider using this to emphasize a point probably
+indicates a lack of imagination on my part. An argument
+should ideally stand on its own without needing to have
+unnecessary “fluff” such as the long string of “NONONO”
+in order to draw attention to it. The fact that I did not
+consider this in the writing of my post again goes to
+show my lack of consideration of the author’s point of
+view.&lt;/p&gt;
+
+&lt;h1 id=&quot;the-finale&quot;&gt;The Finale&lt;/h1&gt;
+
+&lt;p&gt;The many thousands of posts I’ve made number too many to
+all have their place in this blog post, so I’ve selected
+one of my most popular posts, the &lt;a href=&quot;https://bukkit.org/threads/make-a-minigame-plugin.168164/&quot;&gt;minigame tutorial&lt;/a&gt;.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;https://agenttroll.github.io/blog/img/mistake-exhibit-5.png&quot; alt=&quot;Mistake Exhibit 5&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;This is honestly a completely unnecessary comment. The
+fact is that this is not even a prime candidate for async
+code, so I see no reason for someone to even be considering
+using this in an async context. The targeted audience,
+intermediate level developers, probably aren’t even well
+versed in the use of the scheduler anyways (although if
+you are an intermediate developer and are skilled in the
+use of the Bukkit scheduler, good on you). I think this was
+a feeable attempt to assert my own mastery over threading
+or something, but doing so made me look insecure and again
+detracts from the main point of the post, which should
+have been to educate intermediate-level developers on how
+to take advantage of OOP in order to create a simple
+minigame. It is ironic that I had to include that comment
+in there when the post itself contained a number of bugs
+pointed out by several users, such as &lt;a href=&quot;https://bukkit.org/threads/make-a-minigame-plugin.168164/#post-1814525&quot;&gt;here&lt;/a&gt;,
+&lt;a href=&quot;https://bukkit.org/threads/make-a-minigame-plugin.168164/page-2#post-1822616&quot;&gt;here&lt;/a&gt;,
+and &lt;a href=&quot;https://bukkit.org/threads/make-a-minigame-plugin.168164/page-2#post-1822730&quot;&gt;here&lt;/a&gt;.
+When I myself am having trouble even writing code that
+compiles, others have written their thanks and support,
+even after pointing out egregious errors that I have made.
+When I posted comments that attack users and had aggressive
+undertones, others who might not even be as skilled
+developers as I was wrote insightful and friendly comments
+instead.&lt;/p&gt;
+
+&lt;p&gt;I even had the gall to include this comment prior to
+pasting the post source:&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;https://agenttroll.github.io/blog/img/mistake-exhibit-6.png&quot; alt=&quot;Mistake Exhibit 6&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;When the code fails to compile, and the post itself doesn’t
+even look that good, I told others to source my post for
+its &lt;em&gt;formatting&lt;/em&gt;. I thought so highly of myself, so highly
+of the quality of work that I posted, that I even wanted
+people to credit me for such a trivial aspect of it, an
+aspect that looked terrible anyways.&lt;/p&gt;
+
+&lt;h1 id=&quot;takeaways&quot;&gt;Takeaways&lt;/h1&gt;
+
+&lt;p&gt;The many examples that I’ve posted paint me as a person
+lacking self-awareness, brash, aggressive, and an
+all-around first-class prick. While I’m not a completely
+changed person yet, recognizing my toxicity has been
+something of a revelation for me, and I continue to work
+on actively trying to suppress my propensity for
+passive-aggressiveness. These examples fail to do justice
+for the amount of appalling comments that I’ve made, most
+notably against the Sponge project, comments that I’ve not
+yet had the opportunity to apologize for.&lt;/p&gt;
+
+&lt;h1 id=&quot;closing-words&quot;&gt;Closing Words&lt;/h1&gt;
+
+&lt;p&gt;One of the things that I’ve noticed was the fact that many
+of my most malicious comments were well-received by people,
+garnering several likes, such as in the case of the first
+example. While again, the information was laid out
+somewhere within the post itself, the lack of comment on
+the fact that I was basically bullying the author of the
+resource is something that I now find highly discomforting.&lt;/p&gt;
+
+&lt;p&gt;The people who have been influenced by my comments have
+already been affected, and there’s really nothing I can do
+about it. I believe that by removing or editing out the
+comments I’ve made, I will have destroyed and hidden 
+something that actually happened, and thus those posts will
+remain untouched. And while I cannot change what has
+already been said, I can help prevent people from making
+the same mistake as I did, the mistake of being a complete
+self-entitled brat. Again, this is an issue that I continue
+to deal with writing comments on the Spigot forums, and
+even carefully thinking about my words will not prevent
+everything from slipping through. But by sharing my
+experience, I hope I can continue to improve.&lt;/p&gt;</content><author><name></name></author><summary type="html">Quick note, this is NOT clickbait.</summary></entry><entry><title type="html">Intro to Control Theory</title><link href="https://agenttroll.github.io/blog/2019/01/16/intro-to-control-theory.html" rel="alternate" type="text/html" title="Intro to Control Theory" /><published>2019-01-16T21:16:20-08:00</published><updated>2019-01-16T21:16:20-08:00</updated><id>https://agenttroll.github.io/blog/2019/01/16/intro-to-control-theory</id><content type="html" xml:base="https://agenttroll.github.io/blog/2019/01/16/intro-to-control-theory.html">&lt;p&gt;While I don’t profess to be an absolute expert at control theory, a lot of the information about the matter
+that I’ve found online appears to be either inaccessible to the average Joe or unhelpful. I’ve decided to
+do a write up about what control theory is from the perspective of an implementor, rather than a theorist.&lt;/p&gt;
+
+&lt;p&gt;That being said, control theory is still theory. That is, to understand the concept itself, you must
+understand the theory. I do plan on going over the practical use of control theory in code later on in this
+post, but I will first begin with theory.&lt;/p&gt;
+
+&lt;p&gt;Feel free to drop me a message on Telegram if I’ve made any errors in my explanation, because I again do not
+profess to be an expert at all in the subject.&lt;/p&gt;
+
+&lt;h1 id=&quot;the-premise-of-control-theory&quot;&gt;The Premise of Control Theory&lt;/h1&gt;</content><author><name></name></author><summary type="html">While I don’t profess to be an absolute expert at control theory, a lot of the information about the matter that I’ve found online appears to be either inaccessible to the average Joe or unhelpful. I’ve decided to do a write up about what control theory is from the perspective of an implementor, rather than a theorist.</summary></entry><entry><title type="html">SQLite: Not What I Hoped For</title><link href="https://agenttroll.github.io/blog/2018/06/19/sqlite-not-what-i-hoped-for.html" rel="alternate" type="text/html" title="SQLite: Not What I Hoped For" /><published>2018-06-19T12:14:10-07:00</published><updated>2018-06-19T12:14:10-07:00</updated><id>https://agenttroll.github.io/blog/2018/06/19/sqlite-not-what-i-hoped-for</id><content type="html" xml:base="https://agenttroll.github.io/blog/2018/06/19/sqlite-not-what-i-hoped-for.html">&lt;p&gt;An issue with one of the plugins on MineSaga has recently brought to my attention the rather poor decision of using SQLite to store player data. Now we’re not even doing anything complicated with SQLite, it’s literally just used for persistence to track player data that gets updated occasionally. Even factoring in network latency, I don’t believe that SQLite will outperform MySQL for our particular use case.&lt;/p&gt;
 
 &lt;p&gt;In case you came here for the conclusion, and not the fluff, here’s what I learned:&lt;/p&gt;
 
@@ -82,7 +279,7 @@
 
 &lt;p&gt;I definitely learned a lot about databases by going through this entire ordeal. While it was very frustrating to find out that my plugin was at fault for crashing, yet again (see my previous blog post for more about crashing), I would not have been motivated enough to go through and test for myself each of the little details involving databases. After all, it is the little details that separates the good from the great.&lt;/p&gt;
 
-&lt;p&gt;There will be lots of exciting things to come, both for MineSaga and for my blog in the coming few weeks as summer commences, so I’m definitely very hyped about that! Stay tuned.&lt;/p&gt;</content><author><name></name></author><summary type="html">An issue with one of the plugins on MineSaga has recently brought to my attention the rather poor decision of using SQLite to store player data. Now we’re not even doing anything complicated with SQLite, it’s literally just used for persistence to track player data that gets updated occasionally. Even factoring in network latency, I don’t believe that SQLite will outperform MySQL for our particular use case.</summary></entry><entry><title type="html">JDB, But Not That One</title><link href="https://agenttroll.github.io/blog/2018/05/11/jdb-but-not-that-one.html" rel="alternate" type="text/html" title="JDB, But Not That One" /><published>2018-05-12T06:44:35+00:00</published><updated>2018-05-12T06:44:35+00:00</updated><id>https://agenttroll.github.io/blog/2018/05/11/jdb-but-not-that-one</id><content type="html" xml:base="https://agenttroll.github.io/blog/2018/05/11/jdb-but-not-that-one.html">&lt;h1 id=&quot;but-also-some-background&quot;&gt;But Also, Some Background&lt;/h1&gt;
+&lt;p&gt;There will be lots of exciting things to come, both for MineSaga and for my blog in the coming few weeks as summer commences, so I’m definitely very hyped about that! Stay tuned.&lt;/p&gt;</content><author><name></name></author><summary type="html">An issue with one of the plugins on MineSaga has recently brought to my attention the rather poor decision of using SQLite to store player data. Now we’re not even doing anything complicated with SQLite, it’s literally just used for persistence to track player data that gets updated occasionally. Even factoring in network latency, I don’t believe that SQLite will outperform MySQL for our particular use case.</summary></entry><entry><title type="html">JDB, But Not That One</title><link href="https://agenttroll.github.io/blog/2018/05/11/jdb-but-not-that-one.html" rel="alternate" type="text/html" title="JDB, But Not That One" /><published>2018-05-11T23:44:35-07:00</published><updated>2018-05-11T23:44:35-07:00</updated><id>https://agenttroll.github.io/blog/2018/05/11/jdb-but-not-that-one</id><content type="html" xml:base="https://agenttroll.github.io/blog/2018/05/11/jdb-but-not-that-one.html">&lt;h1 id=&quot;but-also-some-background&quot;&gt;But Also, Some Background&lt;/h1&gt;
 
 &lt;p&gt;I’ve been working on a school project for my CS Projects class for the past few months. Just a few days ago, I had a great opportunity to actually present it to a school staff meeting. I had mixed feelings about the overall success of my presentation, so instead of working on improving my prepardness for presentations that I might have later, I decided to write a rather unfaithful transcript of it here. I don’t fault the staff for being primarily non-technical, but I definitely would have enjoyed presenting to a more seasoned audience in the future.&lt;/p&gt;
 
@@ -211,7 +408,7 @@
   &lt;/ul&gt;
 &lt;/blockquote&gt;
 
-&lt;p&gt;I think I’m going to start pasting this around like the gospel…&lt;/p&gt;</content><author><name></name></author><summary type="html">But Also, Some Background</summary></entry><entry><title type="html">Keeping Inventories Open</title><link href="https://agenttroll.github.io/blog/2018/04/13/keeping-inventories-open.html" rel="alternate" type="text/html" title="Keeping Inventories Open" /><published>2018-04-14T04:38:10+00:00</published><updated>2018-04-14T04:38:10+00:00</updated><id>https://agenttroll.github.io/blog/2018/04/13/keeping-inventories-open</id><content type="html" xml:base="https://agenttroll.github.io/blog/2018/04/13/keeping-inventories-open.html">&lt;p&gt;&lt;em&gt;Note: Code samples in this post have been slightly altered. I have not leaked any information from our plugins in the writing of this post&lt;/em&gt;&lt;/p&gt;
+&lt;p&gt;I think I’m going to start pasting this around like the gospel…&lt;/p&gt;</content><author><name></name></author><summary type="html">But Also, Some Background</summary></entry><entry><title type="html">Keeping Inventories Open</title><link href="https://agenttroll.github.io/blog/2018/04/13/keeping-inventories-open.html" rel="alternate" type="text/html" title="Keeping Inventories Open" /><published>2018-04-13T21:38:10-07:00</published><updated>2018-04-13T21:38:10-07:00</updated><id>https://agenttroll.github.io/blog/2018/04/13/keeping-inventories-open</id><content type="html" xml:base="https://agenttroll.github.io/blog/2018/04/13/keeping-inventories-open.html">&lt;p&gt;&lt;em&gt;Note: Code samples in this post have been slightly altered. I have not leaked any information from our plugins in the writing of this post&lt;/em&gt;&lt;/p&gt;
 
 &lt;p&gt;Over the past week or two, we’ve been working hard to get the gambling plugin fixed up for you guys to use. Unfortunately, there were a few interesting bumps in the road.&lt;/p&gt;
 
@@ -356,7 +553,7 @@
 
 &lt;h1 id=&quot;additional-edit-2018-04-14-004005&quot;&gt;Additional Edit (2018-04-14 00:40:05)&lt;/h1&gt;
 
-&lt;p&gt;Some readers may be confused as to how &lt;code class=&quot;highlighter-rouge&quot;&gt;InventoryCloseEvent&lt;/code&gt; ends up in the same scheduling loop at all if the first instance that it is called is through &lt;code class=&quot;highlighter-rouge&quot;&gt;PlayerList#disconnect(...)&lt;/code&gt;. They reason that since &lt;code class=&quot;highlighter-rouge&quot;&gt;runTask&lt;/code&gt; already schedules for the next tick, all the cleanup would be done and the cycle would never start. The answer to that is: I really have no idea. I know that Essentials kicks players from within a task, so it’s possible that an AFK kick could be causing this, but AFK timers are disabled so I doubt that. I doubt that it is a problem from within the server, because the server doesn’t use the scheduler to process async tasks. Either way, it doesn’t matter what would cause the the loop because whatever is kicking the player is doing it correctly; the inventory itself is not being handled correctly and that is what got fixed.&lt;/p&gt;</content><author><name></name></author><summary type="html">Note: Code samples in this post have been slightly altered. I have not leaked any information from our plugins in the writing of this post</summary></entry><entry><title type="html">Those Mistakes Are Mine</title><link href="https://agenttroll.github.io/blog/2018/03/25/those-mistakes-are-mine.html" rel="alternate" type="text/html" title="Those Mistakes Are Mine" /><published>2018-03-25T08:19:25+00:00</published><updated>2018-03-25T08:19:25+00:00</updated><id>https://agenttroll.github.io/blog/2018/03/25/those-mistakes-are-mine</id><content type="html" xml:base="https://agenttroll.github.io/blog/2018/03/25/those-mistakes-are-mine.html">&lt;blockquote&gt;
+&lt;p&gt;Some readers may be confused as to how &lt;code class=&quot;highlighter-rouge&quot;&gt;InventoryCloseEvent&lt;/code&gt; ends up in the same scheduling loop at all if the first instance that it is called is through &lt;code class=&quot;highlighter-rouge&quot;&gt;PlayerList#disconnect(...)&lt;/code&gt;. They reason that since &lt;code class=&quot;highlighter-rouge&quot;&gt;runTask&lt;/code&gt; already schedules for the next tick, all the cleanup would be done and the cycle would never start. The answer to that is: I really have no idea. I know that Essentials kicks players from within a task, so it’s possible that an AFK kick could be causing this, but AFK timers are disabled so I doubt that. I doubt that it is a problem from within the server, because the server doesn’t use the scheduler to process async tasks. Either way, it doesn’t matter what would cause the the loop because whatever is kicking the player is doing it correctly; the inventory itself is not being handled correctly and that is what got fixed.&lt;/p&gt;</content><author><name></name></author><summary type="html">Note: Code samples in this post have been slightly altered. I have not leaked any information from our plugins in the writing of this post</summary></entry><entry><title type="html">Those Mistakes Are Mine</title><link href="https://agenttroll.github.io/blog/2018/03/25/those-mistakes-are-mine.html" rel="alternate" type="text/html" title="Those Mistakes Are Mine" /><published>2018-03-25T01:19:25-07:00</published><updated>2018-03-25T01:19:25-07:00</updated><id>https://agenttroll.github.io/blog/2018/03/25/those-mistakes-are-mine</id><content type="html" xml:base="https://agenttroll.github.io/blog/2018/03/25/those-mistakes-are-mine.html">&lt;blockquote&gt;
   &lt;p&gt;Minions is a shit plugin&lt;/p&gt;
 
   &lt;p&gt;- @GulliblexD&lt;/p&gt;
@@ -416,7 +613,7 @@
 
 &lt;p&gt;I know that there have been (many) problems with minions. I know that it’s a massive waste of time to deal with the side effects of it. The owners know it too, and when it is said that “minions is a shit plugin,” it is said only half-jokingly, because the reality is that there were many things wrong with it, and there will still be many things to come that I haven’t spotted yet.&lt;/p&gt;
 
-&lt;p&gt;Yet on the other hand, given the circumstances, I don’t think minions is a bad plugin. Of course, I wrote it, so there’s no reason for me to think that it is. I think that it is a really nifty concept, and there’s always a worse place the plugin could be compared to where it is/has been. There have only been 2 instances where minions didn’t do what they were supposed to do for players, and both times were when blocks were being pushed by pistons. All taken, I would say that it was a relative success in spite of the significant number of bumps in the road.&lt;/p&gt;</content><author><name></name></author><summary type="html">Minions is a shit plugin - @GulliblexD</summary></entry><entry><title type="html">Increasing The Player Count</title><link href="https://agenttroll.github.io/blog/2018/03/03/increasing-the-player-count.html" rel="alternate" type="text/html" title="Increasing The Player Count" /><published>2018-03-03T08:19:40+00:00</published><updated>2018-03-03T08:19:40+00:00</updated><id>https://agenttroll.github.io/blog/2018/03/03/increasing-the-player-count</id><content type="html" xml:base="https://agenttroll.github.io/blog/2018/03/03/increasing-the-player-count.html">&lt;p&gt;Gosh its been a while actually for a 2 things: firstly, the 1 year anniversary of the first post on this blog is fast approaching, and two, I’ve been with Intermissum for around 6 months now.&lt;/p&gt;
+&lt;p&gt;Yet on the other hand, given the circumstances, I don’t think minions is a bad plugin. Of course, I wrote it, so there’s no reason for me to think that it is. I think that it is a really nifty concept, and there’s always a worse place the plugin could be compared to where it is/has been. There have only been 2 instances where minions didn’t do what they were supposed to do for players, and both times were when blocks were being pushed by pistons. All taken, I would say that it was a relative success in spite of the significant number of bumps in the road.&lt;/p&gt;</content><author><name></name></author><summary type="html">Minions is a shit plugin - @GulliblexD</summary></entry><entry><title type="html">Increasing The Player Count</title><link href="https://agenttroll.github.io/blog/2018/03/03/increasing-the-player-count.html" rel="alternate" type="text/html" title="Increasing The Player Count" /><published>2018-03-03T00:19:40-08:00</published><updated>2018-03-03T00:19:40-08:00</updated><id>https://agenttroll.github.io/blog/2018/03/03/increasing-the-player-count</id><content type="html" xml:base="https://agenttroll.github.io/blog/2018/03/03/increasing-the-player-count.html">&lt;p&gt;Gosh its been a while actually for a 2 things: firstly, the 1 year anniversary of the first post on this blog is fast approaching, and two, I’ve been with Intermissum for around 6 months now.&lt;/p&gt;
 
 &lt;p&gt;Speaking of Intermissum, we’ve been growing well over the past month and some that we’ve released. The player average is a good 550 to 600 depending on the day and and the time, and the most recent 2 realms, Western and Jurassic have been at absolute capacity almost every day for the past week or so. Which brings me to my next point…&lt;/p&gt;
 
@@ -516,7 +713,7 @@
 
 &lt;p&gt;I hoped that through my endless rambling and criticism that I’ve cleared up some thoughts that people have had regarding the slot availability on MineSaga. We are not going to increase the slots or get rid of the queue because it is simply the most effective way that we have so far to manage the limited resources availible to the server.&lt;/p&gt;
 
-&lt;p&gt;There have been multiple discussions privately about how to distribute computing power and divide up how the different realms and islands are managed. I do not feel comfortable sharing those details without approval so they remain purely for speculation at the moment. Stay tuned! :)&lt;/p&gt;</content><author><name></name></author><summary type="html">Gosh its been a while actually for a 2 things: firstly, the 1 year anniversary of the first post on this blog is fast approaching, and two, I’ve been with Intermissum for around 6 months now.</summary></entry><entry><title type="html">Status Update: Installing Arch for the First Time</title><link href="https://agenttroll.github.io/blog/2018/01/06/status-update-installing-arch-for-the-first-time.html" rel="alternate" type="text/html" title="Status Update: Installing Arch for the First Time" /><published>2018-01-06T07:00:00+00:00</published><updated>2018-01-06T07:00:00+00:00</updated><id>https://agenttroll.github.io/blog/2018/01/06/status-update-installing-arch-for-the-first-time</id><content type="html" xml:base="https://agenttroll.github.io/blog/2018/01/06/status-update-installing-arch-for-the-first-time.html">&lt;p&gt;It’s been draining on the soul, but luckily coming up with a “unique” title has been rejuvenating (rejuvinatig? rejuvenating? whatever).&lt;/p&gt;
+&lt;p&gt;There have been multiple discussions privately about how to distribute computing power and divide up how the different realms and islands are managed. I do not feel comfortable sharing those details without approval so they remain purely for speculation at the moment. Stay tuned! :)&lt;/p&gt;</content><author><name></name></author><summary type="html">Gosh its been a while actually for a 2 things: firstly, the 1 year anniversary of the first post on this blog is fast approaching, and two, I’ve been with Intermissum for around 6 months now.</summary></entry><entry><title type="html">Status Update: Installing Arch for the First Time</title><link href="https://agenttroll.github.io/blog/2018/01/06/status-update-installing-arch-for-the-first-time.html" rel="alternate" type="text/html" title="Status Update: Installing Arch for the First Time" /><published>2018-01-05T23:00:00-08:00</published><updated>2018-01-05T23:00:00-08:00</updated><id>https://agenttroll.github.io/blog/2018/01/06/status-update-installing-arch-for-the-first-time</id><content type="html" xml:base="https://agenttroll.github.io/blog/2018/01/06/status-update-installing-arch-for-the-first-time.html">&lt;p&gt;It’s been draining on the soul, but luckily coming up with a “unique” title has been rejuvenating (rejuvinatig? rejuvenating? whatever).&lt;/p&gt;
 
 &lt;p&gt;I don’t profess to be an expert on ArchLinux, or even Linux in general but based on my experience installing Arch on my MacBook Pro 11.something, I’d be even more wary of following a random blog post (because it probably won’t work). I don’t think any of the issues that I encountered were unique by any means, but I believe my own little successes are the result of the wealth of mainly online resources. I’m therefore very keen to share my own experience and perhaps someone might come along and save a few hours of their lifetime and hair-tearing.&lt;/p&gt;
 
@@ -604,7 +801,7 @@ WPAConfigSection=(
 
 &lt;p&gt;Although trying a CLI-based install for the first time was an interesting experience, and I felt like I learned a lot from it compared to a more graphical nod that Debian takes, it still was frustrating and uncooperative even at the best of times. I’m happy with the end result, even if it’s not perfect though, and as always, the pleasure and satisfaction that comes with finally wrangling something to work is much more powerful than the ordeal that it takes to acheive that.&lt;/p&gt;
 
-&lt;p&gt;Although it &lt;em&gt;would&lt;/em&gt; be nice if I could actually see anything, I still haven’t figured out that HiDPI thing yet…&lt;/p&gt;</content><author><name></name></author><summary type="html">It’s been draining on the soul, but luckily coming up with a “unique” title has been rejuvenating (rejuvinatig? rejuvenating? whatever).</summary></entry><entry><title type="html">New Years: Productivity</title><link href="https://agenttroll.github.io/blog/2017/12/31/new-years-productivity.html" rel="alternate" type="text/html" title="New Years: Productivity" /><published>2017-12-31T07:00:00+00:00</published><updated>2017-12-31T07:00:00+00:00</updated><id>https://agenttroll.github.io/blog/2017/12/31/new-years-productivity</id><content type="html" xml:base="https://agenttroll.github.io/blog/2017/12/31/new-years-productivity.html">&lt;p&gt;Perhaps we can take some time to look at productivity, in spirit of the (Eve of) New Year.&lt;/p&gt;
+&lt;p&gt;Although it &lt;em&gt;would&lt;/em&gt; be nice if I could actually see anything, I still haven’t figured out that HiDPI thing yet…&lt;/p&gt;</content><author><name></name></author><summary type="html">It’s been draining on the soul, but luckily coming up with a “unique” title has been rejuvenating (rejuvinatig? rejuvenating? whatever).</summary></entry><entry><title type="html">New Years: Productivity</title><link href="https://agenttroll.github.io/blog/2017/12/31/new-years-productivity.html" rel="alternate" type="text/html" title="New Years: Productivity" /><published>2017-12-30T23:00:00-08:00</published><updated>2017-12-30T23:00:00-08:00</updated><id>https://agenttroll.github.io/blog/2017/12/31/new-years-productivity</id><content type="html" xml:base="https://agenttroll.github.io/blog/2017/12/31/new-years-productivity.html">&lt;p&gt;Perhaps we can take some time to look at productivity, in spirit of the (Eve of) New Year.&lt;/p&gt;
 
 &lt;p&gt;Probably the most ironic thing about productivity is that discussing productivity is unproductive in itself. Sure, it’s great food for thought, but at the same time, let us consider that 1) you will read this and do nothing about it and 2) productivity is subjective. In fact, #1 probably isn’t even your fault; maybe you’ve already fixed whatever issue arose from that facet of productivity, or maybe it doesn’t even apply to you. I’m not saying that you aren’t lazy and stubborn, because you probably are as well. At least something might occur to you that has not before even if you won’t do anything about your own productivity after reading.&lt;/p&gt;
 
@@ -664,443 +861,4 @@ WPAConfigSection=(
 &lt;p&gt;Indeed, it may seem like a loss and counterproductive - exactly what we are fighting here - but trust me when I say that breaks are necessary to be productive. The hardest part about taking breaks is making sure you get back after treating yourself a bit. If you can at least keep yourself disciplined, then it should be no problem, incorporating breaks into your schedule should slowly, but surely improve your productivity.&lt;/p&gt;
 
 &lt;h1 id=&quot;final-word&quot;&gt;Final Word&lt;/h1&gt;
-&lt;p&gt;I’m sure there are many other factors that I’ve missed which could be vital to productivity, and I acknowledge that “programming productivity” isn’t the entire story. However, with the above noted thoughts on how I improved my own productivity over the years, perhaps the reader might at least have some background on how (yet another) developer works.&lt;/p&gt;</content><author><name></name></author><summary type="html">Perhaps we can take some time to look at productivity, in spirit of the (Eve of) New Year.</summary></entry><entry><title type="html">Multi Conditionals</title><link href="https://agenttroll.github.io/blog/2017/12/21/multi-conditionals.html" rel="alternate" type="text/html" title="Multi Conditionals" /><published>2017-12-21T08:00:00+00:00</published><updated>2017-12-21T08:00:00+00:00</updated><id>https://agenttroll.github.io/blog/2017/12/21/multi-conditionals</id><content type="html" xml:base="https://agenttroll.github.io/blog/2017/12/21/multi-conditionals.html">&lt;p&gt;There have been actually several times as I’m writing servers in things like my JDB project and the TridentSDK project in which the following scenario pops up: there is a single thread that manages incoming and outgoing messages. I need to block on an outgoing queue, as well as block until some bytes off the network are read.&lt;/p&gt;
-
-&lt;p&gt;My situation looks something like the following:&lt;/p&gt;
-
-&lt;div class=&quot;language-java highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;n&quot;&gt;BlockingQueue&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Message&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;incoming&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;;&lt;/span&gt;
-&lt;span class=&quot;n&quot;&gt;BlockingQueue&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Message&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;outgoing&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;;&lt;/span&gt;
-
-&lt;span class=&quot;k&quot;&gt;while&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;kc&quot;&gt;true&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
-    &lt;span class=&quot;k&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;hasInput&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;())&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
-        &lt;span class=&quot;c1&quot;&gt;// Read into incoming&lt;/span&gt;
-    &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;else&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;(!&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;outgoing&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;isEmpty&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;())&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
-        &lt;span class=&quot;c1&quot;&gt;// Write from outgoing&lt;/span&gt;
-    &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;else&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
-        &lt;span class=&quot;c1&quot;&gt;// Block, wait for input or output&lt;/span&gt;
-    &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
-&lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
-
-&lt;span class=&quot;kt&quot;&gt;boolean&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;hasInput&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;();&lt;/span&gt;
-&lt;span class=&quot;n&quot;&gt;Data&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;waitForInput&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;();&lt;/span&gt;
-&lt;span class=&quot;kt&quot;&gt;void&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;writeToOutput&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Message&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;send&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;);&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;Message consumers will block on the &lt;code class=&quot;highlighter-rouge&quot;&gt;incoming&lt;/code&gt; queue and wait for input from the socket to be read by the I/O loop in order to process those messages.&lt;/p&gt;
-
-&lt;p&gt;Given this scenario, how might the I/O loop be implemented in order to block on network input as well as the &lt;code class=&quot;highlighter-rouge&quot;&gt;outgoing&lt;/code&gt; queue and wait until either of the two have I/O tasks to execute?&lt;/p&gt;
-
-&lt;h1 id=&quot;naive-solution-subsequent-takes&quot;&gt;Naive Solution: Subsequent &lt;code class=&quot;highlighter-rouge&quot;&gt;take()&lt;/code&gt;s&lt;/h1&gt;
-
-&lt;p&gt;A simple, first-thought, although naive solution might look something like the following:&lt;/p&gt;
-
-&lt;div class=&quot;language-java highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;k&quot;&gt;while&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;kc&quot;&gt;true&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
-    &lt;span class=&quot;n&quot;&gt;Message&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;recv&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;new&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Message&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;waitForInput&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;());&lt;/span&gt;
-    &lt;span class=&quot;n&quot;&gt;incoming&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;add&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;recv&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;);&lt;/span&gt;
-
-    &lt;span class=&quot;n&quot;&gt;Message&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;send&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;outgoing&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;take&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;();&lt;/span&gt;
-    &lt;span class=&quot;n&quot;&gt;writeToOutput&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;send&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;);&lt;/span&gt;
-&lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;This will not work correctly. Because the loop must wait for input, the second blocking method, &lt;code class=&quot;highlighter-rouge&quot;&gt;outgoing.take()&lt;/code&gt;, will not be reached until a message is received. Therefore, a message that is queued to be sent cannot be unless something is received first - and what if the client is written in the same way? There will be a deadlock because the client must depend on input from the server in order to send a message, but the server is in fact also waiting to receive a message that will never come from the waiting client.&lt;/p&gt;
-
-&lt;p&gt;So it can be seen that this method both does not work as intended and will cause risks with client-server deadlock.&lt;/p&gt;
-
-&lt;h1 id=&quot;naive-solution-single-lockcondition&quot;&gt;Naive Solution: Single lock/Condition&lt;/h1&gt;
-
-&lt;p&gt;A second tempting solution is to protect the &lt;code class=&quot;highlighter-rouge&quot;&gt;incoming&lt;/code&gt; queue and the &lt;code class=&quot;highlighter-rouge&quot;&gt;outgoing&lt;/code&gt; queue with a single lock/&lt;code class=&quot;highlighter-rouge&quot;&gt;Condition&lt;/code&gt;.&lt;/p&gt;
-
-&lt;p&gt;Assuming the same context:&lt;/p&gt;
-
-&lt;div class=&quot;language-java highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;n&quot;&gt;Lock&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;lock&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;new&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;ReentrantLock&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;();&lt;/span&gt;
-&lt;span class=&quot;n&quot;&gt;Condition&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;cond&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;lock&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;newCondition&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;();&lt;/span&gt;
-
-&lt;span class=&quot;k&quot;&gt;while&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;kc&quot;&gt;true&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
-    &lt;span class=&quot;c1&quot;&gt;// Await for a signal from a message producer&lt;/span&gt;
-    &lt;span class=&quot;c1&quot;&gt;// adding to the outgoing queue&lt;/span&gt;
-    &lt;span class=&quot;c1&quot;&gt;// Spurious wakeup checked by conditions below&lt;/span&gt;
-    &lt;span class=&quot;n&quot;&gt;cond&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;await&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;();&lt;/span&gt;
-
-    &lt;span class=&quot;k&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;hasInput&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;())&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
-        &lt;span class=&quot;n&quot;&gt;Message&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;recv&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;new&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Message&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;waitForInput&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;());&lt;/span&gt;
-        &lt;span class=&quot;k&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;recv&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;!=&lt;/span&gt; &lt;span class=&quot;kc&quot;&gt;null&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
-            &lt;span class=&quot;n&quot;&gt;lock&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;lock&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;();&lt;/span&gt;
-            &lt;span class=&quot;k&quot;&gt;try&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
-                &lt;span class=&quot;n&quot;&gt;incoming&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;add&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;recv&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;);&lt;/span&gt;
-                &lt;span class=&quot;n&quot;&gt;cond&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;signal&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;();&lt;/span&gt; &lt;span class=&quot;c1&quot;&gt;// Signal the message consumer&lt;/span&gt;
-            &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;else&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
-                &lt;span class=&quot;n&quot;&gt;lock&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;unlock&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;();&lt;/span&gt;
-            &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
-        &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
-    &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
-
-    &lt;span class=&quot;n&quot;&gt;Message&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;send&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;;&lt;/span&gt;
-    &lt;span class=&quot;n&quot;&gt;lock&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;lock&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;();&lt;/span&gt;
-    &lt;span class=&quot;k&quot;&gt;try&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
-        &lt;span class=&quot;n&quot;&gt;send&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;outgoing&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;poll&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;();&lt;/span&gt;
-    &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;finally&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
-        &lt;span class=&quot;n&quot;&gt;lock&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;unlock&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;();&lt;/span&gt;
-    &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
-
-    &lt;span class=&quot;k&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;send&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;!=&lt;/span&gt; &lt;span class=&quot;kc&quot;&gt;null&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
-        &lt;span class=&quot;n&quot;&gt;writeToOutput&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;send&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;);&lt;/span&gt;
-    &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
-&lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;However, there still exists several issues with this code. Firstly, &lt;code class=&quot;highlighter-rouge&quot;&gt;cond.await()&lt;/code&gt; will block only on the outgoing queue, and ignore network input. This will have the opposite effect as the earlier naive solution in which there requires network input for there to be output; in this case, the I/O thread will, in fact, have to wait for output in order for input to be read.&lt;/p&gt;
-
-&lt;p&gt;In truth, we can try all different kinds of combinations of switching different &lt;code class=&quot;highlighter-rouge&quot;&gt;Condition&lt;/code&gt;s and different mechanisms of all sorts without succeeding, there is simply no way to wait on both the reading from socket and simultaneously the outgoing queue. Further, a thread blocked on network input is not blocked on a lock or &lt;code class=&quot;highlighter-rouge&quot;&gt;Condition&lt;/code&gt; or whatever - it remains in &lt;code class=&quot;highlighter-rouge&quot;&gt;RUNNABLE&lt;/code&gt; mode, so it might as well be busy waiting for all other observers can care. After exhausting these ideas, I too thought that it would be impossible to act on events rather than having to use a timer and step over the other blocked method in order to check either input or output depending on what is blocked.&lt;/p&gt;
-
-&lt;p&gt;Fortunately, there is a way.&lt;/p&gt;
-
-&lt;h1 id=&quot;the-solution&quot;&gt;The Solution&lt;/h1&gt;
-
-&lt;p&gt;In order for my I/O thread to correctly handle I/O input, it must be interruptible. Thankfully, by switching to &lt;code class=&quot;highlighter-rouge&quot;&gt;java.nio&lt;/code&gt;, this functionality can be achieved with &lt;code class=&quot;highlighter-rouge&quot;&gt;InterruptibleChannel&lt;/code&gt;. I was able to override the default interrupt handler and use the following little utility I made to notify the I/O thread:&lt;/p&gt;
-
-&lt;div class=&quot;language-java highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;kn&quot;&gt;import&lt;/span&gt; &lt;span class=&quot;nn&quot;&gt;sun.nio.ch.Interruptible&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;;&lt;/span&gt;
-
-&lt;span class=&quot;kn&quot;&gt;import&lt;/span&gt; &lt;span class=&quot;nn&quot;&gt;java.lang.reflect.Field&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;;&lt;/span&gt;
-&lt;span class=&quot;kn&quot;&gt;import&lt;/span&gt; &lt;span class=&quot;nn&quot;&gt;java.nio.channels.SocketChannel&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;;&lt;/span&gt;
-
-&lt;span class=&quot;cm&quot;&gt;/**
- * Utility class used to modify {@link SocketChannel}s in
- * order to override the default behavior and allow for I/O
- * threads to capture {@link Signal}s passed while waiting
- * for input.
- *
- * &amp;lt;p&amp;gt;Be aware that this is an extremely egregious hack.
- * For the most part, it is a toy. I don't expect that
- * anyone would seriously consider using this in production,
- * but if there is any case where that occurs, I am not
- * responsible for what happens. Use at your own risk. You
- * have been warned.&amp;lt;/p&amp;gt;
- *
- * &amp;lt;p&amp;gt;To add further to the risks associated with this
- * class, one must &amp;lt;strong&amp;gt;NEVER&amp;lt;/strong&amp;gt; call {@link
- * Thread#interrupt()} on an I/O thread. Doing so may
- * result in undefined behavior. Capturing a {@link Signal}
- * also means that the I/O thread must use
- * {@link Thread#interrupted()} in order to clear the
- * interrupt state before the next signal. Finally,
- * {@link Thread#interrupt()} is used in order to propagate
- * signals to the I/O thread, and therefore, if any methods
- * that are interruptible must catch the exception and run
- * {@link Thread#interrupted()}.&amp;lt;/p&amp;gt;
- */&lt;/span&gt;
-&lt;span class=&quot;kd&quot;&gt;public&lt;/span&gt; &lt;span class=&quot;kd&quot;&gt;final&lt;/span&gt; &lt;span class=&quot;kd&quot;&gt;class&lt;/span&gt; &lt;span class=&quot;nc&quot;&gt;SocketInterruptUtil&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
-    &lt;span class=&quot;cm&quot;&gt;/** The cached field used to hack the SocketChannel */&lt;/span&gt;
-    &lt;span class=&quot;kd&quot;&gt;private&lt;/span&gt; &lt;span class=&quot;kd&quot;&gt;static&lt;/span&gt; &lt;span class=&quot;kd&quot;&gt;final&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Field&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;INTERRUPTOR&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;;&lt;/span&gt;
-    &lt;span class=&quot;cm&quot;&gt;/** The signal used to notify readers */&lt;/span&gt;
-    &lt;span class=&quot;kd&quot;&gt;private&lt;/span&gt; &lt;span class=&quot;kd&quot;&gt;static&lt;/span&gt; &lt;span class=&quot;kd&quot;&gt;final&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Signal&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;SIGNAL&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;new&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Signal&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;();&lt;/span&gt;
-
-    &lt;span class=&quot;kd&quot;&gt;static&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
-        &lt;span class=&quot;k&quot;&gt;try&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
-            &lt;span class=&quot;n&quot;&gt;Class&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;lt;?&amp;gt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;cls&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Class&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;forName&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;java.nio.channels.spi.AbstractInterruptibleChannel&quot;&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;);&lt;/span&gt;
-            &lt;span class=&quot;n&quot;&gt;INTERRUPTOR&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;cls&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;getDeclaredField&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;interruptor&quot;&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;);&lt;/span&gt;
-            &lt;span class=&quot;n&quot;&gt;INTERRUPTOR&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;setAccessible&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;kc&quot;&gt;true&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;);&lt;/span&gt;
-        &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;catch&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;NoSuchFieldException&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;e&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
-            &lt;span class=&quot;n&quot;&gt;System&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;out&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;println&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;No such field: interruptor&quot;&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;);&lt;/span&gt;
-            &lt;span class=&quot;n&quot;&gt;System&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;out&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;println&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;Perhaps not running Oracle HotSpot?&quot;&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;);&lt;/span&gt;
-            &lt;span class=&quot;k&quot;&gt;throw&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;new&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;RuntimeException&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;e&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;);&lt;/span&gt;
-        &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;catch&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;ClassNotFoundException&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;e&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
-            &lt;span class=&quot;n&quot;&gt;System&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;out&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;println&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;No such class: AbstractInterruptibleChannel&quot;&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;);&lt;/span&gt;
-            &lt;span class=&quot;n&quot;&gt;System&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;out&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;println&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;Perhaps not running Oracle HotSpot?&quot;&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;);&lt;/span&gt;
-            &lt;span class=&quot;k&quot;&gt;throw&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;new&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;RuntimeException&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;e&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;);&lt;/span&gt;
-        &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
-    &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
-
-    &lt;span class=&quot;c1&quot;&gt;// Suppress instantiation&lt;/span&gt;
-    &lt;span class=&quot;kd&quot;&gt;private&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;SocketInterruptUtil&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;()&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
-    &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
-
-    &lt;span class=&quot;cm&quot;&gt;/**
-     * Prepares the {@link SocketChannel} to receive
-     * {@link Signal}s dispatched by another thread. This
-     * is required in order for this to work correctly.
-     *
-     * @param ch the channel to prepare
-     */&lt;/span&gt;
-    &lt;span class=&quot;kd&quot;&gt;public&lt;/span&gt; &lt;span class=&quot;kd&quot;&gt;static&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;void&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;prepare&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;SocketChannel&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;ch&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
-        &lt;span class=&quot;k&quot;&gt;try&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
-            &lt;span class=&quot;n&quot;&gt;INTERRUPTOR&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;set&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;ch&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Interruptible&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;thread&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;-&amp;gt;&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
-                &lt;span class=&quot;k&quot;&gt;throw&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;SIGNAL&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;;&lt;/span&gt;
-            &lt;span class=&quot;o&quot;&gt;});&lt;/span&gt;
-        &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;catch&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;IllegalAccessException&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;e&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
-            &lt;span class=&quot;n&quot;&gt;e&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;printStackTrace&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;();&lt;/span&gt;
-        &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
-    &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
-
-    &lt;span class=&quot;cm&quot;&gt;/**
-     * Signals the given I/O thread to unblock from ALL
-     * blocking methods and proceed and throws a
-     * {@link Signal} to be handled by the thread.
-     *
-     * @param thread the thread to unblock
-     */&lt;/span&gt;
-    &lt;span class=&quot;kd&quot;&gt;public&lt;/span&gt; &lt;span class=&quot;kd&quot;&gt;static&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;void&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;signal&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Thread&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;thread&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
-        &lt;span class=&quot;k&quot;&gt;try&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
-            &lt;span class=&quot;c1&quot;&gt;// Thread probably not blocked on I/O&lt;/span&gt;
-            &lt;span class=&quot;k&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;thread&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;getState&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;()&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;!=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Thread&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;State&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;RUNNABLE&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
-                &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;;&lt;/span&gt;
-            &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
-            &lt;span class=&quot;n&quot;&gt;thread&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;interrupt&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;();&lt;/span&gt;
-        &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;catch&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Signal&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;ignored&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
-        &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
-    &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
-
-    &lt;span class=&quot;cm&quot;&gt;/**
-     * A signal dispatched by another thread to a target
-     * I/O thread in order for targets to respond to
-     * notifications.
-     */&lt;/span&gt;
-    &lt;span class=&quot;kd&quot;&gt;public&lt;/span&gt; &lt;span class=&quot;kd&quot;&gt;static&lt;/span&gt; &lt;span class=&quot;kd&quot;&gt;class&lt;/span&gt; &lt;span class=&quot;nc&quot;&gt;Signal&lt;/span&gt; &lt;span class=&quot;kd&quot;&gt;extends&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;RuntimeException&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
-        &lt;span class=&quot;kd&quot;&gt;private&lt;/span&gt; &lt;span class=&quot;kd&quot;&gt;static&lt;/span&gt; &lt;span class=&quot;kd&quot;&gt;final&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;long&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;serialVersionUID&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;220295899772322553L&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;;&lt;/span&gt;
-    &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
-&lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;A correct usage of the class would look something like the following:&lt;/p&gt;
-
-&lt;div class=&quot;language-java highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;n&quot;&gt;ServerSocketChannel&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;server&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;ServerSocketChannel&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;open&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;();&lt;/span&gt;
-&lt;span class=&quot;o&quot;&gt;...&lt;/span&gt;
-&lt;span class=&quot;k&quot;&gt;while&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;kc&quot;&gt;true&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
-    &lt;span class=&quot;n&quot;&gt;SocketChannel&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;ch&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;server&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;accept&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;();&lt;/span&gt;
-    &lt;span class=&quot;n&quot;&gt;SocketInterruptUtil&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;prepare&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;ch&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;);&lt;/span&gt;
-
-    &lt;span class=&quot;k&quot;&gt;while&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;ch&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;isOpen&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;())&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
-        &lt;span class=&quot;k&quot;&gt;try&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
-            &lt;span class=&quot;n&quot;&gt;ByteBuffer&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;buf&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;...&lt;/span&gt;
-            &lt;span class=&quot;n&quot;&gt;ch&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;read&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;buf&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;);&lt;/span&gt;
-
-            &lt;span class=&quot;n&quot;&gt;Message&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;msg&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;new&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Message&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;buf&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;);&lt;/span&gt;
-            &lt;span class=&quot;n&quot;&gt;incoming&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;add&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;msg&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;);&lt;/span&gt;
-        &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;catch&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Signal&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;signal&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
-            &lt;span class=&quot;n&quot;&gt;Message&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;msg&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;outgoing&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;poll&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;();&lt;/span&gt;
-            &lt;span class=&quot;n&quot;&gt;writeToOutput&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;msg&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;);&lt;/span&gt;
-
-            &lt;span class=&quot;n&quot;&gt;Thread&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;interrupted&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;();&lt;/span&gt;
-        &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;catch&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;InterruptedException&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;e&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
-            &lt;span class=&quot;n&quot;&gt;Thread&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;interrupted&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;();&lt;/span&gt;
-        &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
-    &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
-
-    &lt;span class=&quot;c1&quot;&gt;// Normally you would also need to have another&lt;/span&gt;
-    &lt;span class=&quot;c1&quot;&gt;// catch for Signal/InterruptedException here&lt;/span&gt;
-    &lt;span class=&quot;c1&quot;&gt;// However, you'd also need to check to make&lt;/span&gt;
-    &lt;span class=&quot;c1&quot;&gt;// sure that there is an active connection, so&lt;/span&gt;
-    &lt;span class=&quot;c1&quot;&gt;// I can just check to make sure that there is&lt;/span&gt;
-    &lt;span class=&quot;c1&quot;&gt;// at least a connected SocketChannel before&lt;/span&gt;
-    &lt;span class=&quot;c1&quot;&gt;// signalling and get rid of the try/catch.&lt;/span&gt;
-&lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;And for the outgoing logic:&lt;/p&gt;
-
-&lt;div class=&quot;language-java highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;n&quot;&gt;outgoing&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;add&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;msg&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;);&lt;/span&gt;
-&lt;span class=&quot;n&quot;&gt;SocketInterruptUtil&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;signal&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;ioThread&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;);&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;h1 id=&quot;discussion&quot;&gt;Discussion&lt;/h1&gt;
-
-&lt;p&gt;In order for this to work, I made a slightly (OK, really) hacky solution to default &lt;code class=&quot;highlighter-rouge&quot;&gt;InterruptibleChannel&lt;/code&gt; functionality. I found that what &lt;code class=&quot;highlighter-rouge&quot;&gt;InterruptibleChannel&lt;/code&gt; did was put an interrupt listener before every single blocking call in order to close the socket if either the blocked thread is interrupted or if the socket was closed. I couldn’t put in my own handler because I can only override before or after the blocking method, in which my own handler would be overridden by the interrupt handler provided by the method itself. Therefore, I went one step deeper and overrode the cached instance of the interrupt handler inside of &lt;code class=&quot;highlighter-rouge&quot;&gt;InterruptibleChannel&lt;/code&gt; to exit early and throw my own Signal which can be caught by the I/O thread.&lt;/p&gt;
-
-&lt;p&gt;I haven’t deeply investigated the performance of this method over perhaps timed busy waiting, but from testing, a blocked read can respond to signals in sub-millisecond times even when saturated with messages between “10 nanosecond intervals” on an i3-3240. A &lt;code class=&quot;highlighter-rouge&quot;&gt;while&lt;/code&gt; loop probably takes more than 10ns to run which is why I mention that rate in quotes, but again, this time is very impressive even if it’s off by a bit. You wouldn’t want to be waking a thread every 1 millisecond in order to check for the other condition, which is why I say that it’s good in comparison with the alternative.&lt;/p&gt;
-
-&lt;p&gt;Unfortunately, this technique is risky in many ways, first of all, because it depends on there being the &lt;code class=&quot;highlighter-rouge&quot;&gt;AbstractInterruptibleChannel&lt;/code&gt; SPI class being available, as well as the field being available. The field probably won’t be going away because caching is required, but the class itself might. Additionally, the interrupt status of the thread is risky to play around with and requires &lt;code class=&quot;highlighter-rouge&quot;&gt;Thread.interrupted()&lt;/code&gt; to be called each time either Signal is thrown or InterruptedException is captured if the &lt;code class=&quot;highlighter-rouge&quot;&gt;signal(Thread)&lt;/code&gt; method misses the I/O portion. Otherwise, the thread itself might die. Finally, the only possible way to exit directly out of a blocking &lt;code class=&quot;highlighter-rouge&quot;&gt;read(...)&lt;/code&gt; is to throw the exception, but if a read is halfway done, then the behavior may be undefined. I will need to test further in order to determine what happens, but until then, this class still remains a very risky hack. I would highly advise against using it in a production environment, regardless of whatever performance gains may bear fruit through event-driven notifications rather than spurious wakeups. I have included a warning in the class javadoc comment to cover my ass, so please don’t push it :)&lt;/p&gt;
-
-&lt;p&gt;In the end, even though I have acheived what I was hoping for, even if it isn’t really viable in the real-world, I guess I will just have to keep searching for a better solution.&lt;/p&gt;
-
-&lt;h1 id=&quot;closing-words&quot;&gt;Closing Words&lt;/h1&gt;
-&lt;p&gt;Figuring this all out was an interesting use of 3 hours. I’m completely done with this though, I’m not looking to play around anymore with it, but anyone else can feel free to do so themself. My plan is to update the “On Thread Safety” post very soon though, and there is more to come over winter break. Take care everyone!&lt;/p&gt;</content><author><name></name></author><summary type="html">There have been actually several times as I’m writing servers in things like my JDB project and the TridentSDK project in which the following scenario pops up: there is a single thread that manages incoming and outgoing messages. I need to block on an outgoing queue, as well as block until some bytes off the network are read.</summary></entry><entry><title type="html">Happy December</title><link href="https://agenttroll.github.io/blog/2017/12/17/happy-december.html" rel="alternate" type="text/html" title="Happy December" /><published>2017-12-17T18:55:00+00:00</published><updated>2017-12-17T18:55:00+00:00</updated><id>https://agenttroll.github.io/blog/2017/12/17/happy-december</id><content type="html" xml:base="https://agenttroll.github.io/blog/2017/12/17/happy-december.html">&lt;p&gt;I suppose it’s been a while.&lt;/p&gt;
-
-&lt;p&gt;I think for lack of a better subject to write about, I may have put blogging by the wayside. I mean, 2/4 posts so far have been how I fixed some problem so the next time my computer breaks, I know what to install…&lt;/p&gt;
-
-&lt;p&gt;But good news, Debian Stretch so far hasn’t broken since at least April because I don’t ever recall having to use the Stretch CD that I have on my desk since I upgraded. So even then my blog has been pretty dead.&lt;/p&gt;
-
-&lt;p&gt;Although it’s not as if I run a well-known blog, it gives me warm feelings knowing that there’s a little nook in the Internet where I can reflect and vent whatever is in my head that I think is relevant, knowing that some random person (or more likely a bot) will look at it and possibly respond internally as a result of something that I write.&lt;/p&gt;
-
-&lt;p&gt;Probably won’t happen though. The Internet’s a pretty big place.&lt;/p&gt;
-
-&lt;p&gt;I’ve been thinking about writing a blog post for a while, but whenever computer time and thinking time coincide, it’s like I think “maybe later” or perhaps I need better ideas before wasting my own (or worse, a reader’s) time. So from here on out, I’ve set myself a goal to post something weekly or biweekly, whether or not somebody cares. Anything will probably go, from this melange of thoughts to some random meme dump from the past week.&lt;/p&gt;
-
-&lt;p&gt;So in the process of writing that, I guess I’ll just make a mind dump of whatever I don’t forget over the next 30 or so minutes.&lt;/p&gt;
-
-&lt;h1 id=&quot;flaming-vsauce&quot;&gt;Flaming Vsauce&lt;/h1&gt;
-
-&lt;p&gt;As I’m writing this, I’m currently offline and I was actually going to look at other people explain why Vsauce is often used unironically to describe a bunch of ideas that have no relation to each other.&lt;/p&gt;
-
-&lt;p&gt;I’ve watched my fair share of Vsauce videos, and yes, I do agree that there are a few (a lot?) of videos whose entire purpose is to go off on a huge tangent. But look at &lt;em&gt;me&lt;/em&gt;. This entire blog post has been a huge tangent, and none of the posts have any relation to each other. Yet. But hold on a minute. If I am correct in my conclusion that Vsauce is used to mock those that go off on tangents (as it is to mock the creator himself), could that not be the entire point of Vsauce videos? Could not even answering the question in full be the actual purpose of his videos?&lt;/p&gt;
-
-&lt;p&gt;The point I’m arguing for is that Vsauce videos have nothing to do with being a Q&amp;amp;A type thing where he investigates and answers whatever is being asked in the title, but rather to make random connections so that viewers investigate &lt;em&gt;themselves&lt;/em&gt;.&lt;/p&gt;
-
-&lt;p&gt;Since I’m still offline, the only evidence I have is trying to remember whatever videos I watched, but bear with me here.&lt;/p&gt;
-
-&lt;p&gt;By going off on tangents and only vaguely answering the question, I think that Vsauce is purposely trying to get viewers to think for themselves and become a little bit more curious about what was mentioned in the video. Could it not be possible that those who are even angered by Vsauce’s vagueness or style of discussion to do their own research in order to debunk his claim(s) and in doing so, learn a little bit in the process?&lt;/p&gt;
-
-&lt;p&gt;But then again, why not have every inflammatory creator turn around and say “oh, that wasn’t the point, the point was to get you to learn and debunk my claims!”&lt;/p&gt;
-
-&lt;p&gt;But then again, Vsauce hasn’t ever said specifically that instilling curiosity was the point of his videos either. Maybe he hasn’t realized how apparently stupid he sounds to some other viewers. I can’t speak for myself of the quality of his videos, but I myself do enjoy some of his content occaisionally, so I’m probably biased in favor of defending Vsauce.&lt;/p&gt;
-
-&lt;p&gt;As a final note, for the love of God, do not make me the next Vsauce meme.&lt;/p&gt;
-
-&lt;h1 id=&quot;vaguness-is-necessary&quot;&gt;Vaguness is Necessary&lt;/h1&gt;
-
-&lt;p&gt;I recall from my social studies class that there are claims that the U.S. Constitution was written to be intentionally vauge. Now the merits of that claim or how useful vagueness has been to the U.S. as a nation is another topic for another time, but I think that intential vagueness is not only helpful, but absolutely &lt;strong&gt;necessary&lt;/strong&gt; for learning.&lt;/p&gt;
-
-&lt;p&gt;So some backstory: I believe it was yesterday night, when I was finally able to get ArchLinux running on my MacBook, and I was just heading off to bed, right? And as I laid there, I still high on satisfaction and having finally been able to get the bootloader and the Wi-Fi and just everything in place, and I thought to myself:&lt;/p&gt;
-
-&lt;blockquote&gt;
-  &lt;p&gt;Why didn’t the ArchWiki just tell me everything I needed to do exactly as it needs to be done?&lt;/p&gt;
-&lt;/blockquote&gt;
-
-&lt;p&gt;And from there, I realized how perhaps vagueness was connected to learning. Intentional, maybe not, but important? Most definitely. I recall conversations with some of the AP Computer Science students describing how the (unnamed) teacher was (to put in nice terms) “not a very good teacher.” I’m not sure how the Vsauce connection or the social studies connection came about, but through these connections, I realized that you don’t learn from instruction, you learn from what was missed during instruction.&lt;/p&gt;
-
-&lt;p&gt;Now let me make clear that at the same time, what you don’t know must drive your curiosity. Vagueness will fail if students are not motivated to learn more about what they don’t understand, or what they don’t know. By allowing students to do their own learning, I think that they might be able to become more independent, be in charge, and feel more rewarded by knowledge than if they are spoonfed.&lt;/p&gt;
-
-&lt;p&gt;On the contrary, it is is also important that there are some details that are spoonfed. You can’t learn from nothing, and there must still be the answer somewhere. If it is too difficult to find, or students are not motivated to find the answers themselves, or if students are not willing to create their own solutions, then vagueness has failed to work.&lt;/p&gt;
-
-&lt;p&gt;There is a fine balance between teaching too much and not teaching at all. Vagueness should be a tool, and teachers a source of guidance rather than a source of information. I would even go as far as to say that teachers should learn not to teach their own subject, but to learn how to guide students.&lt;/p&gt;
-
-&lt;p&gt;Make note that there is a reason why I chose to discuss vagueness before some of the sections below :)&lt;/p&gt;
-
-&lt;h1 id=&quot;your-opinion-sucks&quot;&gt;Your Opinion Sucks&lt;/h1&gt;
-
-&lt;p&gt;The section header probably inflamed at least more than one reader.&lt;/p&gt;
-
-&lt;p&gt;The connection that some people have with their opinion should be thrown away. I think that opinions are agents of discussion, not the people who are proponents of that opinion. Pretty much 100% of the time, your opinion sucks and needs to be changed.&lt;/p&gt;
-
-&lt;p&gt;Don’t get all offended because someone doesn’t agree with you. The idea of an opinion isn’t so other people agree with it, it is so that the existing state of humanity can be improved if is better than an existing idea. If people don’t agree with it, no need to get all butthurt. Their disagreement is an opinion as well, so both of your opinions suck.&lt;/p&gt;
-
-&lt;p&gt;But then again… I’m voicing my own opinion on opinions, so I should piss off, right?&lt;/p&gt;
-
-&lt;h1 id=&quot;machine-conciousness&quot;&gt;Machine Conciousness&lt;/h1&gt;
-
-&lt;p&gt;I used to have to go to Costco a lot with my parents because, you know, they were those parents.&lt;/p&gt;
-
-&lt;p&gt;Thing was, at Costco, there’s this big ol’ table filled with tons and tons of books, and whenever my parents would shop, I would pick up a book and read it while they did their thing, and one of those books happened to be Michio Kaku’s book that discussed time travel or some other baity Sci-Fi topic.&lt;/p&gt;
-
-&lt;p&gt;Truth is, one of the things that the book I read that day talked about was human consciousness. Now I don’t recall that much from the book itself, so I’m looking to get my hands on it ASAP after I finish writing this.&lt;/p&gt;
-
-&lt;p&gt;Anyways, I also happen to be fascinated with natural processes. Things like what the smallest subatomic particles are made of, what makes energy “energy,” etc… and human conciousness was something that I found mysterious, as well as it happens, neurologists and psychologists the world over. What makes us concious? What makes us/gives us the ability to be meta-cogniscent? Why (if they do not) do animals not think abstractly? And most importantly, what prevents lifeless objects from possessing consiousness?&lt;/p&gt;
-
-&lt;p&gt;How mind-numbingly complex and unknown, the processes that go on inside of our little brains. The only thing I recall today about human consciousness is how people have attempted to preserve it through cryogenics and how it was related someehow to prediction, thinking about the future and being able to respond to how events might continue or change. It boggles the mind, thinking about the mind, in fact.&lt;/p&gt;
-
-&lt;p&gt;I’d honestly love to find some free time to work on something along the same vein as machine consciousness someday. But for now I gotta finish the blog post.&lt;/p&gt;
-
-&lt;h1 id=&quot;jdb&quot;&gt;JDB&lt;/h1&gt;
-
-&lt;p&gt;Some keen observers might notice that I have a new JDB project on GitHub and this is actually for a post APCS course that I am currently in at school. In short, it’s just a CLI Java-debugger, but looking at jdb.md should give a clue as to what the goals are for the project.&lt;/p&gt;
-
-&lt;p&gt;One of the services that I use as part of the class is something called Seesaw, which lets me write a bi/triweekly journal about my progress, but unfortunately, there’s a character limit!&lt;/p&gt;
-
-&lt;p&gt;Since I like to elaborate and write, it turns out this is a relevant inconvenience for me. I think I will begin to incorporate those posts into my blog since it will allow me to add inline elements such as photos or videos without having to make a separate entry, something that writing to GitHub Gist and Seesaw itself did not allow.&lt;/p&gt;
-
-&lt;p&gt;I think that by writing a public journal, others might also benefit from reading through how I think and be able to apply the same concepts to their own programming challenges as well. At the same time, I might also create the illusion that my blog is a little more active than it really is.&lt;/p&gt;
-
-&lt;h1 id=&quot;on-thread-safety&quot;&gt;On Thread Safety&lt;/h1&gt;
-
-&lt;p&gt;It’s been a &lt;strong&gt;long&lt;/strong&gt; while since I’ve looked at the “On Thread Safety” treatise that I had written back in May. I’ve started to look back at it over the past 2 days, so hopefully anyone who has been watching that will be excited for the changes that I’ve made so far, however miniscule. I’m very excited by the prospect of writing a finished product all, but I’m afraid that a single post may not be enough to explain as comprehensively as possible the mechanics of multithreading in Java. I’m not looking to replace other resources, but again, simply condensing and using the vaguness idea from above to help explain a few esoteric/quirky concepts pertaining to thread-safety.&lt;/p&gt;
-
-&lt;p&gt;Again, I’m looking forward to continuing to update it, so stay tuned!&lt;/p&gt;
-
-&lt;h1 id=&quot;octopress&quot;&gt;Octopress&lt;/h1&gt;
-
-&lt;p&gt;As I was looking through the 3 photos on the blog so far, firstly, I noticed that each section in this post so far has been successively shorter than the previous.&lt;/p&gt;
-
-&lt;p&gt;I also noticed this one photo:&lt;/p&gt;
-
-&lt;p&gt;&lt;img src=&quot;https://agenttroll.github.io/blog/img/octopress3mobile.png&quot; alt=&quot;Otopress3 on Mobile&quot; /&gt;&lt;/p&gt;
-
-&lt;p&gt;GG @ The navbar button.&lt;/p&gt;
-
-&lt;p&gt;Although it’s not necessarily related to the above bug (which I am sure is the fault of the theme rather than Octopress itself), I’m thinking of getting rid of Octopress3 perhaps in the near future and using pure Jekyll. There’s little that I think Octopress offers in terms of features vs. Jekyll and the barebones should be sufficient for me. On top of that, Jekyll is significantly more active in terms of development than Octopress so that is also another motivator.&lt;/p&gt;
-
-&lt;h1 id=&quot;closing-thoughts&quot;&gt;Closing Thoughts&lt;/h1&gt;
-
-&lt;p&gt;It’s been a while so I’ve got a lot of stuff to talk about, perhaps contributing to the length of today’s post. I guess my final message would be to stay tuned.&lt;/p&gt;
-
-&lt;p&gt;If nothing of interest to you was written here, perhaps you might leave with a smile on your face. If failing to interest you, I hope your day gets better regardless :)&lt;/p&gt;</content><author><name></name></author><summary type="html">I suppose it’s been a while.</summary></entry><entry><title type="html">Status Update: Reinstalling Debian (for the Nth Time)</title><link href="https://agenttroll.github.io/blog/2017/04/22/status-update-reinstalling-debian-for-the-nth-time.html" rel="alternate" type="text/html" title="Status Update: Reinstalling Debian (for the Nth Time)" /><published>2017-04-23T06:30:03+00:00</published><updated>2017-04-23T06:30:03+00:00</updated><id>https://agenttroll.github.io/blog/2017/04/22/status-update-reinstalling-debian-for-the-nth-time</id><content type="html" xml:base="https://agenttroll.github.io/blog/2017/04/22/status-update-reinstalling-debian-for-the-nth-time.html">&lt;p&gt;It’s really not something I do everyday, but apparently, since I’ve broken my Debian computer so many damn times that I kinda have a routine of what programs to install and what packages to use. There were a few interesting changes and things that I’ve learned from my most recent failure (see &lt;a href=&quot;https://agenttroll.github.io/blog/2017/04/04/i-finally-figured-out-how-to-get-ffmpeg-to-work-on-mixed-jessie-sid.html&quot;&gt;my previous post for the retardation&lt;/a&gt;).&lt;/p&gt;
-
-&lt;h1 id=&quot;initial-setup&quot;&gt;Initial Setup&lt;/h1&gt;
-
-&lt;p&gt;I’m forever in love with 3 tools in particular, &lt;a href=&quot;https://github.com/albertlauncher/albert&quot;&gt;Albert Launcher&lt;/a&gt;, tmux, and &lt;a href=&quot;https://github.com/Valloric/YouCompleteMe/wiki/Building-Vim-from-source&quot;&gt;compiled Vim&lt;/a&gt; (which I should note also requires Ruby and Python, which I use &lt;a href=&quot;https://github.com/rbenv/rbenv&quot;&gt;rbenv&lt;/a&gt; and &lt;a href=&quot;https://github.com/pyenv/pyenv&quot;&gt;pyenv&lt;/a&gt; respectively).&lt;/p&gt;
-
-&lt;p&gt;I had no issues installing Albert, for it was a precompiled package. However, I had considerable trouble trying to get tmux to play nicely with &lt;a href=&quot;https://github.com/powerline/powerline&quot;&gt;powerline&lt;/a&gt;. One of the confusing things was the way you install powerline is actually using python’s pip, which came bundled with the &lt;code class=&quot;highlighter-rouge&quot;&gt;2.7.9&lt;/code&gt; version that I was using from &lt;code class=&quot;highlighter-rouge&quot;&gt;pyenv&lt;/code&gt;. Depending on what you used to install powerline, the &lt;code class=&quot;highlighter-rouge&quot;&gt;--user&lt;/code&gt; flag was used in the official documentation, which placed the package in a different directory than if you had installed it without (the &lt;code class=&quot;highlighter-rouge&quot;&gt;--user&lt;/code&gt; flag would place it in &lt;code class=&quot;highlighter-rouge&quot;&gt;.local&lt;/code&gt;, while without the flag, it would place the package in &lt;code class=&quot;highlighter-rouge&quot;&gt;~/.pyenv/versions/2.7.9/...&lt;/code&gt;). Using &lt;code class=&quot;highlighter-rouge&quot;&gt;pip show powerline-status&lt;/code&gt; will show you where the powerline directory is stored, and I finished the rest after finding this &lt;a href=&quot;https://askubuntu.com/a/283909&quot;&gt;well-written post on AskUbuntu&lt;/a&gt;.&lt;/p&gt;
-
-&lt;p&gt;Further, another little quirk about pyenv is that it does not automatically install its dependencies, you must look at what you need to install &lt;a href=&quot;https://github.com/pyenv/pyenv/wiki/Common-build-problems&quot;&gt;here&lt;/a&gt;. The same cannot be said for &lt;code class=&quot;highlighter-rouge&quot;&gt;rbenv&lt;/code&gt;, however you must also (ironically) &lt;a href=&quot;https://github.com/rbenv/ruby-build&quot;&gt;install the &lt;code class=&quot;highlighter-rouge&quot;&gt;install&lt;/code&gt;&lt;/a&gt; command in order to install it in the first place.&lt;/p&gt;
-
-&lt;p&gt;So back to actually installing tmux itself, the issue was trying to get the command prompt to render correctly, as it would be cut off after my username. I later also got the classic “everything is bold” bug in tmux, but both were fixed by adding the following to my &lt;code class=&quot;highlighter-rouge&quot;&gt;.bashrc&lt;/code&gt;:&lt;/p&gt;
-
-&lt;div class=&quot;language-bash highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;nb&quot;&gt;export &lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;TERM&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;xterm-256color
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;After that, everything worked like charm. I then installed vim and XFCE, removing all the GNOME packages except for the theme (I like the theme actually).&lt;/p&gt;
-
-&lt;h1 id=&quot;nvidia-drivers&quot;&gt;NVIDIA drivers&lt;/h1&gt;
-
-&lt;p&gt;Ah, the bane of linux gaming, installing GPU drivers. For the past few years, I’ve used the proprietary ones off of the Nvidia site, but I decided to take the ones packaged in &lt;code class=&quot;highlighter-rouge&quot;&gt;jessie-backports&lt;/code&gt; for a spin this time (the reason being that they have the new 375 drivers). I ran into the same roadblock a few dozen times, when DKMS and the &lt;code class=&quot;highlighter-rouge&quot;&gt;xorg&lt;/code&gt; nvidia package kept getting stuck. Evidently, the way to fix this was actually to stop XDM, but my intuition was uh… Not exactly up to par the few dozen times that I did it. I even went so far as to attempt to build from source using the &lt;code class=&quot;highlighter-rouge&quot;&gt;deb-src&lt;/code&gt; repository for &lt;code class=&quot;highlighter-rouge&quot;&gt;jessie-backports&lt;/code&gt;, again getting stuck with the dependencies issue. However, just remember to shutoff your window manager for like 15 minutes while it installs, and then when &lt;code class=&quot;highlighter-rouge&quot;&gt;apt-get&lt;/code&gt; finishes with an error on the &lt;code class=&quot;highlighter-rouge&quot;&gt;xorg&lt;/code&gt; package, just reboot and the problem should be solved (&lt;code class=&quot;highlighter-rouge&quot;&gt;sudo dpkg --configure -a&lt;/code&gt; may be needed). The NVIDIA drivers are exceptionally awkward to resolve because one needs to keep rebooting and repeating the reconfiguration until the dependencies are resolved.&lt;/p&gt;
-
-&lt;p&gt;As with the classic setup, I also &lt;a href=&quot;https://askubuntu.com/questions/481414/install-nvidia-driver-instead-nouveau&quot;&gt;blacklisted &lt;code class=&quot;highlighter-rouge&quot;&gt;nouveau&lt;/code&gt;&lt;/a&gt; as well.&lt;/p&gt;
-
-&lt;h1 id=&quot;other-things-i-install&quot;&gt;Other things I install&lt;/h1&gt;
-
-&lt;p&gt;Some of the other packages I install are Google Chrome, Jetbrains Toolbox (along with a few IDEs), and &lt;a href=&quot;https://github.com/cmpitg/infinality-debian-package&quot;&gt;Infinality&lt;/a&gt;. I also use &lt;a href=&quot;http://sdkman.io/&quot;&gt;sdkman&lt;/a&gt; for quite a few different things such as Java/Maven. I also do quite a bit of customization on other things such as installing a solarized-light theme for xfce-terminal, and other font related changes.&lt;/p&gt;
-
-&lt;h1 id=&quot;back-to-the-ffmpeg-problem&quot;&gt;Back to the FFmpeg problem…&lt;/h1&gt;
-
-&lt;p&gt;After breaking my system after that episode, I was eagar to reinstall FFmpeg and OBS the correct way this time. Ironically, I AGAIN broke my system in the process of writing this blog post by removing all the GNOME packages and borking with &lt;code class=&quot;highlighter-rouge&quot;&gt;polkit&lt;/code&gt;. So in fact, I had to redo everything previously written in the process of describing my installation process, and again got close to breaking the DM by forgetting to reconfigure.&lt;/p&gt;
-
-&lt;p&gt;Anyways, with that debacle over, I found to my surprise that using &lt;a href=&quot;https://github.com/lutris/ffmpeg-nvenc&quot;&gt;the script&lt;/a&gt; I had used in the previous article did not work. However, with some digging around, I was finally able to get it to work after about a week:&lt;/p&gt;
-
-&lt;ol&gt;
-  &lt;li&gt;The first problem was dependency conflicts. &lt;code class=&quot;highlighter-rouge&quot;&gt;libvdpau-dev&lt;/code&gt; and &lt;code class=&quot;highlighter-rouge&quot;&gt;libva-dev&lt;/code&gt; and any other libraries that conflict with the &lt;code class=&quot;highlighter-rouge&quot;&gt;jessie&lt;/code&gt; packages need to be removed from the installer script and installed using:&lt;/li&gt;
-&lt;/ol&gt;
-
-&lt;div class=&quot;language-bash highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;nb&quot;&gt;sudo &lt;/span&gt;apt-get install &lt;span class=&quot;nt&quot;&gt;-t&lt;/span&gt; jessie-backports libvdpau-dev libva-dev &lt;span class=&quot;c&quot;&gt;# And any other conflicts&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;ol&gt;
-  &lt;li&gt;
-    &lt;p&gt;Run the script: &lt;code class=&quot;highlighter-rouge&quot;&gt;sudo ./build.sh -o -d /usr/local&lt;/code&gt;. No problems here.&lt;/p&gt;
-  &lt;/li&gt;
-  &lt;li&gt;
-    &lt;p&gt;Optional: I replaced the NVENC header files with a newer version that I downloaded off the NVIDIA site.&lt;/p&gt;
-  &lt;/li&gt;
-  &lt;li&gt;
-    &lt;p&gt;Starting both &lt;code class=&quot;highlighter-rouge&quot;&gt;ffmpeg&lt;/code&gt; and &lt;code class=&quot;highlighter-rouge&quot;&gt;obs&lt;/code&gt; should produce an error that looks something like:&lt;/p&gt;
-  &lt;/li&gt;
-&lt;/ol&gt;
-
-&lt;div class=&quot;language-bash highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;error &lt;span class=&quot;k&quot;&gt;while &lt;/span&gt;loading shared libraries: libavdevice.so.57: cannot open shared object file
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;ol&gt;
-  &lt;li&gt;Open up &lt;code class=&quot;highlighter-rouge&quot;&gt;/etc/ld.so.conf&lt;/code&gt; and use the following lines (libav and nvenc links) - &lt;a href=&quot;https://forum.ivorde.com/ffmpeg-error-while-loading-shared-libraries-libavdevice-so-52-cannot-open-shared-object-file-no-t129.html&quot;&gt;Source&lt;/a&gt;:&lt;/li&gt;
-&lt;/ol&gt;
-
-&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;include /etc/ld.so.conf.d/*.conf
-/usr/local/lib
-/usr/lib/x86_64-linux-gnu/nvidia/current
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;ol&gt;
-  &lt;li&gt;OBS should have an error having to do with not being able to find &lt;code class=&quot;highlighter-rouge&quot;&gt;libcuda.so&lt;/code&gt; and &lt;code class=&quot;highlighter-rouge&quot;&gt;libnvidia-encode.so&lt;/code&gt;. These files are provided by installing the following libraries:&lt;/li&gt;
-&lt;/ol&gt;
-
-&lt;div class=&quot;language-bash highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;nb&quot;&gt;sudo &lt;/span&gt;apt-get install &lt;span class=&quot;nt&quot;&gt;-t&lt;/span&gt; jessie-backports libnvidia-encode1 libcuda1
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;ol&gt;
-  &lt;li&gt;
-    &lt;p&gt;Run &lt;code class=&quot;highlighter-rouge&quot;&gt;sudo ldconfig&lt;/code&gt; to create the links&lt;/p&gt;
-  &lt;/li&gt;
-  &lt;li&gt;
-    &lt;p&gt;Open up OBS and profit&lt;/p&gt;
-  &lt;/li&gt;
-&lt;/ol&gt;
-
-&lt;h1 id=&quot;conclusion&quot;&gt;Conclusion&lt;/h1&gt;
-
-&lt;p&gt;Getting myself up to speed was a hell of a joyride…&lt;/p&gt;</content><author><name></name></author><summary type="html">It’s really not something I do everyday, but apparently, since I’ve broken my Debian computer so many damn times that I kinda have a routine of what programs to install and what packages to use. There were a few interesting changes and things that I’ve learned from my most recent failure (see my previous post for the retardation).</summary></entry></feed>
+&lt;p&gt;I’m sure there are many other factors that I’ve missed which could be vital to productivity, and I acknowledge that “programming productivity” isn’t the entire story. However, with the above noted thoughts on how I improved my own productivity over the years, perhaps the reader might at least have some background on how (yet another) developer works.&lt;/p&gt;</content><author><name></name></author><summary type="html">Perhaps we can take some time to look at productivity, in spirit of the (Eve of) New Year.</summary></entry></feed>
