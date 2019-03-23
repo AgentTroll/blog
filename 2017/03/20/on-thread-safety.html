@@ -134,29 +134,29 @@
 <p><a name="what-is-thread-safety"></a></p>
 <h1 id="-what-is-thread-safety"><a href="#what-is-thread-safety">#</a> WHAT IS THREAD-SAFETY?</h1>
 
-<p>When sharing data between threads, it is vitally important to realize that the same assumptions about the ordering of operations cannot be held true for multithreaded programs as they are for single-threaded ones.</p>
+<p>Thread-safety is a problem arising from when program state is shared between threads.</p>
 
 <blockquote>
-  <p>As a small side note, single-threaded programs are not truly single-threaded. While what the programmer does is single-threaded - things like the <code class="highlighter-rouge">main</code> method - the program as a whole is not. There are threads managed by the JVM in the background, such as the GC thread(s), the JIT thread(s), maybe RMI threads or Ctrl-Break monitor threads if applicable, among others. This means that while there are never truly “single-threaded” programs in the strictest definition of the term, it is important to realise that threads in the JVM sub-system do not interfere or comprimise the thread-safety of a “single-threaded” program. If the programmer does not interact with additional threads other than the main thread which runs the <code class="highlighter-rouge">main</code> method, <strong>there are no thread-safety issues with the code. In the absence of program-level threads, it is <em>impossible</em> for thread-safety to be a problem</strong>.</p>
+  <p><strong>State</strong>: state refers to variables, basically as a general term to describe anything that holds a value. Fields, global variables, and others are considered to be part of the “program state,” or the various different values that need to be passed around and set in a program.</p>
 </blockquote>
 
-<p>The idea of making a program thread-safe is the same as making what is arbitrary predictable. The nature of threads is that they run independently of each other. In doing so, it is impossible to determine the timing between operations or the effects of a read or write on a state variable.</p>
+<p>Threads intrinsically run independently of one another. This behavior can be thought of as a thread running as if the entire program were single-threaded. This allows for optimizations such as caching variables in a localized memory space as well as reordering certain operations.</p>
+
+<p>However, many programs cannot run threads independently. Threads must be coordinated, or they must share some kind of state in order to compute something, or to share the result of that computation. The actions of one thread must therefore be visible and ordered with respect to another thread. The fact that this runs contrary to the intrinsic behavior of threads gives rise to the problem of thread-safety, ensuring that the state of a program remains consistent between each thread.</p>
+
+<p>It is important to note that a multithreaded program is <strong>entirely thread safe if you do not share any state variables</strong>. If all threads are truly independent of one another, then no problems relating to thread-safety can arise.</p>
 
 <blockquote>
-  <p><strong>State</strong>: When I use “state” or “shared state,” I refer to data to which a thread might be able to read or write. It is a general term used to describe whatever is made available to threads to access. This may be an instance object that is passed around, a global variable, a class field. For example, I can say that a thread will mutate a state by incrementing it, or a thread can mutate a state by setting its value, because the “state” is the data that the thread is accessing and mutating, or changing in some way. I can also say that a thread will read the state of an object to say that the thread will be able to use the object’s getters to obtain the value of its fields.</p>
+  <p>As a small side note, single-threaded programs are not truly single-threaded. While what the programmer does is single-threaded - things like the <code class="highlighter-rouge">main</code> method - the program as a whole is not. There are threads managed by the JVM in the background, such as the GC thread(s), the JIT thread(s), maybe RMI threads or Ctrl-Break monitor threads if applicable, among others. This means that while there are never truly “single-threaded” programs in the strictest definition of the term, it is important to realise that threads in the JVM sub-system do not interfere or comprimise the thread-safety of a “single-threaded” program. If the programmer does not interact with additional threads other than the main thread which runs the <code class="highlighter-rouge">main</code> method, <strong>there are no thread-safety issues with the code. In the absence of additional program-level threads, it is <em>impossible</em> for thread-safety to be a problem</strong>.</p>
 </blockquote>
 
-<p><strong>While the issues relating to thread-safety are diverse and expansive, most issues can be boiled down to either an ordering or visibility issue.</strong></p>
-
-<p>The nature of <em>most</em> programs is that they must enforce a relationship between its threads in order to calculate a result, to report back the status of an operation, to listen to events, etc… All of these require threads to be dependent on each other, against their independent nature:</p>
-
-<p>If it were possible to isolate visibility issues, then surprising behavior that results from this can be seen in the following diagram of two threads accessing a shared state:</p>
+<p>The fact that many threads behave independently of one another causes issues in multithreaded code that would be counterintuitive. For example, consider the following sequence of events:</p>
 
 <p><img src="https://agenttroll.github.io/blog/img/Visibility.jpg" alt="Visbility" /></p>
 
-<p>In the absence of adequate synchronization, the above diagram demonstrates how <code class="highlighter-rouge">Thread 1</code> continued to read a “stale” value of <code class="highlighter-rouge">4</code> from a shared state, before but also after <code class="highlighter-rouge">Thread 2</code> has set it to <code class="highlighter-rouge">5</code>. The effect of writing <code class="highlighter-rouge">5</code> to the shared variable was therefore not visible to <code class="highlighter-rouge">Thread 1</code>.</p>
+<p>In the absence of adequate synchronization, the above diagram demonstrates how <code class="highlighter-rouge">Thread 1</code> continues to read <code class="highlighter-rouge">4</code> from a shared state, even after <code class="highlighter-rouge">Thread 2</code> has set it to <code class="highlighter-rouge">5</code>. Because threads intrinsically behave as if they were independent of one another, the value read by <code class="highlighter-rouge">Thread 1</code> might have been cached, or the new value set by <code class="highlighter-rouge">Thread 2</code> might have been cached where only <code class="highlighter-rouge">Thread 2</code> can see it. This is called a visibility problem.</p>
 
-<p>Also consider the following code:</p>
+<p>The independent behavior of threads can also be illustrated by this snippet of code:</p>
 
 <div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">MutableState</span> <span class="n">state</span> <span class="o">=</span> <span class="c1">// ...</span>
 <span class="n">Thread</span> <span class="n">t1</span> <span class="o">=</span> <span class="k">new</span> <span class="n">Thread</span><span class="o">(()</span> <span class="o">-&gt;</span> <span class="o">{</span>
@@ -171,16 +171,16 @@
 <span class="n">t2</span><span class="o">.</span><span class="na">start</span><span class="o">();</span>
 </code></pre></div></div>
 
-<p>In the absence of adequate synchronization between threads, there can be no correct assumptions about the order of operations. Recalling that threads are arbitrary and independent, it is entirely possible for <code class="highlighter-rouge">t1</code> to start AFTER <code class="highlighter-rouge">t2</code>. It is also possible for <code class="highlighter-rouge">t1</code> to run as expected before <code class="highlighter-rouge">t2</code>, but there are no guarantees here. It is even possible for <code class="highlighter-rouge">t1</code> to <code class="highlighter-rouge">state.mutate()</code> <em>simultaneously</em> with <code class="highlighter-rouge">t2</code>. To further our visibility example, it is further possible for <code class="highlighter-rouge">t2</code> to not even see what changes have been made by <code class="highlighter-rouge">t1</code>. In effect, the results of running these two threads are then arbitrary and indeterminate as well.</p>
+<p>In the absence of adequate synchronization between threads, there can be no correct assumptions about the order of operations. Recalling that threads are arbitrary and independent, it is entirely possible for <code class="highlighter-rouge">t1</code> to start AFTER <code class="highlighter-rouge">t2</code>. It is also possible for <code class="highlighter-rouge">t1</code> to run as expected before <code class="highlighter-rouge">t2</code>, but there are no guarantees here. It is even possible for <code class="highlighter-rouge">t1</code> to <code class="highlighter-rouge">state.mutate()</code> <em>simultaneously</em> with <code class="highlighter-rouge">t2</code>. Referring back to our visibility example, it is even possible for <code class="highlighter-rouge">t2</code> to not even see what changes have been made by <code class="highlighter-rouge">t1</code>. In effect, the results of running these two threads are then arbitrary and indeterminate as well.</p>
 
-<p>This is the heart of thread-safety. Through using tools such as locks, synchronization tools, atomic variables and others, code that is not thread-safe can be tamed and used to exploit modern multiprocessors.</p>
+<p>Although the problems caused by thread-safety are often insidious and even catastrophic, tools such as locks, synchronizers, atomic variables and others, can be used to tame and safely exploit the power of modern processors.</p>
 
 <hr />
 
 <p><a name="what-causes-threads-to-behave-this-way"></a></p>
 <h1 id="-what-causes-threads-to-behave-this-way"><a href="#what-causes-threads-to-behave-this-way">#</a> WHAT CAUSES THREADS TO BEHAVE THIS WAY?</h1>
 
-<p>Having some basic idea of what “thread-safety” is, I believe that there is benefit in discussing the nitty gritty details of why threads behave in this “independent” manner. There tends to be a lot of widespread use of mere analogies in order to explain why thread-safety is a problem and this in itself has caused issues on its own, much like how parents might avoid talking about sexual intercourse with their children until they are older.</p>
+<p>Having some basic idea of what “thread-safety” is, I believe that there is benefit in discussing the nitty gritty details of why threads behave in this “independent” manner. There tends to be a lot of widespread use of mere analogies in order to explain why thread-safety is a problem and this in itself has caused issues on its own.</p>
 
 <p>Going along the same vein with the “messy details” of multithreading, I think now would be a good time to also discuss some drawbacks of writing multithreaded programs:</p>
 
@@ -222,7 +222,7 @@
 <h1 id="-how-to-write-thread-safe-code"><a href="#how-to-write-thread-safe-code">#</a> HOW TO WRITE THREAD-SAFE CODE?</h1>
 
 <div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nd">@ThreadSafe</span>
-<span class="kd">public</span> <span class="kd">class</span> <span class="nc">ThreadNotUnsafe</span> <span class="o">{</span>
+<span class="kd">public</span> <span class="kd">class</span> <span class="nc">ThreadSafe</span> <span class="o">{</span>
     <span class="c1">// Add 'volatile'</span>
     <span class="kd">private</span> <span class="kd">volatile</span> <span class="kt">int</span> <span class="n">state</span> <span class="o">=</span> <span class="mi">4</span><span class="o">;</span>
     
