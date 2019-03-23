@@ -53,26 +53,25 @@ It turns out that the benefit that comes from exploiting multiprocessors is a do
 <a name="what-is-thread-safety"></a>
 # [#](#what-is-thread-safety) WHAT IS THREAD-SAFETY?
 
-When sharing data between threads, it is vitally important to realize that the same assumptions about the ordering of operations cannot be held true for multithreaded programs as they are for single-threaded ones.
+Thread-safety is a problem arising from when program state is shared between threads.
 
-> As a small side note, single-threaded programs are not truly single-threaded. While what the programmer does is single-threaded - things like the `main` method - the program as a whole is not. There are threads managed by the JVM in the background, such as the GC thread(s), the JIT thread(s), maybe RMI threads or Ctrl-Break monitor threads if applicable, among others. This means that while there are never truly "single-threaded" programs in the strictest definition of the term, it is important to realise that threads in the JVM sub-system do not interfere or comprimise the thread-safety of a "single-threaded" program. If the programmer does not interact with additional threads other than the main thread which runs the `main` method, **there are no thread-safety issues with the code. In the absence of program-level threads, it is *impossible* for thread-safety to be a problem**.
+> **State**: state refers to variables, basically as a general term to describe anything that holds a value. Fields, global variables, and others are considered to be part of the "program state," or the various different values that need to be passed around and set in a program.
 
-The idea of making a program thread-safe is the same as making what is arbitrary predictable. The nature of threads is that they run independently of each other. In doing so, it is impossible to determine the timing between operations or the effects of a read or write on a state variable.
+Threads intrinsically run independently of one another. This behavior can be thought of as a thread running as if the entire program were single-threaded. This allows for optimizations such as caching variables in a localized memory space as well as reordering certain operations.
 
-> **State**: When I use "state" or "shared state," I refer to data to which a thread might be able to read or write. It is a general term used to describe whatever is made available to threads to access. This may be an instance object that is passed around, a global variable, a class field. For example, I can say that a thread will mutate a state by incrementing it, or a thread can mutate a state by setting its value, because the "state" is the data that the thread is accessing and mutating, or changing in some way. I can also say that a thread will read the state of an object to say that the thread will be able to use the object's getters to obtain the value of its fields.
+However, many programs cannot run threads independently. Threads must be coordinated, or they must share some kind of state in order to compute something, or to share the result of that computation. The actions of one thread must therefore be visible and ordered with respect to another thread. The fact that this runs contrary to the intrinsic behavior of threads gives rise to the problem of thread-safety, ensuring that the state of a program remains consistent between each thread.
 
+It is important to note that a multithreaded program is **entirely thread safe if you do not share any state variables**. If all threads are truly independent of one another, then no problems relating to thread-safety can arise.
 
-**While the issues relating to thread-safety are diverse and expansive, most issues can be boiled down to either an ordering or visibility issue.**
+> As a small side note, single-threaded programs are not truly single-threaded. While what the programmer does is single-threaded - things like the `main` method - the program as a whole is not. There are threads managed by the JVM in the background, such as the GC thread(s), the JIT thread(s), maybe RMI threads or Ctrl-Break monitor threads if applicable, among others. This means that while there are never truly "single-threaded" programs in the strictest definition of the term, it is important to realise that threads in the JVM sub-system do not interfere or comprimise the thread-safety of a "single-threaded" program. If the programmer does not interact with additional threads other than the main thread which runs the `main` method, **there are no thread-safety issues with the code. In the absence of additional program-level threads, it is *impossible* for thread-safety to be a problem**.
 
-The nature of *most* programs is that they must enforce a relationship between its threads in order to calculate a result, to report back the status of an operation, to listen to events, etc... All of these require threads to be dependent on each other, against their independent nature:
-
-If it were possible to isolate visibility issues, then surprising behavior that results from this can be seen in the following diagram of two threads accessing a shared state:
+The fact that many threads behave independently of one another causes issues in multithreaded code that would be counterintuitive. For example, consider the following sequence of events:
 
 ![Visbility]({{ site.url }}/blog/img/Visibility.jpg)
 
-In the absence of adequate synchronization, the above diagram demonstrates how `Thread 1` continued to read a "stale" value of `4` from a shared state, before but also after `Thread 2` has set it to `5`. The effect of writing `5` to the shared variable was therefore not visible to `Thread 1`.
+In the absence of adequate synchronization, the above diagram demonstrates how `Thread 1` continues to read `4` from a shared state, even after `Thread 2` has set it to `5`. Because threads intrinsically behave as if they were independent of one another, the value read by `Thread 1` might have been cached, or the new value set by `Thread 2` might have been cached where only `Thread 2` can see it. This is called a visibility problem.
 
-Also consider the following code:
+The independent behavior of threads can also be illustrated by this snippet of code:
 
 ``` java
 MutableState state = // ...
@@ -88,16 +87,16 @@ t1.start();
 t2.start();
 ```
 
-In the absence of adequate synchronization between threads, there can be no correct assumptions about the order of operations. Recalling that threads are arbitrary and independent, it is entirely possible for `t1` to start AFTER `t2`. It is also possible for `t1` to run as expected before `t2`, but there are no guarantees here. It is even possible for `t1` to `state.mutate()` *simultaneously* with `t2`. To further our visibility example, it is further possible for `t2` to not even see what changes have been made by `t1`. In effect, the results of running these two threads are then arbitrary and indeterminate as well.
+In the absence of adequate synchronization between threads, there can be no correct assumptions about the order of operations. Recalling that threads are arbitrary and independent, it is entirely possible for `t1` to start AFTER `t2`. It is also possible for `t1` to run as expected before `t2`, but there are no guarantees here. It is even possible for `t1` to `state.mutate()` *simultaneously* with `t2`. Referring back to our visibility example, it is even possible for `t2` to not even see what changes have been made by `t1`. In effect, the results of running these two threads are then arbitrary and indeterminate as well.
 
-This is the heart of thread-safety. Through using tools such as locks, synchronization tools, atomic variables and others, code that is not thread-safe can be tamed and used to exploit modern multiprocessors.
+Although the problems caused by thread-safety are often insidious and even catastrophic, tools such as locks, synchronizers, atomic variables and others, can be used to tame and safely exploit the power of modern processors.
 
 ---
 
 <a name="what-causes-threads-to-behave-this-way"></a>
 # [#](#what-causes-threads-to-behave-this-way) WHAT CAUSES THREADS TO BEHAVE THIS WAY?
 
-Having some basic idea of what "thread-safety" is, I believe that there is benefit in discussing the nitty gritty details of why threads behave in this "independent" manner. There tends to be a lot of widespread use of mere analogies in order to explain why thread-safety is a problem and this in itself has caused issues on its own, much like how parents might avoid talking about sexual intercourse with their children until they are older.
+Having some basic idea of what "thread-safety" is, I believe that there is benefit in discussing the nitty gritty details of why threads behave in this "independent" manner. There tends to be a lot of widespread use of mere analogies in order to explain why thread-safety is a problem and this in itself has caused issues on its own.
 
 Going along the same vein with the "messy details" of multithreading, I think now would be a good time to also discuss some drawbacks of writing multithreaded programs:
 
@@ -137,7 +136,7 @@ Sources used:
 
 ``` java
 @ThreadSafe
-public class ThreadNotUnsafe {
+public class ThreadSafe {
     // Add 'volatile'
     private volatile int state = 4;
     
