@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.6.2">Jekyll</generator><link href="https://agenttroll.github.io/blog/feed.xml" rel="self" type="application/atom+xml" /><link href="https://agenttroll.github.io/blog/" rel="alternate" type="text/html" /><updated>2019-03-21T00:11:03-07:00</updated><id>https://agenttroll.github.io/blog/</id><title type="html">Inside a Troll</title><subtitle>Thoughts of a Java developer</subtitle><entry><title type="html">Lessons Learned Debugging: Part 1</title><link href="https://agenttroll.github.io/blog/2019/03/20/lessons-learned-debugging-part-1.html" rel="alternate" type="text/html" title="Lessons Learned Debugging: Part 1" /><published>2019-03-20T22:27:00-07:00</published><updated>2019-03-20T22:27:00-07:00</updated><id>https://agenttroll.github.io/blog/2019/03/20/lessons-learned-debugging-part-1</id><content type="html" xml:base="https://agenttroll.github.io/blog/2019/03/20/lessons-learned-debugging-part-1.html">&lt;p&gt;This is going to be among the first in a blog series that
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.6.2">Jekyll</generator><link href="https://agenttroll.github.io/blog/feed.xml" rel="self" type="application/atom+xml" /><link href="https://agenttroll.github.io/blog/" rel="alternate" type="text/html" /><updated>2019-03-23T15:23:49-07:00</updated><id>https://agenttroll.github.io/blog/</id><title type="html">Inside a Troll</title><subtitle>Thoughts of a Java developer</subtitle><entry><title type="html">Lessons Learned Debugging: Part 1</title><link href="https://agenttroll.github.io/blog/2019/03/20/lessons-learned-debugging-part-1.html" rel="alternate" type="text/html" title="Lessons Learned Debugging: Part 1" /><published>2019-03-20T22:27:00-07:00</published><updated>2019-03-20T22:27:00-07:00</updated><id>https://agenttroll.github.io/blog/2019/03/20/lessons-learned-debugging-part-1</id><content type="html" xml:base="https://agenttroll.github.io/blog/2019/03/20/lessons-learned-debugging-part-1.html">&lt;p&gt;This is going to be among the first in a blog series that
 detail some of my work while at Intermissum to reduce
 bugginess. Not only did I personally run into many
 hardships in order to write better production-quality
@@ -204,6 +204,78 @@ post, but I will first begin with theory.&lt;/p&gt;
 profess to be an expert at all in the subject.&lt;/p&gt;
 
 &lt;h1 id=&quot;the-premise-of-control-theory&quot;&gt;The Premise of Control Theory&lt;/h1&gt;
+
+&lt;p&gt;Control Theory is a branch of Computer Science that deals
+with the manipulation of a physical system. When people
+talk about Control Theory, they tend to use temperature
+control as an example. Another common use of Control Theory
+is in robotics, where the physical systems are the moving
+parts of the robot such as arms and legs. The need for
+Control Theory arises because the state of the environment
+changes during the operation of a physical mechanism. In
+order to control the distance that a robot moves for
+example, one would need to know how powerful the motor is,
+the frictional forces that will be experienced, such as
+from the surface, from the ball bearings, potentially wind
+resistance, etc. By taking all of these factors into
+account, one can can calculate parameters such as current
+and the time that a motor will need to run to move some
+distance. This model, where all the information is
+collected beforehand to compute a command that controls
+a system is called an &lt;em&gt;open loop system&lt;/em&gt;.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;https://agenttroll.github.io/blog/img/itct-open-loop.svg&quot; alt=&quot;Open Loop&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;However, the problem is that it would be impractical to 
+have to measure or require a human to input the
+potentially large number of different variables that
+affect the system. This problem is solved by using a sensor
+to measure the actual output of the system (in this case,
+the actual distance the wheel of a robot rolls) and then
+sending that information back to the software, which then
+computes a new set of parameters to compensate for 
+overshoot or undershoot of some target. This is called a
+&lt;em&gt;closed-loop system&lt;/em&gt;, because information travels both in
+the direction of the system being controlled, and in the
+direction of the software controlling that system as well.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;https://agenttroll.github.io/blog/img/itct-closed-loop.svg&quot; alt=&quot;Closed Loop&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;And while you will still need to understand certain
+operating parameters of the physical system, you will not
+need to account for every possible factor that will affect
+the the physical result of a command.&lt;/p&gt;
+
+&lt;p&gt;(As a quick side note, one would use a sensor when dealing
+with autonomous systems. When humans are operating a
+system, it is the human who takes note of whatever state
+the system is currently in, and therefore, a system that
+would otherwise be an open-loop becomes a closed-loop
+system with human intervention)&lt;/p&gt;
+
+&lt;h1 id=&quot;abstract-view-of-closed-loop-systems&quot;&gt;Abstract View of Closed-Loop Systems&lt;/h1&gt;
+
+&lt;p&gt;Physical systems do not react instantaneously. As such, a
+closed-loop system will usually sample and send updates 
+over time at fixed intervals.&lt;/p&gt;
+
+&lt;p&gt;At the beginning of a procedure, a goal (or target or
+setpoint) is defined for a system. This could be rolling a
+particular distance for a wheel, or a room heating up to a
+particular temperature, or a particular speed at which to
+spin an axle, etc, so long as whatever sensor is equipped
+on the device is capable of measuring it (e.g. an encoder
+or a thermocouple). Then, the &lt;em&gt;error&lt;/em&gt; is computed by
+subtracting the current state of the system from the
+setpoint. Finally, a command will be sent to compensate for
+the error. This will be repeated at a set time interval
+until the error becomes, or gets close enough to 0.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;https://agenttroll.github.io/blog/img/itct-abstract-loop.svg&quot; alt=&quot;Abstract Loop&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;The process of computing the output based on the error
+value is known as PID (sometimes PIDF), where the letters
+stand for proportional, integral, derivative, and feed.&lt;/p&gt;
 
 &lt;p&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;// TODO&lt;/code&gt;&lt;/p&gt;</content><author><name></name></author><summary type="html">While I don’t profess to be an absolute expert at control theory, a lot of the information about the matter that I’ve found online appears to be either inaccessible to the average Joe or unhelpful. I’ve decided to do a write up about what control theory is from the perspective of an implementor, rather than a theorist.</summary></entry><entry><title type="html">SQLite: Not What I Hoped For</title><link href="https://agenttroll.github.io/blog/2018/06/19/sqlite-not-what-i-hoped-for.html" rel="alternate" type="text/html" title="SQLite: Not What I Hoped For" /><published>2018-06-19T12:14:10-07:00</published><updated>2018-06-19T12:14:10-07:00</updated><id>https://agenttroll.github.io/blog/2018/06/19/sqlite-not-what-i-hoped-for</id><content type="html" xml:base="https://agenttroll.github.io/blog/2018/06/19/sqlite-not-what-i-hoped-for.html">&lt;p&gt;An issue with one of the plugins on MineSaga has recently brought to my attention the rather poor decision of using SQLite to store player data. Now we’re not even doing anything complicated with SQLite, it’s literally just used for persistence to track player data that gets updated occasionally. Even factoring in network latency, I don’t believe that SQLite will outperform MySQL for our particular use case.&lt;/p&gt;
 
