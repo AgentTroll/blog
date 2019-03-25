@@ -79,14 +79,19 @@ spin an axle, etc, so long as whatever sensor is equipped
 on the device is capable of measuring it (e.g. an encoder
 or a thermocouple). Then, the *error* is computed by
 subtracting the current state of the system from the
-setpoint. Finally, a command will be sent to compensate for
-the error. This will be repeated at a set time interval
-until the error becomes, or gets close enough to 0.
+setpoint, where error is simply a metric of how far away
+the current state of the mechanism is from where the 
+setpoint  is. Finally, a command will be sent to compensate
+for the error. This will be repeated at a set time interval
+until the error becomes, or gets close enough to 0, meaning
+that the mechanism has reached its setpoint.
 
 ![Abstract Loop]({{ site.url }}/blog/img/itct-abstract-loop.svg)
 
 The process of computing the output based on the error
 value is known as PID (sometimes PIDF), where the letters
 stand for proportional, integral, derivative, and feed.
+
+
 
 `// TODO`
