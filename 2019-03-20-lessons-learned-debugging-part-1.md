@@ -91,7 +91,7 @@ I leave with the following wisdom from [The Power of Ten](http://spinroot.com/ge
 they are meant to make it possible to check code where very
 literally your life may depend on its correctness: code 
 that is used to control the airplane that you fly on, the 
-nuclear powerplant a few miles from where you live, or the 
+nuclear power plant a few miles from where you live, or the 
 spacecraft that carries astronauts into orbit. The rules 
 act like the seat-belt in your car: initially they are 
 perhaps a little uncomfortable, but after a while their use
