@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.6.2">Jekyll</generator><link href="https://agenttroll.github.io/blog/feed.xml" rel="self" type="application/atom+xml" /><link href="https://agenttroll.github.io/blog/" rel="alternate" type="text/html" /><updated>2019-03-23T15:59:03-07:00</updated><id>https://agenttroll.github.io/blog/</id><title type="html">Inside a Troll</title><subtitle>Thoughts of a Java developer</subtitle><entry><title type="html">Lessons Learned Debugging: Part 1</title><link href="https://agenttroll.github.io/blog/2019/03/20/lessons-learned-debugging-part-1.html" rel="alternate" type="text/html" title="Lessons Learned Debugging: Part 1" /><published>2019-03-20T22:27:00-07:00</published><updated>2019-03-20T22:27:00-07:00</updated><id>https://agenttroll.github.io/blog/2019/03/20/lessons-learned-debugging-part-1</id><content type="html" xml:base="https://agenttroll.github.io/blog/2019/03/20/lessons-learned-debugging-part-1.html">&lt;p&gt;This is going to be among the first in a blog series that
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.6.2">Jekyll</generator><link href="https://agenttroll.github.io/blog/feed.xml" rel="self" type="application/atom+xml" /><link href="https://agenttroll.github.io/blog/" rel="alternate" type="text/html" /><updated>2019-03-25T16:12:54-07:00</updated><id>https://agenttroll.github.io/blog/</id><title type="html">Inside a Troll</title><subtitle>Thoughts of a Java developer</subtitle><entry><title type="html">Lessons Learned Debugging: Part 1</title><link href="https://agenttroll.github.io/blog/2019/03/20/lessons-learned-debugging-part-1.html" rel="alternate" type="text/html" title="Lessons Learned Debugging: Part 1" /><published>2019-03-20T22:27:00-07:00</published><updated>2019-03-20T22:27:00-07:00</updated><id>https://agenttroll.github.io/blog/2019/03/20/lessons-learned-debugging-part-1</id><content type="html" xml:base="https://agenttroll.github.io/blog/2019/03/20/lessons-learned-debugging-part-1.html">&lt;p&gt;This is going to be among the first in a blog series that
 detail some of my work while at Intermissum to reduce
 bugginess. Not only did I personally run into many
 hardships in order to write better production-quality
@@ -6,7 +6,100 @@ plugins, this series will present me with new challenges in
 the form of figuring out what to share, what not to share,
 as well as what I am not &lt;em&gt;allowed&lt;/em&gt; to share.&lt;/p&gt;
 
-&lt;h1 id=&quot;-todo&quot;&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;// TODO&lt;/code&gt;&lt;/h1&gt;</content><author><name></name></author><summary type="html">This is going to be among the first in a blog series that detail some of my work while at Intermissum to reduce bugginess. Not only did I personally run into many hardships in order to write better production-quality plugins, this series will present me with new challenges in the form of figuring out what to share, what not to share, as well as what I am not allowed to share.</summary></entry><entry><title type="html">My Biggest Mistake</title><link href="https://agenttroll.github.io/blog/2019/03/20/my-biggest-mistake.html" rel="alternate" type="text/html" title="My Biggest Mistake" /><published>2019-03-20T22:24:50-07:00</published><updated>2019-03-20T22:24:50-07:00</updated><id>https://agenttroll.github.io/blog/2019/03/20/my-biggest-mistake</id><content type="html" xml:base="https://agenttroll.github.io/blog/2019/03/20/my-biggest-mistake.html">&lt;p&gt;Quick note, this is NOT clickbait.&lt;/p&gt;
+&lt;h1 id=&quot;splitting-up-your-code&quot;&gt;Splitting Up Your Code&lt;/h1&gt;
+
+&lt;p&gt;The first lesson, while it may seem obvious to some, is to
+always split up your code. What I used to do was place a
+large majority of my code in the main class, reasoning that
+the more I can keep in the main class, the less classes and
+therefore the less complexity I will have to deal with.
+There are often &lt;a href=&quot;https://github.com/EnterpriseQualityCoding/FizzBuzzEnterpriseEdition&quot;&gt;memes&lt;/a&gt; 
+that stigmatize complexity or “enterprise” design in a 
+negative light. While monolithic codebases such as the
+Spring framework with sprawling abstractions for each and
+every possible purpose might add credit to this stigma,
+using abstractions and creating purpose-built classes can
+improve your code quality and productivity vastly.&lt;/p&gt;
+
+&lt;p&gt;Some of the many advantages to splitting up your code
+include:&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;Less mental overhead to keep track of where specific
+  code segments are in your file&lt;/li&gt;
+  &lt;li&gt;It is easier to navigate classes that have a purpose
+  rather than through a file that has many purposes&lt;/li&gt;
+  &lt;li&gt;It will be easier to browse and evaluate what the
+  plugin is doing&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;All of these will contribute to less buggy code, because
+you will be less mentally fatigued by housekeeping while
+you are writing the code, as well as being able to more
+quickly debug and walk through the call trace in a logical
+fashion. Splitting up my code in a sensible way was far and
+away one of the most effective steps I took in reducing the
+bugginess of my code.&lt;/p&gt;
+
+&lt;h1 id=&quot;drawbacks&quot;&gt;Drawbacks?&lt;/h1&gt;
+
+&lt;p&gt;You will feel like you are less productive initially if you
+are not used to the workflow. You are going to feel like
+creating new files is such a pain, how you need to set
+everything up, how writing more pragmatic and clean code
+takes up so much space and isn’t as elegant as what you
+would have figured out when writing code that fits into a
+single class.&lt;/p&gt;
+
+&lt;p&gt;You will feel like you’re creating classes all the time and
+not writing enough code. You will feel like there’s so much
+boilerplate, and the gains you are making are marginal.
+But I implore you to trust me on this one. You are clearing
+out mental clutter. You are making less mistakes, because
+you are taking time to really understand the code and how
+it all fits into the big picture. You are slowing down when
+you write code, so you have less bugs down the line to have
+to fix. I cannot stress enough that this is something that
+has been tried and tested dozens upon dozens of times, and
+that I myself have found success in being more watchful
+over my tendency to write spaghetti code.&lt;/p&gt;
+
+&lt;p&gt;You will thank yourself in the future, when you have to
+look back over your code, because it is so much easier to
+understand. You will see that you have gotten better at
+recognizing the responsibility of each component of your
+code. You will become a better engineer, because you will
+have gotten closer to &lt;em&gt;designing&lt;/em&gt; your code rather than
+simply &lt;em&gt;writing&lt;/em&gt; your code. These are skills that you build
+up by changing poor programming practices, so it pays to
+really evaluate yourself now.&lt;/p&gt;
+
+&lt;h1 id=&quot;conclusion&quot;&gt;Conclusion&lt;/h1&gt;
+
+&lt;p&gt;There you go, that’s tip #1 done. These are meant to be
+simple, short, and practical. If you’ve been disappointed,
+then hopefully the next one will offer some insight you
+yourself have missed.&lt;/p&gt;
+
+&lt;p&gt;I leave with the following wisdom from &lt;a href=&quot;http://spinroot.com/gerard/pdf/P10.pdf&quot;&gt;The Power of Ten&lt;/a&gt;:&lt;/p&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;If the rules seem Draconian at first, bear in mind that
+they are meant to make it possible to check code where very
+literally your life may depend on its correctness: code 
+that is used to control the airplane that you fly on, the 
+nuclear powerplant a few miles from where you live, or the 
+spacecraft that carries astronauts into orbit. The rules 
+act like the seat-belt in your car: initially they are 
+perhaps a little uncomfortable, but after a while their use
+becomes second-nature and not using them becomes 
+unimaginable.&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;While these tips are not necessarily rules that are
+responsible for keeping people alive, incorporating the
+same philosophy into your programming repertoire will help
+you in the long run.&lt;/p&gt;</content><author><name></name></author><summary type="html">This is going to be among the first in a blog series that detail some of my work while at Intermissum to reduce bugginess. Not only did I personally run into many hardships in order to write better production-quality plugins, this series will present me with new challenges in the form of figuring out what to share, what not to share, as well as what I am not allowed to share.</summary></entry><entry><title type="html">My Biggest Mistake</title><link href="https://agenttroll.github.io/blog/2019/03/20/my-biggest-mistake.html" rel="alternate" type="text/html" title="My Biggest Mistake" /><published>2019-03-20T22:24:50-07:00</published><updated>2019-03-20T22:24:50-07:00</updated><id>https://agenttroll.github.io/blog/2019/03/20/my-biggest-mistake</id><content type="html" xml:base="https://agenttroll.github.io/blog/2019/03/20/my-biggest-mistake.html">&lt;p&gt;Quick note, this is NOT clickbait.&lt;/p&gt;
 
 &lt;p&gt;I’ve been around the Bukkit server-modding community for a
 while now. Not as long as some people, of course, but still
@@ -267,9 +360,12 @@ spin an axle, etc, so long as whatever sensor is equipped
 on the device is capable of measuring it (e.g. an encoder
 or a thermocouple). Then, the &lt;em&gt;error&lt;/em&gt; is computed by
 subtracting the current state of the system from the
-setpoint. Finally, a command will be sent to compensate for
-the error. This will be repeated at a set time interval
-until the error becomes, or gets close enough to 0.&lt;/p&gt;
+setpoint, where error is simply a metric of how far away
+the current state of the mechanism is from where the 
+setpoint  is. Finally, a command will be sent to compensate
+for the error. This will be repeated at a set time interval
+until the error becomes, or gets close enough to 0, meaning
+that the mechanism has reached its setpoint.&lt;/p&gt;
 
 &lt;p&gt;&lt;img src=&quot;https://agenttroll.github.io/blog/img/itct-abstract-loop.svg&quot; alt=&quot;Abstract Loop&quot; /&gt;&lt;/p&gt;
 
