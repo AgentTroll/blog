@@ -78,8 +78,11 @@
 
   <div class="post-content" itemprop="articleBody">
     <p>While I don’t profess to be an absolute expert at control theory, a lot of the information about the matter
-that I’ve found online appears to be either inaccessible to the average Joe or unhelpful. I’ve decided to
-do a write up about what control theory is from the perspective of an implementor, rather than a theorist.</p>
+that I’ve found online appears to be either inaccessible to the average Joe or simply flat-out unhelpful. 
+Control Theory is often explained with mechanical controllers that don’t really have any application to the
+software world, and it has been difficult for me personally to comprehend at all what is going on. In light of
+this, I’ve decided to do a write up about what control theory is from the perspective of an implementor, 
+rather than that of a theorist.</p>
 
 <p>That being said, control theory is still theory. That is, to understand the concept itself, you must
 understand the theory. I do plan on going over the practical use of control theory in code later on in this
@@ -138,6 +141,11 @@ the system is currently in, and therefore, a system that
 would otherwise be an open-loop becomes a closed-loop
 system with human intervention)</p>
 
+<p>While I will be referring to the software control of
+physical systems, control loops can also be built with
+mechanical controls in the place of the software component
+as well.</p>
+
 <h1 id="abstract-view-of-closed-loop-systems">Abstract View of Closed-Loop Systems</h1>
 
 <p>Physical systems do not react instantaneously. As such, a
@@ -163,7 +171,179 @@ that the mechanism has reached its setpoint.</p>
 
 <p>The process of computing the output based on the error
 value is known as PID (sometimes PIDF), where the letters
-stand for proportional, integral, derivative, and feed.</p>
+stand for proportional, integral, derivative, and
+feed-forward. Because PID is the main “controller” of a
+mechanism, one often uses the term “PID control” or “PID
+loop” to refer to a closed-loop control system. On the
+above diagram, PID would be the “Compute output” portion of
+the control loop.</p>
+
+<p>When you look up <a href="https://en.wikipedia.org/wiki/PID_controller">“PID Controller”</a> on Wikipedia, you get
+this image here:</p>
+
+<p><img src="https://wikimedia.org/api/rest_v1/media/math/render/svg/cd581e5c8539ce46453574d1188bd9d52a610fe0" alt="PID equation" /></p>
+
+<p>(You will notice that there’s only 3 terms, and that I’ve
+dropped the F from PID several times already. I’ll get into
+why that is later on)</p>
+
+<p>This is a good starting point at which we can start to
+implement a PID control loop. All the K values are simply
+“gain” constants, which are used to control the power (for
+lack of a better word) of the output. These are adjustible
+in order to change the order of magnitude of the output, so
+for example, a motor that takes an input between -1 m/s and
+1 m/s would have smaller gain constants than a motor that
+takes input between -10 m/s to 10 m/s.</p>
+
+<p>Each gain constant precedes a value that is proportional to
+the instantaneous error, then the accumulated error, then
+the rate at which the error is changing.</p>
+
+<h3 id="the-p-term">The <code class="highlighter-rouge">P</code> term</h3>
+
+<p>The P term is directly proportional to the instantaneous
+error. The P term is the most powerful because it responds
+to all changes to the value of the error, and the gain
+constant for the proportional term is usually tuned first.
+Having a P term alone usually leads to erratic output
+values in close proximity to the error beacuse the P gain
+amplifies the error to the negatives if the mechanism
+overshoots, and vice versa.</p>
+
+<p>A typical PID loop with only a P term would look like this:</p>
+
+<p><img src="https://agenttroll.github.io/blog/img/itct-p-only.svg" alt="P only loop" /></p>
+
+<p>I’ve purposely set the P value too high in order to to
+exaggerate the effect I’m referring to. In practice, it is
+possible to only use a P term successfully without needing
+the other terms to control it for simple mechanisms.</p>
+
+<h3 id="the-i-term">The <code class="highlighter-rouge">I</code> term</h3>
+
+<p>The I term is related to the accumulated error. The longer
+the robot is off target, the more powerful the I term
+becomes. The problem with the I term on its own is that it
+tends to either overcompensate because the accumulated
+error must be reduced by an opposing physical action, which
+then overshoots and starts another cycle oscillation.</p>
+
+<p>This can be seen in a I only term loop here:</p>
+
+<p><img src="https://agenttroll.github.io/blog/img/itct-i-only.svg" alt="I only loop" /></p>
+
+<p>The most common type of control loop that I’ve personally
+seen is a PI loop, in which only the P and I terms are
+used. It’s rare to see a full PID(F) loop because it is
+often more work to determine the gain constants than it is
+worth the marginal gains produced by adding an extra term.</p>
+
+<h3 id="the-d-term">The <code class="highlighter-rouge">D</code> term</h3>
+
+<p>The D term is related to the rate at which error changes.
+The faster the mechanism moves away from its setpoint, the
+more powerful the D term becomes. Unlike the other two
+terms, the D term does not respond directly to rate, but
+rather the change in rate. Therefore, it is not possible to
+have a D only system. The effect of the D term is to
+reduce the rate at which the error grows, therefore
+flattening the error line. This is useful for more stable
+mechanisms that require the output to be adjusted to
+reduce the power of the P term.</p>
+
+<p>It’s probably easier to see it on a graph. Here’s a PD loop
+with the D gain set to <code class="highlighter-rouge">0</code>:</p>
+
+<p><img src="https://agenttroll.github.io/blog/img/itct-pd-0.svg" alt="PD - D = 0" /></p>
+
+<p>Now compare that to a PD loop with the D gain raised
+slightly:</p>
+
+<p><img src="https://agenttroll.github.io/blog/img/itct-pd-06.svg" alt="PD - D = 0.6" /></p>
+
+<p>It should be again noted that any combination of PID
+controller terms tend to not be used in my experience. The
+Wikipedia page has this to say:</p>
+
+<blockquote>
+  <p>Derivative action is seldom used in practice though – by
+one estimate in only 25% of deployed controllers</p>
+</blockquote>
+
+<p>Although this claim requires citation, it is easy to see
+that the D term isn’t too significantly useful for the
+vast majority of applications where P/I term controllers
+are used instead. When the D gain is raised, the D term
+tends to “fight” against the other two terms because it
+wants to flatten the motion curve, when the other two terms
+actually want the curve to get closer to the setpoint:</p>
+
+<p><img src="https://agenttroll.github.io/blog/img/itct-pd-07.svg" alt="PD - D = 0.7" /></p>
+
+<h3 id="the-f-term">The <code class="highlighter-rouge">F</code> term</h3>
+
+<p>The F term is special because it is often left out of the
+“PID” initialism. In part, this is due to the fact that
+feed-forward is the application of a constant output,
+regardless of the state of the mechanism. The actual
+equation for a full PIDF loop looks like the following:</p>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>u(t) = K_p*e(t) + K_i*integrate(0, t, e(T), T) + K_d*derive(e(t), t) + K_f*SP
+</code></pre></div></div>
+
+<p>Where the F term involves the F gain multiplied by the
+setpoint.</p>
+
+<p>The purpose of a feed-forward in a PIDF computation is to
+provide “stability.” The F term acts as kind of a base rate
+that pads the output from changes in the environment.</p>
+
+<p>The F term is really only useful for applications where a
+rate of something is to remain constant. In attempting to
+use the F term to run a PID loop for displacement, you
+would get a motion curve that looks something like this:</p>
+
+<p><img src="https://agenttroll.github.io/blog/img/itct-pf.svg" alt="PD - D = 0.6" /></p>
+
+<p>A PID loop would be unable to compensate for the constant
+rate provided by the F term.</p>
+
+<p>If a system used only a feed-forward term and had no input
+from the other terms, then it would be an open-loop system
+because no feedback from the sensor is needed to adjust the
+output. Because the F term doesn’t respond to any changes
+in the environment, it is not included with the other terms
+that do require feedback from a sensor.</p>
+
+<p>The other part of the reason why I think that the F term is
+dropped is because many systems tend to change quite often.
+As a matter of fact, <a href="https://frc-pdr.readthedocs.io/en/latest/control/pid_control.html">FRC Programming Done Right</a>
+has this to say about using the F term:</p>
+
+<blockquote>
+  <p>Feedforward control is necessary on all but the absolute 
+simplest of systems. It’s incredibly difficult to get a 
+good response without a feedforward calculation.</p>
+</blockquote>
+
+<p>In my opinion, this is actually backwards. For simpler,
+more predictable systems, it is easier to use an F term
+because it is easier to predict and measure the various
+different factors that impact the performance of a
+specific device. This all goes back to the open-loop and
+closed-loop system. The simpler the system is, the easier
+it will be to determine the appropriate F gain. This also
+means that it is difficult to use for more varied, dynamic
+environments you’d typically find PID control loops
+running in, which is why PID tends to be referred to
+without reference to the F term.</p>
+
+<h1 id="implementation">Implementation</h1>
+
+<h1 id="implementation-for-rate">Implementation For Rate</h1>
+
+<h1 id="conclusion">Conclusion</h1>
 
 <p><code class="highlighter-rouge">// TODO</code></p>
 
