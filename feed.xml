@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.6.2">Jekyll</generator><link href="https://agenttroll.github.io/blog/feed.xml" rel="self" type="application/atom+xml" /><link href="https://agenttroll.github.io/blog/" rel="alternate" type="text/html" /><updated>2019-03-26T01:10:44-07:00</updated><id>https://agenttroll.github.io/blog/</id><title type="html">Inside a Troll</title><subtitle>Thoughts of a Java developer</subtitle><entry><title type="html">Lessons Learned Debugging: Part 1</title><link href="https://agenttroll.github.io/blog/2019/03/20/lessons-learned-debugging-part-1.html" rel="alternate" type="text/html" title="Lessons Learned Debugging: Part 1" /><published>2019-03-20T22:27:00-07:00</published><updated>2019-03-20T22:27:00-07:00</updated><id>https://agenttroll.github.io/blog/2019/03/20/lessons-learned-debugging-part-1</id><content type="html" xml:base="https://agenttroll.github.io/blog/2019/03/20/lessons-learned-debugging-part-1.html">&lt;p&gt;This is going to be among the first in a blog series that
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.6.2">Jekyll</generator><link href="https://agenttroll.github.io/blog/feed.xml" rel="self" type="application/atom+xml" /><link href="https://agenttroll.github.io/blog/" rel="alternate" type="text/html" /><updated>2019-03-26T23:45:51-07:00</updated><id>https://agenttroll.github.io/blog/</id><title type="html">Inside a Troll</title><subtitle>Thoughts of a Java developer</subtitle><entry><title type="html">Lessons Learned Debugging: Part 1</title><link href="https://agenttroll.github.io/blog/2019/03/20/lessons-learned-debugging-part-1.html" rel="alternate" type="text/html" title="Lessons Learned Debugging: Part 1" /><published>2019-03-20T22:27:00-07:00</published><updated>2019-03-20T22:27:00-07:00</updated><id>https://agenttroll.github.io/blog/2019/03/20/lessons-learned-debugging-part-1</id><content type="html" xml:base="https://agenttroll.github.io/blog/2019/03/20/lessons-learned-debugging-part-1.html">&lt;p&gt;This is going to be among the first in a blog series that
 detail some of my work while at Intermissum to reduce
 bugginess. Not only did I personally run into many
 hardships in order to write better production-quality
@@ -402,40 +402,99 @@ lack of a better word) of the output. These are adjustible
 in order to change the order of magnitude of the output, so
 for example, a motor that takes an input between -1 m/s and
 1 m/s would have smaller gain constants than a motor that
-takes input between -10 m/s to 10 m/s.&lt;/p&gt;
+takes input between -10 m/s to 10 m/s. A user provides
+these constants to the PID controller in advance. It takes
+some degree of testing to figure out the best combination
+of gain values, a topic which is out of scope of this
+discussion of the PID equation for the time being.&lt;/p&gt;
 
 &lt;p&gt;Each gain constant precedes a value that is proportional to
 the instantaneous error, then the accumulated error, then
 the rate at which the error is changing.&lt;/p&gt;
 
-&lt;h3 id=&quot;the-p-term&quot;&gt;The &lt;code class=&quot;highlighter-rouge&quot;&gt;P&lt;/code&gt; term&lt;/h3&gt;
+&lt;h1 id=&quot;pid-under-the-magnifying-glass&quot;&gt;PID Under The Magnifying Glass&lt;/h1&gt;
 
-&lt;p&gt;The P term is directly proportional to the instantaneous
-error. The P term is the most powerful because it responds
-to all changes to the value of the error, and the gain
-constant for the proportional term is usually tuned first.
-Having a P term alone usually leads to erratic output
-values in close proximity to the error beacuse the P gain
-amplifies the error to the negatives if the mechanism
-overshoots, and vice versa.&lt;/p&gt;
+&lt;p&gt;The PID formula from the previous section takes all 3
+terms and adds them together to produce the final output
+value.&lt;/p&gt;
 
-&lt;p&gt;A typical PID loop with only a P term would look like this:&lt;/p&gt;
+&lt;p&gt;The error values that go into a PID controller are almost
+always some form of distance or displacement. For example,
+this could be the distance a robot is from a target, or the
+number of degrees off a desired temperature. However, error
+can also be a rate in, such as the current rate of a pump 
+compared to the desired rate of a pump. The concept for 
+both of them are exactly the same, however, and the PID 
+computation shouldn’t need to change so long as they are 
+using distinct PID controllers. Either way, the bottom line
+is that PID is simply a way to derive an output value based
+on the input values. The behavior of the mechanism ends up 
+being the same one way or another anyways, so don’t fret if
+you’re worried about the rate being a derivative of
+distance - it doesn’t matter. The end result is that you
+want to obtain an output that gets you to where you want to
+go, or to a rate at which you want to go at.&lt;/p&gt;
 
-&lt;p&gt;&lt;img src=&quot;https://agenttroll.github.io/blog/img/itct-p-only.svg&quot; alt=&quot;P only loop&quot; /&gt;&lt;/p&gt;
+&lt;p&gt;The output of a PID controller is always a rate. It doesn’t
+really make any sense to output a distance or displacement
+value, because physical systems can control rate in order
+to affect the distance from a setpoint. For example, a PID
+controller can output a greater value to increase the speed
+at which a wheel turns, or decrease the temperature of a
+heating element to reduce the speed at which heat is
+distrubuted into a room.&lt;/p&gt;
 
-&lt;p&gt;I’ve purposely set the P value too high in order to to
-exaggerate the effect I’m referring to. In practice, it is
-possible to only use a P term successfully without needing
-the other terms to control it for simple mechanisms.&lt;/p&gt;
+&lt;h4 id=&quot;the-p-term&quot;&gt;The &lt;code class=&quot;highlighter-rouge&quot;&gt;P&lt;/code&gt; term&lt;/h4&gt;
 
-&lt;h3 id=&quot;the-i-term&quot;&gt;The &lt;code class=&quot;highlighter-rouge&quot;&gt;I&lt;/code&gt; term&lt;/h3&gt;
+&lt;p&gt;The P term looks like the following:&lt;/p&gt;
 
-&lt;p&gt;The I term is related to the accumulated error. The longer
-the robot is off target, the more powerful the I term
-becomes. The problem with the I term on its own is that it
-tends to either overcompensate because the accumulated
-error must be reduced by an opposing physical action, which
-then overshoots and starts another cycle oscillation.&lt;/p&gt;
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;K_p*e(t)
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;Meaning that it is derived from the proportional gain
+constant multiplied by the most recently recorded error.&lt;/p&gt;
+
+&lt;p&gt;The P term is the most powerful because it responds to all 
+changes to the value of the error, and the gain constant 
+for the proportional term is usually tuned first. Having a 
+P term alone usually leads to erratic output values in 
+close proximity to the error beacuse the P gain amplifies 
+the error to the negatives if the mechanism overshoots, and
+vice versa.&lt;/p&gt;
+
+&lt;p&gt;A motion curve is typically used in robotics to show the
+distanced travelled by a robot over time. I’ve used a
+motion curve below to show the response to a PID loop
+controlling the state of a system, where state can be a
+temperature or a volume or a distance.&lt;/p&gt;
+
+&lt;p&gt;A system with an overly large P value looks like the 
+following:&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;https://agenttroll.github.io/blog/img/itct-p-unstable.svg&quot; alt=&quot;P unstable loop&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;It is often possible to acheive reasonably good results
+using just the P term. One can adjuts the P gain until a
+decent motion curve is produced, leaving all other gains
+to 0. This is simply called a “P controller” or “P loop.”&lt;/p&gt;
+
+&lt;h4 id=&quot;the-i-term&quot;&gt;The &lt;code class=&quot;highlighter-rouge&quot;&gt;I&lt;/code&gt; term&lt;/h4&gt;
+
+&lt;p&gt;The I term looks like the following:&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;K_i*integrate(0, t, e(T), T)
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;Meaning that it is derived from multiplying the integral
+gain by the accumulated error from time 0 to the current
+time.&lt;/p&gt;
+
+&lt;p&gt;Because the I term is related to the accumulated error, the
+longer the robot is off target, the more powerful the I 
+term becomes. The problem with the I term on its own is 
+that it tends to overcompensate because the accumulated 
+error must be reduced by an opposing physical action, which 
+then overshoots and starts another oscillation cycle.&lt;/p&gt;
 
 &lt;p&gt;This can be seen in a I only term loop here:&lt;/p&gt;
 
@@ -444,10 +503,41 @@ then overshoots and starts another cycle oscillation.&lt;/p&gt;
 &lt;p&gt;The most common type of control loop that I’ve personally
 seen is a PI loop, in which only the P and I terms are
 used. It’s rare to see a full PID(F) loop because it is
-often more work to determine the gain constants than it is
-worth the marginal gains produced by adding an extra term.&lt;/p&gt;
+often more work to redetermine the gain constants than it 
+is worth the marginal gains produced by adding an extra 
+term.&lt;/p&gt;
 
-&lt;h3 id=&quot;the-d-term&quot;&gt;The &lt;code class=&quot;highlighter-rouge&quot;&gt;D&lt;/code&gt; term&lt;/h3&gt;
+&lt;p&gt;For example, consider the following P only loop, which
+demonstrates the ability of a single P term to produce
+relatively decent results:&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;https://agenttroll.github.io/blog/img/itct-p-stable.svg&quot; alt=&quot;P stable&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;An I term can be introduced to make a PI controller. This
+will smooth out the motion curve when it reaches the
+setpoint, and prevent a quick decceleration. You can see,
+however, that there is some degree of overshoot when an I
+term is introduced:&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;https://agenttroll.github.io/blog/img/itct-pi.svg&quot; alt=&quot;PI&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;According to &lt;a href=&quot;http://www.ni.com/en-us/innovations/white-papers/06/pid-theory-explained.html&quot;&gt;PID Theory Explained&lt;/a&gt;:&lt;/p&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;Some amount of overshoot is always necessary for a fast 
+system so that it could respond to changes immediately&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;h4 id=&quot;the-d-term&quot;&gt;The &lt;code class=&quot;highlighter-rouge&quot;&gt;D&lt;/code&gt; term&lt;/h4&gt;
+
+&lt;p&gt;The D term looks like the following:&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;K_d*derive(e(t), t)
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;Meaning that it is derived from the product of the
+derivative gain and the instantaneous rate of change for 
+the error.&lt;/p&gt;
 
 &lt;p&gt;The D term is related to the rate at which error changes.
 The faster the mechanism moves away from its setpoint, the
@@ -465,14 +555,22 @@ with the D gain set to &lt;code class=&quot;highlighter-rouge&quot;&gt;0&lt;/cod
 
 &lt;p&gt;&lt;img src=&quot;https://agenttroll.github.io/blog/img/itct-pd-0.svg&quot; alt=&quot;PD - D = 0&quot; /&gt;&lt;/p&gt;
 
-&lt;p&gt;Now compare that to a PD loop with the D gain raised
+&lt;p&gt;Now, compare that to a PD loop with the D gain raised
 slightly:&lt;/p&gt;
 
 &lt;p&gt;&lt;img src=&quot;https://agenttroll.github.io/blog/img/itct-pd-06.svg&quot; alt=&quot;PD - D = 0.6&quot; /&gt;&lt;/p&gt;
 
-&lt;p&gt;It should be again noted that any combination of PID
-controller terms tend to not be used in my experience. The
-Wikipedia page has this to say:&lt;/p&gt;
+&lt;p&gt;The D term is problematic sometimes because setting the D
+gain to to high of a value will cause the output to
+oscillate extremely rapidly. This can also happen when
+there are a lot of environmental disturbances that cause
+the D term to overreact:&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;https://agenttroll.github.io/blog/img/itct-pd-massive.svg&quot; alt=&quot;PD - D = massive&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;In my experience, I tend to see controllers using mostly
+P and I terms, but usually no D term. The Wikipedia page
+has this to say:&lt;/p&gt;
 
 &lt;blockquote&gt;
   &lt;p&gt;Derivative action is seldom used in practice though – by
@@ -481,7 +579,7 @@ one estimate in only 25% of deployed controllers&lt;/p&gt;
 
 &lt;p&gt;Although this claim requires citation, it is easy to see
 that the D term isn’t too significantly useful for the
-vast majority of applications where P/I term controllers
+vast majority of applications where PI term controllers
 are used instead. When the D gain is raised, the D term
 tends to “fight” against the other two terms because it
 wants to flatten the motion curve, when the other two terms
@@ -489,7 +587,12 @@ actually want the curve to get closer to the setpoint:&lt;/p&gt;
 
 &lt;p&gt;&lt;img src=&quot;https://agenttroll.github.io/blog/img/itct-pd-07.svg&quot; alt=&quot;PD - D = 0.7&quot; /&gt;&lt;/p&gt;
 
-&lt;h3 id=&quot;the-f-term&quot;&gt;The &lt;code class=&quot;highlighter-rouge&quot;&gt;F&lt;/code&gt; term&lt;/h3&gt;
+&lt;p&gt;When the D term is used, it tends to be used in a full PID
+loop to control the I term overshoot. PD loops are also
+found in the wild, but again, anything with a D term tends
+to be quite rare compared to P and PI loops.&lt;/p&gt;
+
+&lt;h4 id=&quot;the-f-term&quot;&gt;The &lt;code class=&quot;highlighter-rouge&quot;&gt;F&lt;/code&gt; term&lt;/h4&gt;
 
 &lt;p&gt;The F term is special because it is often left out of the
 “PID” initialism. In part, this is due to the fact that
@@ -500,29 +603,16 @@ equation for a full PIDF loop looks like the following:&lt;/p&gt;
 &lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;u(t) = K_p*e(t) + K_i*integrate(0, t, e(T), T) + K_d*derive(e(t), t) + K_f*SP
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
 
-&lt;p&gt;Where the F term involves the F gain multiplied by the
-setpoint.&lt;/p&gt;
+&lt;p&gt;Where the F term is derived from the product of the
+feed-forward gain and the current setpoint.&lt;/p&gt;
 
 &lt;p&gt;The purpose of a feed-forward in a PIDF computation is to
 provide “stability.” The F term acts as kind of a base rate
-that pads the output from changes in the environment.&lt;/p&gt;
-
-&lt;p&gt;The F term is really only useful for applications where a
-rate of something is to remain constant. In attempting to
-use the F term to run a PID loop for displacement, you
-would get a motion curve that looks something like this:&lt;/p&gt;
-
-&lt;p&gt;&lt;img src=&quot;https://agenttroll.github.io/blog/img/itct-pf.svg&quot; alt=&quot;PD - D = 0.6&quot; /&gt;&lt;/p&gt;
-
-&lt;p&gt;A PID loop would be unable to compensate for the constant
-rate provided by the F term.&lt;/p&gt;
-
-&lt;p&gt;If a system used only a feed-forward term and had no input
-from the other terms, then it would be an open-loop system
-because no feedback from the sensor is needed to adjust the
-output. Because the F term doesn’t respond to any changes
-in the environment, it is not included with the other terms
-that do require feedback from a sensor.&lt;/p&gt;
+that pads the output from changes in the environment.
+Because the F term doesn’t respond to feedback from a
+sensor (see the derivation of the F term), it is doesn’t
+truly belong with the other P, I, and D terms that do
+depend on sensor feedback.&lt;/p&gt;
 
 &lt;p&gt;The other part of the reason why I think that the F term is
 dropped is because many systems tend to change quite often.
@@ -547,13 +637,261 @@ environments you’d typically find PID control loops
 running in, which is why PID tends to be referred to
 without reference to the F term.&lt;/p&gt;
 
+&lt;p&gt;The F term also is only really useful for constant-rate
+mechanisms (i.e. those that use difference in rate as the
+error value rather than difference in displacement as is
+customoary). Becase the F term cannot respond to
+environmental changes, having a pre-defined F term in order
+to drive a mechanism and using the other terms to control
+error to that predefined rate is the most useful
+application of the F term that I can personally see.&lt;/p&gt;
+
 &lt;h1 id=&quot;implementation&quot;&gt;Implementation&lt;/h1&gt;
 
-&lt;h1 id=&quot;implementation-for-rate&quot;&gt;Implementation For Rate&lt;/h1&gt;
+&lt;p&gt;The derivation of the PID(F) formula is actually more 
+daunting than the implementation in code.&lt;/p&gt;
+
+&lt;p&gt;We can imagine the PID loop as looking something like this:&lt;/p&gt;
+
+&lt;div class=&quot;language-java highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;n&quot;&gt;PidfController&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;controller&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;c1&quot;&gt;// ...&lt;/span&gt;
+
+&lt;span class=&quot;c1&quot;&gt;// Begin the loop by setting a target&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;controller&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;setSetpoint&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;setpoint&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;);&lt;/span&gt;
+
+&lt;span class=&quot;k&quot;&gt;while&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;kc&quot;&gt;true&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+    &lt;span class=&quot;c1&quot;&gt;// Set the last state recorded by a sensor&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;controller&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;setLastState&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;state&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;);&lt;/span&gt;
+
+    &lt;span class=&quot;c1&quot;&gt;// If the error is 0, the PID procedure is done&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;controller&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;computeError&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;()&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;==&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+        &lt;span class=&quot;k&quot;&gt;break&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;;&lt;/span&gt;
+    &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
+
+    &lt;span class=&quot;c1&quot;&gt;// Compute the output&lt;/span&gt;
+    &lt;span class=&quot;kt&quot;&gt;double&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;output&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;controller&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;computePidf&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;();&lt;/span&gt;
+
+    &lt;span class=&quot;c1&quot;&gt;// Send output to the mechanism&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;mechanism&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;setOutput&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;output&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;);&lt;/span&gt;
+
+    &lt;span class=&quot;c1&quot;&gt;// Wait a constant time interval before repeating &lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;Thread&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;sleep&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;INTERVAL&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;);&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;(Once again, it should be noted that often a PID(F)
+controller stops once the error is close enough to 0, in
+general it’s a poor idea to directly compare floating point
+numbers anyways, so you probably get the idea)&lt;/p&gt;
+
+&lt;p&gt;To write the &lt;code class=&quot;highlighter-rouge&quot;&gt;PidfController&lt;/code&gt;, the easiest step is to 
+firstly define our gain and interval constants:&lt;/p&gt;
+
+&lt;div class=&quot;language-java highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;kd&quot;&gt;static&lt;/span&gt; &lt;span class=&quot;kd&quot;&gt;final&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;double&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;INTERVAL&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;;&lt;/span&gt;
+
+&lt;span class=&quot;kt&quot;&gt;double&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;pGain&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;;&lt;/span&gt;
+&lt;span class=&quot;kt&quot;&gt;double&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;iGain&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;;&lt;/span&gt;
+&lt;span class=&quot;kt&quot;&gt;double&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;dGain&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;;&lt;/span&gt;
+&lt;span class=&quot;kt&quot;&gt;double&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;fGain&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;;&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;The next portion would be to implement a way to calculate
+error. We will need a way to define the setpoint to which
+the PID(F) controller is to travel to, and then a way to
+define the last state recorded by a sensor:&lt;/p&gt;
+
+&lt;div class=&quot;language-java highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;kt&quot;&gt;double&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;setpoint&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;;&lt;/span&gt;
+&lt;span class=&quot;kt&quot;&gt;double&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;lastState&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;;&lt;/span&gt;
+
+&lt;span class=&quot;c1&quot;&gt;// Called by a user to set the setpoint&lt;/span&gt;
+&lt;span class=&quot;kd&quot;&gt;public&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;void&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;setSetpoint&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;kt&quot;&gt;double&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;setpoint&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;this&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;setpoint&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;setpoint&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;;&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
+
+&lt;span class=&quot;c1&quot;&gt;// Called by a sensor to set the state of the system&lt;/span&gt;
+&lt;span class=&quot;kd&quot;&gt;public&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;void&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;setLastState&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;kt&quot;&gt;double&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;lastState&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;this&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;lastState&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;lastState&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;;&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
+
+&lt;span class=&quot;kd&quot;&gt;public&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;double&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;computeError&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;()&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;this&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;setpoint&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;this&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;lastState&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;;&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;Now that we have our gain constants a way to compute the 
+current error, we can now head to computing each term.&lt;/p&gt;
+
+&lt;p&gt;Proportional:&lt;/p&gt;
+
+&lt;div class=&quot;language-java highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;kt&quot;&gt;double&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;computeProportional&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;()&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+    &lt;span class=&quot;kt&quot;&gt;double&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;error&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;this&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;computeError&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;();&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;this&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;pGain&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;error&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;;&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;For integral, we need to hold the amount of error that has
+accummulated since the PID loop began. This can be acheived
+by using a variable to hold the error multiplied by the
+interval time each time the loop runs:&lt;/p&gt;
+
+&lt;div class=&quot;language-java highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;kt&quot;&gt;double&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;accumulatedError&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;;&lt;/span&gt;
+
+&lt;span class=&quot;kt&quot;&gt;double&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;computeIntegral&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;()&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+    &lt;span class=&quot;kt&quot;&gt;double&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;error&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;this&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;computeError&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;();&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;this&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;accumulatedError&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;error&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;INTERVAL&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;;&lt;/span&gt;
+
+    &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;this&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;iGain&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;this&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;accumulatedError&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;;&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;For derivative, since the rate of change of the error is
+instantaneous, we can simply use the slope formula for the
+last recorded error and the current error taken over the
+interval time:&lt;/p&gt;
+
+&lt;div class=&quot;language-java highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;kt&quot;&gt;double&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;lastError&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;;&lt;/span&gt;
+
+&lt;span class=&quot;kt&quot;&gt;double&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;computeDerivative&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;()&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+    &lt;span class=&quot;kt&quot;&gt;double&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;error&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;this&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;computeError&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;();&lt;/span&gt;
+    &lt;span class=&quot;kt&quot;&gt;double&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;derivative&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;error&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;this&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;lastError&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;/&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;INTERVAL&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;;&lt;/span&gt;
+
+    &lt;span class=&quot;k&quot;&gt;this&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;lastError&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;error&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;;&lt;/span&gt;
+
+    &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;this&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;dGain&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;derivative&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;;&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;For feed-forward, it is the gain multiplied by setpoint:&lt;/p&gt;
+
+&lt;div class=&quot;language-java highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;kt&quot;&gt;double&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;computeFeedforward&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;()&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;this&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;fGain&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;this&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;setpoint&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;;&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;Finally, tying everything together:&lt;/p&gt;
+
+&lt;div class=&quot;language-java highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;kt&quot;&gt;double&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;computePidf&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;()&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;this&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;computeProportional&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;()&lt;/span&gt;
+            &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;this&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;computeDerivative&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;()&lt;/span&gt;
+            &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;this&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;computeIntegral&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;()&lt;/span&gt;
+            &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;this&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;computeFeedforward&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;();&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;And then cleanup our code and write it all into a coherent
+class:&lt;/p&gt;
+
+&lt;div class=&quot;language-java highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;kd&quot;&gt;public&lt;/span&gt; &lt;span class=&quot;kd&quot;&gt;class&lt;/span&gt; &lt;span class=&quot;nc&quot;&gt;PidfController&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+    &lt;span class=&quot;kd&quot;&gt;private&lt;/span&gt; &lt;span class=&quot;kd&quot;&gt;static&lt;/span&gt; &lt;span class=&quot;kd&quot;&gt;final&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;double&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;INTERVAL&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;mf&quot;&gt;0.5&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;;&lt;/span&gt;
+
+    &lt;span class=&quot;kd&quot;&gt;private&lt;/span&gt; &lt;span class=&quot;kd&quot;&gt;final&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;double&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;pGain&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;;&lt;/span&gt;
+    &lt;span class=&quot;kd&quot;&gt;private&lt;/span&gt; &lt;span class=&quot;kd&quot;&gt;final&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;double&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;iGain&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;;&lt;/span&gt;
+    &lt;span class=&quot;kd&quot;&gt;private&lt;/span&gt; &lt;span class=&quot;kd&quot;&gt;final&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;double&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;dGain&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;;&lt;/span&gt;
+    &lt;span class=&quot;kd&quot;&gt;private&lt;/span&gt; &lt;span class=&quot;kd&quot;&gt;final&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;double&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;fGain&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;;&lt;/span&gt;
+
+    &lt;span class=&quot;kd&quot;&gt;private&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;double&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;setpoint&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;;&lt;/span&gt;
+    &lt;span class=&quot;kd&quot;&gt;private&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;double&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;lastState&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;;&lt;/span&gt;
+
+    &lt;span class=&quot;kd&quot;&gt;private&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;double&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;accumulatedError&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;;&lt;/span&gt;
+    &lt;span class=&quot;kd&quot;&gt;private&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;double&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;lastError&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;;&lt;/span&gt;
+
+    &lt;span class=&quot;kd&quot;&gt;public&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;PidfController&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;kt&quot;&gt;double&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;pGain&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;double&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;iGain&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;double&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;dGain&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;double&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;fGain&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+        &lt;span class=&quot;k&quot;&gt;this&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;pGain&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;pGain&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;;&lt;/span&gt;
+        &lt;span class=&quot;k&quot;&gt;this&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;iGain&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;iGain&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;;&lt;/span&gt;
+        &lt;span class=&quot;k&quot;&gt;this&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;dGain&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;dGain&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;;&lt;/span&gt;
+        &lt;span class=&quot;k&quot;&gt;this&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;fGain&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;fGain&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;;&lt;/span&gt;
+    &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
+
+    &lt;span class=&quot;kd&quot;&gt;public&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;void&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;setSetpoint&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;kt&quot;&gt;double&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;setpoint&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+        &lt;span class=&quot;k&quot;&gt;this&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;setpoint&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;setpoint&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;;&lt;/span&gt;
+    &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
+
+    &lt;span class=&quot;kd&quot;&gt;public&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;void&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;setLastState&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;kt&quot;&gt;double&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;lastState&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+        &lt;span class=&quot;k&quot;&gt;this&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;lastState&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;lastState&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;;&lt;/span&gt;
+    &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
+
+    &lt;span class=&quot;kd&quot;&gt;public&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;double&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;computeError&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;()&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+        &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;this&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;setpoint&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;this&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;lastState&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;;&lt;/span&gt;
+    &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
+
+    &lt;span class=&quot;kd&quot;&gt;private&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;double&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;computeProportional&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;()&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+        &lt;span class=&quot;kt&quot;&gt;double&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;error&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;this&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;computeError&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;();&lt;/span&gt;
+        &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;this&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;pGain&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;error&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;;&lt;/span&gt;
+    &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
+
+    &lt;span class=&quot;kd&quot;&gt;private&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;double&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;computeIntegral&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;()&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+        &lt;span class=&quot;kt&quot;&gt;double&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;error&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;this&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;computeError&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;();&lt;/span&gt;
+        &lt;span class=&quot;k&quot;&gt;this&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;accumulatedError&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;error&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;INTERVAL&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;;&lt;/span&gt;
+
+        &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;this&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;iGain&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;this&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;accumulatedError&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;;&lt;/span&gt;
+    &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
+
+    &lt;span class=&quot;kd&quot;&gt;private&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;double&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;computeDerivative&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;()&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+        &lt;span class=&quot;kt&quot;&gt;double&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;error&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;this&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;computeError&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;();&lt;/span&gt;
+        &lt;span class=&quot;kt&quot;&gt;double&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;derivative&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;error&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;this&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;lastError&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;/&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;INTERVAL&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;;&lt;/span&gt;
+
+        &lt;span class=&quot;k&quot;&gt;this&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;lastError&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;error&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;;&lt;/span&gt;
+
+        &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;this&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;dGain&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;derivative&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;;&lt;/span&gt;
+    &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
+
+    &lt;span class=&quot;kd&quot;&gt;private&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;double&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;computeFeedforward&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;()&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+        &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;this&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;fGain&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;this&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;setpoint&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;;&lt;/span&gt;
+    &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
+
+    &lt;span class=&quot;kd&quot;&gt;public&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;double&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;computePidf&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;()&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+        &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;this&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;computeProportional&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;()&lt;/span&gt;
+                &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;this&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;computeDerivative&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;()&lt;/span&gt;
+                &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;this&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;computeIntegral&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;()&lt;/span&gt;
+                &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;this&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;computeFeedforward&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;();&lt;/span&gt;
+    &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;Users should change the &lt;code class=&quot;highlighter-rouge&quot;&gt;INTERVAL&lt;/code&gt; time as they see 
+appropriate.&lt;/p&gt;
+
+&lt;p&gt;It should be noted that all the gain values can even be
+changed during the PID loop, and so it is not necessary for
+them to be &lt;code class=&quot;highlighter-rouge&quot;&gt;final&lt;/code&gt;. The &lt;code class=&quot;highlighter-rouge&quot;&gt;INTERVAL&lt;/code&gt; time doesn’t even need
+to be constant, so long as one takes into account the time
+that elapses between each iteration of the PID loop. That
+being said, this is simply just the bare-bones minimum
+code, and it is up to the implementor to determine if those
+features are needed.&lt;/p&gt;
+
+&lt;p&gt;As far as units go, it is not necessarily required to have
+a consistent unit conversion. A PIDF loop simply outputs
+the rate as it relates to the gain constants and the error
+value. It is up to users to determine if any consistency is
+really required here.&lt;/p&gt;
 
 &lt;h1 id=&quot;conclusion&quot;&gt;Conclusion&lt;/h1&gt;
 
-&lt;p&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;// TODO&lt;/code&gt;&lt;/p&gt;</content><author><name></name></author><summary type="html">While I don’t profess to be an absolute expert at control theory, a lot of the information about the matter that I’ve found online appears to be either inaccessible to the average Joe or simply flat-out unhelpful. Control Theory is often explained with mechanical controllers that don’t really have any application to the software world, and it has been difficult for me personally to comprehend at all what is going on. In light of this, I’ve decided to do a write up about what control theory is from the perspective of an implementor, rather than that of a theorist.</summary></entry><entry><title type="html">SQLite: Not What I Hoped For</title><link href="https://agenttroll.github.io/blog/2018/06/19/sqlite-not-what-i-hoped-for.html" rel="alternate" type="text/html" title="SQLite: Not What I Hoped For" /><published>2018-06-19T12:14:10-07:00</published><updated>2018-06-19T12:14:10-07:00</updated><id>https://agenttroll.github.io/blog/2018/06/19/sqlite-not-what-i-hoped-for</id><content type="html" xml:base="https://agenttroll.github.io/blog/2018/06/19/sqlite-not-what-i-hoped-for.html">&lt;p&gt;An issue with one of the plugins on MineSaga has recently brought to my attention the rather poor decision of using SQLite to store player data. Now we’re not even doing anything complicated with SQLite, it’s literally just used for persistence to track player data that gets updated occasionally. Even factoring in network latency, I don’t believe that SQLite will outperform MySQL for our particular use case.&lt;/p&gt;
+&lt;p&gt;Control Theory and control engineering are broad topics
+that I’ve only briefly touched over in this blog post. With
+a better understanding of the theory and implementation of
+PID control, one can build more precise physical mechanisms
+such as robots, temperature controls, pumps, etc.&lt;/p&gt;
+
+&lt;p&gt;I’ve done my best to speak on general terms so that the
+concepts can be applied to the widest selection of
+scenarios possible. Sometimes, that has made it more 
+difficult to undestand what I’m talking about, but I hope
+that giving several real world examples to demonstrate a
+single concept has made it easier to grasp.&lt;/p&gt;
+
+&lt;p&gt;Again, I will reiterate that I’m by no means an expert in
+the field of Control Theory. Feel free to contact me for
+corrections, but I’m definitely not the right person to ask
+if you need clarification, as I’ve done my best already to 
+try and clarify everything up front.&lt;/p&gt;
+
+&lt;p&gt;For FRC Robots, you definitely want to use &lt;code class=&quot;highlighter-rouge&quot;&gt;PIDController&lt;/code&gt;
+over the hand-rolled implementation I have here, by the
+way.&lt;/p&gt;
+
+&lt;p&gt;I probably won’t be doing any more posts about robotics
+unless some extenuating circumstance forces me to.&lt;/p&gt;</content><author><name></name></author><summary type="html">While I don’t profess to be an absolute expert at control theory, a lot of the information about the matter that I’ve found online appears to be either inaccessible to the average Joe or simply flat-out unhelpful. Control Theory is often explained with mechanical controllers that don’t really have any application to the software world, and it has been difficult for me personally to comprehend at all what is going on. In light of this, I’ve decided to do a write up about what control theory is from the perspective of an implementor, rather than that of a theorist.</summary></entry><entry><title type="html">SQLite: Not What I Hoped For</title><link href="https://agenttroll.github.io/blog/2018/06/19/sqlite-not-what-i-hoped-for.html" rel="alternate" type="text/html" title="SQLite: Not What I Hoped For" /><published>2018-06-19T12:14:10-07:00</published><updated>2018-06-19T12:14:10-07:00</updated><id>https://agenttroll.github.io/blog/2018/06/19/sqlite-not-what-i-hoped-for</id><content type="html" xml:base="https://agenttroll.github.io/blog/2018/06/19/sqlite-not-what-i-hoped-for.html">&lt;p&gt;An issue with one of the plugins on MineSaga has recently brought to my attention the rather poor decision of using SQLite to store player data. Now we’re not even doing anything complicated with SQLite, it’s literally just used for persistence to track player data that gets updated occasionally. Even factoring in network latency, I don’t believe that SQLite will outperform MySQL for our particular use case.&lt;/p&gt;
 
 &lt;p&gt;In case you came here for the conclusion, and not the fluff, here’s what I learned:&lt;/p&gt;
 

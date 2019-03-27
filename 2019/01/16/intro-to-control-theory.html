@@ -194,40 +194,99 @@ lack of a better word) of the output. These are adjustible
 in order to change the order of magnitude of the output, so
 for example, a motor that takes an input between -1 m/s and
 1 m/s would have smaller gain constants than a motor that
-takes input between -10 m/s to 10 m/s.</p>
+takes input between -10 m/s to 10 m/s. A user provides
+these constants to the PID controller in advance. It takes
+some degree of testing to figure out the best combination
+of gain values, a topic which is out of scope of this
+discussion of the PID equation for the time being.</p>
 
 <p>Each gain constant precedes a value that is proportional to
 the instantaneous error, then the accumulated error, then
 the rate at which the error is changing.</p>
 
-<h3 id="the-p-term">The <code class="highlighter-rouge">P</code> term</h3>
+<h1 id="pid-under-the-magnifying-glass">PID Under The Magnifying Glass</h1>
 
-<p>The P term is directly proportional to the instantaneous
-error. The P term is the most powerful because it responds
-to all changes to the value of the error, and the gain
-constant for the proportional term is usually tuned first.
-Having a P term alone usually leads to erratic output
-values in close proximity to the error beacuse the P gain
-amplifies the error to the negatives if the mechanism
-overshoots, and vice versa.</p>
+<p>The PID formula from the previous section takes all 3
+terms and adds them together to produce the final output
+value.</p>
 
-<p>A typical PID loop with only a P term would look like this:</p>
+<p>The error values that go into a PID controller are almost
+always some form of distance or displacement. For example,
+this could be the distance a robot is from a target, or the
+number of degrees off a desired temperature. However, error
+can also be a rate in, such as the current rate of a pump 
+compared to the desired rate of a pump. The concept for 
+both of them are exactly the same, however, and the PID 
+computation shouldn’t need to change so long as they are 
+using distinct PID controllers. Either way, the bottom line
+is that PID is simply a way to derive an output value based
+on the input values. The behavior of the mechanism ends up 
+being the same one way or another anyways, so don’t fret if
+you’re worried about the rate being a derivative of
+distance - it doesn’t matter. The end result is that you
+want to obtain an output that gets you to where you want to
+go, or to a rate at which you want to go at.</p>
 
-<p><img src="https://agenttroll.github.io/blog/img/itct-p-only.svg" alt="P only loop" /></p>
+<p>The output of a PID controller is always a rate. It doesn’t
+really make any sense to output a distance or displacement
+value, because physical systems can control rate in order
+to affect the distance from a setpoint. For example, a PID
+controller can output a greater value to increase the speed
+at which a wheel turns, or decrease the temperature of a
+heating element to reduce the speed at which heat is
+distrubuted into a room.</p>
 
-<p>I’ve purposely set the P value too high in order to to
-exaggerate the effect I’m referring to. In practice, it is
-possible to only use a P term successfully without needing
-the other terms to control it for simple mechanisms.</p>
+<h4 id="the-p-term">The <code class="highlighter-rouge">P</code> term</h4>
 
-<h3 id="the-i-term">The <code class="highlighter-rouge">I</code> term</h3>
+<p>The P term looks like the following:</p>
 
-<p>The I term is related to the accumulated error. The longer
-the robot is off target, the more powerful the I term
-becomes. The problem with the I term on its own is that it
-tends to either overcompensate because the accumulated
-error must be reduced by an opposing physical action, which
-then overshoots and starts another cycle oscillation.</p>
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>K_p*e(t)
+</code></pre></div></div>
+
+<p>Meaning that it is derived from the proportional gain
+constant multiplied by the most recently recorded error.</p>
+
+<p>The P term is the most powerful because it responds to all 
+changes to the value of the error, and the gain constant 
+for the proportional term is usually tuned first. Having a 
+P term alone usually leads to erratic output values in 
+close proximity to the error beacuse the P gain amplifies 
+the error to the negatives if the mechanism overshoots, and
+vice versa.</p>
+
+<p>A motion curve is typically used in robotics to show the
+distanced travelled by a robot over time. I’ve used a
+motion curve below to show the response to a PID loop
+controlling the state of a system, where state can be a
+temperature or a volume or a distance.</p>
+
+<p>A system with an overly large P value looks like the 
+following:</p>
+
+<p><img src="https://agenttroll.github.io/blog/img/itct-p-unstable.svg" alt="P unstable loop" /></p>
+
+<p>It is often possible to acheive reasonably good results
+using just the P term. One can adjuts the P gain until a
+decent motion curve is produced, leaving all other gains
+to 0. This is simply called a “P controller” or “P loop.”</p>
+
+<h4 id="the-i-term">The <code class="highlighter-rouge">I</code> term</h4>
+
+<p>The I term looks like the following:</p>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>K_i*integrate(0, t, e(T), T)
+</code></pre></div></div>
+
+<p>Meaning that it is derived from multiplying the integral
+gain by the accumulated error from time 0 to the current
+time.</p>
+
+<p>Because the I term is related to the accumulated error, the
+longer the robot is off target, the more powerful the I 
+term becomes. The problem with the I term on its own is 
+that it tends to overcompensate because the accumulated 
+error must be reduced by an opposing physical action, which 
+then overshoots and starts another oscillation cycle.</p>
 
 <p>This can be seen in a I only term loop here:</p>
 
@@ -236,10 +295,41 @@ then overshoots and starts another cycle oscillation.</p>
 <p>The most common type of control loop that I’ve personally
 seen is a PI loop, in which only the P and I terms are
 used. It’s rare to see a full PID(F) loop because it is
-often more work to determine the gain constants than it is
-worth the marginal gains produced by adding an extra term.</p>
+often more work to redetermine the gain constants than it 
+is worth the marginal gains produced by adding an extra 
+term.</p>
 
-<h3 id="the-d-term">The <code class="highlighter-rouge">D</code> term</h3>
+<p>For example, consider the following P only loop, which
+demonstrates the ability of a single P term to produce
+relatively decent results:</p>
+
+<p><img src="https://agenttroll.github.io/blog/img/itct-p-stable.svg" alt="P stable" /></p>
+
+<p>An I term can be introduced to make a PI controller. This
+will smooth out the motion curve when it reaches the
+setpoint, and prevent a quick decceleration. You can see,
+however, that there is some degree of overshoot when an I
+term is introduced:</p>
+
+<p><img src="https://agenttroll.github.io/blog/img/itct-pi.svg" alt="PI" /></p>
+
+<p>According to <a href="http://www.ni.com/en-us/innovations/white-papers/06/pid-theory-explained.html">PID Theory Explained</a>:</p>
+
+<blockquote>
+  <p>Some amount of overshoot is always necessary for a fast 
+system so that it could respond to changes immediately</p>
+</blockquote>
+
+<h4 id="the-d-term">The <code class="highlighter-rouge">D</code> term</h4>
+
+<p>The D term looks like the following:</p>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>K_d*derive(e(t), t)
+</code></pre></div></div>
+
+<p>Meaning that it is derived from the product of the
+derivative gain and the instantaneous rate of change for 
+the error.</p>
 
 <p>The D term is related to the rate at which error changes.
 The faster the mechanism moves away from its setpoint, the
@@ -257,14 +347,22 @@ with the D gain set to <code class="highlighter-rouge">0</code>:</p>
 
 <p><img src="https://agenttroll.github.io/blog/img/itct-pd-0.svg" alt="PD - D = 0" /></p>
 
-<p>Now compare that to a PD loop with the D gain raised
+<p>Now, compare that to a PD loop with the D gain raised
 slightly:</p>
 
 <p><img src="https://agenttroll.github.io/blog/img/itct-pd-06.svg" alt="PD - D = 0.6" /></p>
 
-<p>It should be again noted that any combination of PID
-controller terms tend to not be used in my experience. The
-Wikipedia page has this to say:</p>
+<p>The D term is problematic sometimes because setting the D
+gain to to high of a value will cause the output to
+oscillate extremely rapidly. This can also happen when
+there are a lot of environmental disturbances that cause
+the D term to overreact:</p>
+
+<p><img src="https://agenttroll.github.io/blog/img/itct-pd-massive.svg" alt="PD - D = massive" /></p>
+
+<p>In my experience, I tend to see controllers using mostly
+P and I terms, but usually no D term. The Wikipedia page
+has this to say:</p>
 
 <blockquote>
   <p>Derivative action is seldom used in practice though – by
@@ -273,7 +371,7 @@ one estimate in only 25% of deployed controllers</p>
 
 <p>Although this claim requires citation, it is easy to see
 that the D term isn’t too significantly useful for the
-vast majority of applications where P/I term controllers
+vast majority of applications where PI term controllers
 are used instead. When the D gain is raised, the D term
 tends to “fight” against the other two terms because it
 wants to flatten the motion curve, when the other two terms
@@ -281,7 +379,12 @@ actually want the curve to get closer to the setpoint:</p>
 
 <p><img src="https://agenttroll.github.io/blog/img/itct-pd-07.svg" alt="PD - D = 0.7" /></p>
 
-<h3 id="the-f-term">The <code class="highlighter-rouge">F</code> term</h3>
+<p>When the D term is used, it tends to be used in a full PID
+loop to control the I term overshoot. PD loops are also
+found in the wild, but again, anything with a D term tends
+to be quite rare compared to P and PI loops.</p>
+
+<h4 id="the-f-term">The <code class="highlighter-rouge">F</code> term</h4>
 
 <p>The F term is special because it is often left out of the
 “PID” initialism. In part, this is due to the fact that
@@ -292,29 +395,16 @@ equation for a full PIDF loop looks like the following:</p>
 <div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>u(t) = K_p*e(t) + K_i*integrate(0, t, e(T), T) + K_d*derive(e(t), t) + K_f*SP
 </code></pre></div></div>
 
-<p>Where the F term involves the F gain multiplied by the
-setpoint.</p>
+<p>Where the F term is derived from the product of the
+feed-forward gain and the current setpoint.</p>
 
 <p>The purpose of a feed-forward in a PIDF computation is to
 provide “stability.” The F term acts as kind of a base rate
-that pads the output from changes in the environment.</p>
-
-<p>The F term is really only useful for applications where a
-rate of something is to remain constant. In attempting to
-use the F term to run a PID loop for displacement, you
-would get a motion curve that looks something like this:</p>
-
-<p><img src="https://agenttroll.github.io/blog/img/itct-pf.svg" alt="PD - D = 0.6" /></p>
-
-<p>A PID loop would be unable to compensate for the constant
-rate provided by the F term.</p>
-
-<p>If a system used only a feed-forward term and had no input
-from the other terms, then it would be an open-loop system
-because no feedback from the sensor is needed to adjust the
-output. Because the F term doesn’t respond to any changes
-in the environment, it is not included with the other terms
-that do require feedback from a sensor.</p>
+that pads the output from changes in the environment.
+Because the F term doesn’t respond to feedback from a
+sensor (see the derivation of the F term), it is doesn’t
+truly belong with the other P, I, and D terms that do
+depend on sensor feedback.</p>
 
 <p>The other part of the reason why I think that the F term is
 dropped is because many systems tend to change quite often.
@@ -339,13 +429,262 @@ environments you’d typically find PID control loops
 running in, which is why PID tends to be referred to
 without reference to the F term.</p>
 
+<p>The F term also is only really useful for constant-rate
+mechanisms (i.e. those that use difference in rate as the
+error value rather than difference in displacement as is
+customoary). Becase the F term cannot respond to
+environmental changes, having a pre-defined F term in order
+to drive a mechanism and using the other terms to control
+error to that predefined rate is the most useful
+application of the F term that I can personally see.</p>
+
 <h1 id="implementation">Implementation</h1>
 
-<h1 id="implementation-for-rate">Implementation For Rate</h1>
+<p>The derivation of the PID(F) formula is actually more 
+daunting than the implementation in code.</p>
+
+<p>We can imagine the PID loop as looking something like this:</p>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">PidfController</span> <span class="n">controller</span> <span class="o">=</span> <span class="c1">// ...</span>
+
+<span class="c1">// Begin the loop by setting a target</span>
+<span class="n">controller</span><span class="o">.</span><span class="na">setSetpoint</span><span class="o">(</span><span class="n">setpoint</span><span class="o">);</span>
+
+<span class="k">while</span> <span class="o">(</span><span class="kc">true</span><span class="o">)</span> <span class="o">{</span>
+    <span class="c1">// Set the last state recorded by a sensor</span>
+    <span class="n">controller</span><span class="o">.</span><span class="na">setLastState</span><span class="o">(</span><span class="n">state</span><span class="o">);</span>
+
+    <span class="c1">// If the error is 0, the PID procedure is done</span>
+    <span class="k">if</span> <span class="o">(</span><span class="n">controller</span><span class="o">.</span><span class="na">computeError</span><span class="o">()</span> <span class="o">==</span> <span class="mi">0</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">break</span><span class="o">;</span>
+    <span class="o">}</span>
+
+    <span class="c1">// Compute the output</span>
+    <span class="kt">double</span> <span class="n">output</span> <span class="o">=</span> <span class="n">controller</span><span class="o">.</span><span class="na">computePidf</span><span class="o">();</span>
+
+    <span class="c1">// Send output to the mechanism</span>
+    <span class="n">mechanism</span><span class="o">.</span><span class="na">setOutput</span><span class="o">(</span><span class="n">output</span><span class="o">);</span>
+
+    <span class="c1">// Wait a constant time interval before repeating </span>
+    <span class="n">Thread</span><span class="o">.</span><span class="na">sleep</span><span class="o">(</span><span class="n">INTERVAL</span><span class="o">);</span>
+<span class="o">}</span>
+</code></pre></div></div>
+
+<p>(Once again, it should be noted that often a PID(F)
+controller stops once the error is close enough to 0, in
+general it’s a poor idea to directly compare floating point
+numbers anyways, so you probably get the idea)</p>
+
+<p>To write the <code class="highlighter-rouge">PidfController</code>, the easiest step is to 
+firstly define our gain and interval constants:</p>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">static</span> <span class="kd">final</span> <span class="kt">double</span> <span class="n">INTERVAL</span><span class="o">;</span>
+
+<span class="kt">double</span> <span class="n">pGain</span><span class="o">;</span>
+<span class="kt">double</span> <span class="n">iGain</span><span class="o">;</span>
+<span class="kt">double</span> <span class="n">dGain</span><span class="o">;</span>
+<span class="kt">double</span> <span class="n">fGain</span><span class="o">;</span>
+</code></pre></div></div>
+
+<p>The next portion would be to implement a way to calculate
+error. We will need a way to define the setpoint to which
+the PID(F) controller is to travel to, and then a way to
+define the last state recorded by a sensor:</p>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kt">double</span> <span class="n">setpoint</span><span class="o">;</span>
+<span class="kt">double</span> <span class="n">lastState</span><span class="o">;</span>
+
+<span class="c1">// Called by a user to set the setpoint</span>
+<span class="kd">public</span> <span class="kt">void</span> <span class="nf">setSetpoint</span><span class="o">(</span><span class="kt">double</span> <span class="n">setpoint</span><span class="o">)</span> <span class="o">{</span>
+    <span class="k">this</span><span class="o">.</span><span class="na">setpoint</span> <span class="o">=</span> <span class="n">setpoint</span><span class="o">;</span>
+<span class="o">}</span>
+
+<span class="c1">// Called by a sensor to set the state of the system</span>
+<span class="kd">public</span> <span class="kt">void</span> <span class="nf">setLastState</span><span class="o">(</span><span class="kt">double</span> <span class="n">lastState</span><span class="o">)</span> <span class="o">{</span>
+    <span class="k">this</span><span class="o">.</span><span class="na">lastState</span> <span class="o">=</span> <span class="n">lastState</span><span class="o">;</span>
+<span class="o">}</span>
+
+<span class="kd">public</span> <span class="kt">double</span> <span class="nf">computeError</span><span class="o">()</span> <span class="o">{</span>
+    <span class="k">return</span> <span class="k">this</span><span class="o">.</span><span class="na">setpoint</span> <span class="o">-</span> <span class="k">this</span><span class="o">.</span><span class="na">lastState</span><span class="o">;</span>
+<span class="o">}</span>
+</code></pre></div></div>
+
+<p>Now that we have our gain constants a way to compute the 
+current error, we can now head to computing each term.</p>
+
+<p>Proportional:</p>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kt">double</span> <span class="nf">computeProportional</span><span class="o">()</span> <span class="o">{</span>
+    <span class="kt">double</span> <span class="n">error</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="na">computeError</span><span class="o">();</span>
+    <span class="k">return</span> <span class="k">this</span><span class="o">.</span><span class="na">pGain</span> <span class="o">*</span> <span class="n">error</span><span class="o">;</span>
+<span class="o">}</span>
+</code></pre></div></div>
+
+<p>For integral, we need to hold the amount of error that has
+accummulated since the PID loop began. This can be acheived
+by using a variable to hold the error multiplied by the
+interval time each time the loop runs:</p>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kt">double</span> <span class="n">accumulatedError</span><span class="o">;</span>
+
+<span class="kt">double</span> <span class="nf">computeIntegral</span><span class="o">()</span> <span class="o">{</span>
+    <span class="kt">double</span> <span class="n">error</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="na">computeError</span><span class="o">();</span>
+    <span class="k">this</span><span class="o">.</span><span class="na">accumulatedError</span> <span class="o">+=</span> <span class="n">error</span> <span class="o">*</span> <span class="n">INTERVAL</span><span class="o">;</span>
+
+    <span class="k">return</span> <span class="k">this</span><span class="o">.</span><span class="na">iGain</span> <span class="o">*</span> <span class="k">this</span><span class="o">.</span><span class="na">accumulatedError</span><span class="o">;</span>
+<span class="o">}</span>
+</code></pre></div></div>
+
+<p>For derivative, since the rate of change of the error is
+instantaneous, we can simply use the slope formula for the
+last recorded error and the current error taken over the
+interval time:</p>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kt">double</span> <span class="n">lastError</span><span class="o">;</span>
+
+<span class="kt">double</span> <span class="nf">computeDerivative</span><span class="o">()</span> <span class="o">{</span>
+    <span class="kt">double</span> <span class="n">error</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="na">computeError</span><span class="o">();</span>
+    <span class="kt">double</span> <span class="n">derivative</span> <span class="o">=</span> <span class="o">(</span><span class="n">error</span> <span class="o">-</span> <span class="k">this</span><span class="o">.</span><span class="na">lastError</span><span class="o">)</span> <span class="o">/</span> <span class="n">INTERVAL</span><span class="o">;</span>
+
+    <span class="k">this</span><span class="o">.</span><span class="na">lastError</span> <span class="o">=</span> <span class="n">error</span><span class="o">;</span>
+
+    <span class="k">return</span> <span class="k">this</span><span class="o">.</span><span class="na">dGain</span> <span class="o">*</span> <span class="n">derivative</span><span class="o">;</span>
+<span class="o">}</span>
+</code></pre></div></div>
+
+<p>For feed-forward, it is the gain multiplied by setpoint:</p>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kt">double</span> <span class="nf">computeFeedforward</span><span class="o">()</span> <span class="o">{</span>
+    <span class="k">return</span> <span class="k">this</span><span class="o">.</span><span class="na">fGain</span> <span class="o">*</span> <span class="k">this</span><span class="o">.</span><span class="na">setpoint</span><span class="o">;</span>
+<span class="o">}</span>
+</code></pre></div></div>
+
+<p>Finally, tying everything together:</p>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kt">double</span> <span class="nf">computePidf</span><span class="o">()</span> <span class="o">{</span>
+    <span class="k">return</span> <span class="k">this</span><span class="o">.</span><span class="na">computeProportional</span><span class="o">()</span>
+            <span class="o">+</span> <span class="k">this</span><span class="o">.</span><span class="na">computeDerivative</span><span class="o">()</span>
+            <span class="o">+</span> <span class="k">this</span><span class="o">.</span><span class="na">computeIntegral</span><span class="o">()</span>
+            <span class="o">+</span> <span class="k">this</span><span class="o">.</span><span class="na">computeFeedforward</span><span class="o">();</span>
+<span class="o">}</span>
+</code></pre></div></div>
+
+<p>And then cleanup our code and write it all into a coherent
+class:</p>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">public</span> <span class="kd">class</span> <span class="nc">PidfController</span> <span class="o">{</span>
+    <span class="kd">private</span> <span class="kd">static</span> <span class="kd">final</span> <span class="kt">double</span> <span class="n">INTERVAL</span> <span class="o">=</span> <span class="mf">0.5</span><span class="o">;</span>
+
+    <span class="kd">private</span> <span class="kd">final</span> <span class="kt">double</span> <span class="n">pGain</span><span class="o">;</span>
+    <span class="kd">private</span> <span class="kd">final</span> <span class="kt">double</span> <span class="n">iGain</span><span class="o">;</span>
+    <span class="kd">private</span> <span class="kd">final</span> <span class="kt">double</span> <span class="n">dGain</span><span class="o">;</span>
+    <span class="kd">private</span> <span class="kd">final</span> <span class="kt">double</span> <span class="n">fGain</span><span class="o">;</span>
+
+    <span class="kd">private</span> <span class="kt">double</span> <span class="n">setpoint</span><span class="o">;</span>
+    <span class="kd">private</span> <span class="kt">double</span> <span class="n">lastState</span><span class="o">;</span>
+
+    <span class="kd">private</span> <span class="kt">double</span> <span class="n">accumulatedError</span><span class="o">;</span>
+    <span class="kd">private</span> <span class="kt">double</span> <span class="n">lastError</span><span class="o">;</span>
+
+    <span class="kd">public</span> <span class="nf">PidfController</span><span class="o">(</span><span class="kt">double</span> <span class="n">pGain</span><span class="o">,</span> <span class="kt">double</span> <span class="n">iGain</span><span class="o">,</span> <span class="kt">double</span> <span class="n">dGain</span><span class="o">,</span> <span class="kt">double</span> <span class="n">fGain</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">this</span><span class="o">.</span><span class="na">pGain</span> <span class="o">=</span> <span class="n">pGain</span><span class="o">;</span>
+        <span class="k">this</span><span class="o">.</span><span class="na">iGain</span> <span class="o">=</span> <span class="n">iGain</span><span class="o">;</span>
+        <span class="k">this</span><span class="o">.</span><span class="na">dGain</span> <span class="o">=</span> <span class="n">dGain</span><span class="o">;</span>
+        <span class="k">this</span><span class="o">.</span><span class="na">fGain</span> <span class="o">=</span> <span class="n">fGain</span><span class="o">;</span>
+    <span class="o">}</span>
+
+    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">setSetpoint</span><span class="o">(</span><span class="kt">double</span> <span class="n">setpoint</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">this</span><span class="o">.</span><span class="na">setpoint</span> <span class="o">=</span> <span class="n">setpoint</span><span class="o">;</span>
+    <span class="o">}</span>
+
+    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">setLastState</span><span class="o">(</span><span class="kt">double</span> <span class="n">lastState</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">this</span><span class="o">.</span><span class="na">lastState</span> <span class="o">=</span> <span class="n">lastState</span><span class="o">;</span>
+    <span class="o">}</span>
+
+    <span class="kd">public</span> <span class="kt">double</span> <span class="nf">computeError</span><span class="o">()</span> <span class="o">{</span>
+        <span class="k">return</span> <span class="k">this</span><span class="o">.</span><span class="na">setpoint</span> <span class="o">-</span> <span class="k">this</span><span class="o">.</span><span class="na">lastState</span><span class="o">;</span>
+    <span class="o">}</span>
+
+    <span class="kd">private</span> <span class="kt">double</span> <span class="nf">computeProportional</span><span class="o">()</span> <span class="o">{</span>
+        <span class="kt">double</span> <span class="n">error</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="na">computeError</span><span class="o">();</span>
+        <span class="k">return</span> <span class="k">this</span><span class="o">.</span><span class="na">pGain</span> <span class="o">*</span> <span class="n">error</span><span class="o">;</span>
+    <span class="o">}</span>
+
+    <span class="kd">private</span> <span class="kt">double</span> <span class="nf">computeIntegral</span><span class="o">()</span> <span class="o">{</span>
+        <span class="kt">double</span> <span class="n">error</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="na">computeError</span><span class="o">();</span>
+        <span class="k">this</span><span class="o">.</span><span class="na">accumulatedError</span> <span class="o">+=</span> <span class="n">error</span> <span class="o">*</span> <span class="n">INTERVAL</span><span class="o">;</span>
+
+        <span class="k">return</span> <span class="k">this</span><span class="o">.</span><span class="na">iGain</span> <span class="o">*</span> <span class="k">this</span><span class="o">.</span><span class="na">accumulatedError</span><span class="o">;</span>
+    <span class="o">}</span>
+
+    <span class="kd">private</span> <span class="kt">double</span> <span class="nf">computeDerivative</span><span class="o">()</span> <span class="o">{</span>
+        <span class="kt">double</span> <span class="n">error</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="na">computeError</span><span class="o">();</span>
+        <span class="kt">double</span> <span class="n">derivative</span> <span class="o">=</span> <span class="o">(</span><span class="n">error</span> <span class="o">-</span> <span class="k">this</span><span class="o">.</span><span class="na">lastError</span><span class="o">)</span> <span class="o">/</span> <span class="n">INTERVAL</span><span class="o">;</span>
+
+        <span class="k">this</span><span class="o">.</span><span class="na">lastError</span> <span class="o">=</span> <span class="n">error</span><span class="o">;</span>
+
+        <span class="k">return</span> <span class="k">this</span><span class="o">.</span><span class="na">dGain</span> <span class="o">*</span> <span class="n">derivative</span><span class="o">;</span>
+    <span class="o">}</span>
+
+    <span class="kd">private</span> <span class="kt">double</span> <span class="nf">computeFeedforward</span><span class="o">()</span> <span class="o">{</span>
+        <span class="k">return</span> <span class="k">this</span><span class="o">.</span><span class="na">fGain</span> <span class="o">*</span> <span class="k">this</span><span class="o">.</span><span class="na">setpoint</span><span class="o">;</span>
+    <span class="o">}</span>
+
+    <span class="kd">public</span> <span class="kt">double</span> <span class="nf">computePidf</span><span class="o">()</span> <span class="o">{</span>
+        <span class="k">return</span> <span class="k">this</span><span class="o">.</span><span class="na">computeProportional</span><span class="o">()</span>
+                <span class="o">+</span> <span class="k">this</span><span class="o">.</span><span class="na">computeDerivative</span><span class="o">()</span>
+                <span class="o">+</span> <span class="k">this</span><span class="o">.</span><span class="na">computeIntegral</span><span class="o">()</span>
+                <span class="o">+</span> <span class="k">this</span><span class="o">.</span><span class="na">computeFeedforward</span><span class="o">();</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+</code></pre></div></div>
+
+<p>Users should change the <code class="highlighter-rouge">INTERVAL</code> time as they see 
+appropriate.</p>
+
+<p>It should be noted that all the gain values can even be
+changed during the PID loop, and so it is not necessary for
+them to be <code class="highlighter-rouge">final</code>. The <code class="highlighter-rouge">INTERVAL</code> time doesn’t even need
+to be constant, so long as one takes into account the time
+that elapses between each iteration of the PID loop. That
+being said, this is simply just the bare-bones minimum
+code, and it is up to the implementor to determine if those
+features are needed.</p>
+
+<p>As far as units go, it is not necessarily required to have
+a consistent unit conversion. A PIDF loop simply outputs
+the rate as it relates to the gain constants and the error
+value. It is up to users to determine if any consistency is
+really required here.</p>
 
 <h1 id="conclusion">Conclusion</h1>
 
-<p><code class="highlighter-rouge">// TODO</code></p>
+<p>Control Theory and control engineering are broad topics
+that I’ve only briefly touched over in this blog post. With
+a better understanding of the theory and implementation of
+PID control, one can build more precise physical mechanisms
+such as robots, temperature controls, pumps, etc.</p>
+
+<p>I’ve done my best to speak on general terms so that the
+concepts can be applied to the widest selection of
+scenarios possible. Sometimes, that has made it more 
+difficult to undestand what I’m talking about, but I hope
+that giving several real world examples to demonstrate a
+single concept has made it easier to grasp.</p>
+
+<p>Again, I will reiterate that I’m by no means an expert in
+the field of Control Theory. Feel free to contact me for
+corrections, but I’m definitely not the right person to ask
+if you need clarification, as I’ve done my best already to 
+try and clarify everything up front.</p>
+
+<p>For FRC Robots, you definitely want to use <code class="highlighter-rouge">PIDController</code>
+over the hand-rolled implementation I have here, by the
+way.</p>
+
+<p>I probably won’t be doing any more posts about robotics
+unless some extenuating circumstance forces me to.</p>
+
 
   </div>
 
