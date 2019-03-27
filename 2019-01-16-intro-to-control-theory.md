@@ -121,40 +121,101 @@ lack of a better word) of the output. These are adjustible
 in order to change the order of magnitude of the output, so
 for example, a motor that takes an input between -1 m/s and
 1 m/s would have smaller gain constants than a motor that
-takes input between -10 m/s to 10 m/s.
+takes input between -10 m/s to 10 m/s. A user provides
+these constants to the PID controller in advance. It takes
+some degree of testing to figure out the best combination
+of gain values, a topic which is out of scope of this
+discussion of the PID equation for the time being.
 
 Each gain constant precedes a value that is proportional to
 the instantaneous error, then the accumulated error, then
 the rate at which the error is changing.
 
-### The `P` term
+# PID Under The Magnifying Glass
 
-The P term is directly proportional to the instantaneous
-error. The P term is the most powerful because it responds
-to all changes to the value of the error, and the gain
-constant for the proportional term is usually tuned first.
-Having a P term alone usually leads to erratic output
-values in close proximity to the error beacuse the P gain
-amplifies the error to the negatives if the mechanism
-overshoots, and vice versa.
+The PID formula from the previous section takes all 3
+terms and adds them together to produce the final output
+value.
 
-A typical PID loop with only a P term would look like this:
+The error values that go into a PID controller are almost
+always some form of distance or displacement. For example,
+this could be the distance a robot is from a target, or the
+number of degrees off a desired temperature. However, error
+can also be a rate in, such as the current rate of a pump 
+compared to the desired rate of a pump. The concept for 
+both of them are exactly the same, however, and the PID 
+computation shouldn't need to change so long as they are 
+using distinct PID controllers. Either way, the bottom line
+is that PID is simply a way to derive an output value based
+on the input values. The behavior of the mechanism ends up 
+being the same one way or another anyways, so don't fret if
+you're worried about the rate being a derivative of
+distance - it doesn't matter. The end result is that you
+want to obtain an output that gets you to where you want to
+go, or to a rate at which you want to go at.
 
-![P only loop]({{ site.url }}/blog/img/itct-p-only.svg)
+The output of a PID controller is always a rate. It doesn't
+really make any sense to output a distance or displacement
+value, because physical systems can control rate in order
+to affect the distance from a setpoint. For example, a PID
+controller can output a greater value to increase the speed
+at which a wheel turns, or decrease the temperature of a
+heating element to reduce the speed at which heat is
+distrubuted into a room.
 
-I've purposely set the P value too high in order to to
-exaggerate the effect I'm referring to. In practice, it is
-possible to only use a P term successfully without needing
-the other terms to control it for simple mechanisms.
+#### The `P` term
 
-### The `I` term
+The P term looks like the following:
 
-The I term is related to the accumulated error. The longer
-the robot is off target, the more powerful the I term
-becomes. The problem with the I term on its own is that it
-tends to either overcompensate because the accumulated
-error must be reduced by an opposing physical action, which
-then overshoots and starts another cycle oscillation.
+```
+K_p*e(t)
+```
+
+Meaning that it is derived from the proportional gain
+constant multiplied by the most recently recorded error.
+
+The P term is the most powerful because it responds to all 
+changes to the value of the error, and the gain constant 
+for the proportional term is usually tuned first. Having a 
+P term alone usually leads to erratic output values in 
+close proximity to the error beacuse the P gain amplifies 
+the error to the negatives if the mechanism overshoots, and
+vice versa.
+
+A motion curve is typically used in robotics to show the
+distanced travelled by a robot over time. I've used a
+motion curve below to show the response to a PID loop
+controlling the state of a system, where state can be a
+temperature or a volume or a distance.
+
+A system with an overly large P value looks like the 
+following:
+
+![P unstable loop]({{ site.url }}/blog/img/itct-p-unstable.svg)
+
+It is often possible to acheive reasonably good results
+using just the P term. One can adjuts the P gain until a
+decent motion curve is produced, leaving all other gains
+to 0. This is simply called a "P controller" or "P loop."
+
+#### The `I` term
+
+The I term looks like the following:
+
+```
+K_i*integrate(0, t, e(T), T)
+```
+
+Meaning that it is derived from multiplying the integral
+gain by the accumulated error from time 0 to the current
+time.
+
+Because the I term is related to the accumulated error, the
+longer the robot is off target, the more powerful the I 
+term becomes. The problem with the I term on its own is 
+that it tends to overcompensate because the accumulated 
+error must be reduced by an opposing physical action, which 
+then overshoots and starts another oscillation cycle.
 
 This can be seen in a I only term loop here:
 
@@ -163,10 +224,40 @@ This can be seen in a I only term loop here:
 The most common type of control loop that I've personally
 seen is a PI loop, in which only the P and I terms are
 used. It's rare to see a full PID(F) loop because it is
-often more work to determine the gain constants than it is
-worth the marginal gains produced by adding an extra term.
+often more work to redetermine the gain constants than it 
+is worth the marginal gains produced by adding an extra 
+term.
 
-### The `D` term
+For example, consider the following P only loop, which
+demonstrates the ability of a single P term to produce
+relatively decent results:
+
+![P stable]({{ site.url }}/blog/img/itct-p-stable.svg)
+
+An I term can be introduced to make a PI controller. This
+will smooth out the motion curve when it reaches the
+setpoint, and prevent a quick decceleration. You can see,
+however, that there is some degree of overshoot when an I
+term is introduced:
+
+![PI]({{ site.url }}/blog/img/itct-pi.svg)
+
+According to [PID Theory Explained](http://www.ni.com/en-us/innovations/white-papers/06/pid-theory-explained.html):
+
+> Some amount of overshoot is always necessary for a fast 
+system so that it could respond to changes immediately
+
+#### The `D` term
+
+The D term looks like the following:
+
+```
+K_d*derive(e(t), t)
+```
+
+Meaning that it is derived from the product of the
+derivative gain and the instantaneous rate of change for 
+the error.
 
 The D term is related to the rate at which error changes.
 The faster the mechanism moves away from its setpoint, the
@@ -184,21 +275,29 @@ with the D gain set to `0`:
 
 ![PD - D = 0]({{ site.url }}/blog/img/itct-pd-0.svg)
 
-Now compare that to a PD loop with the D gain raised
+Now, compare that to a PD loop with the D gain raised
 slightly:
 
 ![PD - D = 0.6]({{ site.url }}/blog/img/itct-pd-06.svg)
 
-It should be again noted that any combination of PID
-controller terms tend to not be used in my experience. The
-Wikipedia page has this to say:
+The D term is problematic sometimes because setting the D
+gain to to high of a value will cause the output to
+oscillate extremely rapidly. This can also happen when
+there are a lot of environmental disturbances that cause
+the D term to overreact:
+
+![PD - D = massive]({{ site.url }}/blog/img/itct-pd-massive.svg)
+
+In my experience, I tend to see controllers using mostly
+P and I terms, but usually no D term. The Wikipedia page
+has this to say:
 
 > Derivative action is seldom used in practice though – by
 one estimate in only 25% of deployed controllers
 
 Although this claim requires citation, it is easy to see
 that the D term isn't too significantly useful for the
-vast majority of applications where P/I term controllers
+vast majority of applications where PI term controllers
 are used instead. When the D gain is raised, the D term
 tends to "fight" against the other two terms because it
 wants to flatten the motion curve, when the other two terms
@@ -206,7 +305,12 @@ actually want the curve to get closer to the setpoint:
 
 ![PD - D = 0.7]({{ site.url }}/blog/img/itct-pd-07.svg)
 
-### The `F` term
+When the D term is used, it tends to be used in a full PID
+loop to control the I term overshoot. PD loops are also
+found in the wild, but again, anything with a D term tends
+to be quite rare compared to P and PI loops.
+
+#### The `F` term
 
 The F term is special because it is often left out of the
 "PID" initialism. In part, this is due to the fact that
@@ -218,29 +322,16 @@ equation for a full PIDF loop looks like the following:
 u(t) = K_p*e(t) + K_i*integrate(0, t, e(T), T) + K_d*derive(e(t), t) + K_f*SP
 ```
 
-Where the F term involves the F gain multiplied by the
-setpoint.
+Where the F term is derived from the product of the
+feed-forward gain and the current setpoint.
 
 The purpose of a feed-forward in a PIDF computation is to
 provide "stability." The F term acts as kind of a base rate
 that pads the output from changes in the environment.
-
-The F term is really only useful for applications where a
-rate of something is to remain constant. In attempting to
-use the F term to run a PID loop for displacement, you
-would get a motion curve that looks something like this:
-
-![PD - D = 0.6]({{ site.url }}/blog/img/itct-pf.svg)
-
-A PID loop would be unable to compensate for the constant
-rate provided by the F term.
-
-If a system used only a feed-forward term and had no input
-from the other terms, then it would be an open-loop system
-because no feedback from the sensor is needed to adjust the
-output. Because the F term doesn't respond to any changes
-in the environment, it is not included with the other terms
-that do require feedback from a sensor.
+Because the F term doesn't respond to feedback from a
+sensor (see the derivation of the F term), it is doesn't
+truly belong with the other P, I, and D terms that do
+depend on sensor feedback.
 
 The other part of the reason why I think that the F term is
 dropped is because many systems tend to change quite often.
@@ -263,10 +354,268 @@ environments you'd typically find PID control loops
 running in, which is why PID tends to be referred to
 without reference to the F term.
 
+The F term also is only really useful for constant-rate
+mechanisms (i.e. those that use difference in rate as the
+error value rather than difference in displacement as is
+customoary). Becase the F term cannot respond to
+environmental changes, having a pre-defined F term in order
+to drive a mechanism and using the other terms to control
+error to that predefined rate is the most useful
+application of the F term that I can personally see.
+
 # Implementation
 
-# Implementation For Rate
+The derivation of the PID(F) formula is actually more 
+daunting than the implementation in code.
+
+We can imagine the PID loop as looking something like this:
+
+``` java
+PidfController controller = // ...
+
+// Begin the loop by setting a target
+controller.setSetpoint(setpoint);
+
+while (true) {
+    // Set the last state recorded by a sensor
+    controller.setLastState(state);
+
+    // If the error is 0, the PID procedure is done
+    if (controller.computeError() == 0) {
+        break;
+    }
+
+    // Compute the output
+    double output = controller.computePidf();
+
+    // Send output to the mechanism
+    mechanism.setOutput(output);
+
+    // Wait a constant time interval before repeating 
+    Thread.sleep(INTERVAL);
+}
+```
+
+(Once again, it should be noted that often a PID(F)
+controller stops once the error is close enough to 0, in
+general it's a poor idea to directly compare floating point
+numbers anyways, so you probably get the idea)
+
+To write the `PidfController`, the easiest step is to 
+firstly define our gain and interval constants:
+
+``` java
+static final double INTERVAL;
+
+double pGain;
+double iGain;
+double dGain;
+double fGain;
+```
+
+The next portion would be to implement a way to calculate
+error. We will need a way to define the setpoint to which
+the PID(F) controller is to travel to, and then a way to
+define the last state recorded by a sensor:
+
+``` java
+double setpoint;
+double lastState;
+
+// Called by a user to set the setpoint
+public void setSetpoint(double setpoint) {
+    this.setpoint = setpoint;
+}
+
+// Called by a sensor to set the state of the system
+public void setLastState(double lastState) {
+    this.lastState = lastState;
+}
+
+public double computeError() {
+    return this.setpoint - this.lastState;
+}
+```
+
+Now that we have our gain constants a way to compute the 
+current error, we can now head to computing each term.
+
+Proportional:
+
+``` java
+double computeProportional() {
+    double error = this.computeError();
+    return this.pGain * error;
+}
+```
+
+For integral, we need to hold the amount of error that has
+accummulated since the PID loop began. This can be acheived
+by using a variable to hold the error multiplied by the
+interval time each time the loop runs:
+
+``` java
+double accumulatedError;
+
+double computeIntegral() {
+    double error = this.computeError();
+    this.accumulatedError += error * INTERVAL;
+
+    return this.iGain * this.accumulatedError;
+}
+```
+
+For derivative, since the rate of change of the error is
+instantaneous, we can simply use the slope formula for the
+last recorded error and the current error taken over the
+interval time:
+
+``` java
+double lastError;
+
+double computeDerivative() {
+    double error = this.computeError();
+    double derivative = (error - this.lastError) / INTERVAL;
+
+    this.lastError = error;
+
+    return this.dGain * derivative;
+}
+```
+
+For feed-forward, it is the gain multiplied by setpoint:
+
+``` java
+double computeFeedforward() {
+    return this.fGain * this.setpoint;
+}
+```
+
+Finally, tying everything together:
+
+``` java
+double computePidf() {
+    return this.computeProportional()
+            + this.computeDerivative()
+            + this.computeIntegral()
+            + this.computeFeedforward();
+}
+```
+
+And then cleanup our code and write it all into a coherent
+class:
+
+``` java
+public class PidfController {
+    private static final double INTERVAL = 0.5;
+
+    private final double pGain;
+    private final double iGain;
+    private final double dGain;
+    private final double fGain;
+
+    private double setpoint;
+    private double lastState;
+
+    private double accumulatedError;
+    private double lastError;
+
+    public PidfController(double pGain, double iGain, double dGain, double fGain) {
+        this.pGain = pGain;
+        this.iGain = iGain;
+        this.dGain = dGain;
+        this.fGain = fGain;
+    }
+
+    public void setSetpoint(double setpoint) {
+        this.setpoint = setpoint;
+    }
+
+    public void setLastState(double lastState) {
+        this.lastState = lastState;
+    }
+
+    public double computeError() {
+        return this.setpoint - this.lastState;
+    }
+
+    private double computeProportional() {
+        double error = this.computeError();
+        return this.pGain * error;
+    }
+
+    private double computeIntegral() {
+        double error = this.computeError();
+        this.accumulatedError += error * INTERVAL;
+
+        return this.iGain * this.accumulatedError;
+    }
+
+    private double computeDerivative() {
+        double error = this.computeError();
+        double derivative = (error - this.lastError) / INTERVAL;
+
+        this.lastError = error;
+
+        return this.dGain * derivative;
+    }
+
+    private double computeFeedforward() {
+        return this.fGain * this.setpoint;
+    }
+
+    public double computePidf() {
+        return this.computeProportional()
+                + this.computeDerivative()
+                + this.computeIntegral()
+                + this.computeFeedforward();
+    }
+}
+```
+
+Users should change the `INTERVAL` time as they see 
+appropriate.
+
+It should be noted that all the gain values can even be
+changed during the PID loop, and so it is not necessary for
+them to be `final`. The `INTERVAL` time doesn't even need
+to be constant, so long as one takes into account the time
+that elapses between each iteration of the PID loop. That
+being said, this is simply just the bare-bones minimum
+code, and it is up to the implementor to determine if those
+features are needed.
+
+As far as units go, it is not necessarily required to have
+a consistent unit conversion. A PIDF loop simply outputs
+the rate as it relates to the gain constants and the error
+value. It is up to users to determine if any consistency is
+really required here.
 
 # Conclusion
 
-`// TODO`
+Control Theory and control engineering are broad topics
+that I've only briefly touched over in this blog post. With
+a better understanding of the theory and implementation of
+PID control, one can build more precise physical mechanisms
+such as robots, temperature controls, pumps, etc.
+
+I've done my best to speak on general terms so that the
+concepts can be applied to the widest selection of
+scenarios possible. Sometimes, that has made it more 
+difficult to undestand what I'm talking about, but I hope
+that giving several real world examples to demonstrate a
+single concept has made it easier to grasp.
+
+Again, I will reiterate that I'm by no means an expert in
+the field of Control Theory. Feel free to contact me for
+corrections, but I'm definitely not the right person to ask
+if you need clarification, as I've done my best already to 
+try and clarify everything up front.
+
+For FRC Robots, you definitely want to use `PIDController`
+over the hand-rolled implementation I have here, by the
+way.
+
+I probably won't be doing any more posts about robotics
+unless some extenuating circumstance forces me to.
+
