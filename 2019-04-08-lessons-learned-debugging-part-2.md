@@ -222,8 +222,8 @@ with having to deep-copy the entire collection for that.
 (I'm not sure why the API designers decided not to produce
 a copy of the collection there. In the modern age of
 Java 8, I would have personally returned a `Stream`, but
-that luxury didn't when `Inventory` was designed. In fact,
-there should be no reason really why the returned 
+that luxury they didn't have when `Inventory` was designed.
+In fact, there should be no reason really why the returned
 collection is mutable, at the very least, it needs to be
 unmodifiable because other cleanup procedures need to be
 run for someone to actually stop "viewing" an inventory.
