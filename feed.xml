@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.6.2">Jekyll</generator><link href="https://agenttroll.github.io/blog/feed.xml" rel="self" type="application/atom+xml" /><link href="https://agenttroll.github.io/blog/" rel="alternate" type="text/html" /><updated>2019-04-09T20:55:43-07:00</updated><id>https://agenttroll.github.io/blog/</id><title type="html">Inside a Troll</title><subtitle>Thoughts of a Java developer</subtitle><entry><title type="html">Lessons Learned Debugging: Part 2</title><link href="https://agenttroll.github.io/blog/2019/04/08/lessons-learned-debugging-part-2.html" rel="alternate" type="text/html" title="Lessons Learned Debugging: Part 2" /><published>2019-04-08T22:03:10-07:00</published><updated>2019-04-08T22:03:10-07:00</updated><id>https://agenttroll.github.io/blog/2019/04/08/lessons-learned-debugging-part-2</id><content type="html" xml:base="https://agenttroll.github.io/blog/2019/04/08/lessons-learned-debugging-part-2.html">&lt;p&gt;One of the recurring problems that will cause you headaches
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.6.2">Jekyll</generator><link href="https://agenttroll.github.io/blog/feed.xml" rel="self" type="application/atom+xml" /><link href="https://agenttroll.github.io/blog/" rel="alternate" type="text/html" /><updated>2019-04-09T20:57:06-07:00</updated><id>https://agenttroll.github.io/blog/</id><title type="html">Inside a Troll</title><subtitle>Thoughts of a Java developer</subtitle><entry><title type="html">Lessons Learned Debugging: Part 2</title><link href="https://agenttroll.github.io/blog/2019/04/08/lessons-learned-debugging-part-2.html" rel="alternate" type="text/html" title="Lessons Learned Debugging: Part 2" /><published>2019-04-08T22:03:10-07:00</published><updated>2019-04-08T22:03:10-07:00</updated><id>https://agenttroll.github.io/blog/2019/04/08/lessons-learned-debugging-part-2</id><content type="html" xml:base="https://agenttroll.github.io/blog/2019/04/08/lessons-learned-debugging-part-2.html">&lt;p&gt;One of the recurring problems that will cause you headaches
 is the throwing of exceptions where you &lt;em&gt;don’t want them to
 be thrown&lt;/em&gt;. Among these exceptions, one of the most elusive
 is &lt;code class=&quot;highlighter-rouge&quot;&gt;ConcurrentModificationException&lt;/code&gt;.&lt;/p&gt;
@@ -209,8 +209,8 @@ with having to deep-copy the entire collection for that.&lt;/p&gt;
 &lt;p&gt;(I’m not sure why the API designers decided not to produce
 a copy of the collection there. In the modern age of
 Java 8, I would have personally returned a &lt;code class=&quot;highlighter-rouge&quot;&gt;Stream&lt;/code&gt;, but
-that luxury didn’t when &lt;code class=&quot;highlighter-rouge&quot;&gt;Inventory&lt;/code&gt; was designed. In fact,
-there should be no reason really why the returned 
+that luxury they didn’t have when &lt;code class=&quot;highlighter-rouge&quot;&gt;Inventory&lt;/code&gt; was designed.
+In fact, there should be no reason really why the returned
 collection is mutable, at the very least, it needs to be
 unmodifiable because other cleanup procedures need to be
 run for someone to actually stop “viewing” an inventory.
