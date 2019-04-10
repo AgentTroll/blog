@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.6.2">Jekyll</generator><link href="https://agenttroll.github.io/blog/feed.xml" rel="self" type="application/atom+xml" /><link href="https://agenttroll.github.io/blog/" rel="alternate" type="text/html" /><updated>2019-04-09T20:57:06-07:00</updated><id>https://agenttroll.github.io/blog/</id><title type="html">Inside a Troll</title><subtitle>Thoughts of a Java developer</subtitle><entry><title type="html">Lessons Learned Debugging: Part 2</title><link href="https://agenttroll.github.io/blog/2019/04/08/lessons-learned-debugging-part-2.html" rel="alternate" type="text/html" title="Lessons Learned Debugging: Part 2" /><published>2019-04-08T22:03:10-07:00</published><updated>2019-04-08T22:03:10-07:00</updated><id>https://agenttroll.github.io/blog/2019/04/08/lessons-learned-debugging-part-2</id><content type="html" xml:base="https://agenttroll.github.io/blog/2019/04/08/lessons-learned-debugging-part-2.html">&lt;p&gt;One of the recurring problems that will cause you headaches
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.6.2">Jekyll</generator><link href="https://agenttroll.github.io/blog/feed.xml" rel="self" type="application/atom+xml" /><link href="https://agenttroll.github.io/blog/" rel="alternate" type="text/html" /><updated>2019-04-09T20:57:53-07:00</updated><id>https://agenttroll.github.io/blog/</id><title type="html">Inside a Troll</title><subtitle>Thoughts of a Java developer</subtitle><entry><title type="html">Lessons Learned Debugging: Part 2</title><link href="https://agenttroll.github.io/blog/2019/04/08/lessons-learned-debugging-part-2.html" rel="alternate" type="text/html" title="Lessons Learned Debugging: Part 2" /><published>2019-04-08T22:03:10-07:00</published><updated>2019-04-08T22:03:10-07:00</updated><id>https://agenttroll.github.io/blog/2019/04/08/lessons-learned-debugging-part-2</id><content type="html" xml:base="https://agenttroll.github.io/blog/2019/04/08/lessons-learned-debugging-part-2.html">&lt;p&gt;One of the recurring problems that will cause you headaches
 is the throwing of exceptions where you &lt;em&gt;don’t want them to
 be thrown&lt;/em&gt;. Among these exceptions, one of the most elusive
 is &lt;code class=&quot;highlighter-rouge&quot;&gt;ConcurrentModificationException&lt;/code&gt;.&lt;/p&gt;
@@ -78,20 +78,21 @@ modifying the collection in the process.&lt;/p&gt;
 &lt;p&gt;There are a few important exceptions to this where you are
 completely safe from CME:&lt;/p&gt;
 
-&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;1. You are using an indexed loop. If you remove
+&lt;ol&gt;
+  &lt;li&gt;You are using an indexed loop. If you remove
 something, you are in control of the loop index, so
-it's up to you to correct for the index of any item
+it’s up to you to correct for the index of any item
 shifting (if you are not using an indexed removal,
-that is).
-2. You are using a thread-safe collection. Iterators
+that is).&lt;/li&gt;
+  &lt;li&gt;You are using a thread-safe collection. Iterators
 provided by those classes are only weakly-consistent,
 and it can potentially take time for modifications to
 show up. If you are simply throwing away elements,
-there's really nothing to worry about.
-3. If you are using a safe method of modifying the
-collection such as through `Iterator#remove()` or
-using `#removeIf(...)`.
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+there’s really nothing to worry about.&lt;/li&gt;
+  &lt;li&gt;If you are using a safe method of modifying the
+collection such as through &lt;code class=&quot;highlighter-rouge&quot;&gt;Iterator#remove()&lt;/code&gt; or
+using &lt;code class=&quot;highlighter-rouge&quot;&gt;#removeIf(...)&lt;/code&gt;.&lt;/li&gt;
+&lt;/ol&gt;
 
 &lt;p&gt;You will also need to be cautious of side-effects of
 methods called in the loop. For example, the following
