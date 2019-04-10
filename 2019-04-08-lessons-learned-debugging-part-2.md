@@ -86,19 +86,19 @@ modifying the collection in the process.
 There are a few important exceptions to this where you are
 completely safe from CME:
 
-    1. You are using an indexed loop. If you remove
-    something, you are in control of the loop index, so
-    it's up to you to correct for the index of any item
-    shifting (if you are not using an indexed removal,
-    that is).
-    2. You are using a thread-safe collection. Iterators
-    provided by those classes are only weakly-consistent,
-    and it can potentially take time for modifications to
-    show up. If you are simply throwing away elements,
-    there's really nothing to worry about.
-    3. If you are using a safe method of modifying the
-    collection such as through `Iterator#remove()` or
-    using `#removeIf(...)`.
+1. You are using an indexed loop. If you remove
+something, you are in control of the loop index, so
+it's up to you to correct for the index of any item
+shifting (if you are not using an indexed removal,
+that is).
+2. You are using a thread-safe collection. Iterators
+provided by those classes are only weakly-consistent,
+and it can potentially take time for modifications to
+show up. If you are simply throwing away elements,
+there's really nothing to worry about.
+3. If you are using a safe method of modifying the
+collection such as through `Iterator#remove()` or
+using `#removeIf(...)`.
 
 You will also need to be cautious of side-effects of
 methods called in the loop. For example, the following
