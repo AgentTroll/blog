@@ -1,4 +1,251 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.6.2">Jekyll</generator><link href="https://agenttroll.github.io/blog/feed.xml" rel="self" type="application/atom+xml" /><link href="https://agenttroll.github.io/blog/" rel="alternate" type="text/html" /><updated>2019-03-29T21:46:04-07:00</updated><id>https://agenttroll.github.io/blog/</id><title type="html">Inside a Troll</title><subtitle>Thoughts of a Java developer</subtitle><entry><title type="html">Lessons Learned Debugging: Part 1</title><link href="https://agenttroll.github.io/blog/2019/03/20/lessons-learned-debugging-part-1.html" rel="alternate" type="text/html" title="Lessons Learned Debugging: Part 1" /><published>2019-03-20T22:27:00-07:00</published><updated>2019-03-20T22:27:00-07:00</updated><id>https://agenttroll.github.io/blog/2019/03/20/lessons-learned-debugging-part-1</id><content type="html" xml:base="https://agenttroll.github.io/blog/2019/03/20/lessons-learned-debugging-part-1.html">&lt;p&gt;This is going to be among the first in a blog series that
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.6.2">Jekyll</generator><link href="https://agenttroll.github.io/blog/feed.xml" rel="self" type="application/atom+xml" /><link href="https://agenttroll.github.io/blog/" rel="alternate" type="text/html" /><updated>2019-04-09T20:55:43-07:00</updated><id>https://agenttroll.github.io/blog/</id><title type="html">Inside a Troll</title><subtitle>Thoughts of a Java developer</subtitle><entry><title type="html">Lessons Learned Debugging: Part 2</title><link href="https://agenttroll.github.io/blog/2019/04/08/lessons-learned-debugging-part-2.html" rel="alternate" type="text/html" title="Lessons Learned Debugging: Part 2" /><published>2019-04-08T22:03:10-07:00</published><updated>2019-04-08T22:03:10-07:00</updated><id>https://agenttroll.github.io/blog/2019/04/08/lessons-learned-debugging-part-2</id><content type="html" xml:base="https://agenttroll.github.io/blog/2019/04/08/lessons-learned-debugging-part-2.html">&lt;p&gt;One of the recurring problems that will cause you headaches
+is the throwing of exceptions where you &lt;em&gt;don’t want them to
+be thrown&lt;/em&gt;. Among these exceptions, one of the most elusive
+is &lt;code class=&quot;highlighter-rouge&quot;&gt;ConcurrentModificationException&lt;/code&gt;.&lt;/p&gt;
+
+&lt;h1 id=&quot;what-is-concurrentmodificationexception&quot;&gt;What is &lt;code class=&quot;highlighter-rouge&quot;&gt;ConcurrentModificationException&lt;/code&gt;?&lt;/h1&gt;
+
+&lt;p&gt;A &lt;code class=&quot;highlighter-rouge&quot;&gt;ConcurrentModificationException&lt;/code&gt;, or a CME, as I will
+refer to it from here on out, is caused by a change, or a
+modification, to a collection while iterating over it.
+The most common example of this happening is through
+something like this:&lt;/p&gt;
+
+&lt;div class=&quot;language-java highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;n&quot;&gt;List&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;String&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;stringList&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;...&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;for&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;String&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;string&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;stringList&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;stringList&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;remove&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;string&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;);&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;The reason you cannot do this is because it will cause the
+Iterator to lose track of where it is. For example, in a
+collection with 10 elements, if you remove the 3rd item and
+the iterator is on the 4th element, what is the iterator
+supposed to do? Is it supposed to now be on the 5th element
+because everything shifts down? Are you supposed to stay on
+the same 4th element and shift with the removal of the
+item? It’s easier just to avoid the consistency issues and
+throw an exception instead. We will get into how to get
+around this later.&lt;/p&gt;
+
+&lt;p&gt;A for-each loop is simply syntax sugar over an &lt;code class=&quot;highlighter-rouge&quot;&gt;Iterator&lt;/code&gt;.
+In an &lt;code class=&quot;highlighter-rouge&quot;&gt;ArrayList&lt;/code&gt;, the call to &lt;code class=&quot;highlighter-rouge&quot;&gt;Iterator#next()&lt;/code&gt; checks to
+ensure that &lt;code class=&quot;highlighter-rouge&quot;&gt;modCount&lt;/code&gt; has not changed, where &lt;code class=&quot;highlighter-rouge&quot;&gt;modCount&lt;/code&gt; is
+an &lt;code class=&quot;highlighter-rouge&quot;&gt;int&lt;/code&gt; that changes whenever the &lt;code class=&quot;highlighter-rouge&quot;&gt;ArrayList&lt;/code&gt; has a
+modification (such as through the usage of &lt;code class=&quot;highlighter-rouge&quot;&gt;#add(...)&lt;/code&gt;
+or &lt;code class=&quot;highlighter-rouge&quot;&gt;#remove(...)&lt;/code&gt;). From the &lt;a href=&quot;https://hg.openjdk.java.net/jdk8/jdk8/jdk/file/tip/src/share/classes/java/util/ArrayList.java#l884&quot;&gt;ArrayList source&lt;/a&gt;:&lt;/p&gt;
+
+&lt;div class=&quot;language-java highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;kd&quot;&gt;final&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;void&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;checkForComodification&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;()&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;modCount&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;!=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;expectedModCount&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;
+        &lt;span class=&quot;k&quot;&gt;throw&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;new&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;ConcurrentModificationException&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;();&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;expectedModCount&lt;/code&gt; is the value of &lt;code class=&quot;highlighter-rouge&quot;&gt;modCount&lt;/code&gt; when the
+iterator is constructed, or when the for-loop begins. A CME
+is so serious of an exception because often, one can get
+away without throwing the exception during testing. If a
+collection contains only one element, the &lt;code class=&quot;highlighter-rouge&quot;&gt;modCount&lt;/code&gt; will
+change after &lt;code class=&quot;highlighter-rouge&quot;&gt;Itr#checkForComodification()&lt;/code&gt; has been
+called, and no CME will be thrown. This is an issue because
+one might populate a collection with only a single element
+for the purposes of testing. It may be only one player,
+because you are the only one testing the plugin, or it may
+be only one object that you are storing to make sure that
+something works. This is something that tends to slip into
+production because it appears to work during testing.&lt;/p&gt;
+
+&lt;p&gt;As a reminder, this can happen with any collection except
+those that are thread-safe, so a &lt;code class=&quot;highlighter-rouge&quot;&gt;HashSet&lt;/code&gt;, a &lt;code class=&quot;highlighter-rouge&quot;&gt;LinkedList&lt;/code&gt;,
+and &lt;code class=&quot;highlighter-rouge&quot;&gt;HashMap&lt;/code&gt; are all succeptible to throwing a CME if you
+iterate and modify at the same time.&lt;/p&gt;
+
+&lt;h1 id=&quot;be-wary-of-iteration-and-unforeseen-side-effects&quot;&gt;Be Wary of Iteration and Unforeseen Side-Effects&lt;/h1&gt;
+
+&lt;p&gt;One way to avoid making mistakes is to reuse paradigms that
+are well understood, and that is known to already work. On
+the opposite end, it is also imperative to recognize
+certain paradigms that have a tendency to fail. Iteration
+through Collections is one of those paradigms that you
+should be on the lookout for. The simplicity of loops and
+the monotony of perhaps writing them hundreds if not
+thousands of times over can lower one’s guard against them.&lt;/p&gt;
+
+&lt;p&gt;The trick is to proceed with caution when writing loops.
+Ensure that you are truly only reading from them, and never
+modifying the collection in the process.&lt;/p&gt;
+
+&lt;p&gt;There are a few important exceptions to this where you are
+completely safe from CME:&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;1. You are using an indexed loop. If you remove
+something, you are in control of the loop index, so
+it's up to you to correct for the index of any item
+shifting (if you are not using an indexed removal,
+that is).
+2. You are using a thread-safe collection. Iterators
+provided by those classes are only weakly-consistent,
+and it can potentially take time for modifications to
+show up. If you are simply throwing away elements,
+there's really nothing to worry about.
+3. If you are using a safe method of modifying the
+collection such as through `Iterator#remove()` or
+using `#removeIf(...)`.
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;You will also need to be cautious of side-effects of
+methods called in the loop. For example, the following
+snippet of code will throw a CME:&lt;/p&gt;
+
+&lt;div class=&quot;language-java highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;n&quot;&gt;Inventory&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;inventory&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;;&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;for&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;HumanEntity&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;viewer&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;inventory&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;getViewers&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;())&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;viewer&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;closeInventory&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;();&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;Upon initial inspection, it looks completely safe, it
+doesn’t appear to be modifying the collection returned by
+&lt;code class=&quot;highlighter-rouge&quot;&gt;Inventory#getViewers()&lt;/code&gt;. However, this is another reason
+why CMEs are so insidious. &lt;code class=&quot;highlighter-rouge&quot;&gt;HumanEntity#closeInventory()&lt;/code&gt;
+interally removes the viewer from the &lt;code class=&quot;highlighter-rouge&quot;&gt;#getViewers()&lt;/code&gt;
+collection, and so by closing the inventory, it will modify
+the collection while you are still in a loop. This is only
+one example from the Bukkit API, but I’m sure there are
+more, I’ve just never personally had to deal with them.&lt;/p&gt;
+
+&lt;p&gt;In this case, where you are not able to change the
+&lt;code class=&quot;highlighter-rouge&quot;&gt;#closeInventory()&lt;/code&gt; method because it is written in the
+API, you would make a copy of that collection and then
+iterate over it:&lt;/p&gt;
+
+&lt;div class=&quot;language-java highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;n&quot;&gt;Inventory&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;inventory&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;;&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;for&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;HumanEntity&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;viewer&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;new&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;ArrayList&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;lt;&amp;gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;inventory&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;getViewers&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;()))&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;viewer&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;closeInventory&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;();&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;This works because the new collection is a different
+&lt;code class=&quot;highlighter-rouge&quot;&gt;ArrayList&lt;/code&gt; and therefore uses a different iterator than
+the actual collection of viewers. We can remove items from
+the actual collection without affecting the elements in the
+copy, and therefore no CME is thrown.&lt;/p&gt;
+
+&lt;p&gt;It is tempting to use a workaround to creating an entirely
+new deep copy of the collection, such as by using
+&lt;code class=&quot;highlighter-rouge&quot;&gt;Collections#unmodifiableCollection(...)&lt;/code&gt;, or even by using
+Google Guava’s &lt;code class=&quot;highlighter-rouge&quot;&gt;Iterables.concat(...)&lt;/code&gt; to “hack” in a new
+iterator. However, the problem is that both of these are
+non-solutions because they &lt;em&gt;still depend on the underlying
+iterator&lt;/em&gt;. You MUST create a new collection in order for
+this to work.&lt;/p&gt;
+
+&lt;h1 id=&quot;other-solutions&quot;&gt;Other Solutions&lt;/h1&gt;
+
+&lt;p&gt;Instances such as the Inventory example don’t come up too
+often, and sometimes you just need to run some unrelated
+code to process the removed elements, or even just remove
+a few elements from a loop outright.&lt;/p&gt;
+
+&lt;p&gt;Nowadays, the most effective solution would be to use the
+&lt;code class=&quot;highlighter-rouge&quot;&gt;#removeIf(...)&lt;/code&gt; method:&lt;/p&gt;
+
+&lt;div class=&quot;language-java highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;n&quot;&gt;List&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;String&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;list&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;c1&quot;&gt;// ...&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;list&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;removeIf&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;string&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;-&amp;gt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;string&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;startsWith&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;remove-me&quot;&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;));&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;You can even use this to process the elements that should
+be removed if you so wish:&lt;/p&gt;
+
+&lt;div class=&quot;language-java highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;n&quot;&gt;List&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;String&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;list&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;c1&quot;&gt;// ...&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;Consumer&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;String&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;removeListener&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;c1&quot;&gt;// ...&lt;/span&gt;
+
+&lt;span class=&quot;n&quot;&gt;list&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;removeIf&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;string&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;-&amp;gt;&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;string&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;startsWith&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;remove-me&quot;&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;))&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+        &lt;span class=&quot;n&quot;&gt;removeListener&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;accept&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;string&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;);&lt;/span&gt;
+        &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;kc&quot;&gt;true&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;;&lt;/span&gt;
+    &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
+
+    &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;kc&quot;&gt;false&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;;&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;});&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;For those of us stuck on Java 7, or for reasons I might not
+have forseen, you can use &lt;code class=&quot;highlighter-rouge&quot;&gt;Iterator#remove()&lt;/code&gt; in order to
+do the same thing:&lt;/p&gt;
+
+&lt;div class=&quot;language-java highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;n&quot;&gt;List&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;String&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;list&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;c1&quot;&gt;// ...&lt;/span&gt;
+
+&lt;span class=&quot;n&quot;&gt;Iterator&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;String&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;it&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;list&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;iterator&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;();&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;while&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;it&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;hasNext&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;())&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;String&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;string&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;it&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;next&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;();&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;string&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;startsWith&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;remove-me&quot;&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;))&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+        &lt;span class=&quot;n&quot;&gt;it&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;remove&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;();&lt;/span&gt;
+    &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;This will also allow you to only partially iterate by using
+&lt;code class=&quot;highlighter-rouge&quot;&gt;break&lt;/code&gt; if you so desire. A shortened form that scopes the
+iterator for only a single loop will look like this:&lt;/p&gt;
+
+&lt;div class=&quot;language-java highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;n&quot;&gt;List&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;String&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;list&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;c1&quot;&gt;// ...&lt;/span&gt;
+
+&lt;span class=&quot;k&quot;&gt;for&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Iterator&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;String&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;it&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;list&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;iterator&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;();&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;it&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;hasNext&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;();&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;String&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;string&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;it&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;next&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;();&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;string&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;startsWith&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;remove-me&quot;&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;))&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+        &lt;span class=&quot;n&quot;&gt;it&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;remove&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;();&lt;/span&gt;
+    &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;All of these code snippets will have the same effect of
+removing &lt;code class=&quot;highlighter-rouge&quot;&gt;String&lt;/code&gt;s starting with &lt;code class=&quot;highlighter-rouge&quot;&gt;remove-me&lt;/code&gt;, so choose
+whatever one you see fit. Once again, these will not work
+if methods you are calling have the side effect of removing
+the element from the collection anyways, such as 
+demonstrated in the previous section, so you will be stuck
+with having to deep-copy the entire collection for that.&lt;/p&gt;
+
+&lt;p&gt;(I’m not sure why the API designers decided not to produce
+a copy of the collection there. In the modern age of
+Java 8, I would have personally returned a &lt;code class=&quot;highlighter-rouge&quot;&gt;Stream&lt;/code&gt;, but
+that luxury didn’t when &lt;code class=&quot;highlighter-rouge&quot;&gt;Inventory&lt;/code&gt; was designed. In fact,
+there should be no reason really why the returned 
+collection is mutable, at the very least, it needs to be
+unmodifiable because other cleanup procedures need to be
+run for someone to actually stop “viewing” an inventory.
+Perhaps this could be a PR or something to return a
+deep-copy as a defensive programming measure)&lt;/p&gt;
+
+&lt;h1 id=&quot;conclusion&quot;&gt;Conclusion&lt;/h1&gt;
+
+&lt;p&gt;There are solutions to CME, but it is up to the programmer
+to actually be vigilant, and to never let their guard down
+in spite of the appearance of simplicity of a loop. You
+must train yourself to recognize and check yourself when
+you are writing loops, because a CME might also slip past
+during testing as I’ve discussed before. This paradigm is
+the second lesson in this series of posts.&lt;/p&gt;
+
+&lt;p&gt;I leave with the following wisdom from &lt;a href=&quot;http://spinroot.com/gerard/pdf/P10.pdf&quot;&gt;The Power of Ten&lt;/a&gt;:&lt;/p&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;If the rules seem Draconian at first, bear in mind that
+they are meant to make it possible to check code where very
+literally your life may depend on its correctness: code 
+that is used to control the airplane that you fly on, the 
+nuclear power plant a few miles from where you live, or the 
+spacecraft that carries astronauts into orbit. The rules 
+act like the seat-belt in your car: initially they are 
+perhaps a little uncomfortable, but after a while their use
+becomes second-nature and not using them becomes 
+unimaginable.&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;While these tips are not necessarily rules that are
+responsible for keeping people alive, incorporating the
+same philosophy into your programming repertoire will help
+you in the long run.&lt;/p&gt;</content><author><name></name></author><summary type="html">One of the recurring problems that will cause you headaches is the throwing of exceptions where you don’t want them to be thrown. Among these exceptions, one of the most elusive is ConcurrentModificationException.</summary></entry><entry><title type="html">Lessons Learned Debugging: Part 1</title><link href="https://agenttroll.github.io/blog/2019/03/20/lessons-learned-debugging-part-1.html" rel="alternate" type="text/html" title="Lessons Learned Debugging: Part 1" /><published>2019-03-20T22:27:00-07:00</published><updated>2019-03-20T22:27:00-07:00</updated><id>https://agenttroll.github.io/blog/2019/03/20/lessons-learned-debugging-part-1</id><content type="html" xml:base="https://agenttroll.github.io/blog/2019/03/20/lessons-learned-debugging-part-1.html">&lt;p&gt;This is going to be among the first in a blog series that
 detail some of my work while at Intermissum to reduce
 bugginess. Not only did I personally run into many
 hardships in order to write better production-quality
@@ -1497,64 +1744,4 @@ WPAConfigSection=(
 
 &lt;p&gt;Although trying a CLI-based install for the first time was an interesting experience, and I felt like I learned a lot from it compared to a more graphical nod that Debian takes, it still was frustrating and uncooperative even at the best of times. I’m happy with the end result, even if it’s not perfect though, and as always, the pleasure and satisfaction that comes with finally wrangling something to work is much more powerful than the ordeal that it takes to acheive that.&lt;/p&gt;
 
-&lt;p&gt;Although it &lt;em&gt;would&lt;/em&gt; be nice if I could actually see anything, I still haven’t figured out that HiDPI thing yet…&lt;/p&gt;</content><author><name></name></author><summary type="html">It’s been draining on the soul, but luckily coming up with a “unique” title has been rejuvenating (rejuvinatig? rejuvenating? whatever).</summary></entry><entry><title type="html">New Years: Productivity</title><link href="https://agenttroll.github.io/blog/2017/12/31/new-years-productivity.html" rel="alternate" type="text/html" title="New Years: Productivity" /><published>2017-12-30T23:00:00-08:00</published><updated>2017-12-30T23:00:00-08:00</updated><id>https://agenttroll.github.io/blog/2017/12/31/new-years-productivity</id><content type="html" xml:base="https://agenttroll.github.io/blog/2017/12/31/new-years-productivity.html">&lt;p&gt;Perhaps we can take some time to look at productivity, in spirit of the (Eve of) New Year.&lt;/p&gt;
-
-&lt;p&gt;Probably the most ironic thing about productivity is that discussing productivity is unproductive in itself. Sure, it’s great food for thought, but at the same time, let us consider that 1) you will read this and do nothing about it and 2) productivity is subjective. In fact, #1 probably isn’t even your fault; maybe you’ve already fixed whatever issue arose from that facet of productivity, or maybe it doesn’t even apply to you. I’m not saying that you aren’t lazy and stubborn, because you probably are as well. At least something might occur to you that has not before even if you won’t do anything about your own productivity after reading.&lt;/p&gt;
-
-&lt;h1 id=&quot;what-does-it-mean-to-be-productive&quot;&gt;What Does It Mean to Be Productive?&lt;/h1&gt;
-
-&lt;p&gt;In my view, there are two main types of productivity: problem-solving productivity and programming productivity. The former deals with solving problems and working out bugs, while the latter deals with literally writing out code more quickly. There’s a lot of overlap in terms of “working on a computer” in general, but for the most part, I will be touching on the latter form of productivity. The issue with dealing with the former is that problem-solving is almost purely mental gymnastics; some people “are just better” at solving problems than other people.&lt;/p&gt;
-
-&lt;p&gt;I mean, in actuality, I don’t even know that much about productivity, I’m simply distributing my opinion based on my experience. So although I can’t help you in the solving-problems area, I’m sure it’s not the end of the line for you.&lt;/p&gt;
-
-&lt;p&gt;There’s lots of debate on who might be a better programmer, the one who is good at problem solving, or the fast programmer. In an ideal world, you’d want someone to be strong in both areas, but there is a sort of division of labor between debuggers and programmers respectively in some cases. While I think that it is an interesting point of discussion, it’s out of scope of what will be covered here.&lt;/p&gt;
-
-&lt;p&gt;To further elaborate on our topic of discussion, being “productive” in context means that you are able to edit code efficiently. You are able to put your ideas “onto paper” or out of your head and into an editor quickly. Assuming that you have the problem solved yourself, you’re able to “take action,” that is, you are not simply sitting at your chair staring at your code when you have your ideas down already.&lt;/p&gt;
-
-&lt;p&gt;Keep in mind that productivity also depends on the person: there are lots of things (i.e. colors) that are based on preferences, and almost nothing is based on hard data or science. The idea behind productivity is to find what works for &lt;em&gt;you&lt;/em&gt;. I’m simply here to offer my own preferences and use myself as an example to what facets of productivity might be improved if things were different.&lt;/p&gt;
-
-&lt;p&gt;Without further ado…&lt;/p&gt;
-
-&lt;h1 id=&quot;touch-typing&quot;&gt;Touch-typing&lt;/h1&gt;
-
-&lt;p&gt;The ultimate limit to how quickly you can write code is your typing speed. You cannot get faster at actually writing code if you can’t type very quickly. While autocomplete is a godsend to those who cannot type as quickly, it still pays to type more quickly and get what little you are typing in the first place done quickly. There are numerous online programs and websites that can help a slow typist, whether it be 10fastfingers or keybr or others. It also helps to type special symbols, such as in Java: &lt;code class=&quot;highlighter-rouge&quot;&gt;(){}&quot;\^&amp;amp;*+-&lt;/code&gt; and others.&lt;/p&gt;
-
-&lt;h1 id=&quot;monitor-size&quot;&gt;Monitor Size&lt;/h1&gt;
-&lt;p&gt;There’s also lots of debate on the best size of monitor, the best multi-monitor setup, etc…&lt;/p&gt;
-
-&lt;p&gt;However, there is a lot of data that support the idea that humans are terrible multitaskers. The thing is that if you want to write code faster, you must be in your editor as much as possible, that means no browser open with the docs, your StackOverflow question, your GitHub milestone, whatever. If you work sequentially, as in you exclusively process what you have to do, then exclusively work on writing code, and then switching as necessary, you will find that you will be able to work much more quickly than if you looked through, say, the StackOverflow question as you forget key details while within your editor.&lt;/p&gt;
-
-&lt;p&gt;That also means that your monitor, and by extension, your &lt;strong&gt;total screen estate&lt;/strong&gt; should be kept ot a minimum, while not being too small as to make it difficult or to require effort to read whatever you have written. The way I see it: toss your 2 additional monitors and settle with a single-monitor setup.&lt;/p&gt;
-
-&lt;p&gt;Again, for me personally, the best monitor size is around a 24” (a little over 60 cm) diagonal on a 16:10. This way, I can fit a substantial amount of text and therefore be able to navigate more efficiently across larger distances, but at the same time, I do not need to change where I am looking at in order to see the edges of the screen. And yet again, this is not an exact science, but try to look for a monitor that is just large enough for your peripheral vision to process what is at the edge of your screen. If you are completely torn between two screen sizes, I’d go with the smaller screen, because over the long term, you will be focused on what you write anyways rather than anything surrounding it.&lt;/p&gt;
-
-&lt;p&gt;To continue adding on to the focus idea, I would also recommend turning off music, at least why you are programming. There are some people who are unsettled by silence, but the fact that you are noticing silence or conversely, the music itself, means that you are not completley focused on the programming task. You probably won’t get rid of your music, and again, I don’t have any hard data to back me up on productivity with or without background noise, but going off the focus logic, it makes more sense to work in silence. Perhaps console yourself with the continous sound from your 100 decibel mechanical keyboard otherwise (just kidding, I do not condone replacing your keyboard with a jet engine).&lt;/p&gt;
-
-&lt;h1 id=&quot;font&quot;&gt;Font&lt;/h1&gt;
-
-&lt;p&gt;The code you write is literally written in the font that you are using, so it pays to use a font that is comfortable to the eye. There are tons and tons of good fonts out there, some meticulously designed, others based more on stylistic preference. I personally use a lot of Monaco, but many people use a less playful font like Menlo or a very blocky monospace. Whatever it is, you should have no trouble reading large amounts of text written in your selected font. You should avoid fonts that are too small or have poor balance although again, preference trumps pretty much everything so just be sure to get yourself a good font.&lt;/p&gt;
-
-&lt;h1 id=&quot;editor&quot;&gt;Editor&lt;/h1&gt;
-
-&lt;p&gt;Another productivity-booster is the editor that you use. For me, I use a combination of IntelliJ IDEA/IdeaViM and ViM. What made the difference was that Eclipse was too slow and its auto-completion was nowhere close to IDEA’s in terms of speed or intelligence. IntelliJ actually shows me that over a 3 month period, I had saved 100K characters from being typed, which is an astounding amount of time saved through auto-complete. Again, I’m not saying that you should switch editors, but that is by far one of the most effective productivity-booster for me.&lt;/p&gt;
-
-&lt;p&gt;Secondly, ViM and counterparts, the whole idea of avoiding using your mouse is also very effective once you become used to the different mode of navigation. The fact is that using your mouse requires a very precise movement in comparison with the more granular keyboard-based movement that ViM is capable of. To add on to that, you must also remove one hand from the keyboard in order to move the mouse, and then place your hand again on the keyboard, and enough of these actions will eventually add up to a significant amount of time that could be saved remaining in the home position. Although it had/has a steep learning curve for me personally, I think that using IdeaViM has saved me on the magnitude of hours in the past few months from reaching for the mouse. I use ViM for most of my text-editing nowadays and the way I see it, “text-editing has never been better.”&lt;/p&gt;
-
-&lt;p&gt;The one thing I have against ViM is that its support for Java is practically non-existant &lt;strong&gt;relative&lt;/strong&gt; at least to IntelliJ IDEA. The code completion is not as good and lacking IntelliSense and the more advanced features such as viewing documentation, library source code, Git/Maven wrappers, etc… will kill productivity. Instead of bringing Java to ViM, bring ViM to Java as said somewhere on the Internet.&lt;/p&gt;
-
-&lt;h1 id=&quot;colors&quot;&gt;Colors&lt;/h1&gt;
-
-&lt;p&gt;The color palette is also important for productivity. By using a more preferable palette, you will reduce your overall fatigue and increase your endurance for writing code efficiently. Avoid using a harsh, very light, flashy color palette. Many, many developers tend to prefer a high-contrast dark theme for their editors and environment backgrounds, because it makes the text both easy to read and easy on the eyes. These can be found on Google, along with other common “dark” themes such as Solarized. I use a slightly modified Google Code syntax on a grey background, although the contrast is exceedingly poor, it’s just that I haven’t found time to change it in the past, oh, 3 years. You probably won’t change your background either, so I don’t feel exceedingly bad about it myself.&lt;/p&gt;
-
-&lt;p&gt;I say contrast is important because although it serves to detriment the general “easy-on-the-eyes” gospel, it will make it much easier to actually see the text. Over time, it’s more typical for eye strain to occur on text that is difficult to see than text that is “a harsh color.” Further, people using programs such as f.lux and redshift will have a difficult time reading the text if there is little contrast, which becomes more compounded as the color temperature decreases.&lt;/p&gt;
-
-&lt;h1 id=&quot;breaks&quot;&gt;Breaks&lt;/h1&gt;
-
-&lt;p&gt;Sitting at a computer and programming in itself is physically and mentally taxing. It is an absolute necessity to completely stop and take a break once in a while, no matter how close you are to “solving that one bug.” Looking a monitor for extended periods of times is strenuous on the eyes, poor for the back, and wreaks havoc on your hands and shoulders. You must also remain hydrated and satiated, and on top of that, you cannot solve problems effectively while at the same time being distracted by what is on your computer screen. Not only can you improve your productivity but having a self-check once in a while, but you will also become a better problem-solver if you do not continue to attack a problem in the same way you have the past 3 hours you have been sitting in an office chair.&lt;/p&gt;
-
-&lt;p&gt;Stand up, stretch, drink some water, give your eyes a break, give your mind some time to relax. Over time, you will lose focus anyways, and giving yourself a break and continue to do something productive and healthy for your body is the absolute least that you can do rather than suffer from over-exerting yourself. I personally take a break whenever I feel the need to go use the restroom, and I immediately drink another cup of water so that I would be guaranteed to need to take a break in the future. What works for a lot of people, not just for software engineers but also students and other places that require long periods of focus is to take a 10-15 minute break every hour.&lt;/p&gt;
-
-&lt;p&gt;Indeed, it may seem like a loss and counterproductive - exactly what we are fighting here - but trust me when I say that breaks are necessary to be productive. The hardest part about taking breaks is making sure you get back after treating yourself a bit. If you can at least keep yourself disciplined, then it should be no problem, incorporating breaks into your schedule should slowly, but surely improve your productivity.&lt;/p&gt;
-
-&lt;h1 id=&quot;final-word&quot;&gt;Final Word&lt;/h1&gt;
-&lt;p&gt;I’m sure there are many other factors that I’ve missed which could be vital to productivity, and I acknowledge that “programming productivity” isn’t the entire story. However, with the above noted thoughts on how I improved my own productivity over the years, perhaps the reader might at least have some background on how (yet another) developer works.&lt;/p&gt;</content><author><name></name></author><summary type="html">Perhaps we can take some time to look at productivity, in spirit of the (Eve of) New Year.</summary></entry></feed>
+&lt;p&gt;Although it &lt;em&gt;would&lt;/em&gt; be nice if I could actually see anything, I still haven’t figured out that HiDPI thing yet…&lt;/p&gt;</content><author><name></name></author><summary type="html">It’s been draining on the soul, but luckily coming up with a “unique” title has been rejuvenating (rejuvinatig? rejuvenating? whatever).</summary></entry></feed>
