@@ -1,4 +1,233 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.6.2">Jekyll</generator><link href="https://agenttroll.github.io/blog/feed.xml" rel="self" type="application/atom+xml" /><link href="https://agenttroll.github.io/blog/" rel="alternate" type="text/html" /><updated>2019-04-11T20:20:17-07:00</updated><id>https://agenttroll.github.io/blog/</id><title type="html">Inside a Troll</title><subtitle>Thoughts of a Java developer</subtitle><entry><title type="html">Lessons Learned Debugging: Part 2</title><link href="https://agenttroll.github.io/blog/2019/04/08/lessons-learned-debugging-part-2.html" rel="alternate" type="text/html" title="Lessons Learned Debugging: Part 2" /><published>2019-04-08T22:03:10-07:00</published><updated>2019-04-08T22:03:10-07:00</updated><id>https://agenttroll.github.io/blog/2019/04/08/lessons-learned-debugging-part-2</id><content type="html" xml:base="https://agenttroll.github.io/blog/2019/04/08/lessons-learned-debugging-part-2.html">&lt;p&gt;One of the recurring problems that will cause you headaches
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.6.2">Jekyll</generator><link href="https://agenttroll.github.io/blog/feed.xml" rel="self" type="application/atom+xml" /><link href="https://agenttroll.github.io/blog/" rel="alternate" type="text/html" /><updated>2019-06-07T20:46:25-07:00</updated><id>https://agenttroll.github.io/blog/</id><title type="html">Inside a Troll</title><subtitle>Thoughts of a Java developer</subtitle><entry><title type="html">Lessons Learned Debugging: Part 3</title><link href="https://agenttroll.github.io/blog/2019/06/03/lessons-learned-debugging-part-3.html" rel="alternate" type="text/html" title="Lessons Learned Debugging: Part 3" /><published>2019-06-03T18:48:55-07:00</published><updated>2019-06-03T18:48:55-07:00</updated><id>https://agenttroll.github.io/blog/2019/06/03/lessons-learned-debugging-part-3</id><content type="html" xml:base="https://agenttroll.github.io/blog/2019/06/03/lessons-learned-debugging-part-3.html">&lt;p&gt;Been another while since I’ve last written something, so
+here goes for another post in the series.&lt;/p&gt;
+
+&lt;h1 id=&quot;keep-method-line-counts-to-30-lines-or-less&quot;&gt;Keep method line counts to 30 lines or less&lt;/h1&gt;
+
+&lt;p&gt;As a general rule of thumb, your methods should probably
+never, ever exceed 30 SLOC. As a matter of fact, this is
+one of the rules from the “The Power of Ten” article I’ve
+been referencing at the end of every post in this series:&lt;/p&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;Rule: No function should be longer than what can be 
+printed on a single sheet of paper in a standard reference 
+format with one line per statement and one line per
+declaration. Typically, this means no more than about 60 
+lines of code per function.&lt;/p&gt;
+
+  &lt;p&gt;Rationale: Each function should be a logical unit in the 
+code that is understandable and verifiable as a unit. It is 
+much harder to understand a logical unit that spans 
+multiple screens on a computer display or multiple pages 
+when printed. Excessively long functions are often a sign 
+of poorly structured code.&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;While this rule does say that you can use a maximum of 60
+lines per method, I myself recommend using 30 lines. “The
+Power of Ten” primarily refers to C code, which usually
+more verbose than Java is since it requires more 
+low-level instructions to do the same thing that the Java
+library might provide in a single line. The fact that 
+engineers at NASA can launch satellites into space and 
+control robots on another planet from right here on Earth
+means that you probably can accomplish whatever end-goal
+you have in mind without writing any methods exceeding 30
+lines of code.&lt;/p&gt;
+
+&lt;h1 id=&quot;rationale-points&quot;&gt;Rationale Points&lt;/h1&gt;
+
+&lt;p&gt;Not all of the points in the rationale make much sense for
+us Java developers, however, there same principles still
+apply.&lt;/p&gt;
+
+&lt;h4 id=&quot;it-helps-reduce-clutter&quot;&gt;It Helps Reduce Clutter&lt;/h4&gt;
+
+&lt;p&gt;One of the reasons you should do this piggybacks off of the
+Part 1 post - keeping your methods below a certain number
+of lines helps reduce mental clutter. You can only see a
+limited amount of logic before you’ll need to scroll, which
+means that you will hide some of the context outside of the
+viewport. By keeping the number of SLOC in a method to a 
+minimum, you will have a much easier time reviewing your
+code as you go along because you know that it is doing one
+specific thing. You will boost your productivity because
+you aren’t bogged down with which variables you have
+initialized and what other logic you need to implement, you
+instead focus on the one purpose the method has.&lt;/p&gt;
+
+&lt;h4 id=&quot;keeping-your-methods-short-is-good-design&quot;&gt;Keeping Your Methods Short Is Good Design&lt;/h4&gt;
+
+&lt;p&gt;The second reason is because it is simply good design.
+Methods should do exactly one thing and one thing only.
+Joshua Bloch (author of &lt;em&gt;Effective Java&lt;/em&gt;, former Google 
+Software engineer, current professor at CMU) says that
+API designers (which applies here as well) should adhere
+to the “Principle of Least Astonishment” 
+(&lt;a href=&quot;https://youtu.be/heh4OeB9A-c?t=2910&quot;&gt;How To Design A Good API and Why it Matters&lt;/a&gt;).
+This means that when you read the method name, you should
+never be surprised by what the method is going to do, i.e.
+the method should perform exactly the function it was
+designed to do and nothing more. Too often, I will see
+novice developers write methods with a generic name that
+is doing too much, especially listener methods which are
+like super-methods with the utter amount of logic that
+needs to be performed for a method that is named something
+entirely generic such that you cannot actually &lt;em&gt;tell&lt;/em&gt; what
+is going on.&lt;/p&gt;
+
+&lt;h4 id=&quot;splitting-up-your-methods-encourages-documentation&quot;&gt;Splitting Up Your Methods Encourages Documentation&lt;/h4&gt;
+
+&lt;p&gt;Finally, the third reason is that method names can be used
+as documentation. If you’re doing a little bit of work that
+needs to be explained, you can extract that portion of code
+to a method with a descriptive name rather than adding a
+comment. For example, I myself am guilty of violating this
+lesson a few odd times, one of them involving the code
+needed to parse an item lore. The code looks a little bit
+like this:&lt;/p&gt;
+
+&lt;div class=&quot;language-java highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;kd&quot;&gt;public&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;void&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;parseLore&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;ItemMeta&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;meta&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+    &lt;span class=&quot;o&quot;&gt;...&lt;/span&gt;
+
+    &lt;span class=&quot;n&quot;&gt;List&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;String&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;newLore&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;new&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;ArrayList&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;lt;&amp;gt;();&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;for&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Enchantment&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;ench&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;this&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;enchantments&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+        &lt;span class=&quot;n&quot;&gt;String&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;enchName&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;ench&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;getName&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;();&lt;/span&gt;
+        &lt;span class=&quot;n&quot;&gt;newLore&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;add&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;enchName&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;);&lt;/span&gt;
+    &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
+
+    &lt;span class=&quot;k&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;newLore&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;size&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;()&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;15&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+        &lt;span class=&quot;n&quot;&gt;Collections&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;sort&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;newLore&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;);&lt;/span&gt;
+        &lt;span class=&quot;n&quot;&gt;newLore&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;newLore&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;sublist&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;15&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;);&lt;/span&gt;
+    &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt; 
+
+    &lt;span class=&quot;o&quot;&gt;...&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;While this snippet looks succinct in its current form,
+this portion of code is embedded within dozens of lines of
+code above and below. In Java, method calls are essentially
+free (or at least so insignificant that if you aren’t an
+engineer working at Oracle it isn’t worth optimizing), and
+you don’t even need to use a method more than once to have
+a method. It costs next to nothing to add another method to
+improve readability, reduce clutter, and to document the
+code. The improved code would look something like so:&lt;/p&gt;
+
+&lt;div class=&quot;language-java highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;kd&quot;&gt;public&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;void&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;parseLore&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;ItemMeta&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;meta&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+    &lt;span class=&quot;o&quot;&gt;...&lt;/span&gt;
+
+    &lt;span class=&quot;n&quot;&gt;List&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;String&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;newLore&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;this&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;parseAndTrimLore&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;();&lt;/span&gt;
+
+    &lt;span class=&quot;o&quot;&gt;...&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
+
+&lt;span class=&quot;kd&quot;&gt;private&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;void&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;parseAndTrimLore&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;()&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;List&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;String&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;newLore&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;new&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;ArrayList&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;lt;&amp;gt;();&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;for&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Enchantment&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;ench&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;this&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;enchantments&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+        &lt;span class=&quot;n&quot;&gt;String&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;enchName&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;ench&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;getName&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;();&lt;/span&gt;
+        &lt;span class=&quot;n&quot;&gt;newLore&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;add&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;enchName&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;);&lt;/span&gt;
+    &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
+
+    &lt;span class=&quot;k&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;newLore&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;size&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;()&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;15&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+        &lt;span class=&quot;n&quot;&gt;Collections&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;sort&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;newLore&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;);&lt;/span&gt;
+        &lt;span class=&quot;n&quot;&gt;newLore&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;newLore&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;sublist&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;15&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;);&lt;/span&gt;
+    &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt; 
+
+    &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;newLore&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;;&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;Now, while reading through &lt;code class=&quot;highlighter-rouge&quot;&gt;#parseLore(ItemMeta)&lt;/code&gt;, you
+immediately know what 9 odd lines of code are doing without
+having to read over it. As an added bonus, you can focus on 
+getting the high-level logic of the &lt;code class=&quot;highlighter-rouge&quot;&gt;#parseLore(ItemMeta)&lt;/code&gt; 
+method down right, before moving on to debugging 
+lower-level methods such as &lt;code class=&quot;highlighter-rouge&quot;&gt;#parseAndTrimLore()&lt;/code&gt;.&lt;/p&gt;
+
+&lt;p&gt;While this isn’t to say that comments are always bad or
+they are always a code smell, but a certain &lt;a href=&quot;https://blog.codinghorror.com/coding-without-comments/&quot;&gt;programming
+mantra&lt;/a&gt; 
+reasons that commenting is a poor practice because it acts
+as a crutch or as an excuse for writing code that isn’t
+understandable. If you focus on writing your code so that
+it is easily understandable, you will reduce the amount of
+bugs in your code because you are forced to slow down and
+think through all the moving parts of your code. It will be
+easier for yourself as well as other developers to do code
+review, because your code is declarative and the intentions
+of the developer are more clear. As the article author puts
+it:&lt;/p&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;if your feel your code is too complex to understand 
+without comments, your code is probably just bad&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;h1 id=&quot;in-practice&quot;&gt;In Practice&lt;/h1&gt;
+
+&lt;p&gt;It is important to note that as is with many rules, there
+are exceptions to the rule, both the 30 SLOC limit as well
+as getting rid of all your comments. I personally comment
+my code all the time, but if I’m breaking 30 SLOC, I better
+have a damn good reason for doing so. Otherwise, it is a
+good idea to split a super-method into smaller methods.
+In the future, if I ever refactor my code or if I need to
+modify my super-method to not do something, I can just use
+the existing sub-methods, or remove a call to a sub-method
+respectively without modifying existing code. This helps
+improve extensibility and productivity in the long run,
+even if it takes a bit longer now to extract portions
+of your code into a different method.&lt;/p&gt;
+
+&lt;p&gt;Many IDEs will probably have a linter, or if you aren’t
+running checkstyle or something, you can use SonarQube or
+something of the like attached to your CI pipeline to do
+checks on the SLOC of your methods. IntelliJ IDEA’s linter
+settings for method length is this particular entry here:&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;https://agenttroll.github.io/blog/img/lld-idea-settings.png&quot; alt=&quot;IDEA Settings Menu&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;It’s usually helpful to include along with it lambda length
+as well, probably 15-20 lines for lambdas is a little too
+much (at that point, pull the lambda entire lambda into a
+method, or split the lambda logic into methods).&lt;/p&gt;
+
+&lt;h1 id=&quot;conclusion&quot;&gt;Conclusion&lt;/h1&gt;
+
+&lt;p&gt;This is very similar to the 
+&lt;a href=&quot;https://agenttroll.github.io/blog/2019/03/20/lessons-learned-debugging-part-1.html&quot;&gt;Part 1&lt;/a&gt;
+reasoning in terms of keeping your code short and
+organized. The effect of making changing your programming
+practices is enormous, and in time, you will start to spend
+less time debugging your code. Remember that the majority
+of development time is debugging, not actually writing 
+anything. If you are saving debugging time and instead
+writing your code a little more slowly, but getting it 
+right the first time, you are saving a significant amount
+of time and costs down the road.&lt;/p&gt;
+
+&lt;p&gt;As is customary, I leave with the following wisdom from 
+&lt;a href=&quot;http://spinroot.com/gerard/pdf/P10.pdf&quot;&gt;The Power of Ten&lt;/a&gt;:&lt;/p&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;If the rules seem Draconian at first, bear in mind that
+they are meant to make it possible to check code where very
+literally your life may depend on its correctness: code 
+that is used to control the airplane that you fly on, the 
+nuclear power plant a few miles from where you live, or the 
+spacecraft that carries astronauts into orbit. The rules 
+act like the seat-belt in your car: initially they are 
+perhaps a little uncomfortable, but after a while their use
+becomes second-nature and not using them becomes 
+unimaginable.&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;While these tips are not necessarily rules that are
+responsible for keeping people alive, incorporating the
+same philosophy into your programming repertoire will help
+you in the long run.&lt;/p&gt;</content><author><name></name></author><summary type="html">Been another while since I’ve last written something, so here goes for another post in the series.</summary></entry><entry><title type="html">Lessons Learned Debugging: Part 2</title><link href="https://agenttroll.github.io/blog/2019/04/08/lessons-learned-debugging-part-2.html" rel="alternate" type="text/html" title="Lessons Learned Debugging: Part 2" /><published>2019-04-08T22:03:10-07:00</published><updated>2019-04-08T22:03:10-07:00</updated><id>https://agenttroll.github.io/blog/2019/04/08/lessons-learned-debugging-part-2</id><content type="html" xml:base="https://agenttroll.github.io/blog/2019/04/08/lessons-learned-debugging-part-2.html">&lt;p&gt;One of the recurring problems that will cause you headaches
 is the throwing of exceptions where you &lt;em&gt;don’t want them to
 be thrown&lt;/em&gt;. Among these exceptions, one of the most elusive
 is &lt;code class=&quot;highlighter-rouge&quot;&gt;ConcurrentModificationException&lt;/code&gt;.&lt;/p&gt;
@@ -1657,92 +1886,4 @@ unless some extenuating circumstance forces me to.&lt;/p&gt;</content><author><n
 
 &lt;p&gt;I hoped that through my endless rambling and criticism that I’ve cleared up some thoughts that people have had regarding the slot availability on MineSaga. We are not going to increase the slots or get rid of the queue because it is simply the most effective way that we have so far to manage the limited resources availible to the server.&lt;/p&gt;
 
-&lt;p&gt;There have been multiple discussions privately about how to distribute computing power and divide up how the different realms and islands are managed. I do not feel comfortable sharing those details without approval so they remain purely for speculation at the moment. Stay tuned! :)&lt;/p&gt;</content><author><name></name></author><summary type="html">Gosh its been a while actually for a 2 things: firstly, the 1 year anniversary of the first post on this blog is fast approaching, and two, I’ve been with Intermissum for around 6 months now.</summary></entry><entry><title type="html">Status Update: Installing Arch for the First Time</title><link href="https://agenttroll.github.io/blog/2018/01/06/status-update-installing-arch-for-the-first-time.html" rel="alternate" type="text/html" title="Status Update: Installing Arch for the First Time" /><published>2018-01-05T23:00:00-08:00</published><updated>2018-01-05T23:00:00-08:00</updated><id>https://agenttroll.github.io/blog/2018/01/06/status-update-installing-arch-for-the-first-time</id><content type="html" xml:base="https://agenttroll.github.io/blog/2018/01/06/status-update-installing-arch-for-the-first-time.html">&lt;p&gt;It’s been draining on the soul, but luckily coming up with a “unique” title has been rejuvenating (rejuvinatig? rejuvenating? whatever).&lt;/p&gt;
-
-&lt;p&gt;I don’t profess to be an expert on ArchLinux, or even Linux in general but based on my experience installing Arch on my MacBook Pro 11.something, I’d be even more wary of following a random blog post (because it probably won’t work). I don’t think any of the issues that I encountered were unique by any means, but I believe my own little successes are the result of the wealth of mainly online resources. I’m therefore very keen to share my own experience and perhaps someone might come along and save a few hours of their lifetime and hair-tearing.&lt;/p&gt;
-
-&lt;h1 id=&quot;getting-over-the-hurdle&quot;&gt;Getting Over the Hurdle&lt;/h1&gt;
-
-&lt;p&gt;For me, the primary challenge in the first place was connecting to the Internet. To go along with that, my MacBook carries with it a Broadcom Wireless interface, which requires a proprietary driver in order to work correctly. Fortunately, it was just the right hardware that happened to work with the proprietary driver. Unfortunately, the driver requires the Internet to obtain, and my USB was all occupied with carrying the bootable ISO. Therefore, the only way I can get the required packages is by exiting the Arch CLI and manually downloading on macOS, then going back and mounting whatever partition on which I downloaded the package.&lt;/p&gt;
-
-&lt;p&gt;First lesson here: it is impossible to install Arch without access to another installation with Internet. Let me repeat that: &lt;strong&gt;IMPOSSIBLE&lt;/strong&gt;. If you are rich and can buy an ethernet/thunderbolt adapter, go nuts, save yourself some time. Otherwise, you must at least have a VM that boots the Arch ISO in order to download the packages. I’ll spare the gory details of trying to compile &lt;code class=&quot;highlighter-rouge&quot;&gt;broadcom-wl&lt;/code&gt;, which consisted of failing to compile due to Internet requirements, not realizing that you can’t get the right kernel version without rebooting, and thinking that &lt;code class=&quot;highlighter-rouge&quot;&gt;mkinitcpio&lt;/code&gt; will save my butt (It didn’t).&lt;/p&gt;
-
-&lt;p&gt;Secondly, to install packages on a different computer, you must A) Know how how to install Arch B) Get the built packages and C) Get those packages onto the laptop. Honestly, I messed up enough times without Internet access in the first place just dealing with A: formatting the wrong partition (luckily the USB /dev/sdb) multiple times before I figured out why my bootable USB wasn’t bootable anymore, dealing with &lt;code class=&quot;highlighter-rouge&quot;&gt;mount -o force ...&lt;/code&gt; in order to be able to write, and forgetting to mount the target partition. Needless to say, there was lots of &lt;code class=&quot;highlighter-rouge&quot;&gt;rm -fR /&lt;/code&gt;, but at the same time, the repetition drilled in deep the commands required, so I got faster and faster at failing. Better to fail quickly than slowly I suppose.&lt;/p&gt;
-
-&lt;p&gt;In short, the process went something like so for me: mount temp partition from the VirtualBox “disk,” then run the following:&lt;/p&gt;
-
-&lt;div class=&quot;language-shell highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;pacman &lt;span class=&quot;nt&quot;&gt;-Sy&lt;/span&gt;
-pacman &lt;span class=&quot;nt&quot;&gt;-S&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;--cachdir&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;.&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;--dbpath&lt;/span&gt; /tmp base base-devel linux-headers broadcom-wl-dkms wpa_supplicant
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;And then transfer the all the .pkg files onto macOS using nc. Once I have them, I can then put them on a mounted transfer partition that I used to access those files more easily from the boot CLI.&lt;/p&gt;
-
-&lt;h1 id=&quot;finally-installation&quot;&gt;Finally, Installation&lt;/h1&gt;
-&lt;p&gt;The truth is that in order to install the base system, one only needs the base package, and that’s it. In short, you need to do the following in order to “install” Arch:&lt;/p&gt;
-
-&lt;ol&gt;
-  &lt;li&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;cgdisk&lt;/code&gt; and format the partition&lt;/li&gt;
-  &lt;li&gt;Mount desired partition&lt;/li&gt;
-  &lt;li&gt;Mount the &lt;code class=&quot;highlighter-rouge&quot;&gt;/boot&lt;/code&gt; partition&lt;/li&gt;
-  &lt;li&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;pacstrap&lt;/code&gt; the desired repo with the base arg&lt;/li&gt;
-  &lt;li&gt;Chroot into the mount dir&lt;/li&gt;
-  &lt;li&gt;Create &lt;code class=&quot;highlighter-rouge&quot;&gt;systemd-boot&lt;/code&gt; entry for the correct partition&lt;/li&gt;
-  &lt;li&gt;Reboot&lt;/li&gt;
-&lt;/ol&gt;
-
-&lt;p&gt;I won’t go into specifics here, since firstly I’m not a very good source of info and secondly, because these are quite easy steps that you can find on the Internet. Again, needless to say, I messed up on multiple occaisions here: &lt;code class=&quot;highlighter-rouge&quot;&gt;cgdisk&lt;/code&gt; on the wrong disk, forgetting to mount &lt;code class=&quot;highlighter-rouge&quot;&gt;/boot&lt;/code&gt; and ending up with an unbootable system, writing the wrong partition UUID to &lt;code class=&quot;highlighter-rouge&quot;&gt;systemd-boot&lt;/code&gt;, etc…&lt;/p&gt;
-
-&lt;p&gt;It is absolutely vital that you are able to reboot. This is the only way that you can update to the correct kernel version and access your modules, and I guarantee that a successful boot is the most important milestone here, even if you aren’t able to connect to the WiFi quite yet.&lt;/p&gt;
-
-&lt;h1 id=&quot;the-wifi-problem&quot;&gt;The WiFi Problem&lt;/h1&gt;
-
-&lt;p&gt;Back to our initial issue, although we have Arch installed without using the Internet on the target machine, we still do not have Internet access. Luckily, having the &lt;code class=&quot;highlighter-rouge&quot;&gt;broadcom-wl-dkms&lt;/code&gt; file on our transfer partition, we can &lt;code class=&quot;highlighter-rouge&quot;&gt;pacman -S&lt;/code&gt; that very easily. Having already confirmed that the kernel has been updated, we can safely restart and see through &lt;code class=&quot;highlighter-rouge&quot;&gt;ip a&lt;/code&gt; that the driver has successfully detected the network interface - a good sign.&lt;/p&gt;
-
-&lt;p&gt;For me, this all happened at school, where the WiFi setup was a little more complicated since we used WPA Enterprise, so I had to wait until I got home.&lt;/p&gt;
-
-&lt;p&gt;The good news came late at night, when I was toying with &lt;code class=&quot;highlighter-rouge&quot;&gt;wpa_supplicant&lt;/code&gt;. I was able to use &lt;code class=&quot;highlighter-rouge&quot;&gt;wpa_password&lt;/code&gt; to generate the config, but not realizing that I needed to also set the &lt;code class=&quot;highlighter-rouge&quot;&gt;ap_scan&lt;/code&gt; and ssid scan in order to detect my network (which had SSID masking enabled), I was finally able to connect to the Internet. Content with Internet access for the time being, I got to installing and setting up a few other personal neccessities:&lt;/p&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;Xorg&lt;/li&gt;
-  &lt;li&gt;Display Manager (LightDM)
-    &lt;ul&gt;
-      &lt;li&gt;Careful, you also need the locker (I used gtk) for it to work!&lt;/li&gt;
-    &lt;/ul&gt;
-  &lt;/li&gt;
-  &lt;li&gt;i3wm, dmenu&lt;/li&gt;
-  &lt;li&gt;Users&lt;/li&gt;
-  &lt;li&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;chromium&lt;/code&gt;&lt;/li&gt;
-  &lt;li&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;xfce4-terminal&lt;/code&gt;&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;But since the entire idea of my laptop was that it was portable, and I already had a well-established Debain computer at home, I was bent on getting WiFi to work at my school. That wouldn’t happen for another several weeks though; it was winter break, and I didn’t plan on going to school at all to test whether or not my config worked.&lt;/p&gt;
-
-&lt;h1 id=&quot;the-breakthrough&quot;&gt;The Breakthrough&lt;/h1&gt;
-
-&lt;p&gt;It takes only a few seconds to look at the massive variety in responses to the “proper” config for WPA Enterprise one can find on Google, but as it turns out, whatever people say “works for them” is very blatantly BS. The config depends entirely on the network, and there is no way around having to try out different combinations of “WPA-EAP/IEEE801X…” and “CCMP/TKIP/…” and other options that I still have no interest in. However, recalling that I have a handy MacBook, I booted into macOS to see if I can get some hints by connecting to the WiFi, which I already knew worked splendidly without any hassle. From there, I knew that I could use “WPA-EAP” and “PEAP” options, and the rest goes guess-and-check.&lt;/p&gt;
-
-&lt;p&gt;For my own future reference, this is what I used:&lt;/p&gt;
-
-&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;Description='Automatically generated profile by wifi-menu'
-Interface=wlp2s0
-Connection=wireless
-Security=wpa-configsection
-ESSID=$SSID
-IP=dhcp
-WPAConfigSection=(
-        'ssid=&quot;$SSID&quot;'
-        'proto=RSN'
-        'key_mgmt=WPA-EAP'
-        'eap=PEAP'
-        'identity=&quot;$USERNAME&quot;'
-        'password=&quot;$PASSWORD&quot;'
-        'phase1=&quot;peaplabel=auto peapver=0&quot;'
-        'phase2=&quot;auth=MSCHAPV2&quot;'
-)
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;h1 id=&quot;final-thoughts&quot;&gt;Final Thoughts&lt;/h1&gt;
-
-&lt;p&gt;Although trying a CLI-based install for the first time was an interesting experience, and I felt like I learned a lot from it compared to a more graphical nod that Debian takes, it still was frustrating and uncooperative even at the best of times. I’m happy with the end result, even if it’s not perfect though, and as always, the pleasure and satisfaction that comes with finally wrangling something to work is much more powerful than the ordeal that it takes to acheive that.&lt;/p&gt;
-
-&lt;p&gt;Although it &lt;em&gt;would&lt;/em&gt; be nice if I could actually see anything, I still haven’t figured out that HiDPI thing yet…&lt;/p&gt;</content><author><name></name></author><summary type="html">It’s been draining on the soul, but luckily coming up with a “unique” title has been rejuvenating (rejuvinatig? rejuvenating? whatever).</summary></entry></feed>
+&lt;p&gt;There have been multiple discussions privately about how to distribute computing power and divide up how the different realms and islands are managed. I do not feel comfortable sharing those details without approval so they remain purely for speculation at the moment. Stay tuned! :)&lt;/p&gt;</content><author><name></name></author><summary type="html">Gosh its been a while actually for a 2 things: firstly, the 1 year anniversary of the first post on this blog is fast approaching, and two, I’ve been with Intermissum for around 6 months now.</summary></entry></feed>
