@@ -180,19 +180,17 @@ coordinates. Not so hard, right? Unfortunately, the
 complication comes from the fact that standard longitude
 and latitude considers the Earth as an oblate spheroid, 
 while ECI considers the Earth as a perfect sphere. Further,
-the Earth also spins, which means that your position 
-changes relative to the ECI coordinate system, which is 
-aligned with the ecliptic plane (this would be the plane 
-that the Equator would cross if the Earth wasn't tilted). 
-In order to calculate everything, the current time is 
-taken, and then converted to a single Julian date. This is
-then converted to Greenwich Mean Sidereal Time (GMST), 
-which allows one to calculate the current rotation of the 
-Earth without the fluctuations in a solar day. Armed with 
-this information, we can then convert from the standard 
-"geodetic" latitude and longitude into a "geocentric" 
-latitude and longitude, and from there, trigonometry is 
-used to obtain the ECI coordinates of the observer.
+the Earth also spins, which means that your position
+changes as the Earth spins. In order to calculate 
+everything, the current time is taken, and then converted 
+to a single Julian date. This is then converted to 
+Greenwich Mean Sidereal Time (GMST), which allows one to
+calculate the current rotation of the Earth without the 
+fluctuations in a solar day. Armed with this information,
+we can then convert from the standard"geodetic" latitude 
+and longitude into a "geocentric" latitude and longitude,
+and from there, trigonometry is used to obtain the ECI 
+coordinates of the observer.
 [The implementation](https://github.com/AgentTroll/fate/blob/70311dab1664ffa3278c4af0e3f8f96f859f9efc/eci.c#L12-L22)
 actually then looks deceptively simple.
 
