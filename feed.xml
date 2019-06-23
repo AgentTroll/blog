@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.6.2">Jekyll</generator><link href="https://agenttroll.github.io/blog/feed.xml" rel="self" type="application/atom+xml" /><link href="https://agenttroll.github.io/blog/" rel="alternate" type="text/html" /><updated>2019-06-23T00:59:56-07:00</updated><id>https://agenttroll.github.io/blog/</id><title type="html">Inside a Troll</title><subtitle>Thoughts of a Java developer</subtitle><entry><title type="html">TLE - Tracking Satellites in Space</title><link href="https://agenttroll.github.io/blog/2019/06/22/tle-tracking-satellites-in-space.html" rel="alternate" type="text/html" title="TLE - Tracking Satellites in Space" /><published>2019-06-22T17:23:35-07:00</published><updated>2019-06-22T17:23:35-07:00</updated><id>https://agenttroll.github.io/blog/2019/06/22/tle-tracking-satellites-in-space</id><content type="html" xml:base="https://agenttroll.github.io/blog/2019/06/22/tle-tracking-satellites-in-space.html">&lt;p&gt;This is about my &lt;a href=&quot;https://github.com/AgentTroll/fate&quot;&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;fate&lt;/code&gt;&lt;/a&gt;
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.6.2">Jekyll</generator><link href="https://agenttroll.github.io/blog/feed.xml" rel="self" type="application/atom+xml" /><link href="https://agenttroll.github.io/blog/" rel="alternate" type="text/html" /><updated>2019-06-23T01:04:54-07:00</updated><id>https://agenttroll.github.io/blog/</id><title type="html">Inside a Troll</title><subtitle>Thoughts of a Java developer</subtitle><entry><title type="html">TLE - Tracking Satellites in Space</title><link href="https://agenttroll.github.io/blog/2019/06/22/tle-tracking-satellites-in-space.html" rel="alternate" type="text/html" title="TLE - Tracking Satellites in Space" /><published>2019-06-22T17:23:35-07:00</published><updated>2019-06-22T17:23:35-07:00</updated><id>https://agenttroll.github.io/blog/2019/06/22/tle-tracking-satellites-in-space</id><content type="html" xml:base="https://agenttroll.github.io/blog/2019/06/22/tle-tracking-satellites-in-space.html">&lt;p&gt;This is about my &lt;a href=&quot;https://github.com/AgentTroll/fate&quot;&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;fate&lt;/code&gt;&lt;/a&gt;
 project, something I finished in August of last year. I’ve
 been on a long journey with some other Java-related
 projects more recently, but I’d simply like the chance to
@@ -181,19 +181,17 @@ coordinates. Not so hard, right? Unfortunately, the
 complication comes from the fact that standard longitude
 and latitude considers the Earth as an oblate spheroid, 
 while ECI considers the Earth as a perfect sphere. Further,
-the Earth also spins, which means that your position 
-changes relative to the ECI coordinate system, which is 
-aligned with the ecliptic plane (this would be the plane 
-that the Equator would cross if the Earth wasn’t tilted). 
-In order to calculate everything, the current time is 
-taken, and then converted to a single Julian date. This is
-then converted to Greenwich Mean Sidereal Time (GMST), 
-which allows one to calculate the current rotation of the 
-Earth without the fluctuations in a solar day. Armed with 
-this information, we can then convert from the standard 
-“geodetic” latitude and longitude into a “geocentric” 
-latitude and longitude, and from there, trigonometry is 
-used to obtain the ECI coordinates of the observer.
+the Earth also spins, which means that your position
+changes as the Earth spins. In order to calculate 
+everything, the current time is taken, and then converted 
+to a single Julian date. This is then converted to 
+Greenwich Mean Sidereal Time (GMST), which allows one to
+calculate the current rotation of the Earth without the 
+fluctuations in a solar day. Armed with this information,
+we can then convert from the standard”geodetic” latitude 
+and longitude into a “geocentric” latitude and longitude,
+and from there, trigonometry is used to obtain the ECI 
+coordinates of the observer.
 &lt;a href=&quot;https://github.com/AgentTroll/fate/blob/70311dab1664ffa3278c4af0e3f8f96f859f9efc/eci.c#L12-L22&quot;&gt;The implementation&lt;/a&gt;
 actually then looks deceptively simple.&lt;/p&gt;
 
