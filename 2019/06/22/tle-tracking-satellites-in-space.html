@@ -1,0 +1,383 @@
+<!DOCTYPE html>
+<html lang="en">
+
+  <head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <title>TLE - Tracking Satellites in Space</title>
+  <meta name="description" content="This is about my fate project, something I finished in August of last year. I’ve been on a long journey with some other Java-related projects more recently, ...">
+
+  <link rel="stylesheet" href="/blog/assets/main.css">
+  <link rel="canonical" href="https://agenttroll.github.io/blog/2019/06/22/tle-tracking-satellites-in-space.html">
+  <link rel="alternate" type="application/rss+xml" title="Inside a Troll" href="/blog/feed.xml">
+  
+  
+</head>
+
+
+  <body>
+
+    <header class="site-header" role="banner">
+
+  <div class="wrapper">
+    
+    
+    <a class="site-title" href="/blog/">Inside a Troll</a>
+  
+    
+      <nav class="site-nav">
+        <input type="checkbox" id="nav-trigger" class="nav-trigger" />
+        <label for="nav-trigger">
+          <span class="menu-icon">
+            <svg viewBox="0 0 18 15" width="18px" height="15px">
+              <path fill="#424242" d="M18,1.484c0,0.82-0.665,1.484-1.484,1.484H1.484C0.665,2.969,0,2.304,0,1.484l0,0C0,0.665,0.665,0,1.484,0 h15.031C17.335,0,18,0.665,18,1.484L18,1.484z"/>
+              <path fill="#424242" d="M18,7.516C18,8.335,17.335,9,16.516,9H1.484C0.665,9,0,8.335,0,7.516l0,0c0-0.82,0.665-1.484,1.484-1.484 h15.031C17.335,6.031,18,6.696,18,7.516L18,7.516z"/>
+              <path fill="#424242" d="M18,13.516C18,14.335,17.335,15,16.516,15H1.484C0.665,15,0,14.335,0,13.516l0,0 c0-0.82,0.665-1.484,1.484-1.484h15.031C17.335,12.031,18,12.696,18,13.516L18,13.516z"/>
+            </svg>
+          </span>
+        </label>
+
+        <div class="trigger">
+          
+            
+            
+            <a class="page-link" href="/blog/about/">About</a>
+            
+          
+            
+            
+          
+            
+            
+          
+            
+            
+          
+        </div>
+      </nav>
+    
+  </div>
+</header>
+
+
+    <main class="page-content" aria-label="Content">
+      <div class="wrapper">
+        <article class="post" itemscope itemtype="http://schema.org/BlogPosting">
+
+  <header class="post-header">
+    <h1 class="post-title" itemprop="name headline">TLE - Tracking Satellites in Space</h1>
+    <p class="post-meta">
+      <time datetime="2019-06-22T17:23:35-07:00" itemprop="datePublished">
+        
+        Jun 22, 2019
+      </time>
+      </p>
+  </header>
+
+  <div class="post-content" itemprop="articleBody">
+    <p>This is about my <a href="https://github.com/AgentTroll/fate"><code class="highlighter-rouge">fate</code></a>
+project, something I finished in August of last year. I’ve
+been on a long journey with some other Java-related
+projects more recently, but I’d simply like the chance to
+go back to one of my most significant C projects I’ve ever
+written. I think it would also be a good chance to revisit
+what I learned in the process of writing <code class="highlighter-rouge">fate</code> as well,
+because Tim Dodd of Everyday Astronaut posted a <a href="https://youtu.be/kB-GKvdydho">video
+recently</a> that had some
+discussion about inclination and azimuth, and despite
+wrangling with that for weeks to understand how it worked,
+I still had to pause the video and think through what he
+had said.</p>
+
+<h1 id="high-level-overview">High-level Overview</h1>
+
+<p>The project is actually very simple on the surface, if you
+have the most recent TLE (more specifically 3LE) data, then
+you can input that into the command line and every second,
+some output will be printed to show you above what point
+the satellite is as well as where to point a telescope or
+your eyes to find the object in the sky.</p>
+
+<h1 id="what-is-tle">What is TLE?</h1>
+
+<p>TLE stands for two-line element set. You’ll actually notice
+that I use 3LE, which stands for 3-line element set, and it
+is <em>exactly</em> the same, save for the fact that a 3LE set has
+an additional line at the top that states the name of the
+satellite. This is what a 3LE set looks like:</p>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>0 ISS (ZARYA)
+1 25544U 98067A   19174.05036204  .00001525  00000-0  33398-4 0  9995
+2 25544  51.6442 332.2030 0008185  74.7737  30.3832 15.51219884176168
+</code></pre></div></div>
+
+<p>A TLE set would just be the same thing but with the line 
+starting with <code class="highlighter-rouge">0</code> removed. For the purposes of
+making things easier to understand, I’ll primarily refer
+to both 3LE and TLE as just TLE.</p>
+
+<p>The <a href="https://en.wikipedia.org/wiki/Two-line_element_set">Wikipedia page</a>
+for TLE sets is actually surprisingly helpful and
+informative. The main gist is that TLE is a way of
+communicating the position and motion of a satellite
+orbiting the Earth in as few numbers as possible. TLE sets 
+are readily available from <a href="https://www.space-track.org/#/tle">SpaceTrack.org’s TLE search
+page</a>, and you can look
+for satellites in the <a href="https://www.space-track.org/#/catalog">satellite catalog</a>.
+The U.S. Air Force 18th Space Control Squadron produces
+the TLE data sets by using a variety of sensing techniques
+and calculating the TLE set data for publication on the
+SpaceTrack website.</p>
+
+<p>Here are some additional reading items you might find
+helpful:</p>
+
+<ul>
+  <li><a href="https://www.space-track.org/documentation#/faq">FAQ page</a></li>
+  <li><a href="https://www.space-track.org/documentation#tle">TLE format</a></li>
+  <li><a href="https://www.space-track.org/documentation#legend">Terminology</a></li>
+</ul>
+
+<h1 id="decoding-tle">Decoding TLE</h1>
+
+<p>It’s all well and good that we have the data in TLE format,
+but how can that data be translated into usable numbers
+that show us where to point a telescope for example?</p>
+
+<p>The first step is to refer to 
+<a href="https://www.celestrak.com/NORAD/documentation/spacetrk.pdf">SpaceTrack Report #3</a>.
+I’ll let the author(s) summarize:</p>
+
+<blockquote>
+  <p>The NORAD element sets [TLE sets] are “mean” values 
+obtained by removing periodic variations in a particular
+way. In order to obtain good predictions, these periodic
+variations must be reconstructed (by the prediction model)
+in exactly the same way they were removed by NORAD. Hence, 
+inputting NORAD element sets into a different model (even 
+though the model may be more accurate or even a numerical 
+integrator) will result in degraded predictions. The NORAD 
+element sets must be used with one of the models described 
+in this report in order to retain maximum prediction 
+accuracy</p>
+</blockquote>
+
+<p>Essentially, the report lays out the mathematical models
+for reconstructing the orbit of a particular satellite
+from the data given by the TLE data set. Now there are
+5 different models that the report lays out, SGP, SGP4/8
+and SDP4/8. These are collectively known as “simplified
+perturbation models” and take into account atmospheric
+drag, gravitational drag caused by the Earth’s oblate 
+shape, the Earth’s spin, and various other factors in order
+to predict the motion of the satellite over time.</p>
+
+<p>Since my primary goal was to figure out the position of
+the International Space Station, I selected SGP4. As far as
+I am aware, SGP4 and SDP4 are the most commonly used
+models, this can be checked with the <code class="highlighter-rouge">MEAN_ELEMENT_THEORY</code>
+entry for each satellite entry’s OMM data.</p>
+
+<p>Translating all of the formulae into working C code was
+not super challenging. There is even working FORTRAN that
+I referred to whenever I was having trouble figuring out
+what the intent of a formula was. However, there are quite
+a few variable values that are missing as well as this
+part:</p>
+
+<blockquote>
+  <p>Solve Kepler’s equation for (E + ω)</p>
+</blockquote>
+
+<p>and the changes made to the model with a perigee at
+different distances, which really confused me. That being
+said, combined with looking at the FORTRAN listings on
+SpaceTrack Report #3 as well as with the LizardTail website
+<a href="https://www.lizard-tail.com/isana/tle/lib/sgp4.js">source</a>
+and the 
+<a href="https://www.celestrak.com/publications/AIAA/2006-6753/AIAA-2006-6753.pdf">Revisiting Spacetrack Report #3</a>
+code listings in the appendix, I was able to reconstruct
+the entire mathematical model in C code with most of the
+constants updated to the modern values. I don’t think it is
+entirely perfect, but the numbers it produces look pretty
+correct to me nonetheless.</p>
+
+<p>Now if you ask me, I’d say that the finer details of the
+model itself aren’t actually that important. I can’t say 
+for sure what the purpose of each and every calculation is.
+Again, the model takes into account the many different
+variables that affect the gravitational pull and drag
+experienced by a satellite, but that is as far as the 
+extent of my knowledge about the perturbation models goes.</p>
+
+<p>(Apologies to those readers who may have clicked on this to
+get an understanding of how the perturbation models work,
+that’s simply something I never even needed to know to
+implement the model in code. If anyone does understand, I’d
+love to learn)</p>
+
+<h1 id="conversion-between-coordinate-systems">Conversion Between Coordinate Systems</h1>
+
+<p>Now having implemented the SGP4 model, you might think that
+we can now extract the data we need. Not so. The SGP4 model
+produces 2 vectors, specifying the position and velocity
+(meters per second) of the satellite. <code class="highlighter-rouge">fate</code> actually 
+provides an additional 2 vectors called “unit orientation 
+vectors.” These are used  to derive the position and 
+velocity vectors.</p>
+
+<p>The problem is that the reference frame for the
+position vector uses the ECI coordinate grid, which means
+that we get 3 values in X, Y, and Z. This doesn’t help me,
+because all I want to know is latitude and longitude to the
+ISS.</p>
+
+<p>I won’t go into specifics, but these three articles are
+extremely informative and detailed, and even an idiot like
+myself was able to understand what is being discussed. I
+highly recommend reading the entirety of the following:</p>
+
+<ul>
+  <li><a href="https://www.celestrak.com/columns/v02n01/">Orbital Coordinate Systems, Part I</a></li>
+  <li><a href="https://www.celestrak.com/columns/v02n02/">Orbital Coordinate Systems, Part II</a></li>
+  <li><a href="https://www.celestrak.com/columns/v02n03/">Orbital Coordinate Systems, Part III</a></li>
+</ul>
+
+<p>As far as the high-level overview goes, it is worth taking
+a look at what ECI really is. ECI stands for 
+“Earth-centered inertial,” Earth-centered meaning that the
+origin is at the center of the Earth and inertial meaning 
+that it doesn’t move with the rotation of the Earth itself.</p>
+
+<p>Calculating the look angle in azimuth rotation from true
+north and inclination angle from the horizon is relatively
+complex because you need to turn yourr own latitude and 
+longitude into ECI coordinates as well and utilize some 
+trigonometry to determine the angle created between the 
+coordinates. Not so hard, right? Unfortunately, the
+complication comes from the fact that standard longitude
+and latitude considers the Earth as an oblate spheroid, 
+while ECI considers the Earth as a perfect sphere. Further,
+the Earth also spins, which means that your position 
+changes relative to the ECI coordinate system, which is 
+aligned with the ecliptic plane (this would be the plane 
+that the Equator would cross if the Earth wasn’t tilted). 
+In order to calculate everything, the current time is 
+taken, and then converted to a single Julian date. This is
+then converted to Greenwich Mean Sidereal Time (GMST), 
+which allows one to calculate the current rotation of the 
+Earth without the fluctuations in a solar day. Armed with 
+this information, we can then convert from the standard 
+“geodetic” latitude and longitude into a “geocentric” 
+latitude and longitude, and from there, trigonometry is 
+used to obtain the ECI coordinates of the observer.
+<a href="https://github.com/AgentTroll/fate/blob/70311dab1664ffa3278c4af0e3f8f96f859f9efc/eci.c#L12-L22">The implementation</a>
+actually then looks deceptively simple.</p>
+
+<p>Calculating the position of the satellite above the Earth
+(called the sub-point) is a bit more simple. Essentially, 
+We need to reverse the process and convert ECI into 
+geodetic coordinates, but since we already have the ECI
+coordinates, only simple trig is needed once we’ve factored
+in the GMST to figure out the longitude is because the fact
+that the Earth is oblate only affects latitude, longitude
+runs parallel to the oblateness so no modification is
+necessary. To calculate geodetic latitude, we first 
+calculate the geocentric latitude, which is rather straight
+forward trig. We then run a transformation which moves the
+angle closer and closer to geodetic latitude, until the
+diffence in improvement to the value becomes smaller than
+is worth calculating. This value is then close enough to
+the geodetic latitude to accept.</p>
+
+<h1 id="conclusion">Conclusion</h1>
+
+<p>This has only been a high-level overview of the
+calculations needed to convert the available data into a
+usable format, and then converting that format into
+something that is understandable, like geodetic latitude
+and longitude, and the look angles. I myself don’t even
+know all of the specifics. Working on this project was a
+fascinating insight into the work done by astrophysicists
+and mission planners to determine how to get satellites and
+rockets into the correct orbits, and not only that, but to
+track them and create models for the orbital mechanics that
+affect the motion of the satellites through space.</p>
+
+<p>Not only do I not usually talk about the C language, but I
+didn’t really go into any specifics of it in this 
+particular blog post. That being said, I did talk a little
+bit about astronomy and space, which are both topics that
+I’m very curious to learn more about. I’m sure that every
+one of us watched a rocket launch, watched Neil Armstrong
+take humanity’s first steps on another planet, or simply
+read the news about the Opportunity rover. I’m absolutely
+certain that others have been inspired by spaceflight and 
+can relate to wanting to advance space exploration in the
+future, if not the present.</p>
+
+<p>I, for one, certainly would like to.</p>
+
+  </div>
+
+  
+</article>
+
+      </div>
+    </main>
+
+    <footer class="site-footer">
+
+  <div class="wrapper">
+
+    <h2 class="footer-heading">Inside a Troll</h2>
+
+    <div class="footer-col-wrapper">
+      <div class="footer-col footer-col-1">
+        <ul class="contact-list">
+          <li>
+            
+              Inside a Troll
+            
+            </li>
+            
+            <li><a href="mailto:woodyc40@gmail.com">woodyc40@gmail.com</a></li>
+            
+        </ul>
+      </div>
+
+      <div class="footer-col footer-col-2">
+        <ul class="social-media-list">
+          
+          <li>
+            <a href="https://github.com/AgentTroll"><span class="icon icon--github"><svg viewBox="0 0 16 16" width="16px" height="16px"><path fill="#828282" d="M7.999,0.431c-4.285,0-7.76,3.474-7.76,7.761 c0,3.428,2.223,6.337,5.307,7.363c0.388,0.071,0.53-0.168,0.53-0.374c0-0.184-0.007-0.672-0.01-1.32 c-2.159,0.469-2.614-1.04-2.614-1.04c-0.353-0.896-0.862-1.135-0.862-1.135c-0.705-0.481,0.053-0.472,0.053-0.472 c0.779,0.055,1.189,0.8,1.189,0.8c0.692,1.186,1.816,0.843,2.258,0.645c0.071-0.502,0.271-0.843,0.493-1.037 C4.86,11.425,3.049,10.76,3.049,7.786c0-0.847,0.302-1.54,0.799-2.082C3.768,5.507,3.501,4.718,3.924,3.65 c0,0,0.652-0.209,2.134,0.796C6.677,4.273,7.34,4.187,8,4.184c0.659,0.003,1.323,0.089,1.943,0.261 c1.482-1.004,2.132-0.796,2.132-0.796c0.423,1.068,0.157,1.857,0.077,2.054c0.497,0.542,0.798,1.235,0.798,2.082 c0,2.981-1.814,3.637-3.543,3.829c0.279,0.24,0.527,0.713,0.527,1.437c0,1.037-0.01,1.874-0.01,2.129 c0,0.208,0.14,0.449,0.534,0.373c3.081-1.028,5.302-3.935,5.302-7.362C15.76,3.906,12.285,0.431,7.999,0.431z"/></svg>
+</span><span class="username">AgentTroll</span></a>
+
+          </li>
+          
+
+          
+          <li>
+            <a href="https://twitter.com/AgentTrolldude"><span class="icon icon--twitter"><svg viewBox="0 0 16 16" width="16px" height="16px"><path fill="#828282" d="M15.969,3.058c-0.586,0.26-1.217,0.436-1.878,0.515c0.675-0.405,1.194-1.045,1.438-1.809c-0.632,0.375-1.332,0.647-2.076,0.793c-0.596-0.636-1.446-1.033-2.387-1.033c-1.806,0-3.27,1.464-3.27,3.27 c0,0.256,0.029,0.506,0.085,0.745C5.163,5.404,2.753,4.102,1.14,2.124C0.859,2.607,0.698,3.168,0.698,3.767 c0,1.134,0.577,2.135,1.455,2.722C1.616,6.472,1.112,6.325,0.671,6.08c0,0.014,0,0.027,0,0.041c0,1.584,1.127,2.906,2.623,3.206 C3.02,9.402,2.731,9.442,2.433,9.442c-0.211,0-0.416-0.021-0.615-0.059c0.416,1.299,1.624,2.245,3.055,2.271 c-1.119,0.877-2.529,1.4-4.061,1.4c-0.264,0-0.524-0.015-0.78-0.046c1.447,0.928,3.166,1.469,5.013,1.469 c6.015,0,9.304-4.983,9.304-9.304c0-0.142-0.003-0.283-0.009-0.423C14.976,4.29,15.531,3.714,15.969,3.058z"/></svg>
+</span><span class="username">AgentTrolldude</span></a>
+
+          </li>
+          
+        </ul>
+      </div>
+
+      <div class="footer-col footer-col-3">
+        <p>Thoughts of a Java developer</p>
+      </div>
+    </div>
+
+  </div>
+
+</footer>
+
+
+  </body>
+
+</html>
