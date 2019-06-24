@@ -276,19 +276,19 @@ actually then looks deceptively simple.</p>
 
 <p>Calculating the position of the satellite above the Earth
 (called the sub-point) is a bit more simple. Essentially, 
-We need to reverse the process and convert ECI into 
+we need to reverse the process and convert ECI into 
 geodetic coordinates, but since we already have the ECI
 coordinates, only simple trig is needed once we’ve factored
-in the GMST to figure out the longitude is because the fact
-that the Earth is oblate only affects latitude, longitude
-runs parallel to the oblateness so no modification is
+in the GMST to figure out the longitude, because the fact
+that the Earth is oblate only affects latitude. Longitude
+runs parallel to the oblateness, so no modification is
 necessary. To calculate geodetic latitude, we first 
-calculate the geocentric latitude, which is rather straight
-forward trig. We then run a transformation which moves the
-angle closer and closer to geodetic latitude, until the
-diffence in improvement to the value becomes smaller than
-is worth calculating. This value is then close enough to
-the geodetic latitude to accept.</p>
+calculate the geocentric latitude, which is rather 
+straightforward trig. We then run a transformation which 
+moves the angle closer and closer to geodetic latitude, 
+until the diffence in improvement to the value becomes 
+smaller than is worth calculating. This value is then close
+enough to the geodetic latitude to accept.</p>
 
 <h1 id="conclusion">Conclusion</h1>
 

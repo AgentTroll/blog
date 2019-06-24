@@ -1,4 +1,322 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.6.2">Jekyll</generator><link href="https://agenttroll.github.io/blog/feed.xml" rel="self" type="application/atom+xml" /><link href="https://agenttroll.github.io/blog/" rel="alternate" type="text/html" /><updated>2019-06-23T01:04:54-07:00</updated><id>https://agenttroll.github.io/blog/</id><title type="html">Inside a Troll</title><subtitle>Thoughts of a Java developer</subtitle><entry><title type="html">TLE - Tracking Satellites in Space</title><link href="https://agenttroll.github.io/blog/2019/06/22/tle-tracking-satellites-in-space.html" rel="alternate" type="text/html" title="TLE - Tracking Satellites in Space" /><published>2019-06-22T17:23:35-07:00</published><updated>2019-06-22T17:23:35-07:00</updated><id>https://agenttroll.github.io/blog/2019/06/22/tle-tracking-satellites-in-space</id><content type="html" xml:base="https://agenttroll.github.io/blog/2019/06/22/tle-tracking-satellites-in-space.html">&lt;p&gt;This is about my &lt;a href=&quot;https://github.com/AgentTroll/fate&quot;&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;fate&lt;/code&gt;&lt;/a&gt;
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.6.2">Jekyll</generator><link href="https://agenttroll.github.io/blog/feed.xml" rel="self" type="application/atom+xml" /><link href="https://agenttroll.github.io/blog/" rel="alternate" type="text/html" /><updated>2019-06-23T20:38:02-07:00</updated><id>https://agenttroll.github.io/blog/</id><title type="html">Inside a Troll</title><subtitle>Thoughts of a Java developer</subtitle><entry><title type="html">Implementing PBFT in Java</title><link href="https://agenttroll.github.io/blog/2019/06/23/implementing-pbft-in-java.html" rel="alternate" type="text/html" title="Implementing PBFT in Java" /><published>2019-06-23T17:23:35-07:00</published><updated>2019-06-23T17:23:35-07:00</updated><id>https://agenttroll.github.io/blog/2019/06/23/implementing-pbft-in-java</id><content type="html" xml:base="https://agenttroll.github.io/blog/2019/06/23/implementing-pbft-in-java.html">&lt;p&gt;Following up with my &lt;a href=&quot;&quot;&gt;previous post&lt;/a&gt; about one of my 
+prior projects, I have another post about yet another
+project that I’ve recently finished, 
+&lt;a href=&quot;https://github.com/AgentTroll/pbft-java&quot;&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;pbft-java&lt;/code&gt;&lt;/a&gt;.&lt;/p&gt;
+
+&lt;h1 id=&quot;what-is-pbft&quot;&gt;What is PBFT?&lt;/h1&gt;
+
+&lt;p&gt;PBFT stands for Practical Byzantine Fault Tolerance. PBFT
+is an algorithm developed by Miguel Castro and Barbara
+Liskov that allows replicated systems to tolerate what are
+called Byzantine faults. Since some readers don’t know what
+a Byzantine fault is, here is what Wikipedia has to say:&lt;/p&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;A Byzantine fault […] is a condition of a computer 
+system, particularly distributed computing systems, where 
+components may fail and there is imperfect information on 
+whether a component has failed. The term takes its name 
+from an allegory, the “Byzantine Generals Problem”&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;The Wikipedia page on the 
+&lt;a href=&quot;https://en.wikipedia.org/wiki/Two_Generals%27_Problem&quot;&gt;“Two Generals’ Problem”&lt;/a&gt;
+has a good description of what the Byzantine General’s
+Problem is, but the general gist is that a consensus has
+to be made upon a decision or computation where one of the
+parties involved may be compromised, may be malicious, or
+could be faulty. When applied to computing systems, a set
+of replica computers will need to decide on the correct
+course of action even though other computers may send 
+erroneous data or not even send any data at all.&lt;/p&gt;
+
+&lt;p&gt;The PBFT algorithm is described by the paper authored by
+Castro and Liskov, which can be read
+&lt;a href=&quot;http://pmg.csail.mit.edu/papers/osdi99.pdf&quot;&gt;here&lt;/a&gt;.&lt;/p&gt;
+
+&lt;h1 id=&quot;client-implementation&quot;&gt;Client Implementation&lt;/h1&gt;
+
+&lt;p&gt;I personally used a multitude of different sources when
+developing this project as an abstraction to the PBFT 
+algorithm, and even then, I am still confused on whether or
+not I even got everything down correctly.&lt;/p&gt;
+
+&lt;p&gt;For simplicity, I will refer to the configured fault 
+tolerance to be &lt;code class=&quot;highlighter-rouge&quot;&gt;f&lt;/code&gt; as in the PBFT paper, the number of
+replicas that can have Byzantine faults while still 
+allowing a safe consensus to be reached.&lt;/p&gt;
+
+&lt;p&gt;The client implementation is very, very simple. Only two
+messages need to be implemented, the sending and receiving
+capability for one and the other, and the timeout.&lt;/p&gt;
+
+&lt;p&gt;Requests are identified by their timestamp value, which 
+count up from 0 instead of using the actual system clock 
+since it is possible to send more than one message during 
+the time it takes for &lt;code class=&quot;highlighter-rouge&quot;&gt;System#currentTimeMillis()&lt;/code&gt; to 
+update its value.&lt;/p&gt;
+
+&lt;p&gt;Once a REQUEST is sent to what is believed to be the 
+primary, users will call the &lt;code class=&quot;highlighter-rouge&quot;&gt;Client#checkTimeout()&lt;/code&gt; method
+in a loop, which will check to make sure that a REPLY is 
+received within the configured timeout. If it isn’t, then a
+REQUEST is then multicasted to all replicas.&lt;/p&gt;
+
+&lt;p&gt;The client continuously waits for a REPLY message from 
+replicas. As soon as it receives the &lt;code class=&quot;highlighter-rouge&quot;&gt;f + 1&lt;/code&gt;th REPLY 
+message that matches a stored REPLY, then the result is
+accepted and the timer is stopped.&lt;/p&gt;
+
+&lt;h1 id=&quot;replica-implementation&quot;&gt;Replica Implementation&lt;/h1&gt;
+
+&lt;p&gt;Replicas are vastly more complicated and have tons of 
+moving parts that need to be considered for each message.&lt;/p&gt;
+
+&lt;p&gt;In short, what a replica does is wait for REQUEST messages
+and then go through a process to ensure that all other 
+replicas also agree to go through the same process. Then,
+it will send a REPLY message with the computed result. If
+the replica waits for too long, it will try to vote out the
+primary with a VIEW-CHANGE message in hopes of getting 
+things going again.&lt;/p&gt;
+
+&lt;h4 id=&quot;receiving-request&quot;&gt;Receiving REQUEST&lt;/h4&gt;
+
+&lt;p&gt;If the replica already has already responded to a REQUEST
+with the same client ID and the same timestamp, then it
+means that the operation has already completed and it will
+simply resend the cached REPLY for that operation.&lt;/p&gt;
+
+&lt;p&gt;When a replica receives a REQUEST message that it didn’t
+know about before, it will start a timer that will ensure
+that things keep moving. If the replica isn’t the primary,
+then it simply redirects the message to the primary 
+instead.&lt;/p&gt;
+
+&lt;p&gt;If the replica is a primary, then it will ensure that the
+message shouldn’t be bufferred. If the number of requests
+currently being handled is greater than the configured 
+buffer limit, the primary puts it into a FIFO queue to be
+executed at a later time.&lt;/p&gt;
+
+&lt;p&gt;The primary then sends a PRE-PREPARE to all non-primaries
+and relays the request to them, adding the sent message
+to its log.&lt;/p&gt;
+
+&lt;p&gt;Replicas identify accepted REQUEST messages using the
+current view number and the sequence number that the 
+primary assigns to it. The primary adds the multicasted
+PRE-PREPARE message to a new ticket for that REQUEST.&lt;/p&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;In &lt;code class=&quot;highlighter-rouge&quot;&gt;pbft-java&lt;/code&gt;, I assume that the REQUEST message is 
+included with the PRE-PREPARE message to simplify the 
+encoding process. Users can decide whether or not to follow
+suit, they can always set the REQUEST to null and utilize 
+their own thing if they want to follow the an orthodox
+implementation.&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;h4 id=&quot;receiving-pre-prepare&quot;&gt;Receiving PRE-PREPARE&lt;/h4&gt;
+
+&lt;p&gt;When a non-primary receives a PRE-PREPARE, it ensures that
+the view number is equal to the view that replica currently
+is in, and that the message sequence ID is between the 
+specified water marks, otherwise it ignores the message.
+The replica then checks to ensure the digest is correct, if
+the replica already has a matching ticket (one that has the
+same view number and sequence number), then it will also
+check to make sure that the new PRE-PREPARE message doesn’t
+have a digest different from the previous PRE-PREPARE. If
+these two conditions aren’t met, then the replica also 
+ignores the message.&lt;/p&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;Digests are &lt;code class=&quot;highlighter-rouge&quot;&gt;byte[]&lt;/code&gt; arrays in &lt;code class=&quot;highlighter-rouge&quot;&gt;pbft-java&lt;/code&gt;. Additionally,
+ticketing is used because messages could arrive 
+out-of-order, so I’m not sure if the PBFT paper specifies
+that I should check the &lt;code class=&quot;highlighter-rouge&quot;&gt;prepared&lt;/code&gt; and &lt;code class=&quot;highlighter-rouge&quot;&gt;committed-local&lt;/code&gt;
+states every single time.&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;Having accepted the PRE-PREPARE message, the replica then
+creates a new ticket. It then adds the PRE-PREPARE message 
+to the log, and multicasts a PREPARE message to all known 
+replicas, also adding that PREPARE message to the log.&lt;/p&gt;
+
+&lt;p&gt;The replica will then attempt to check on the &lt;code class=&quot;highlighter-rouge&quot;&gt;prepared&lt;/code&gt;
+and &lt;code class=&quot;highlighter-rouge&quot;&gt;committed-local&lt;/code&gt; states, executing the response to 
+those states as necessary. More on that below.&lt;/p&gt;
+
+&lt;h4 id=&quot;receiving-prepare&quot;&gt;Receiving PREPARE&lt;/h4&gt;
+
+&lt;p&gt;When a replica receives a PREPARE, it will also check to
+make sure that the view number is equal to the current view
+number and the sequence number is within the water marks,
+otherwise ignoring the message. It will create a new ticket
+if one does not exist already, and append the PREPARE to
+the log.&lt;/p&gt;
+
+&lt;p&gt;The relevant condition is &lt;code class=&quot;highlighter-rouge&quot;&gt;prepared&lt;/code&gt;. The ticket will scan
+the messages added to the log for that ticket (again, the
+same view number and the same sequence number). When it
+hits a PRE-PREPARE, it will scan the log to check for
+matching PREPARE messages whose digests also match. If
+the scan hits the &lt;code class=&quot;highlighter-rouge&quot;&gt;2f&lt;/code&gt;th matching PREPARE message, then
+the &lt;code class=&quot;highlighter-rouge&quot;&gt;prepared&lt;/code&gt; state becomes true and the replica responds
+by multicasting a COMMIT message, adding the COMMIT to the
+log.&lt;/p&gt;
+
+&lt;p&gt;The replica will then attempt to check on the &lt;code class=&quot;highlighter-rouge&quot;&gt;prepared&lt;/code&gt;
+and &lt;code class=&quot;highlighter-rouge&quot;&gt;committed-local&lt;/code&gt; states, executing the response to 
+those states as necessary.&lt;/p&gt;
+
+&lt;h4 id=&quot;recieving-commit&quot;&gt;Recieving COMMIT&lt;/h4&gt;
+
+&lt;p&gt;When a replica receives a COMMIT, it will also check to
+make sure that the view number is equal to the current view
+number and the sequence number is within the water marks,
+otherwise ignoring the message. It will create a new ticket
+if one does not exist already, and append the COMMIT to
+the log.&lt;/p&gt;
+
+&lt;p&gt;The relevant condition here is &lt;code class=&quot;highlighter-rouge&quot;&gt;committed-local&lt;/code&gt;. If we
+know that the ticket has reached the &lt;code class=&quot;highlighter-rouge&quot;&gt;prepared&lt;/code&gt; phase, we
+don’t need to rescan to make sure this is true. The ticket
+then looks for matching COMMIT messages, and if it reaches
+the &lt;code class=&quot;highlighter-rouge&quot;&gt;2f + 1&lt;/code&gt;th COMMIT, it will then execute the 
+operation found from the REQUEST message. A REPLY message 
+is sent back to the client with the result of the 
+operation, and the ticket is then moved to the cache in 
+case the same REQUEST is sent again. The client then stops
+the timer for that REQUEST, if available.&lt;/p&gt;
+
+&lt;p&gt;The replica will then attempt to check on the &lt;code class=&quot;highlighter-rouge&quot;&gt;prepared&lt;/code&gt;
+and &lt;code class=&quot;highlighter-rouge&quot;&gt;committed-local&lt;/code&gt; states, executing the response to 
+those states as necessary.&lt;/p&gt;
+
+&lt;p&gt;If the sequence number is evenly divisible by some
+configured number, then the replica will also multicast a
+CHECKPOINT message and add it to its log.&lt;/p&gt;
+
+&lt;h4 id=&quot;receiving-checkpoint&quot;&gt;Receiving CHECKPOINT&lt;/h4&gt;
+
+&lt;p&gt;When a replica receives a CHECKPOINT, it will add it to its
+log. If the log has &lt;code class=&quot;highlighter-rouge&quot;&gt;2f + 1&lt;/code&gt; CHECKPOINT messages from
+itself and other replicas with the same sequence number as
+the one that was received, it will then perform a garbage
+collection by throwing away cached REPLY messages less than
+or equal to the checkpoint, all CHECKPOINT messages below
+that checkpoint, and will update the low water mark to the
+checkpoint and the high water mark to the checkpoint plus
+the configured checkpoint interval.&lt;/p&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;pbft-java&lt;/code&gt; organizes CHECKPOINT messages by the sequence
+number, but I &lt;em&gt;believe&lt;/em&gt; that it should be based on any 
+CHECKPOINT with a sequence number greater than the given
+checkpoint to make it stable&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;h4 id=&quot;what-about-view-changes&quot;&gt;What About View-changes?&lt;/h4&gt;
+
+&lt;p&gt;Replicas will check the timers for all received REQUESTS in
+a loop. If the timer expires, then the replica will skip 
+all the other timers and become “disgruntled.” It will then
+multicast a VIEW-CHANGE message to vote all replicas into
+view &lt;code class=&quot;highlighter-rouge&quot;&gt;v + 1&lt;/code&gt;, where &lt;code class=&quot;highlighter-rouge&quot;&gt;v&lt;/code&gt; represents the current view number.
+The timeout will then double, and the timeout check loop 
+continues. If it times out again, the VIEW-CHANGE will then
+vote for &lt;code class=&quot;highlighter-rouge&quot;&gt;v + 2&lt;/code&gt; and the time doubles yet again, and so on.
+A disgruntled replica only accepts 3 messages: CHECKPOINT,
+VIEW-CHANGE, and NEW-VIEW. All other messages are ignored.&lt;/p&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;The PBFT algorithm specifies that the timeout shouldn’t 
+double, but rather should increase by increments of the 
+original timeout, so instead of 1T -&amp;gt; 2T -&amp;gt; 4T, the paper
+specifies that it should be 1T -&amp;gt; 2T -&amp;gt; 3T if &lt;code class=&quot;highlighter-rouge&quot;&gt;T&lt;/code&gt; 
+represented the original timeout&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;h4 id=&quot;receiving-view-change&quot;&gt;Receiving VIEW-CHANGE&lt;/h4&gt;
+
+&lt;p&gt;When the “new primary” (the primary for view &lt;code class=&quot;highlighter-rouge&quot;&gt;v + 1&lt;/code&gt;)
+receives a VIEW-CHANGE message, it will add it to its log.
+If there are &lt;code class=&quot;highlighter-rouge&quot;&gt;2f&lt;/code&gt; VIEW-CHANGE messages in the log from
+different replicas, then the new primary will then 
+multicast a NEW-VIEW message.&lt;/p&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;Technically, a multitude of items aren’t supposed to be 
+included in the actual NEW-VIEW message, however, again,
+for encoding simplicity, &lt;code class=&quot;highlighter-rouge&quot;&gt;pbft-java&lt;/code&gt; requires that the
+NEW-VIEW message includes the full checkpoint proofs as
+well as full PRE-PREPARE messages. If a more orthodox
+implementation is desired, users are encouraged to add
+their own messages to retrieve missing REQUESTs and
+CHECKPOINTs.&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;If the replica isn’t the “new primary,” it will also add
+the message to its log, but if it has &lt;code class=&quot;highlighter-rouge&quot;&gt;f + 1&lt;/code&gt; VIEW-CHANGE
+messages in its log already from different replicas, then
+it will “bandwagon” and also multicast a VIEW-CHANGE for
+the new view as well.&lt;/p&gt;
+
+&lt;h4 id=&quot;receiving-new-view&quot;&gt;Receiving NEW-VIEW&lt;/h4&gt;
+
+&lt;p&gt;When a replica receives a NEW-VIEW message is received by a
+primary, it will perform a garbage collection by removing
+the VIEW-CHANGE messages still in the log and clear all
+pending requests from the previous view. If the lowest
+proven checkpoint it receives is greater than the current
+low water mark, then the checkpoint is upgraded, the proof
+is inserted into the log, and a garbage collection is done
+as if a checkpoint was proven by CHECKPOINT messages.&lt;/p&gt;
+
+&lt;p&gt;The replica then looks through all of the PRE-PREPARE 
+messages, multicasting a corresponding PREPARE message
+for them once the digest is checked with one generated for
+the request. If the operation is &lt;code class=&quot;highlighter-rouge&quot;&gt;null&lt;/code&gt;, then it is a no-op
+and skipped. Both PRE-PREPARE and PREPARE messages are
+added to the log.&lt;/p&gt;
+
+&lt;p&gt;The replica is then no longer disgruntled, removes all
+outstanding timeouts, and then enters the new view.&lt;/p&gt;
+
+&lt;p&gt;The new primary that is multicasting the NEW-VIEW message
+does all of the above, skipping the portion that handles
+the PRE-PREPARE messages and instead adds those 
+PRE-PREPARES to the log without sending a PREPARE.&lt;/p&gt;
+
+&lt;h1 id=&quot;conclusion&quot;&gt;Conclusion&lt;/h1&gt;
+
+&lt;p&gt;Most of the details for how I interpreted the PBFT protocol
+is laid out here. The finer details of how to structure all
+the data structures needed to store the messages and
+determine quorum sizes still remain, and my implementation
+can be found on GitHub with the link found at the top of
+the post. PBFT is sort of like a gateway algorithm, there
+are implementations of it like I believe Hyperledger and
+other blockchain style applications, but there are other
+BFT algorithms as well.&lt;/p&gt;
+
+&lt;p&gt;I was initially interested in (P)BFT reading up on, as my
+recent post unsurprisingly suggests, about Space(X).
+According to &lt;a href=&quot;https://lwn.net/Articles/540368/&quot;&gt;LWN.net&lt;/a&gt;,
+replication is used for avionics control on the Dragon
+capsules, and the Byzantine Generals’ Problem is used to
+resolve disagreements between the flight computers, so it
+is very cool to see how BFT is applied not only to Earth
+applications, but also in space as well. My particular
+implementation of BFT probably isn’t up-to-par with what
+the SpaceX engineers implemented, however. It definitely
+wouldn’t be launching anything mission critical.&lt;/p&gt;
+
+&lt;p&gt;I’ll probably go back around to adding new posts in my
+“Lessons Learned Debugging” series for another long stretch
+until I figure out what other things to talk about.&lt;/p&gt;</content><author><name></name></author><summary type="html">Following up with my previous post about one of my prior projects, I have another post about yet another project that I’ve recently finished, pbft-java.</summary></entry><entry><title type="html">TLE - Tracking Satellites in Space</title><link href="https://agenttroll.github.io/blog/2019/06/22/tle-tracking-satellites-in-space.html" rel="alternate" type="text/html" title="TLE - Tracking Satellites in Space" /><published>2019-06-22T17:23:35-07:00</published><updated>2019-06-22T17:23:35-07:00</updated><id>https://agenttroll.github.io/blog/2019/06/22/tle-tracking-satellites-in-space</id><content type="html" xml:base="https://agenttroll.github.io/blog/2019/06/22/tle-tracking-satellites-in-space.html">&lt;p&gt;This is about my &lt;a href=&quot;https://github.com/AgentTroll/fate&quot;&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;fate&lt;/code&gt;&lt;/a&gt;
 project, something I finished in August of last year. I’ve
 been on a long journey with some other Java-related
 projects more recently, but I’d simply like the chance to
@@ -197,19 +515,19 @@ actually then looks deceptively simple.&lt;/p&gt;
 
 &lt;p&gt;Calculating the position of the satellite above the Earth
 (called the sub-point) is a bit more simple. Essentially, 
-We need to reverse the process and convert ECI into 
+we need to reverse the process and convert ECI into 
 geodetic coordinates, but since we already have the ECI
 coordinates, only simple trig is needed once we’ve factored
-in the GMST to figure out the longitude is because the fact
-that the Earth is oblate only affects latitude, longitude
-runs parallel to the oblateness so no modification is
+in the GMST to figure out the longitude, because the fact
+that the Earth is oblate only affects latitude. Longitude
+runs parallel to the oblateness, so no modification is
 necessary. To calculate geodetic latitude, we first 
-calculate the geocentric latitude, which is rather straight
-forward trig. We then run a transformation which moves the
-angle closer and closer to geodetic latitude, until the
-diffence in improvement to the value becomes smaller than
-is worth calculating. This value is then close enough to
-the geodetic latitude to accept.&lt;/p&gt;
+calculate the geocentric latitude, which is rather 
+straightforward trig. We then run a transformation which 
+moves the angle closer and closer to geodetic latitude, 
+until the diffence in improvement to the value becomes 
+smaller than is worth calculating. This value is then close
+enough to the geodetic latitude to accept.&lt;/p&gt;
 
 &lt;h1 id=&quot;conclusion&quot;&gt;Conclusion&lt;/h1&gt;
 
@@ -1940,149 +2258,4 @@ unless some extenuating circumstance forces me to.&lt;/p&gt;</content><author><n
   &lt;/ul&gt;
 &lt;/blockquote&gt;
 
-&lt;p&gt;I think I’m going to start pasting this around like the gospel…&lt;/p&gt;</content><author><name></name></author><summary type="html">But Also, Some Background</summary></entry><entry><title type="html">Keeping Inventories Open</title><link href="https://agenttroll.github.io/blog/2018/04/13/keeping-inventories-open.html" rel="alternate" type="text/html" title="Keeping Inventories Open" /><published>2018-04-13T21:38:10-07:00</published><updated>2018-04-13T21:38:10-07:00</updated><id>https://agenttroll.github.io/blog/2018/04/13/keeping-inventories-open</id><content type="html" xml:base="https://agenttroll.github.io/blog/2018/04/13/keeping-inventories-open.html">&lt;p&gt;&lt;em&gt;Note: Code samples in this post have been slightly altered. I have not leaked any information from our plugins in the writing of this post&lt;/em&gt;&lt;/p&gt;
-
-&lt;p&gt;Over the past week or two, we’ve been working hard to get the gambling plugin fixed up for you guys to use. Unfortunately, there were a few interesting bumps in the road.&lt;/p&gt;
-
-&lt;h1 id=&quot;crashing-issue&quot;&gt;Crashing Issue&lt;/h1&gt;
-
-&lt;p&gt;One of the features of coinflips was that once the inventory that flips between the heads opens, it will not close until the coinflip is over. We did this by re-opening the inventory whenever it was closed. It basically looked something like this:&lt;/p&gt;
-
-&lt;div class=&quot;language-java highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;nd&quot;&gt;@EventHandler&lt;/span&gt;
-&lt;span class=&quot;kd&quot;&gt;public&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;void&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;onPlayerCloseInventory&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;InventoryCloseEvent&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;event&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
-    &lt;span class=&quot;k&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;this&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;menuIsCoinflip&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
-        &lt;span class=&quot;c1&quot;&gt;// Schedule the inventory to be opened after the next tick&lt;/span&gt;
-        &lt;span class=&quot;n&quot;&gt;Bukkit&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;getScheduler&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;().&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;runTask&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;this&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;plugin&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;()&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;-&amp;gt;&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
-            &lt;span class=&quot;c1&quot;&gt;// Tell the player to open the inventory that they closed&lt;/span&gt;
-            &lt;span class=&quot;n&quot;&gt;event&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;getPlayer&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;().&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;openInventory&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;event&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;getInventory&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;());&lt;/span&gt;
-        &lt;span class=&quot;o&quot;&gt;});&lt;/span&gt;
-    &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
-&lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;What we found, however, was that for some reason, this handler would become stuck in a loop and prevent the main thread from proceeding. There is nothing overtly wrong about this method, really, it literally performs the correct handling for it after “the next tick.”&lt;/p&gt;
-
-&lt;p&gt;From the &lt;a href=&quot;https://hub.spigotmc.org/javadocs/spigot/org/bukkit/scheduler/BukkitScheduler.html#runTask-org.bukkit.plugin.Plugin-java.lang.Runnable-&quot;&gt;Bukkit Scheduler javadoc&lt;/a&gt;:&lt;/p&gt;
-
-&lt;blockquote&gt;
-  &lt;p&gt;BukkitTask runTask(Plugin plugin,
-                   java.lang.Runnable task)
-            throws java.lang.IllegalArgumentException&lt;/p&gt;
-
-  &lt;p&gt;Returns a task that will run on the next server tick.&lt;/p&gt;
-&lt;/blockquote&gt;
-
-&lt;p&gt;In fact, it was even more confusing because we had no clue how a scheduled task could possibly be creating an endless loop, much less how players could get themselves into a situation that would cause the loop in the first place.&lt;/p&gt;
-
-&lt;h1 id=&quot;initial-attempts&quot;&gt;Initial attempts&lt;/h1&gt;
-
-&lt;p&gt;Since we already isolated the problem to the close event handler, we assumed that the problem would stem from the player being offline when they are told to re-open the coinflip inventory. We added in a check once the task gets run on the inside of the lambda, and then made sure that when a player leaves, they would be not be allowed to re-open the menu:&lt;/p&gt;
-
-&lt;div class=&quot;language-java highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;nd&quot;&gt;@EventHandler&lt;/span&gt;
-&lt;span class=&quot;kd&quot;&gt;public&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;void&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;onPlayerCloseInventory&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;InventoryCloseEvent&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;event&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
-    &lt;span class=&quot;k&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;this&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;menuIsCoinflip&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
-        &lt;span class=&quot;c1&quot;&gt;// Schedule the inventory to be opened after the next tick&lt;/span&gt;
-        &lt;span class=&quot;n&quot;&gt;Bukkit&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;getScheduler&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;().&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;runTask&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;this&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;plugin&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;()&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;-&amp;gt;&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
-            &lt;span class=&quot;k&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;event&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;getPlayer&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;().&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;isOnline&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;())&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
-                &lt;span class=&quot;c1&quot;&gt;// Tell the player to open the inventory that they closed&lt;/span&gt;
-                &lt;span class=&quot;n&quot;&gt;event&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;getPlayer&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;().&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;openInventory&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;event&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;getInventory&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;());&lt;/span&gt;
-            &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
-        &lt;span class=&quot;o&quot;&gt;});&lt;/span&gt;
-    &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
-&lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
-
-&lt;span class=&quot;nd&quot;&gt;@EventHandler&lt;/span&gt;
-&lt;span class=&quot;kd&quot;&gt;public&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;void&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;onPlayerLeaveServer&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;PlayerQuitEvent&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;event&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
-    &lt;span class=&quot;c1&quot;&gt;// Do not allow the menu to open&lt;/span&gt;
-    &lt;span class=&quot;k&quot;&gt;this&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;menuIsCoinflip&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;kc&quot;&gt;false&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;;&lt;/span&gt;
-&lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;However, this also did not work. The next morning, we found that the server crashed from the same recursive loop somehow.&lt;/p&gt;
-
-&lt;p&gt;I then dug into the code to see what was going on behind-the-scenes. I wanted to find out why the player is still allowed to open the inventory even when they are offline. This is a snippet of code that handles the &lt;a href=&quot;https://hub.spigotmc.org/stash/projects/SPIGOT/repos/craftbukkit/browse/nms-patches/PlayerList.patch#281&quot;&gt;player’s disconnect&lt;/a&gt;:&lt;/p&gt;
-
-&lt;div class=&quot;language-patch highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;gi&quot;&gt;+        org.bukkit.craftbukkit.event.CraftEventFactory.handleInventoryCloseEvent(entityplayer);
-+
-+        PlayerQuitEvent playerQuitEvent = new PlayerQuitEvent(cserver.getPlayer(entityplayer), &quot;\u00A7e&quot; + entityplayer.getName() + &quot; left the game&quot;);
-+        cserver.getPluginManager().callEvent(playerQuitEvent);
-+        entityplayer.getBukkitEntity().disconnect(playerQuitEvent.getQuitMessage());
-+
-+        entityplayer.playerTick();// SPIGOT-924
-+        // CraftBukkit end
-+
-&lt;/span&gt;         this.savePlayerFile(entityplayer);
-         if (entityplayer.isPassenger()) {
-             Entity entity = entityplayer.getVehicle();
-&lt;span class=&quot;gu&quot;&gt;@@ -318,17 +421,67 @@
-&lt;/span&gt;
-         if (entityplayer1 == entityplayer) {
-             this.j.remove(uuid);
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;There are 3 things to note here:&lt;/p&gt;
-
-&lt;ol&gt;
-  &lt;li&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;handleInventoryCloseEvent&lt;/code&gt; is called very early when the player disconnects&lt;/li&gt;
-  &lt;li&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;PlayerQuitEvent&lt;/code&gt; gets fired after that&lt;/li&gt;
-  &lt;li&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;Player#isOnline()&lt;/code&gt; and &lt;code class=&quot;highlighter-rouge&quot;&gt;Bukkit.getPlayer(...)&lt;/code&gt; provided by the &lt;code class=&quot;highlighter-rouge&quot;&gt;j&lt;/code&gt; collection will be signalled last&lt;/li&gt;
-&lt;/ol&gt;
-
-&lt;p&gt;This might make our online check seem useless, however, there shouldn’t be any cause for concern, because the scheduler should be scheduling the inventory close by the next tick, once the handler has fully completed and removed the player from the server… Right?&lt;/p&gt;
-
-&lt;h1 id=&quot;nitty-gritty-of-the-scheduler&quot;&gt;Nitty Gritty of the Scheduler&lt;/h1&gt;
-
-&lt;p&gt;We can theorize all we want. The code looks correct, but obviously that is not so because the server is still crashing for the same reason. Therefore, either we are wrong about our isolation of the problem, or our assumption about what the server is doing is wrong. However, given that the bug is very timing-dependent, and players are more likely to be leaving during the night, when the server is crashing, we concluded that our logic must have been wrong somewhere.&lt;/p&gt;
-
-&lt;p&gt;After some more pondering and searching through the Minecraft source code, I looked over the line that calls the &lt;code class=&quot;highlighter-rouge&quot;&gt;mainThreadHeartbeat&lt;/code&gt; method in &lt;code class=&quot;highlighter-rouge&quot;&gt;CraftScheduler&lt;/code&gt;. Piqued, I looked through the source of &lt;code class=&quot;highlighter-rouge&quot;&gt;CraftScheduler&lt;/code&gt; to see what I could find.&lt;/p&gt;
-
-&lt;p&gt;&lt;a href=&quot;https://hub.spigotmc.org/stash/projects/SPIGOT/repos/craftbukkit/browse/src/main/java/org/bukkit/craftbukkit/scheduler/CraftScheduler.java#91&quot;&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;runTask&lt;/code&gt;&lt;/a&gt;:&lt;/p&gt;
-
-&lt;div class=&quot;language-java highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;kd&quot;&gt;public&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;BukkitTask&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;runTask&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Plugin&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;plugin&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Runnable&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;runnable&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
-    &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;runTaskLater&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;plugin&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;runnable&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;0L&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;);&lt;/span&gt;
-&lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;I thought to myself: when an inventory closes, I must be in the &lt;code class=&quot;highlighter-rouge&quot;&gt;disconnect&lt;/code&gt; method from &lt;code class=&quot;highlighter-rouge&quot;&gt;PlayerList&lt;/code&gt; above, so there can never be an instantaneous execution from this method. However, the fact that the server simply stops responding is completely contradictory to this.&lt;/p&gt;
-
-&lt;p&gt;Then it dawned upon me.&lt;/p&gt;
-
-&lt;p&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;openInventory&lt;/code&gt; must be immediately firing &lt;code class=&quot;highlighter-rouge&quot;&gt;InventoryCloseEvent&lt;/code&gt; when the player is offline, since it closes immediately; the player isn’t even there to open it in the first place. It doesn’t need to be going through &lt;code class=&quot;highlighter-rouge&quot;&gt;PlayerList#disconnect(...)&lt;/code&gt;. This basically invalidates all previous assumptions about the calling location of &lt;code class=&quot;highlighter-rouge&quot;&gt;InventoryCloseEvent&lt;/code&gt;…&lt;/p&gt;
-
-&lt;p&gt;If I immediately get back &lt;code class=&quot;highlighter-rouge&quot;&gt;InventoryCloseEvent&lt;/code&gt; from opening the inventory, then I am not getting the event from &lt;code class=&quot;highlighter-rouge&quot;&gt;PlayerList#disconnect(...)&lt;/code&gt;… I am getting it &lt;em&gt;directly from the scheduler&lt;/em&gt;. The scheduled task is causing it to schedule more tasks, which must execute, because the scheduling loop has not finished when I run another task! In other words, &lt;code class=&quot;highlighter-rouge&quot;&gt;InventoryCloseEvent&lt;/code&gt; causes another task to be added to the loop through the tasks in &lt;code class=&quot;highlighter-rouge&quot;&gt;mainThreadHeartbeat&lt;/code&gt;. Since we are still in a loop at this point, the loop will then come across the next task, which will then create another close event, endlessly adding tasks to the scheduling loop. &lt;code class=&quot;highlighter-rouge&quot;&gt;mainThreadHeartbeat&lt;/code&gt; never exits, and so the server doesn’t tick!&lt;/p&gt;
-
-&lt;h1 id=&quot;fixing-the-issue&quot;&gt;Fixing The Issue&lt;/h1&gt;
-
-&lt;p&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;runTask&lt;/code&gt; is a good, short method to use when not being called from within the scheduling loop. However, this risks creating an infinitely long task list. The fix to schedule for exactly 1 tick later like so:&lt;/p&gt;
-
-&lt;div class=&quot;language-java highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;nd&quot;&gt;@EventHandler&lt;/span&gt;
-&lt;span class=&quot;kd&quot;&gt;public&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;void&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;onPlayerCloseInventory&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;InventoryCloseEvent&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;event&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
-    &lt;span class=&quot;k&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;this&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;menuIsCoinflip&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
-        &lt;span class=&quot;c1&quot;&gt;// Schedule the inventory to be opened after the next tick&lt;/span&gt;
-        &lt;span class=&quot;n&quot;&gt;Bukkit&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;getScheduler&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;().&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;runTaskLater&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;this&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;plugin&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;()&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;-&amp;gt;&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
-            &lt;span class=&quot;k&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;event&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;getPlayer&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;().&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;isOnline&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;())&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
-                &lt;span class=&quot;c1&quot;&gt;// Tell the player to open the inventory that they closed&lt;/span&gt;
-                &lt;span class=&quot;n&quot;&gt;event&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;getPlayer&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;().&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;openInventory&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;event&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;getInventory&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;());&lt;/span&gt;
-            &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
-        &lt;span class=&quot;o&quot;&gt;},&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;1L&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;);&lt;/span&gt;
-    &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
-&lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;This has virtually no impact on the previous functionality. By scheduling for 1 tick later instead of the 0 ticks that the &lt;code class=&quot;highlighter-rouge&quot;&gt;runTask&lt;/code&gt; method does, we ensure that even if &lt;code class=&quot;highlighter-rouge&quot;&gt;InventoryCloseEvent&lt;/code&gt; is fired from within the scheduling loop, it will not run within the loop that created it, but rather on the next tick. Since &lt;code class=&quot;highlighter-rouge&quot;&gt;runTask&lt;/code&gt; is usually never called from inside of the tick loop, 1 tick usually needs to pass anyways unless the task gets scheduled before the scheduling loop runs, so there’s really nothing to lose.&lt;/p&gt;
-
-&lt;h1 id=&quot;conclusion&quot;&gt;Conclusion&lt;/h1&gt;
-
-&lt;p&gt;The reason why it took so long for this bug to be discovered is because of the assumption I made that &lt;code class=&quot;highlighter-rouge&quot;&gt;BukkitScheduler#runTask(...)&lt;/code&gt; will always run in the tick after it is being called in. However, when the docs mention that a task will be run “run on the next server tick,” the next server tick may already be in progress, and therefore never allow for the task to leave.&lt;/p&gt;
-
-&lt;p&gt;In hindsight, it may seem like such a stupid assumption to make, that this particular event may be fired in only in one place. How can a problem that is so face-smackingly simple get past us? We were tied up for over a week trying to figure out what made the servers crash due to this bug. The server log gave a hint that the close event listener was being fired from within the scheduler, however, I did not pick up on this. Higher up the stack, the inventory was being closed already in the task, so why should I assume that the task list is growing? I just thought that it was being run in the tick right after the close event.&lt;/p&gt;
-
-&lt;p&gt;This little assumption, that the &lt;code class=&quot;highlighter-rouge&quot;&gt;runTask&lt;/code&gt; method would run the the tick after the task gets scheduled, led to over a week worth of head scratching and frustration. What can be done in the future about it?&lt;/p&gt;
-
-&lt;p&gt;We’ve already got reboot scripts ready to go so servers do not experience as long as a downtime. This only fixes the effects of such bugs; but at the moment, I have no solutions to how the development pipeline can be modified to avoid this in the future. Perhaps strong assumptions about the workings of the scheduler should not be so dearly held on to. Local tests could not have reproduced this bug, tests on production servers by Gullible only turned up the bug once or twice. Theoretically, this should always be turning up when the player that joins a coinflip gets kicked or leaves the server, so why wasn’t it more common during testing? How could it have been more adequately tested?&lt;/p&gt;
-
-&lt;p&gt;I don’t know. It’s ironic because solving this bug creates an even harder problem: how to prevent it. And I have a sneaking feeling that I will need to get around to solving it soon.&lt;/p&gt;
-
-&lt;h1 id=&quot;additional-edit-2018-04-14-004005&quot;&gt;Additional Edit (2018-04-14 00:40:05)&lt;/h1&gt;
-
-&lt;p&gt;Some readers may be confused as to how &lt;code class=&quot;highlighter-rouge&quot;&gt;InventoryCloseEvent&lt;/code&gt; ends up in the same scheduling loop at all if the first instance that it is called is through &lt;code class=&quot;highlighter-rouge&quot;&gt;PlayerList#disconnect(...)&lt;/code&gt;. They reason that since &lt;code class=&quot;highlighter-rouge&quot;&gt;runTask&lt;/code&gt; already schedules for the next tick, all the cleanup would be done and the cycle would never start. The answer to that is: I really have no idea. I know that Essentials kicks players from within a task, so it’s possible that an AFK kick could be causing this, but AFK timers are disabled so I doubt that. I doubt that it is a problem from within the server, because the server doesn’t use the scheduler to process async tasks. Either way, it doesn’t matter what would cause the the loop because whatever is kicking the player is doing it correctly; the inventory itself is not being handled correctly and that is what got fixed.&lt;/p&gt;</content><author><name></name></author><summary type="html">Note: Code samples in this post have been slightly altered. I have not leaked any information from our plugins in the writing of this post</summary></entry></feed>
+&lt;p&gt;I think I’m going to start pasting this around like the gospel…&lt;/p&gt;</content><author><name></name></author><summary type="html">But Also, Some Background</summary></entry></feed>
