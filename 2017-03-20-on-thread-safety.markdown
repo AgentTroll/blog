@@ -72,6 +72,7 @@ In the absence of adequate synchronization, the above diagram demonstrates how `
 Consider the following snippet of code:
 
 ``` java
+@NotThreadSafe
 class MutableState {
     private int state;
     public void mutate() { this.state++; }
@@ -154,17 +155,23 @@ A thread will intrinsically behave as if it were the only thread running on the 
 
 > It is worth nothing that essentially no Java programs are actually "single-threaded" in the strictest sense of the word. The JVM always runs a few threads to perform GC, JIT optimizations, perhaps RMI and Ctrl-Break monitoring as well depending on the environment. A Java program is usually only referred to as "multithreaded" only if the program code itself is actually creating new threads.
 
-This "single-threaded universe" assumption allows for many possible optimizations such as thread-local caching. Since the default is to behave as if other threads don't exist, a thread might cache state values recently read or mutated. Because the caching thread thinks that it is the only thread, it won't consider looking at the caches of other threads, and other threads won't do look at the caching thread either because they have their own caches as well. Threads will continue to read and modify their own cached state variables, which leads to visibility issues.
+This "single-threaded universe" assumption allows for many possible optimizations such as thread-local caching. Since the default is to behave as if other threads don't exist, a thread might cache state values recently read or mutated. Because the caching thread thinks that it is the only thread in existence, it won't consider looking at the caches of other threads, and other threads won't do look at the caching thread either because they have their own caches as well. Threads will continue to read and modify their own cached state variables, which leads to visibility issues. By default, The CPU assumes that its caches are the "source of truth," meaning that if a value from main memory (or RAM) is cached in its multi-level caches, then the CPU will consider the cached value as correct, even if the value in main memory could have been updated by a different thread.
 
-On many systems, what is referred to as "memory" or "main memory" is the "source of truth." Whatever value is stored in the machine DRAM memory is the "correct" value for whatever state is being read or written to. In order to understand why caching is necessary, it may be helpful to look at a diagram of a typical Intel CPU in relation to main memory:
+In order to understand why caching is necessary, it may be helpful to look at a diagram of a typical Intel CPU in relation to main memory:
 
 ![CPU]({{ site.url }}/blog/img/CPU.jpg)
 
-The primary reason why caching is necessary is because lookups to main memory is several orders of a magnitude slower than lookups to something like a multi-level cache (L1/L2/L3). DRAM memory is slow because it is usually quite large and quite far away from the CPU. On the thread-level, state variables may be cached in either the registers or the multi-level caches, which are both small and localized close to the execution cores, meaning that lookups take significantly less time to transmit data to the execution core. Additionally, SRAM memory used in caches is physically much faster than DRAM memory used for main memory. More SRAM memory isn't used because it is expensive as fuck, $5000 USD for a single gigabyte (so literally >100 times the cost of DRAM), and increasing the physical size of the memory storage would increase the lookup time simply because data travel time increases.
-
-<!-- TODO -->
+The primary reason why caching is necessary is because lookups to main memory (or the memory stored in RAM) is several orders of a magnitude slower than lookups to something like a multi-level cache (L1/L2/L3). DRAM memory is slow because it is usually quite large and quite far away from the CPU. On the thread-level, state variables may be cached in either the registers or the multi-level caches, which are both small and localized close to the execution cores, meaning that lookups take significantly less time to transmit data to the execution core. Additionally, SRAM memory used in caches is physically much faster than DRAM memory used for main memory. More SRAM memory isn't used because it is literally expensive as fuck, it costs $5000 USD for a single gigabyte (>100 times the cost per gigabyte of DRAM) and increasing the physical size of the memory storage would also increase the lookup time simply because data travel time increases.
 
 By now, you've seen me write "(shared) state" quite a few times. As was mentioned in the previous section, it is important to note that the entire reason why thread-safety issues even exist is due to *shared states*. **In the absence of shared states, even multithreaded programs are guaranteed to be thread-safe**. If you are NOT sharing data between threads, or if there are no other threads to even share data with, no inconsistencies can be seen.
+
+Because inevitably, a programmer would need to share data in some form or another in their multithreaded programs, CPUs must have a way to ensure that the caches between each execution unit remain coherent. There must be some way for shared states to update their value across caches, and for threads to retrieve values that might have been changed. Many people refer to ensuring shared states are up to date by talking about "cache flushes," whereby the cached state is flushed back to main memory. However, this doesn't make any sense; not only do CPUs not use main memory as a source of truth, it would also make synchronization basically prohibitively expensive because the data would need to cross the memory bus to get back into main memory. Instead, caches are usually kept coherent by policy, meaning that CPUs utilize various protocols (such as the MESIF and MOESI varients of the MESI protocol) that ensure that cached values are kept consistent.
+
+I won't get into the nitty gritty details of how the protocols themselves work, all you need to know is that they work. The more important point is that even with cache coherency protocols in place, inadequately synchronized code may still not work correctly. Execution cores use buffers to store read/write instructions that are sent through the cache coherence protocol. CPUs may be able to use [pipelining](https://cs.stanford.edu/people/eroberts/courses/soco/projects/risc/pipelining/) to keep running instructions as they wait for load requests, for example. In some cases, a CPU may read a "store" instruction from its buffer even though a different value has been stored later on, and would therefore read a stale value. This means that we are still having the visibility problem even with the implementation of cache coherency.
+
+Luckily, CPUs provide *fencing instructions* that insert a "barrier" in the buffer. This means that the entire buffer needs to be processed before execution can proceed, so values that are waiting to be updated are actually updated prior to whatever the thread needs to do. This ensures that the execution core reads the most up-to-date value from another cache or from main-memory.
+
+The Java language provides a memory model which simplifies these details into various different tools and constructs such as the `volatile` and `synchronized` keywords. It is not necessary to understand all the technical details of what a CPU ends up doing to write thread-safe code. However, by having a little bit more background on what the hardware is doing, programmers can understand the need for adequate synchronization and the significance of ensuring that multithreaded code is safe to run.
 
 Sources used:
 
@@ -182,21 +189,21 @@ Sources used:
 <a name="how-to-write-thread-safe-code"></a>
 # [#](#how-to-write-thread-safe-code) HOW TO WRITE THREAD-SAFE CODE?
 
+As previously discussed, the Java language offers many tools to help simplify the process of writing thread-safe code without needing to understand all the hardware details.
+
+If we consider the `MutableState` from the previous section, we can utilize the `volatile` keyword in order to make the class thread-safe.
 
 ``` java
 @ThreadSafe
-public class ThreadSafe {
+public class SafeMutableState {
     // Add 'volatile'
-    private volatile int state = 4;
-    
-    public void setState(int newState) {
-        this.state = newState;
-    }
-    
-    public void getState() {
-        return this.state;
-    }
+    private volatile int state;
+    public void mutate() { this.state++; }
+    public int read() { return this.state; }
 }
 ```
 
-One of the primitives that the Java language gives developers is the `volatile` keyword. This keyword is only applicable to fields. 
+The `volatile` keyword is applicable only to fields.
+
+`// TODO`
+
