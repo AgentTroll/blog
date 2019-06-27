@@ -277,19 +277,6 @@
 
 <p>As previously discussed, the Java language offers many tools to help simplify the process of writing thread-safe code without needing to understand all the hardware details.</p>
 
-<p>If we consider the <code class="highlighter-rouge">MutableState</code> from the previous section, we can utilize the <code class="highlighter-rouge">volatile</code> keyword in order to make the class thread-safe.</p>
-
-<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nd">@ThreadSafe</span>
-<span class="kd">public</span> <span class="kd">class</span> <span class="nc">SafeMutableState</span> <span class="o">{</span>
-    <span class="c1">// Add 'volatile'</span>
-    <span class="kd">private</span> <span class="kd">volatile</span> <span class="kt">int</span> <span class="n">state</span><span class="o">;</span>
-    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">mutate</span><span class="o">()</span> <span class="o">{</span> <span class="k">this</span><span class="o">.</span><span class="na">state</span><span class="o">++;</span> <span class="o">}</span>
-    <span class="kd">public</span> <span class="kt">int</span> <span class="nf">read</span><span class="o">()</span> <span class="o">{</span> <span class="k">return</span> <span class="k">this</span><span class="o">.</span><span class="na">state</span><span class="o">;</span> <span class="o">}</span>
-<span class="o">}</span>
-</code></pre></div></div>
-
-<p>The <code class="highlighter-rouge">volatile</code> keyword is applicable only to fields.</p>
-
 <p><code class="highlighter-rouge">// TODO</code></p>
 
 
