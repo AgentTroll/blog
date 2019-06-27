@@ -191,19 +191,5 @@ Sources used:
 
 As previously discussed, the Java language offers many tools to help simplify the process of writing thread-safe code without needing to understand all the hardware details.
 
-If we consider the `MutableState` from the previous section, we can utilize the `volatile` keyword in order to make the class thread-safe.
-
-``` java
-@ThreadSafe
-public class SafeMutableState {
-    // Add 'volatile'
-    private volatile int state;
-    public void mutate() { this.state++; }
-    public int read() { return this.state; }
-}
-```
-
-The `volatile` keyword is applicable only to fields.
-
 `// TODO`
 
