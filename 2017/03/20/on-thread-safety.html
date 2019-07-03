@@ -277,6 +277,60 @@
 
 <p>As previously discussed, the Java language offers many tools to help simplify the process of writing thread-safe code without needing to understand all the hardware details.</p>
 
+<h4 id="the-synchronized-keyword">The <code class="highlighter-rouge">synchronized</code> Keyword</h4>
+
+<p>One such tool is the <code class="highlighter-rouge">synchronized</code> keyword. All classes extending <code class="highlighter-rouge">Object</code> (basically classes that you write or are provided by the language excluding primitive types) possess what is known as an “intrinsic lock.” You can use a <code class="highlighter-rouge">synchronized</code> block to acquire the lock and release it when the block ends. The point of a lock is only one thread can “hold” the lock at any given time. This means that if <code class="highlighter-rouge">Thread A</code> already has the lock and <code class="highlighter-rouge">Thread B</code> arrives at the <code class="highlighter-rouge">synchronized</code> block, it will wait until <code class="highlighter-rouge">Thread A</code> is done before the lock can be acquired by <code class="highlighter-rouge">Thread B</code>. When more than one thread is waiting, a random thread is selected to acquire the lock once it is released. More on this later.</p>
+
+<p>Consider the <code class="highlighter-rouge">MutableState</code> class from the previous section. We can utilize the <code class="highlighter-rouge">synchronized</code> keyword to ensure thread-safety like so:</p>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nd">@ThreadSafe</span>
+<span class="kd">class</span> <span class="nc">SafeMutableState</span> <span class="o">{</span>
+    <span class="kd">private</span> <span class="kt">int</span> <span class="n">state</span><span class="o">;</span>
+
+    <span class="kd">public</span> <span class="kd">synchronized</span> <span class="kt">void</span> <span class="nf">mutate</span><span class="o">()</span> <span class="o">{</span> 
+        <span class="k">this</span><span class="o">.</span><span class="na">state</span><span class="o">++;</span> 
+    <span class="o">}</span>
+
+    <span class="kd">public</span> <span class="kd">synchronized</span> <span class="kt">int</span> <span class="nf">read</span><span class="o">()</span> <span class="o">{</span> 
+        <span class="k">return</span> <span class="k">this</span><span class="o">.</span><span class="na">state</span><span class="o">;</span> 
+    <span class="o">}</span>
+<span class="o">}</span>
+</code></pre></div></div>
+
+<p>I previously mentioned that the <code class="highlighter-rouge">synchronized</code> “block” is used to acquire and release a lock. However, in the above code snippet, I have used it as a method modifier. What’s going on? As a matter of fact, using the <code class="highlighter-rouge">synchronized</code> keyword as a method modifier is equivalent to the following:</p>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nd">@ThreadSafe</span>
+<span class="kd">class</span> <span class="nc">SafeMutableState</span> <span class="o">{</span>
+    <span class="kd">private</span> <span class="kt">int</span> <span class="n">state</span><span class="o">;</span>
+
+    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">mutate</span><span class="o">()</span> <span class="o">{</span> 
+        <span class="kd">synchronized</span> <span class="o">(</span><span class="k">this</span><span class="o">)</span> <span class="o">{</span>
+            <span class="k">this</span><span class="o">.</span><span class="na">state</span><span class="o">++;</span> 
+        <span class="o">}</span>
+    <span class="o">}</span>
+
+    <span class="kd">public</span> <span class="kt">int</span> <span class="nf">read</span><span class="o">()</span> <span class="o">{</span> 
+        <span class="kd">synchronized</span> <span class="o">(</span><span class="k">this</span><span class="o">)</span> <span class="o">{</span>
+            <span class="k">return</span> <span class="k">this</span><span class="o">.</span><span class="na">state</span><span class="o">;</span> 
+        <span class="o">}</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+</code></pre></div></div>
+
+<p>A <code class="highlighter-rouge">synchronized</code> instance method means that it will simply wrap the method code with a <code class="highlighter-rouge">synchronized (this) {}</code> block. This acquires the intrinsic lock of the Object belonging to that instance of the class.</p>
+
+<p>But what about <code class="highlighter-rouge">static</code> methods? Since we don’t have <code class="highlighter-rouge">this</code> access, which lock does the <code class="highlighter-rouge">synchronized</code> block acquire then? In that case, it would acquire the lock belonging to the <em>class object</em>. For example, say that there was a <code class="highlighter-rouge">static synchronized</code> method in <code class="highlighter-rouge">SafeMutableState</code>. That method would be equivalent to writing <code class="highlighter-rouge">synchronized (SafeMutableState.class) {}</code>.</p>
+
+<p>By making the methods <code class="highlighter-rouge">synchronized</code>, we will ensure that only one thread can perform an increment operation at a time using the <code class="highlighter-rouge">mutate()</code> method. This means that the atomicity issue discussed in the earlier section, where one thread is in the middle of updating the <code class="highlighter-rouge">state</code> value doesn’t complete before another thread reads the value prior to the increment. The <code class="highlighter-rouge">mutate()</code> operation is therefore <em>atomic</em> because the operation completes in its entirety before it is called again. In effect, this means that the <code class="highlighter-rouge">mutate()</code> method is executed sequentially since each thread must line up if they try to update the <code class="highlighter-rouge">state</code> value simultaneously. Having threads line up in this way is sometimes referred to as <em>thread serialization</em>, (not to be confused with data serialization) because threads are executing serially (sequentially).</p>
+
+<p>However, this doesn’t explain why the <code class="highlighter-rouge">read()</code> method is <code class="highlighter-rouge">synchronized</code> as well. Reading from a single field or writing to a single field (except in some cases involving the <code class="highlighter-rouge">long</code> and <code class="highlighter-rouge">double</code> types, more on this later) is atomic already, so we should have no issues, right? Actually, no, and the answer can even be “it depends.” That being said, the <em>only</em> safe and definitive way to ensure that <code class="highlighter-rouge">SafeMutableState</code> is thread-safe is to ensure that the <code class="highlighter-rouge">read()</code> method is synchronized. The main reason is visibility. A <code class="highlighter-rouge">synchronized</code> block only guarantees that values that are set BEFORE acquiring the lock are visible to the thread that acquires it. That means that even though we have a <code class="highlighter-rouge">synchronized mutate()</code> method, that only guarantees that the thread calling the <code class="highlighter-rouge">mutate()</code> method can see the <code class="highlighter-rouge">state</code> value. This means that in order to guarantee that changes made to the <code class="highlighter-rouge">state</code> value to be visible to the <code class="highlighter-rouge">read()</code> method, the <code class="highlighter-rouge">read()</code> method itself must also be <code class="highlighter-rouge">synchronized</code>. However, if we recall from the earlier section, the reason why we have visibility issues is because of the store and load buffers on the CPU, right? That means that as long as we have a fence inserted somewhere in our code, then all the most recent values will be available to the CPU already, which means that if we have a <code class="highlighter-rouge">synchronized</code> or <code class="highlighter-rouge">volatile</code> somewhere that would produce this fence, then we technically don’t even need the <code class="highlighter-rouge">synchronized</code> (we might not even need to synchronized on the same long). Using side-effects like this is referred to as <em>piggybacking</em>. More on this later. With that, I only conclude that writing your code this way is <strong>dangerous</strong>, fragile, non-portable (especially on CPUs that do not have as strong guarantees about memory fences), and does not comply with the Java Language Specification. Remember, your code is either properly synchronized, or not synchronized at all. You cannot have half of your methods <code class="highlighter-rouge">synchronized</code>, and the other half not synchronized and expect your code to work correctly. Synchronize, and remember to synchronize on the correct locks to ensure that your code complies with the Java Memory Model.</p>
+
+<p>Wherever your code is being called by multiple threads, a <code class="highlighter-rouge">synchronized</code> block can be used to ensure atomicity by allowing only a single thread to be executing that to ensure atomicity through thread serialization and that the state values read by that method are up to date.</p>
+
+<p>One technical detail previously mentioned is that threads tend to be non-deterministic. There are many things that control thread timing and when threads run what - the OS thread scheduler and the CPU come to mind. The execution order of threads are arbitrary, and <code class="highlighter-rouge">synchronized</code> blocks cannot control that. When threads queue to wait for a lock, a random thread is selected when the lock becomes available again. It is possible to ensure FIFO order, but that requires a slightly different tool that I’ll be covering in a few sections. That being said, <code class="highlighter-rouge">synchronized</code> blocks can control reorderings to some extent. The compiler and the JIT may try to reorder certain instructions that work in single-threaded code, but will produce surprising results in multithreaded code. I myself don’t actually have any examples of this, but it is worth noting that the <code class="highlighter-rouge">synchronized</code> block cannot be reordered with other instructions outside the block as an optimization (although again, how this is an optimization I’m not exactly sure). A <code class="highlighter-rouge">synchronized</code> block acts as a kind of barrier for this, meaning that instructions cannot flow past the <code class="highlighter-rouge">synchronized</code> block; instructions before can be reordered still, but only as long as those instructions stay before the <code class="highlighter-rouge">synchronized</code> block. This is the same for instructions after the <code class="highlighter-rouge">synchronized</code> block and even instructions inside the <code class="highlighter-rouge">synchronized</code> block as well, so long as those instructions do not move outside of the <code class="highlighter-rouge">synchronized</code> block, of course.</p>
+
+<h4 id="the-volatile-keyword">The <code class="highlighter-rouge">volatile</code> Keyword</h4>
+
 <p><code class="highlighter-rouge">// TODO</code></p>
 
 

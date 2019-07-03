@@ -1,4 +1,194 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.6.2">Jekyll</generator><link href="https://agenttroll.github.io/blog/feed.xml" rel="self" type="application/atom+xml" /><link href="https://agenttroll.github.io/blog/" rel="alternate" type="text/html" /><updated>2019-06-26T19:06:32-07:00</updated><id>https://agenttroll.github.io/blog/</id><title type="html">Inside a Troll</title><subtitle>Thoughts of a Java developer</subtitle><entry><title type="html">Implementing PBFT in Java</title><link href="https://agenttroll.github.io/blog/2019/06/23/implementing-pbft-in-java.html" rel="alternate" type="text/html" title="Implementing PBFT in Java" /><published>2019-06-23T17:23:35-07:00</published><updated>2019-06-23T17:23:35-07:00</updated><id>https://agenttroll.github.io/blog/2019/06/23/implementing-pbft-in-java</id><content type="html" xml:base="https://agenttroll.github.io/blog/2019/06/23/implementing-pbft-in-java.html">&lt;p&gt;Following up with my &lt;a href=&quot;&quot;&gt;previous post&lt;/a&gt; about one of my 
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.6.2">Jekyll</generator><link href="https://agenttroll.github.io/blog/feed.xml" rel="self" type="application/atom+xml" /><link href="https://agenttroll.github.io/blog/" rel="alternate" type="text/html" /><updated>2019-07-02T21:32:33-07:00</updated><id>https://agenttroll.github.io/blog/</id><title type="html">Inside a Troll</title><subtitle>Thoughts of a Java developer</subtitle><entry><title type="html">Lessons Learned Debugging: Part 5</title><link href="https://agenttroll.github.io/blog/2019/07/02/lessons-learned-debugging-part-5.html" rel="alternate" type="text/html" title="Lessons Learned Debugging: Part 5" /><published>2019-07-02T20:22:15-07:00</published><updated>2019-07-02T20:22:15-07:00</updated><id>https://agenttroll.github.io/blog/2019/07/02/lessons-learned-debugging-part-5</id><content type="html" xml:base="https://agenttroll.github.io/blog/2019/07/02/lessons-learned-debugging-part-5.html">&lt;p&gt;This isn’t a bugginess lesson, but if you’re ever going to
+progress beyond a novice-level plugin developer (or even a
+Java developer for that matter), then you’ll need to figure
+out how to ensure data integrity.&lt;/p&gt;
+
+&lt;h1 id=&quot;minimize-data-loss-in-case-of-catastrophe&quot;&gt;Minimize Data Loss In Case of Catastrophe&lt;/h1&gt;
+
+&lt;p&gt;This is not a very pointed piece of advice (more on that in
+a bit), but the whole idea is to design your plugins around
+making sure that as much of your data is kept somewhere
+safe so that in the event of a catastrophe, a bad weather 
+event knocks out your server, you get hacked, your server
+crashes, etc., you can recover at least some, hopefully
+most of your data. This isn’t some external threat that you
+can hope to avoid, this is &lt;strong&gt;inevitable&lt;/strong&gt;. You cannot hope
+to continue avoiding these types of events forever, and 
+take it from me, I learned it the hard way.&lt;/p&gt;
+
+&lt;p&gt;If you are writing plugins and getting paid to do so, you
+MUST have some sort of mechanism to minimize data loss.
+Servers fail all the time; it is not a matter of if, it is
+a matter of when. It is not a choice, it is a 
+responsibility.&lt;/p&gt;
+
+&lt;h1 id=&quot;how-to-protect-your-data&quot;&gt;How to Protect Your Data&lt;/h1&gt;
+
+&lt;p&gt;The most effective way to minimize data loss is through
+autosaving to disk. Autosaving writes a reconstructible
+state, which means that the exact properties, settings,
+objects, whatever type of data being stored in your plugin
+at the exact moment in time can be derived from the data 
+that you save. This means that you should act like your 
+plugin is calling then &lt;code class=&quot;highlighter-rouge&quot;&gt;onDisable&lt;/code&gt; method without actually
+having the server shut down every X minutes. It should not
+be up to the developer to decide how long the autosave
+interval is, and therefore, this should be configurable.
+That being said, 15-30 minutes is a good sweet spot. 
+Writing data to disk ensures that the data cannot be lost
+if the server itself crashes, or a power outage occurs.
+Even if a disk failure occurs, data can sometimes be 
+recovered from the disk. Preferably, &lt;em&gt;secure&lt;/em&gt; backups are
+made every so often as well, which means that it is 
+possible to snapshot the disk state and prevent the 
+autosaves from going to waste even if the disk is
+inadvertently destroyed, or access to the server is 
+completely lost or deleted altogether.&lt;/p&gt;
+
+&lt;p&gt;It is important to note that even autosaves are a point of
+failure. For example, the following code is not an 
+effective way to save data:&lt;/p&gt;
+
+&lt;div class=&quot;language-java highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;k&quot;&gt;try&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;BufferedWriter&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;writer&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;...)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;for&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Data&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;datum&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;this&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;data&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+        &lt;span class=&quot;n&quot;&gt;writer&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;write&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;datum&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;serialize&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;());&lt;/span&gt;
+    &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;}&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;catch&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;IOException&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;e&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;e&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;printStackTrace&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;();&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;}&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;finally&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;writer&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;!=&lt;/span&gt; &lt;span class=&quot;kc&quot;&gt;null&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+        &lt;span class=&quot;n&quot;&gt;writer&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;close&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;();&lt;/span&gt;
+    &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;The problem is that multiple things could possibly go wrong
+here. It may not even be possible to open a new 
+&lt;code class=&quot;highlighter-rouge&quot;&gt;BufferedWriter&lt;/code&gt; if the OS exhausts the available file 
+handles. A more effective solution looks like this:&lt;/p&gt;
+
+&lt;div class=&quot;language-java highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;k&quot;&gt;try&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;BufferedWriter&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;writer&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;...)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;for&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Data&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;datum&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;this&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;data&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+        &lt;span class=&quot;k&quot;&gt;try&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+            &lt;span class=&quot;n&quot;&gt;System&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;out&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;println&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;datum&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;serialize&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;());&lt;/span&gt;
+        &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;catch&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Exception&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;e1&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+            &lt;span class=&quot;n&quot;&gt;e1&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;printStackTrace&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;();&lt;/span&gt;
+        &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
+    &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;}&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;catch&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Exception&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;e&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;for&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Data&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;datum&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;this&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;data&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+        &lt;span class=&quot;k&quot;&gt;try&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+            &lt;span class=&quot;n&quot;&gt;System&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;out&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;println&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;datum&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;serialize&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;());&lt;/span&gt;
+        &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;catch&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Exception&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;e1&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+            &lt;span class=&quot;n&quot;&gt;e1&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;printStackTrace&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;();&lt;/span&gt;
+        &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
+    &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;This way, even if the file cannot be written to, at least
+it might possibly be recovered by parsing the log file or
+by piping the console output somewhere (the parser of this
+data need not be written beforehand, but the data itself 
+should at least be available). Additionally, even if 
+individual &lt;code class=&quot;highlighter-rouge&quot;&gt;Data#serialize()&lt;/code&gt; methods fail, it will not
+prevent other data from being saved.&lt;/p&gt;
+
+&lt;p&gt;Plugins also need to be extremely careful about exceptions
+thrown in the &lt;code class=&quot;highlighter-rouge&quot;&gt;onEnable&lt;/code&gt; method. Because errors during 
+startup cause plugins to be disabled (often with empty 
+data), this means that the data file will be overwritten
+because of a parsing error and all the data will disappear.
+However, ignoring this error is also problematic because it
+will not prevent the plugin from overwriting all of the 
+data on shutdown with the new data. There are multiple
+avenues to solving this, including backing up every server
+startup, using a ring buffer style system where the file
+is copied to a (or multiple) temporary files each time, or
+by using a log file that records changes rather than a
+file which records the singular state of the plugin. The 
+most effective solution I personally am aware of is the
+second option, where temporary files are used to store a
+backup of the data, but only in case an exception occurs:&lt;/p&gt;
+
+&lt;div class=&quot;language-java highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;kd&quot;&gt;public&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;void&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;onEnable&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;()&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+    &lt;span class=&quot;o&quot;&gt;...&lt;/span&gt;
+
+    &lt;span class=&quot;k&quot;&gt;try&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;BufferedReader&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;reader&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;...)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+        &lt;span class=&quot;o&quot;&gt;...&lt;/span&gt;
+    &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;catch&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Exception&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;e&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+        &lt;span class=&quot;n&quot;&gt;Files&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;copy&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(...,&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;...);&lt;/span&gt;
+        &lt;span class=&quot;n&quot;&gt;e&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;printStackTrace&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;();&lt;/span&gt;
+    &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
+
+    &lt;span class=&quot;o&quot;&gt;...&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;This isn’t perfect, because the exception could possibly
+stem from the fact that file handles have been exhausted,
+so the “safest” option is going with a backup every 
+startup, but this is a lightweight solution for what a
+rather serious potential issue, so I personally go with it.&lt;/p&gt;
+
+&lt;p&gt;Another useful way to ensure data integrity is to turn off
+autorestart. Autorestarting is really helpful and keeps 
+players happy when a server goes down due to a one-off 
+error, but in the long run, the safest option is to make 
+sure that a server that goes down stays down until the 
+issue is identified. The issue doesn’t necessarily need to
+be entirely resolved (only a band-aid needs to be put over
+such as removing a plugin while it is fixed), but ensuring
+that plugins do not start up again only to enter an endless
+loop of crashing the server and starting it up again will
+ensure that the data that is backed up stays until it can
+be properly restored and the error can be properly
+investigated. For example, if you are saving in the 
+&lt;code class=&quot;highlighter-rouge&quot;&gt;onEnable&lt;/code&gt; to the same backup file whenever an exception 
+is thrown, then it will do little good for you because the
+autorestart might erase both the original and the backup as
+well if the original is now empty.&lt;/p&gt;
+
+&lt;p&gt;These are just a few of the pointed pieces of advice I
+have. I’m certain that there are more ways to reduce data
+vulnerability, but this is a very broad problem that has
+a large variety of different solutions.&lt;/p&gt;
+
+&lt;h1 id=&quot;conclusion&quot;&gt;Conclusion&lt;/h1&gt;
+
+&lt;p&gt;Just because autosaving is an integral part of maintaining
+data integrity does not mean that you need to be paranoid.
+However, it does mean that you need to be prudent and look
+use extra caution when writing mission-critical portions of
+your plugin.&lt;/p&gt;
+
+&lt;p&gt;Again repeating my custom, I leave with the following wisdom
+from 
+&lt;a href=&quot;http://spinroot.com/gerard/pdf/P10.pdf&quot;&gt;The Power of Ten&lt;/a&gt;:&lt;/p&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;If the rules seem Draconian at first, bear in mind that
+they are meant to make it possible to check code where very
+literally your life may depend on its correctness: code 
+that is used to control the airplane that you fly on, the 
+nuclear power plant a few miles from where you live, or the 
+spacecraft that carries astronauts into orbit. The rules 
+act like the seat-belt in your car: initially they are 
+perhaps a little uncomfortable, but after a while their use
+becomes second-nature and not using them becomes 
+unimaginable.&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;If you’re tuned in with my blog, you can expect some more
+of posts in the “Lessons Learned Debugging” series in the
+near future. I don’t have any big projects that I want to
+talk about (yet), but if I find or write one, I’ll be sure
+to write about that first. As of the writing of this post,
+I’m still open to Bukkit development opportunities, so if
+you’re hiring, check my 
+&lt;a href=&quot;https://agenttroll.github.io/&quot;&gt;main website&lt;/a&gt; under 
+“Professional Experience” to see if I’m still looking for
+work.&lt;/p&gt;</content><author><name></name></author><summary type="html">This isn’t a bugginess lesson, but if you’re ever going to progress beyond a novice-level plugin developer (or even a Java developer for that matter), then you’ll need to figure out how to ensure data integrity.</summary></entry><entry><title type="html">Implementing PBFT in Java</title><link href="https://agenttroll.github.io/blog/2019/06/23/implementing-pbft-in-java.html" rel="alternate" type="text/html" title="Implementing PBFT in Java" /><published>2019-06-23T17:23:35-07:00</published><updated>2019-06-23T17:23:35-07:00</updated><id>https://agenttroll.github.io/blog/2019/06/23/implementing-pbft-in-java</id><content type="html" xml:base="https://agenttroll.github.io/blog/2019/06/23/implementing-pbft-in-java.html">&lt;p&gt;Following up with my &lt;a href=&quot;&quot;&gt;previous post&lt;/a&gt; about one of my 
 prior projects, I have another post about yet another
 project that I’ve recently finished, 
 &lt;a href=&quot;https://github.com/AgentTroll/pbft-java&quot;&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;pbft-java&lt;/code&gt;&lt;/a&gt;.&lt;/p&gt;
@@ -2129,133 +2319,4 @@ unless some extenuating circumstance forces me to.&lt;/p&gt;</content><author><n
 
 &lt;p&gt;I definitely learned a lot about databases by going through this entire ordeal. While it was very frustrating to find out that my plugin was at fault for crashing, yet again (see my previous blog post for more about crashing), I would not have been motivated enough to go through and test for myself each of the little details involving databases. After all, it is the little details that separates the good from the great.&lt;/p&gt;
 
-&lt;p&gt;There will be lots of exciting things to come, both for MineSaga and for my blog in the coming few weeks as summer commences, so I’m definitely very hyped about that! Stay tuned.&lt;/p&gt;</content><author><name></name></author><summary type="html">An issue with one of the plugins on MineSaga has recently brought to my attention the rather poor decision of using SQLite to store player data. Now we’re not even doing anything complicated with SQLite, it’s literally just used for persistence to track player data that gets updated occasionally. Even factoring in network latency, I don’t believe that SQLite will outperform MySQL for our particular use case.</summary></entry><entry><title type="html">JDB, But Not That One</title><link href="https://agenttroll.github.io/blog/2018/05/11/jdb-but-not-that-one.html" rel="alternate" type="text/html" title="JDB, But Not That One" /><published>2018-05-11T23:44:35-07:00</published><updated>2018-05-11T23:44:35-07:00</updated><id>https://agenttroll.github.io/blog/2018/05/11/jdb-but-not-that-one</id><content type="html" xml:base="https://agenttroll.github.io/blog/2018/05/11/jdb-but-not-that-one.html">&lt;h1 id=&quot;but-also-some-background&quot;&gt;But Also, Some Background&lt;/h1&gt;
-
-&lt;p&gt;I’ve been working on a school project for my CS Projects class for the past few months. Just a few days ago, I had a great opportunity to actually present it to a school staff meeting. I had mixed feelings about the overall success of my presentation, so instead of working on improving my prepardness for presentations that I might have later, I decided to write a rather unfaithful transcript of it here. I don’t fault the staff for being primarily non-technical, but I definitely would have enjoyed presenting to a more seasoned audience in the future.&lt;/p&gt;
-
-&lt;p&gt;But enough with my lamenting. Back in September, I had to make a decision on what kind of project I would work on for the rest of the year. Actually, I finished the project last month, so perhaps the rest of the year minus two months. I would have wanted to work on TridentSDK, but that wouldn’t have been very good material to present. There’s a ton of notable acheivements in TridentSDK that would be difficult to explain relative to an actual Minecraft server, so that got scrapped. My second-choice would be a debugger. I often used the IntelliJ IDEA debugger to work on TridentSDK, so I mean, why not? It really counldn’t be that difficult, can it? As it turns out, it really wasn’t &lt;em&gt;that&lt;/em&gt; difficult. I did deal with some interesting bugs, and developing it was difficult at times, but there wasn’t anything that I didn’t already know, save for the intricacies of the JDI.&lt;/p&gt;
-
-&lt;p&gt;By the end of my time developing JDB, I got really lazy and put off working on it a lot. It felt really complete after I solved &lt;a href=&quot;https://github.com/AgentTroll/jdb/commit/48483f6211cb5e67f81133b6a050dbc3151ad495&quot;&gt;the bug involving printing out multiple return values for the same variable&lt;/a&gt;. Thanks, laziness. &lt;a href=&quot;https://github.com/AgentTroll/jdb/blob/master/jdb.md&quot;&gt;This was the real planning document&lt;/a&gt; for JDB in the first place. As a matter of fact, I had no clue that there was &lt;a href=&quot;https://docs.oracle.com/javase/7/docs/technotes/tools/windows/jdb.html&quot;&gt;already a project&lt;/a&gt; in its namesake, but I haven’t been aware of it. That’s not the real takeaway from planning though, the real takeaway is that I was really ambitious at the start, but ended up with a lot simpler of a program than I had envisioned. In fact, when I took a look at it a few days ago, when I was making my presentation, I realized I basically got to none of the features in the Goals section. Thanks, laziness. Nevertheless, I still think I ended up with a very nifty program that did a lot more than I thought I could do.&lt;/p&gt;
-
-&lt;h1 id=&quot;slides&quot;&gt;Slides&lt;/h1&gt;
-
-&lt;p&gt;As a small side note, Pages sucked for converting slides to images. I used https://www.freepdfconvert.com/pdf-jpg. A few images that I got off the internet got removed from slides 2-3, I was too lazy to cite them and they didn’t have anything very useful anyways.&lt;/p&gt;
-
-&lt;blockquote&gt;
-  &lt;p&gt;I’ve quoted approximately what I said&lt;/p&gt;
-&lt;/blockquote&gt;
-
-&lt;p&gt;I’ll put some more stuff down below it or what I should have added.&lt;/p&gt;
-
-&lt;p&gt;&lt;img src=&quot;https://agenttroll.github.io/blog/img/jdb.odp.jpg&quot; alt=&quot;Slide 1&quot; /&gt;&lt;/p&gt;
-
-&lt;blockquote&gt;
-  &lt;p&gt;Hi, I’m Johnny, I’ve been working on a debugger for the past year. If you don’t know what a debugger is, don’t worry. I’ll get to that in the next slide.&lt;/p&gt;
-&lt;/blockquote&gt;
-
-&lt;p&gt;&lt;img src=&quot;https://agenttroll.github.io/blog/img/jdb.odp-2.jpg&quot; alt=&quot;Slide 2&quot; /&gt;&lt;/p&gt;
-
-&lt;blockquote&gt;
-  &lt;p&gt;So what exactly is a debugger? What is debugging? What even is a bug in the first place? So a bug is basically an error; it’s a mistake made by the programmer when he is writing code. A bug is a glitch, and anomaly, or oversight that results in the program not working correctly. All programs contain bugs. Bugs aren’t good. When you’re writing software, you don’t want bugs. One of the tools that you might use to get rid of bugs (these errors in your code) is by using a debugger. So when a program runs, what the programmer sees on his screen, all the computer code, all of that becomes invisible. You can’t see what a program is doing when it runs, you can only see how it affects what the user sees. A debugger helps remove bugs because flaws in the code require you to see the state of the program, and when there is an error, there will be an inconsistency in the program’s state.&lt;/p&gt;
-&lt;/blockquote&gt;
-
-&lt;p&gt;&lt;img src=&quot;https://agenttroll.github.io/blog/img/jdb.odp-3.jpg&quot; alt=&quot;Slide 3&quot; /&gt;&lt;/p&gt;
-
-&lt;blockquote&gt;
-  &lt;p&gt;Now that we have that out of the way, what was I even thinking in the first place, why did I want to create a debugger? I work a lot in the backend, which is basically the behind-the-scenes role of writing software. I write infrastructure, so other people depend on me being right so that everything works. If my programs don’t work, everything comes crashing down with it. This was a big inspiration for me because a debugger would give a helping hand in removing bugs and errors from my program. Secondly, many debuggers are included in your text editor, called an IDE. So your debugger is often something that has buttons and stuff, that you click on. What I was looking for was a &lt;em&gt;CLI&lt;/em&gt;-based debugger, and a CLI is basically a big panel that doesn’t have buttons or anything on it, you have to type commands into it for it to do anything. So think of hacker movies and you see some guy typing away at his computer and a bunch of garbage text comes up on the screen and it magically does something - that was what I was looking for, to be able to use commands to control the debugger instead of clicking buttons. This just makes it more efficient to work with than having to move a mouse. Finally, I mean, why not? I needed a project to work on, why not make a debugger?&lt;/p&gt;
-&lt;/blockquote&gt;
-
-&lt;p&gt;I had to spend a lot of time here trying to explain basic programming concepts like an IDE and a CLI. I would have liked more time getting into the actual meat of JDB in the first place, but alas, I had to spend my time explaining this to my audience!&lt;/p&gt;
-
-&lt;p&gt;&lt;img src=&quot;https://agenttroll.github.io/blog/img/jdb.odp-4.jpg&quot; alt=&quot;Slide 4&quot; /&gt;&lt;/p&gt;
-
-&lt;blockquote&gt;
-  &lt;p&gt;So to demonstrate what my debugger does, I’m going to use it to reverse engineer something, and that something will be a Minecraft server. Now, I chose the Minecraft server becuse it’s relatively simple to understand the function of it at its core, and it will really help me explain some of what it does. So what you see here is a function that gets run whenever the server stops, and you will also see a null-check that I have boxed near the bottom of your screen. What this does is it checks the value of the variable. When programming, you want to make sure that your values are initialized, that is that there is &lt;em&gt;something&lt;/em&gt; at that variable. Sometimes, the variable is null and void; there is nothing stored there. So to demonstrate how my debugger works, what I want to find out is when the server shuts down, is there a value at all at the &lt;code class=&quot;highlighter-rouge&quot;&gt;v&lt;/code&gt; variable. We know that it is a player list, and I can deduce that it stores players somehow. But what I want to know is even if players don’t join the server, will there the &lt;code class=&quot;highlighter-rouge&quot;&gt;v&lt;/code&gt; variable still be null, void, and have no value, or will there be &lt;em&gt;something&lt;/em&gt; at that variable when the server shutsdown?&lt;/p&gt;
-&lt;/blockquote&gt;
-
-&lt;p&gt;Now admittedly, reverse engineering wasn’t a great demonstration of the debugger. My presentation focused very much on explaining the reverse engineering concepts that could have demonstrated better what my debugger does if I had used simple scenarios instead. But alas, I was also inspired to make the debugger because I had a hard time with getting a regular debugger connected to the Minecraft server to debug my plugins. It would also be great if I could demonstrate that JDB works outside of my own custom scenario programs and with other programs as well, but I’m not sure if my audience would have understood the significance of that for me, since I’ve only ever used the regular IntelliJ IDEA debugger to test code thath it runs intead. I also find it hard to believe that anyone followed along with the “null and void” idea of a value, but that should be expected at this point.&lt;/p&gt;
-
-&lt;p&gt;&lt;img src=&quot;https://agenttroll.github.io/blog/img/jdb.odp-5.jpg&quot; alt=&quot;Slide 5&quot; /&gt;&lt;/p&gt;
-
-&lt;blockquote&gt;
-  &lt;p&gt;So what I’m doing here is trying to find the line number on which there is this check for the value of &lt;code class=&quot;highlighter-rouge&quot;&gt;v&lt;/code&gt;. So basically how debuggers work is, as a I said earlier, to stop and halt the program at specific points in the code. So as the code gets read by the computer, as it moves through each line of code, I want to stop the program right before that check and read the value at the &lt;code class=&quot;highlighter-rouge&quot;&gt;v&lt;/code&gt; variable. This is called a breakpoint, the place where you want the program to just halt for a sec so you can look at the program state. So here, in order to find the line number to put the breakpoint on, I will have to look for where that if check is. I’ve boxed it at #1 in the bottom left corner of the screen, you can see the ifnull check if you are close enough to the screen. You also might see that there are two other if checks, but I know that instruction #78 is the right one because in the code from the previous slide (scroll back one slide) you can see that there are 3 if checks here, and (scroll to slide #5) and there are 2 if checks above this one and the variable appears here where you can see the method being called where I have underlined by the bottom right. What I’ve decided to do is actually to pick the instruction at #38, labelled by the #2 box at the top left corner of the screen. This is because in order for the breakpoint to work, I must guarantee that the code is run in the first place, and if I accidentally put it in betwen the if checks, my breakpoint may not run. You can see on the line number table that #32 is located on line 482.&lt;/p&gt;
-&lt;/blockquote&gt;
-
-&lt;p&gt;This was an extremely strenuous slide for me because I needed explain all these different concepts like breakpoints and the basic ideas of machine code to laymen.&lt;/p&gt;
-
-&lt;p&gt;&lt;img src=&quot;https://agenttroll.github.io/blog/img/jdb.odp-6.jpg&quot; alt=&quot;Slide 6&quot; /&gt;&lt;/p&gt;
-
-&lt;blockquote&gt;
-  &lt;p&gt;Here I am going to start the debugger and you can see me using &lt;code class=&quot;highlighter-rouge&quot;&gt;ba&lt;/code&gt; which means put a breakpoint after line 482 in MinecraftServer.&lt;/p&gt;
-&lt;/blockquote&gt;
-
-&lt;p&gt;At this point, my advisor has reminded me that I have 30 seconds left of presentation time. What I should have done was explain also the selection at the bottom and how I select from duplicate class names.&lt;/p&gt;
-
-&lt;p&gt;&lt;img src=&quot;https://agenttroll.github.io/blog/img/jdb.odp-7.jpg&quot; alt=&quot;Slide 7&quot; /&gt;&lt;/p&gt;
-
-&lt;blockquote&gt;
-  &lt;p&gt;As it turns out, I get an error from the program stopping. This is ironic because there’s a bug in my program that I made to get rid of bugs (chuckles)&lt;/p&gt;
-&lt;/blockquote&gt;
-
-&lt;p&gt;&lt;img src=&quot;https://agenttroll.github.io/blog/img/jdb.odp-8.jpg&quot; alt=&quot;Slide 8&quot; /&gt;&lt;/p&gt;
-
-&lt;blockquote&gt;
-  &lt;p&gt;So, what happened? If you can see here, in my code, I am checking for a 0 and leaving the code. On the previous slide, you can see that 0 is an option, and the no option should be -1. Let’s change this to -1 and see what happens.&lt;/p&gt;
-&lt;/blockquote&gt;
-
-&lt;p&gt;As I’m under time constraint, I’m unable to explain what the if and the comparison constructs mean.&lt;/p&gt;
-
-&lt;p&gt;&lt;img src=&quot;https://agenttroll.github.io/blog/img/jdb.odp-9.jpg&quot; alt=&quot;Slide 9&quot; /&gt;&lt;/p&gt;
-
-&lt;blockquote&gt;
-  &lt;p&gt;Alright, so we can put a breakpoint in there, that’s good! No errors this time, what happens then, when I stop the server?&lt;/p&gt;
-&lt;/blockquote&gt;
-
-&lt;p&gt;Here, I should have reminded my audience of what a breakpoint is and the meaning of what I’m doing, but alas, I was already cutting into meeting time after my presentation.&lt;/p&gt;
-
-&lt;p&gt;&lt;img src=&quot;https://agenttroll.github.io/blog/img/jdb.odp-10.jpg&quot; alt=&quot;Slide 10&quot; /&gt;&lt;/p&gt;
-
-&lt;blockquote&gt;
-  &lt;p&gt;I can then inspect all the variables in the state of my program, and you can see at the bottom that I’ve highlighted the value that is located at the &lt;code class=&quot;highlighter-rouge&quot;&gt;v&lt;/code&gt; variable and it is not null. So what I’ve found is that even when there are no players in the first place, that there will be a value there.&lt;/p&gt;
-&lt;/blockquote&gt;
-
-&lt;p&gt;The value at &lt;code class=&quot;highlighter-rouge&quot;&gt;v&lt;/code&gt; is present even if there are no players on the server. This is significant because out of this, I’ve learned that the MinecraftServer initializes this variable without any players on, when it starts off as null by default. Secondly, it is a type of DedicatedPlayerList, which is a type that tells me a lot about how the &lt;code class=&quot;highlighter-rouge&quot;&gt;v&lt;/code&gt; variable gets handled by the server.&lt;/p&gt;
-
-&lt;p&gt;&lt;img src=&quot;https://agenttroll.github.io/blog/img/jdb.odp-11.jpg&quot; alt=&quot;Slide 11&quot; /&gt;&lt;/p&gt;
-
-&lt;blockquote&gt;
-  &lt;p&gt;So what exactly did I learn? So I learned a new API, which is a… (pause)&lt;/p&gt;
-
-  &lt;p&gt;I learned JDI, which is an API, which is in turn something that programmers use to write their apps faster, when I wasn’t really familiar with it before. In fact, the rest of this is garbage, it doesn’t mean anything to you guys (chuckles). Along the way I also ran into a bunch of issues, such as the one that I just showed you with the off-by-one thing that I fixed by switching the code to -1. I also uh (pause)&lt;/p&gt;
-
-  &lt;p&gt;I also got a bunch of output whenever I looked through the program state because the console had duplicate entries in it, so I could hardly read the log. This got fixed so I can actually read the console.&lt;/p&gt;
-&lt;/blockquote&gt;
-
-&lt;p&gt;At this point, I was already 2 minutes over time and I needed to get done, but my brain was letting me down. I had two long pauses to stop and reconsider, but in my own defense, the API learning part was rather difficult to explain, and it is hard to quantify how difficult it is to work with a spammy console.&lt;/p&gt;
-
-&lt;p&gt;&lt;img src=&quot;https://agenttroll.github.io/blog/img/jdb.odp-12.jpg&quot; alt=&quot;Slide 12&quot; /&gt;&lt;/p&gt;
-
-&lt;blockquote&gt;
-  &lt;p&gt;Thank you!&lt;/p&gt;
-&lt;/blockquote&gt;
-
-&lt;p&gt;Right here, I should probably have talked a little bit more of my project, my project’s goals document and the development of it, but again, I’m out of time. I was really ready to present the GitHub it to others, but that will have to wait. Besides, who even cares about GitHub when it’s not even that useful to the audience anyways.&lt;/p&gt;
-
-&lt;h1 id=&quot;conclusion&quot;&gt;Conclusion&lt;/h1&gt;
-
-&lt;p&gt;Looking back on it, I would have certainly enjoyed presenting more if I had a more technical audience, and a larger time constraint. The whole presentation took actually about 10 minutes, and if I had more time, I would have gone a lot more in depth. The staff was not an enjoyable audience to speak to for me at least. I’m sure there are certain teachers who were interested in what I was talking about, but even they probably had trouble following what I was talking about. For the teachers themselves, they probably felt like their morning was wasted by what I thought was interesting but was pretty much useless to them. They aren’t interested in it, and they have a job to do. Yes, yes, teachers should care about students. But if I was a teacher, I would not have given a single damn about this computer science voodoo magic stuff, I have a staff meeting for crying out loud! I think debugging is an interesting art and science, but if I had more time, I would &lt;strong&gt;definitely&lt;/strong&gt; go more in depth with reverse engineering. I think that it is such an interesting thing to do, with not only the mystery of solving problems, but going deeper and deeper with our understanding of a code base, especially one that was meant to be challenging to read such as the Minecraft server has a certain thrill to it.&lt;/p&gt;
-
-&lt;p&gt;You know what else has a certain thrill to it though? Being done with reading this blog post. Until next time.&lt;/p&gt;
-
-&lt;h1 id=&quot;words-of-wisdom&quot;&gt;Words of Wisdom&lt;/h1&gt;
-
-&lt;p&gt;I found a piece of gold today in a compilation video:&lt;/p&gt;
-
-&lt;blockquote&gt;
-  &lt;p&gt;It’s 2017, I mean we should have a lunar base by now… What the hell is going on?&lt;/p&gt;
-  &lt;ul&gt;
-    &lt;li&gt;Elon Musk&lt;/li&gt;
-  &lt;/ul&gt;
-&lt;/blockquote&gt;
-
-&lt;p&gt;I think I’m going to start pasting this around like the gospel…&lt;/p&gt;</content><author><name></name></author><summary type="html">But Also, Some Background</summary></entry></feed>
+&lt;p&gt;There will be lots of exciting things to come, both for MineSaga and for my blog in the coming few weeks as summer commences, so I’m definitely very hyped about that! Stay tuned.&lt;/p&gt;</content><author><name></name></author><summary type="html">An issue with one of the plugins on MineSaga has recently brought to my attention the rather poor decision of using SQLite to store player data. Now we’re not even doing anything complicated with SQLite, it’s literally just used for persistence to track player data that gets updated occasionally. Even factoring in network latency, I don’t believe that SQLite will outperform MySQL for our particular use case.</summary></entry></feed>
