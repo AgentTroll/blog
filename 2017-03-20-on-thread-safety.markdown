@@ -191,5 +191,61 @@ Sources used:
 
 As previously discussed, the Java language offers many tools to help simplify the process of writing thread-safe code without needing to understand all the hardware details.
 
+#### The `synchronized` Keyword
+
+One such tool is the `synchronized` keyword. All classes extending `Object` (basically classes that you write or are provided by the language excluding primitive types) possess what is known as an "intrinsic lock." You can use a `synchronized` block to acquire the lock and release it when the block ends. The point of a lock is only one thread can "hold" the lock at any given time. This means that if `Thread A` already has the lock and `Thread B` arrives at the `synchronized` block, it will wait until `Thread A` is done before the lock can be acquired by `Thread B`. When more than one thread is waiting, a random thread is selected to acquire the lock once it is released. More on this later.
+
+Consider the `MutableState` class from the previous section. We can utilize the `synchronized` keyword to ensure thread-safety like so:
+
+``` java
+@ThreadSafe
+class SafeMutableState {
+    private int state;
+
+    public synchronized void mutate() { 
+        this.state++; 
+    }
+
+    public synchronized int read() { 
+        return this.state; 
+    }
+}
+```
+
+I previously mentioned that the `synchronized` "block" is used to acquire and release a lock. However, in the above code snippet, I have used it as a method modifier. What's going on? As a matter of fact, using the `synchronized` keyword as a method modifier is equivalent to the following:
+
+``` java
+@ThreadSafe
+class SafeMutableState {
+    private int state;
+
+    public void mutate() { 
+        synchronized (this) {
+            this.state++; 
+        }
+    }
+
+    public int read() { 
+        synchronized (this) {
+            return this.state; 
+        }
+    }
+}
+```
+
+A `synchronized` instance method means that it will simply wrap the method code with a `synchronized (this) {}` block. This acquires the intrinsic lock of the Object belonging to that instance of the class.
+
+But what about `static` methods? Since we don't have `this` access, which lock does the `synchronized` block acquire then? In that case, it would acquire the lock belonging to the *class object*. For example, say that there was a `static synchronized` method in `SafeMutableState`. That method would be equivalent to writing `synchronized (SafeMutableState.class) {}`.
+
+By making the methods `synchronized`, we will ensure that only one thread can perform an increment operation at a time using the `mutate()` method. This means that the atomicity issue discussed in the earlier section, where one thread is in the middle of updating the `state` value doesn't complete before another thread reads the value prior to the increment. The `mutate()` operation is therefore *atomic* because the operation completes in its entirety before it is called again. In effect, this means that the `mutate()` method is executed sequentially since each thread must line up if they try to update the `state` value simultaneously. Having threads line up in this way is sometimes referred to as *thread serialization*, (not to be confused with data serialization) because threads are executing serially (sequentially).
+
+However, this doesn't explain why the `read()` method is `synchronized` as well. Reading from a single field or writing to a single field (except in some cases involving the `long` and `double` types, more on this later) is atomic already, so we should have no issues, right? Actually, no, and the answer can even be "it depends." That being said, the *only* safe and definitive way to ensure that `SafeMutableState` is thread-safe is to ensure that the `read()` method is synchronized. The main reason is visibility. A `synchronized` block only guarantees that values that are set BEFORE acquiring the lock are visible to the thread that acquires it. That means that even though we have a `synchronized mutate()` method, that only guarantees that the thread calling the `mutate()` method can see the `state` value. This means that in order to guarantee that changes made to the `state` value to be visible to the `read()` method, the `read()` method itself must also be `synchronized`. However, if we recall from the earlier section, the reason why we have visibility issues is because of the store and load buffers on the CPU, right? That means that as long as we have a fence inserted somewhere in our code, then all the most recent values will be available to the CPU already, which means that if we have a `synchronized` or `volatile` somewhere that would produce this fence, then we technically don't even need the `synchronized` (we might not even need to synchronized on the same long). Using side-effects like this is referred to as *piggybacking*. More on this later. With that, I only conclude that writing your code this way is **dangerous**, fragile, non-portable (especially on CPUs that do not have as strong guarantees about memory fences), and does not comply with the Java Language Specification. Remember, your code is either properly synchronized, or not synchronized at all. You cannot have half of your methods `synchronized`, and the other half not synchronized and expect your code to work correctly. Synchronize, and remember to synchronize on the correct locks to ensure that your code complies with the Java Memory Model.
+
+Wherever your code is being called by multiple threads, a `synchronized` block can be used to ensure atomicity by allowing only a single thread to be executing that to ensure atomicity through thread serialization and that the state values read by that method are up to date.
+
+One technical detail previously mentioned is that threads tend to be non-deterministic. There are many things that control thread timing and when threads run what - the OS thread scheduler and the CPU come to mind. The execution order of threads are arbitrary, and `synchronized` blocks cannot control that. When threads queue to wait for a lock, a random thread is selected when the lock becomes available again. It is possible to ensure FIFO order, but that requires a slightly different tool that I'll be covering in a few sections. That being said, `synchronized` blocks can control reorderings to some extent. The compiler and the JIT may try to reorder certain instructions that work in single-threaded code, but will produce surprising results in multithreaded code. I myself don't actually have any examples of this, but it is worth noting that the `synchronized` block cannot be reordered with other instructions outside the block as an optimization (although again, how this is an optimization I'm not exactly sure). A `synchronized` block acts as a kind of barrier for this, meaning that instructions cannot flow past the `synchronized` block; instructions before can be reordered still, but only as long as those instructions stay before the `synchronized` block. This is the same for instructions after the `synchronized` block and even instructions inside the `synchronized` block as well, so long as those instructions do not move outside of the `synchronized` block, of course. 
+
+#### The `volatile` Keyword
+
 `// TODO`
 
