@@ -169,7 +169,7 @@ Because inevitably, a programmer would need to share data in some form or anothe
 
 I won't get into the nitty gritty details of how the protocols themselves work, all you need to know is that they work. The more important point is that even with cache coherency protocols in place, inadequately synchronized code may still not work correctly. Execution cores use buffers to store read/write instructions that are sent through the cache coherence protocol. CPUs may be able to use [pipelining](https://cs.stanford.edu/people/eroberts/courses/soco/projects/risc/pipelining/) to keep running instructions as they wait for load requests, for example. In some cases, a CPU may read a "store" instruction from its buffer even though a different value has been stored later on, and would therefore read a stale value. This means that we are still having the visibility problem even with the implementation of cache coherency.
 
-Luckily, CPUs provide *fencing instructions* that insert a "barrier" in the buffer. This means that the entire buffer needs to be processed before execution can proceed, so values that are waiting to be updated are actually updated prior to whatever the thread needs to do. This ensures that the execution core reads the most up-to-date value from another cache or from main-memory.
+Luckily, CPUs provide *fencing instructions* that insert a "barrier" in the buffer. This means that the contents of buffer up to the point where the fence is inserted needs to be processed before execution can proceed, so values that are waiting to be updated are actually updated prior to whatever the thread needs to do. This ensures that the execution core reads the most up-to-date value from another cache or from main-memory.
 
 The Java language provides a memory model which simplifies these details into various different tools and constructs such as the `volatile` and `synchronized` keywords. It is not necessary to understand all the technical details of what a CPU ends up doing to write thread-safe code. However, by having a little bit more background on what the hardware is doing, programmers can understand the need for adequate synchronization and the significance of ensuring that multithreaded code is safe to run.
 
@@ -246,6 +246,97 @@ Wherever your code is being called by multiple threads, a `synchronized` block c
 One technical detail previously mentioned is that threads tend to be non-deterministic. There are many things that control thread timing and when threads run what - the OS thread scheduler and the CPU come to mind. The execution order of threads are arbitrary, and `synchronized` blocks cannot control that. When threads queue to wait for a lock, a random thread is selected when the lock becomes available again. It is possible to ensure FIFO order, but that requires a slightly different tool that I'll be covering in a few sections. That being said, `synchronized` blocks can control reorderings to some extent. The compiler and the JIT may try to reorder certain instructions that work in single-threaded code, but will produce surprising results in multithreaded code. I myself don't actually have any examples of this, but it is worth noting that the `synchronized` block cannot be reordered with other instructions outside the block as an optimization (although again, how this is an optimization I'm not exactly sure). A `synchronized` block acts as a kind of barrier for this, meaning that instructions cannot flow past the `synchronized` block; instructions before can be reordered still, but only as long as those instructions stay before the `synchronized` block. This is the same for instructions after the `synchronized` block and even instructions inside the `synchronized` block as well, so long as those instructions do not move outside of the `synchronized` block, of course. 
 
 #### The `volatile` Keyword
+
+The `volatile` keyword, unlike `synchronized`, is a field modifier. While `synchronized` is designed to give strong guarantees for a block of code, `volatile` gives weaker guarantees for fields. Let's take a look at how it is used:
+
+``` java
+@NotThreadSafe
+class VolatileMutableState {
+    private volatile int state;
+
+    public void mutate() { 
+        this.state++; 
+    }
+
+    public int read() { 
+        return this.state; 
+    }
+}
+```
+
+In case you missed it, I'll highlight again that the above snippet is **not** thread-safe. The only purpose of `volatile` is to ensure that state mutations are visible to other threads. However, because `volatile` has no impact on atomicity, `VolatileMutableState` is not thread-safe. Although the increment operation in `mutate()` will be visible to other threads, that only assumes that another thread doesn't sneak in before the incremented value is set into the state. Remember, an increment operation is actually retrieving the state value and incrementing the local copy before updating the state. We ensure that the retrieval uses the most up-to-date value, and that other threads will see the update in the end, but visibility guarantees do not prevent another thread reading the state value before the update. In order to provide the atomicity guarantee, `synchronized` is needed because it allows for threads finish calling `mutate()` before passing off the lock to another thread.
+
+However, if we don't need to perform any non-atomic operations like an increment (these are usually called *compound operations* because they consist of multiple components) and we only need to hold a certain value, we can change the `VolatileMutableState` to look like this:
+
+``` java
+@ThreadSafe
+class VolatileStateHolder {
+    private volatile int state;
+
+    public void mutate(int newState) {
+        this.state = state;
+    }
+
+    public int read() {
+        return this.state;
+    }
+}
+```
+
+Since we have gotten rid of the atomicity issues, the class is now thread-safe. An additional guarantee that `volatile` provides is ordering, similar to how the `synchronized` keyword works. A volatile read or write acts sort of like a "fence," which means that again, operations that occur before the volatile read or write cannot be reordered to occur after it, and operations after cannot be reordered to occur before the volatile read or write. Instructions can still be reordered, so long as they stay on their side of the fence. Recalling from the earlier section, this fence also works to ensure that reads and writes are completely seen by the CPU in order to provide visibility guarantees.
+
+However, even though `VolatileStateHolder` is thread-safe, that doesn't mean that anyone using it is safe as well. Consider the following use:
+
+``` java
+public static final VolatileStateHolder holder = new VolatileStateHolder();
+
+...
+
+// WARNING: NOT THREAD SAFE
+int currentState = holder.read();
+if (currentState == 0) {
+    System.out.println("The holder's state is still 0!")
+    holder.mutate(1);
+}
+```
+
+Can you spot the problem?
+
+In this case, we have moved the atomicity problem we saw in the `VolatileMutableState` into the user code. If multiple threads were running the above snippet, then it is possible for `"The holder's state is still 0!"` to be printed multiple times. Again, notice how the state is retrieved, some operation occurs, and then the state is updated again. In this case, although the final state isn't changing if multiple threads run, we still might not get the desired result. If another thread calls `holder.read()` before the another thread gets to `holder.mutate(1)`, then it will read `0` and re-run the code. In order to solve this problem, we need to synchronize:
+
+``` java
+public static final VolatileStateHolder holder = new VolatileStateHolder();
+
+...
+
+synchronized (holder) {
+    int currentState = holder.read();
+    if (currentState == 0) {
+        System.out.println("The holder's state is still 0!")
+        holder.mutate(1);
+    }
+}
+```
+
+Now, because we use a lock to prevent other threads from running the code concurrently, we have gotten rid of the atomicity problem. Although you might have written thread-safe classes, the way it is used by users may not be thread-safe.
+
+While we are discussing the `synchronized` keyword for the moment, it is worth learning about what to actually synchronize on. In the previous section, I stated that all `Object`s have intrinsic locks. However, this doesn't mean that you should synchronize on any odd `Object` you have on hand. In general, it is a good idea to reduce the scope of your locks, and prevent outside code from accessing them. Some programming adages suggest that you should avoid the `this` lock, because anyone who constructs your object now has access to it. However, sometimes, it is necessary to allow users to access that lock. For example, synchronized collections obtained from `Collections.synchronizedXYZ(...)` require that users synchronize on the collection if they want to iterate over it. This ensures that the iteration prevents other threads from modifying the collection while you are iterating over it. Because the above example is user code, I decided to synchronize on the `holder` field, because the user would be in control of the scope of `holder`. Giving user code others access to a lock potentially could lead to someone accidentally synchronizing on it when it isn't needed, which will prevent code that actually does need the lock to wait. While this slows down the application, it could also lead to more dire problems such as deadlock. If a class is full of primitive fields or is entirely mutable and `this` is the most obvious choice for a lock, an author will usually use a `private final Object lock = new Object();` and synchronize on that instead. Again, it is important that the same lock is used in order to ensure thread serialization, so a mutable lock is generally a poor idea. It is also possible to synchronize on local variables if it is associated with an object that is shared. So long as the code accessing the shared object uses the same lock, then there should be no issue. The key here is caution and defensive programming.
+
+Back to the topic of `volatile` and having the knowledge of how to use it, what in the world could it be used for? While it is easy to see how a general-purpose/all-around tool like `synchronized` might be used, why would anyone ever use `volatile`? We see in the previous examples that we can use it for states that have a single value set or read by non-compound operations. If we never need to check on the state before we modify the state, then `volatile` is sufficient and no synchronization is needed. Remember, because field assignment and retrieval is atomic (except for `long`s and `double`s), we can use `volatile` to ensure thread-safety by making all changes visible. This is useful for things like loops that run until someone wants the loop to stop:
+
+``` java
+public volatile boolean isActive = true;
+while (isActive) {
+    ...
+}
+
+// Another thread might want to stop the loop
+isActive = false;
+```
+
+Another good use for `volatile` is ensuring that `long` and `double` states are atomically set. Because the Java Memory Model doesn't guarantee that assignments to those types are atomic, marking them `volatile` will ensure that writes to them are atomic (however, this is the only atomicity guaranatee that `volatile` provides for). If you are worried about atomicity in the first place, you probably already need the state values to be visible anyways. Therefore, the fact that `volatile` assignment to `long` and `double` states is also atomic is just a nice side-effect in reality.
+
+One niche use of `volatile` is for single-writer thread models. This means that only one thread does mutations, while all other threads simply read the state. So, while `VolatileMutableState` is not actually be thread-safe for multiple mutator threads, if we impose a policy that allows only one thread to ever call `mutate()`, then we have solved the atomicity problem. No other threads can possibly interfere with the increment. We have an external policy that ensures atomicity and we use `volatile` to ensure visibility and ordering. Therefore, the threading model you use can allow you to use non thread-safe classes in a way that is nonetheless thread-safe.
 
 `// TODO`
 
