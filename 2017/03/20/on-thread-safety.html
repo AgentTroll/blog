@@ -253,7 +253,7 @@
 
 <p>I won’t get into the nitty gritty details of how the protocols themselves work, all you need to know is that they work. The more important point is that even with cache coherency protocols in place, inadequately synchronized code may still not work correctly. Execution cores use buffers to store read/write instructions that are sent through the cache coherence protocol. CPUs may be able to use <a href="https://cs.stanford.edu/people/eroberts/courses/soco/projects/risc/pipelining/">pipelining</a> to keep running instructions as they wait for load requests, for example. In some cases, a CPU may read a “store” instruction from its buffer even though a different value has been stored later on, and would therefore read a stale value. This means that we are still having the visibility problem even with the implementation of cache coherency.</p>
 
-<p>Luckily, CPUs provide <em>fencing instructions</em> that insert a “barrier” in the buffer. This means that the entire buffer needs to be processed before execution can proceed, so values that are waiting to be updated are actually updated prior to whatever the thread needs to do. This ensures that the execution core reads the most up-to-date value from another cache or from main-memory.</p>
+<p>Luckily, CPUs provide <em>fencing instructions</em> that insert a “barrier” in the buffer. This means that the contents of buffer up to the point where the fence is inserted needs to be processed before execution can proceed, so values that are waiting to be updated are actually updated prior to whatever the thread needs to do. This ensures that the execution core reads the most up-to-date value from another cache or from main-memory.</p>
 
 <p>The Java language provides a memory model which simplifies these details into various different tools and constructs such as the <code class="highlighter-rouge">volatile</code> and <code class="highlighter-rouge">synchronized</code> keywords. It is not necessary to understand all the technical details of what a CPU ends up doing to write thread-safe code. However, by having a little bit more background on what the hardware is doing, programmers can understand the need for adequate synchronization and the significance of ensuring that multithreaded code is safe to run.</p>
 
@@ -330,6 +330,92 @@
 <p>One technical detail previously mentioned is that threads tend to be non-deterministic. There are many things that control thread timing and when threads run what - the OS thread scheduler and the CPU come to mind. The execution order of threads are arbitrary, and <code class="highlighter-rouge">synchronized</code> blocks cannot control that. When threads queue to wait for a lock, a random thread is selected when the lock becomes available again. It is possible to ensure FIFO order, but that requires a slightly different tool that I’ll be covering in a few sections. That being said, <code class="highlighter-rouge">synchronized</code> blocks can control reorderings to some extent. The compiler and the JIT may try to reorder certain instructions that work in single-threaded code, but will produce surprising results in multithreaded code. I myself don’t actually have any examples of this, but it is worth noting that the <code class="highlighter-rouge">synchronized</code> block cannot be reordered with other instructions outside the block as an optimization (although again, how this is an optimization I’m not exactly sure). A <code class="highlighter-rouge">synchronized</code> block acts as a kind of barrier for this, meaning that instructions cannot flow past the <code class="highlighter-rouge">synchronized</code> block; instructions before can be reordered still, but only as long as those instructions stay before the <code class="highlighter-rouge">synchronized</code> block. This is the same for instructions after the <code class="highlighter-rouge">synchronized</code> block and even instructions inside the <code class="highlighter-rouge">synchronized</code> block as well, so long as those instructions do not move outside of the <code class="highlighter-rouge">synchronized</code> block, of course.</p>
 
 <h4 id="the-volatile-keyword">The <code class="highlighter-rouge">volatile</code> Keyword</h4>
+
+<p>The <code class="highlighter-rouge">volatile</code> keyword, unlike <code class="highlighter-rouge">synchronized</code>, is a field modifier. While <code class="highlighter-rouge">synchronized</code> is designed to give strong guarantees for a block of code, <code class="highlighter-rouge">volatile</code> gives weaker guarantees for fields. Let’s take a look at how it is used:</p>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nd">@NotThreadSafe</span>
+<span class="kd">class</span> <span class="nc">VolatileMutableState</span> <span class="o">{</span>
+    <span class="kd">private</span> <span class="kd">volatile</span> <span class="kt">int</span> <span class="n">state</span><span class="o">;</span>
+
+    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">mutate</span><span class="o">()</span> <span class="o">{</span> 
+        <span class="k">this</span><span class="o">.</span><span class="na">state</span><span class="o">++;</span> 
+    <span class="o">}</span>
+
+    <span class="kd">public</span> <span class="kt">int</span> <span class="nf">read</span><span class="o">()</span> <span class="o">{</span> 
+        <span class="k">return</span> <span class="k">this</span><span class="o">.</span><span class="na">state</span><span class="o">;</span> 
+    <span class="o">}</span>
+<span class="o">}</span>
+</code></pre></div></div>
+
+<p>In case you missed it, I’ll highlight again that the above snippet is <strong>not</strong> thread-safe. The only purpose of <code class="highlighter-rouge">volatile</code> is to ensure that state mutations are visible to other threads. However, because <code class="highlighter-rouge">volatile</code> has no impact on atomicity, <code class="highlighter-rouge">VolatileMutableState</code> is not thread-safe. Although the increment operation in <code class="highlighter-rouge">mutate()</code> will be visible to other threads, that only assumes that another thread doesn’t sneak in before the incremented value is set into the state. Remember, an increment operation is actually retrieving the state value and incrementing the local copy before updating the state. We ensure that the retrieval uses the most up-to-date value, and that other threads will see the update in the end, but visibility guarantees do not prevent another thread reading the state value before the update. In order to provide the atomicity guarantee, <code class="highlighter-rouge">synchronized</code> is needed because it allows for threads finish calling <code class="highlighter-rouge">mutate()</code> before passing off the lock to another thread.</p>
+
+<p>However, if we don’t need to perform any non-atomic operations like an increment (these are usually called <em>compound operations</em> because they consist of multiple components) and we only need to hold a certain value, we can change the <code class="highlighter-rouge">VolatileMutableState</code> to look like this:</p>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nd">@ThreadSafe</span>
+<span class="kd">class</span> <span class="nc">VolatileStateHolder</span> <span class="o">{</span>
+    <span class="kd">private</span> <span class="kd">volatile</span> <span class="kt">int</span> <span class="n">state</span><span class="o">;</span>
+
+    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">mutate</span><span class="o">(</span><span class="kt">int</span> <span class="n">newState</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">this</span><span class="o">.</span><span class="na">state</span> <span class="o">=</span> <span class="n">state</span><span class="o">;</span>
+    <span class="o">}</span>
+
+    <span class="kd">public</span> <span class="kt">int</span> <span class="nf">read</span><span class="o">()</span> <span class="o">{</span>
+        <span class="k">return</span> <span class="k">this</span><span class="o">.</span><span class="na">state</span><span class="o">;</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+</code></pre></div></div>
+
+<p>Since we have gotten rid of the atomicity issues, the class is now thread-safe. An additional guarantee that <code class="highlighter-rouge">volatile</code> provides is ordering, similar to how the <code class="highlighter-rouge">synchronized</code> keyword works. A volatile read or write acts sort of like a “fence,” which means that again, operations that occur before the volatile read or write cannot be reordered to occur after it, and operations after cannot be reordered to occur before the volatile read or write. Instructions can still be reordered, so long as they stay on their side of the fence. Recalling from the earlier section, this fence also works to ensure that reads and writes are completely seen by the CPU in order to provide visibility guarantees.</p>
+
+<p>However, even though <code class="highlighter-rouge">VolatileStateHolder</code> is thread-safe, that doesn’t mean that anyone using it is safe as well. Consider the following use:</p>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">public</span> <span class="kd">static</span> <span class="kd">final</span> <span class="n">VolatileStateHolder</span> <span class="n">holder</span> <span class="o">=</span> <span class="k">new</span> <span class="n">VolatileStateHolder</span><span class="o">();</span>
+
+<span class="o">...</span>
+
+<span class="c1">// WARNING: NOT THREAD SAFE</span>
+<span class="kt">int</span> <span class="n">currentState</span> <span class="o">=</span> <span class="n">holder</span><span class="o">.</span><span class="na">read</span><span class="o">();</span>
+<span class="k">if</span> <span class="o">(</span><span class="n">currentState</span> <span class="o">==</span> <span class="mi">0</span><span class="o">)</span> <span class="o">{</span>
+    <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="s">"The holder's state is still 0!"</span><span class="o">)</span>
+    <span class="n">holder</span><span class="o">.</span><span class="na">mutate</span><span class="o">(</span><span class="mi">1</span><span class="o">);</span>
+<span class="o">}</span>
+</code></pre></div></div>
+
+<p>Can you spot the problem?</p>
+
+<p>In this case, we have moved the atomicity problem we saw in the <code class="highlighter-rouge">VolatileMutableState</code> into the user code. If multiple threads were running the above snippet, then it is possible for <code class="highlighter-rouge">"The holder's state is still 0!"</code> to be printed multiple times. Again, notice how the state is retrieved, some operation occurs, and then the state is updated again. In this case, although the final state isn’t changing if multiple threads run, we still might not get the desired result. If another thread calls <code class="highlighter-rouge">holder.read()</code> before the another thread gets to <code class="highlighter-rouge">holder.mutate(1)</code>, then it will read <code class="highlighter-rouge">0</code> and re-run the code. In order to solve this problem, we need to synchronize:</p>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">public</span> <span class="kd">static</span> <span class="kd">final</span> <span class="n">VolatileStateHolder</span> <span class="n">holder</span> <span class="o">=</span> <span class="k">new</span> <span class="n">VolatileStateHolder</span><span class="o">();</span>
+
+<span class="o">...</span>
+
+<span class="kd">synchronized</span> <span class="o">(</span><span class="n">holder</span><span class="o">)</span> <span class="o">{</span>
+    <span class="kt">int</span> <span class="n">currentState</span> <span class="o">=</span> <span class="n">holder</span><span class="o">.</span><span class="na">read</span><span class="o">();</span>
+    <span class="k">if</span> <span class="o">(</span><span class="n">currentState</span> <span class="o">==</span> <span class="mi">0</span><span class="o">)</span> <span class="o">{</span>
+        <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="s">"The holder's state is still 0!"</span><span class="o">)</span>
+        <span class="n">holder</span><span class="o">.</span><span class="na">mutate</span><span class="o">(</span><span class="mi">1</span><span class="o">);</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+</code></pre></div></div>
+
+<p>Now, because we use a lock to prevent other threads from running the code concurrently, we have gotten rid of the atomicity problem. Although you might have written thread-safe classes, the way it is used by users may not be thread-safe.</p>
+
+<p>While we are discussing the <code class="highlighter-rouge">synchronized</code> keyword for the moment, it is worth learning about what to actually synchronize on. In the previous section, I stated that all <code class="highlighter-rouge">Object</code>s have intrinsic locks. However, this doesn’t mean that you should synchronize on any odd <code class="highlighter-rouge">Object</code> you have on hand. In general, it is a good idea to reduce the scope of your locks, and prevent outside code from accessing them. Some programming adages suggest that you should avoid the <code class="highlighter-rouge">this</code> lock, because anyone who constructs your object now has access to it. However, sometimes, it is necessary to allow users to access that lock. For example, synchronized collections obtained from <code class="highlighter-rouge">Collections.synchronizedXYZ(...)</code> require that users synchronize on the collection if they want to iterate over it. This ensures that the iteration prevents other threads from modifying the collection while you are iterating over it. Because the above example is user code, I decided to synchronize on the <code class="highlighter-rouge">holder</code> field, because the user would be in control of the scope of <code class="highlighter-rouge">holder</code>. Giving user code others access to a lock potentially could lead to someone accidentally synchronizing on it when it isn’t needed, which will prevent code that actually does need the lock to wait. While this slows down the application, it could also lead to more dire problems such as deadlock. If a class is full of primitive fields or is entirely mutable and <code class="highlighter-rouge">this</code> is the most obvious choice for a lock, an author will usually use a <code class="highlighter-rouge">private final Object lock = new Object();</code> and synchronize on that instead. Again, it is important that the same lock is used in order to ensure thread serialization, so a mutable lock is generally a poor idea. It is also possible to synchronize on local variables if it is associated with an object that is shared. So long as the code accessing the shared object uses the same lock, then there should be no issue. The key here is caution and defensive programming.</p>
+
+<p>Back to the topic of <code class="highlighter-rouge">volatile</code> and having the knowledge of how to use it, what in the world could it be used for? While it is easy to see how a general-purpose/all-around tool like <code class="highlighter-rouge">synchronized</code> might be used, why would anyone ever use <code class="highlighter-rouge">volatile</code>? We see in the previous examples that we can use it for states that have a single value set or read by non-compound operations. If we never need to check on the state before we modify the state, then <code class="highlighter-rouge">volatile</code> is sufficient and no synchronization is needed. Remember, because field assignment and retrieval is atomic (except for <code class="highlighter-rouge">long</code>s and <code class="highlighter-rouge">double</code>s), we can use <code class="highlighter-rouge">volatile</code> to ensure thread-safety by making all changes visible. This is useful for things like loops that run until someone wants the loop to stop:</p>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">public</span> <span class="kd">volatile</span> <span class="kt">boolean</span> <span class="n">isActive</span> <span class="o">=</span> <span class="kc">true</span><span class="o">;</span>
+<span class="k">while</span> <span class="o">(</span><span class="n">isActive</span><span class="o">)</span> <span class="o">{</span>
+    <span class="o">...</span>
+<span class="o">}</span>
+
+<span class="c1">// Another thread might want to stop the loop</span>
+<span class="n">isActive</span> <span class="o">=</span> <span class="kc">false</span><span class="o">;</span>
+</code></pre></div></div>
+
+<p>Another good use for <code class="highlighter-rouge">volatile</code> is ensuring that <code class="highlighter-rouge">long</code> and <code class="highlighter-rouge">double</code> states are atomically set. Because the Java Memory Model doesn’t guarantee that assignments to those types are atomic, marking them <code class="highlighter-rouge">volatile</code> will ensure that writes to them are atomic (however, this is the only atomicity guaranatee that <code class="highlighter-rouge">volatile</code> provides for). If you are worried about atomicity in the first place, you probably already need the state values to be visible anyways. Therefore, the fact that <code class="highlighter-rouge">volatile</code> assignment to <code class="highlighter-rouge">long</code> and <code class="highlighter-rouge">double</code> states is also atomic is just a nice side-effect in reality.</p>
+
+<p>One niche use of <code class="highlighter-rouge">volatile</code> is for single-writer thread models. This means that only one thread does mutations, while all other threads simply read the state. So, while <code class="highlighter-rouge">VolatileMutableState</code> is not actually be thread-safe for multiple mutator threads, if we impose a policy that allows only one thread to ever call <code class="highlighter-rouge">mutate()</code>, then we have solved the atomicity problem. No other threads can possibly interfere with the increment. We have an external policy that ensures atomicity and we use <code class="highlighter-rouge">volatile</code> to ensure visibility and ordering. Therefore, the threading model you use can allow you to use non thread-safe classes in a way that is nonetheless thread-safe.</p>
 
 <p><code class="highlighter-rouge">// TODO</code></p>
 
