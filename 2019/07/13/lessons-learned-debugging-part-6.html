@@ -152,12 +152,12 @@ denote an empty/no item. For example, in
 <code class="highlighter-rouge">PlayerInteractEvent</code>, I believe that using <code class="highlighter-rouge">getItem()</code>
 from the event would return <code class="highlighter-rouge">null</code> for no item, but
 <code class="highlighter-rouge">Player#getItemInHand()</code> would return an <code class="highlighter-rouge">AIR</code> item. In
-fact, <code class="highlighter-rouge">Inventory#getItem(int)</code> would return <code class="highlighter-rouge">null</code> as well,
-and any setter accepted a <code class="highlighter-rouge">null</code> item as an empty itme as
-well so the inconsistent use of the <code class="highlighter-rouge">AIR</code> material
-essentially makes no sense at all in this case.
-Regardless, I digress. Even for more advance programmers,
-the Bukkit inventory API is still difficult to navigate.</p>
+fact, <code class="highlighter-rouge">Inventory#getItem(int)</code> would return <code class="highlighter-rouge">null</code> as well
+and any setter accepted a <code class="highlighter-rouge">null</code> item as an empty item 
+so the inconsistent use of the <code class="highlighter-rouge">AIR</code> material obviously 
+doesn’t make a whole lot of sense. Regardless, I digress. 
+The point is, even for more advance programmers, the Bukkit
+inventory API is still difficult to navigate.</p>
 
 <p>Honestly the best advice I can really give is find one way
 to do things and stick with it. This is a controversial

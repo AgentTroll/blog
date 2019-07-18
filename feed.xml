@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.6.2">Jekyll</generator><link href="https://agenttroll.github.io/blog/feed.xml" rel="self" type="application/atom+xml" /><link href="https://agenttroll.github.io/blog/" rel="alternate" type="text/html" /><updated>2019-07-17T19:19:43-07:00</updated><id>https://agenttroll.github.io/blog/</id><title type="html">Inside a Troll</title><subtitle>Thoughts of a Java developer</subtitle><entry><title type="html">Lessons Learned Debugging: Part 6</title><link href="https://agenttroll.github.io/blog/2019/07/13/lessons-learned-debugging-part-6.html" rel="alternate" type="text/html" title="Lessons Learned Debugging: Part 6" /><published>2019-07-13T20:42:05-07:00</published><updated>2019-07-13T20:42:05-07:00</updated><id>https://agenttroll.github.io/blog/2019/07/13/lessons-learned-debugging-part-6</id><content type="html" xml:base="https://agenttroll.github.io/blog/2019/07/13/lessons-learned-debugging-part-6.html">&lt;p&gt;This is another one of those “watch out when you’re doing
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.6.2">Jekyll</generator><link href="https://agenttroll.github.io/blog/feed.xml" rel="self" type="application/atom+xml" /><link href="https://agenttroll.github.io/blog/" rel="alternate" type="text/html" /><updated>2019-07-17T19:23:34-07:00</updated><id>https://agenttroll.github.io/blog/</id><title type="html">Inside a Troll</title><subtitle>Thoughts of a Java developer</subtitle><entry><title type="html">Lessons Learned Debugging: Part 6</title><link href="https://agenttroll.github.io/blog/2019/07/13/lessons-learned-debugging-part-6.html" rel="alternate" type="text/html" title="Lessons Learned Debugging: Part 6" /><published>2019-07-13T20:42:05-07:00</published><updated>2019-07-13T20:42:05-07:00</updated><id>https://agenttroll.github.io/blog/2019/07/13/lessons-learned-debugging-part-6</id><content type="html" xml:base="https://agenttroll.github.io/blog/2019/07/13/lessons-learned-debugging-part-6.html">&lt;p&gt;This is another one of those “watch out when you’re doing
 XYZ” rather than a specific thing to do (or not do).&lt;/p&gt;
 
 &lt;h1 id=&quot;be-careful-handling-inventories&quot;&gt;Be Careful Handling Inventories&lt;/h1&gt;
@@ -73,12 +73,12 @@ denote an empty/no item. For example, in
 &lt;code class=&quot;highlighter-rouge&quot;&gt;PlayerInteractEvent&lt;/code&gt;, I believe that using &lt;code class=&quot;highlighter-rouge&quot;&gt;getItem()&lt;/code&gt;
 from the event would return &lt;code class=&quot;highlighter-rouge&quot;&gt;null&lt;/code&gt; for no item, but
 &lt;code class=&quot;highlighter-rouge&quot;&gt;Player#getItemInHand()&lt;/code&gt; would return an &lt;code class=&quot;highlighter-rouge&quot;&gt;AIR&lt;/code&gt; item. In
-fact, &lt;code class=&quot;highlighter-rouge&quot;&gt;Inventory#getItem(int)&lt;/code&gt; would return &lt;code class=&quot;highlighter-rouge&quot;&gt;null&lt;/code&gt; as well,
-and any setter accepted a &lt;code class=&quot;highlighter-rouge&quot;&gt;null&lt;/code&gt; item as an empty itme as
-well so the inconsistent use of the &lt;code class=&quot;highlighter-rouge&quot;&gt;AIR&lt;/code&gt; material
-essentially makes no sense at all in this case.
-Regardless, I digress. Even for more advance programmers,
-the Bukkit inventory API is still difficult to navigate.&lt;/p&gt;
+fact, &lt;code class=&quot;highlighter-rouge&quot;&gt;Inventory#getItem(int)&lt;/code&gt; would return &lt;code class=&quot;highlighter-rouge&quot;&gt;null&lt;/code&gt; as well
+and any setter accepted a &lt;code class=&quot;highlighter-rouge&quot;&gt;null&lt;/code&gt; item as an empty item 
+so the inconsistent use of the &lt;code class=&quot;highlighter-rouge&quot;&gt;AIR&lt;/code&gt; material obviously 
+doesn’t make a whole lot of sense. Regardless, I digress. 
+The point is, even for more advance programmers, the Bukkit
+inventory API is still difficult to navigate.&lt;/p&gt;
 
 &lt;p&gt;Honestly the best advice I can really give is find one way
 to do things and stick with it. This is a controversial
