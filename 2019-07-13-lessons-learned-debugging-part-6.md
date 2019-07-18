@@ -79,12 +79,12 @@ denote an empty/no item. For example, in
 `PlayerInteractEvent`, I believe that using `getItem()`
 from the event would return `null` for no item, but
 `Player#getItemInHand()` would return an `AIR` item. In
-fact, `Inventory#getItem(int)` would return `null` as well,
-and any setter accepted a `null` item as an empty itme as
-well so the inconsistent use of the `AIR` material
-essentially makes no sense at all in this case.
-Regardless, I digress. Even for more advance programmers,
-the Bukkit inventory API is still difficult to navigate.
+fact, `Inventory#getItem(int)` would return `null` as well
+and any setter accepted a `null` item as an empty item 
+so the inconsistent use of the `AIR` material obviously 
+doesn't make a whole lot of sense. Regardless, I digress. 
+The point is, even for more advance programmers, the Bukkit
+inventory API is still difficult to navigate.
 
 Honestly the best advice I can really give is find one way
 to do things and stick with it. This is a controversial
