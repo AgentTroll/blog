@@ -1,4 +1,181 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.6.2">Jekyll</generator><link href="https://agenttroll.github.io/blog/feed.xml" rel="self" type="application/atom+xml" /><link href="https://agenttroll.github.io/blog/" rel="alternate" type="text/html" /><updated>2019-07-04T22:32:41-07:00</updated><id>https://agenttroll.github.io/blog/</id><title type="html">Inside a Troll</title><subtitle>Thoughts of a Java developer</subtitle><entry><title type="html">Lessons Learned Debugging: Part 5</title><link href="https://agenttroll.github.io/blog/2019/07/02/lessons-learned-debugging-part-5.html" rel="alternate" type="text/html" title="Lessons Learned Debugging: Part 5" /><published>2019-07-02T20:22:15-07:00</published><updated>2019-07-02T20:22:15-07:00</updated><id>https://agenttroll.github.io/blog/2019/07/02/lessons-learned-debugging-part-5</id><content type="html" xml:base="https://agenttroll.github.io/blog/2019/07/02/lessons-learned-debugging-part-5.html">&lt;p&gt;This isn’t a bugginess lesson, but if you’re ever going to
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.6.2">Jekyll</generator><link href="https://agenttroll.github.io/blog/feed.xml" rel="self" type="application/atom+xml" /><link href="https://agenttroll.github.io/blog/" rel="alternate" type="text/html" /><updated>2019-07-17T19:19:43-07:00</updated><id>https://agenttroll.github.io/blog/</id><title type="html">Inside a Troll</title><subtitle>Thoughts of a Java developer</subtitle><entry><title type="html">Lessons Learned Debugging: Part 6</title><link href="https://agenttroll.github.io/blog/2019/07/13/lessons-learned-debugging-part-6.html" rel="alternate" type="text/html" title="Lessons Learned Debugging: Part 6" /><published>2019-07-13T20:42:05-07:00</published><updated>2019-07-13T20:42:05-07:00</updated><id>https://agenttroll.github.io/blog/2019/07/13/lessons-learned-debugging-part-6</id><content type="html" xml:base="https://agenttroll.github.io/blog/2019/07/13/lessons-learned-debugging-part-6.html">&lt;p&gt;This is another one of those “watch out when you’re doing
+XYZ” rather than a specific thing to do (or not do).&lt;/p&gt;
+
+&lt;h1 id=&quot;be-careful-handling-inventories&quot;&gt;Be Careful Handling Inventories&lt;/h1&gt;
+
+&lt;p&gt;Inventories are basically death traps in the world of
+Bukkit programming. It is surprisingly easy to get
+exceptions, duplication bugs (for the uninitiated: bugs
+that allow players to obtain more of an item than intended,
+often disrupting the in-game economy), and even &lt;a href=&quot;https://agenttroll.github.io/blog/2018/04/13/keeping-inventories-open.html&quot;&gt;crash the
+server&lt;/a&gt;
+just handling inventories and &lt;code class=&quot;highlighter-rouge&quot;&gt;ItemStack&lt;/code&gt;s.&lt;/p&gt;
+
+&lt;p&gt;Writing event handlers for &lt;code class=&quot;highlighter-rouge&quot;&gt;InventoryClickEvent&lt;/code&gt; and
+dealing with any use-case for &lt;code class=&quot;highlighter-rouge&quot;&gt;ItemStack&lt;/code&gt; should be
+approached with caution.&lt;/p&gt;
+
+&lt;h1 id=&quot;exceptions-in-event-handlers&quot;&gt;Exceptions in Event Handlers&lt;/h1&gt;
+
+&lt;p&gt;As a reminder from the
+&lt;a href=&quot;https://agenttroll.github.io/blog/2019/07/02/lessons-learned-debugging-part-5.html&quot;&gt;previous post in this series&lt;/a&gt;,
+exceptions thrown can cause problems. For example, when
+event handlers modify the quantity of items as a result of
+some action, an inadvertent exception may terminate the
+handler before it reaches the portion of the code that
+removes the item, or updates the inventory for that matter.
+One way to get around this is to always modify the item in
+whatever desired fashion, e.g. reducing its quantity,
+before actually executing the action associated with using
+that item. However, this isn’t a perfect solution because
+errors could crop up before, such as when you are verifying
+the item type or pre-conditions. On top of that, that also
+leaves server owners with the responsibility of either
+refunding or replacing the items that are consumed but no
+action is done in the case that the code following the
+item modification fails.&lt;/p&gt;
+
+&lt;p&gt;Again, there isn’t a catch-all solution to this problem. Of
+course, exceptions will sometimes leak through the cracks,
+as is with all programming errors. The key is to reduce its
+frequency by taking care to think through the logic and the
+possible edge cases that might occur.&lt;/p&gt;
+
+&lt;p&gt;As a real-life anecdote, one of the duplication bugs I had
+to deal with was a &lt;code class=&quot;highlighter-rouge&quot;&gt;ClassCastException&lt;/code&gt; because I didn’t
+account for the fact that both dispenser and dropper blocks
+could fire &lt;code class=&quot;highlighter-rouge&quot;&gt;BlockDispenseEvent&lt;/code&gt;. What happened was an
+exception occurred before the item was supposed to be
+removed from the dispenser, which means that it would get
+dispensed as a result of the event failing to be cancelled,
+and the item would not leave the dispenser, which allowed
+people to have an infinite item generator.&lt;/p&gt;
+
+&lt;h1 id=&quot;nullpointerexceptions-galore&quot;&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;NullPointerException&lt;/code&gt;s Galore&lt;/h1&gt;
+
+&lt;p&gt;Returning back to the basics, many novice programmers
+struggle to use &lt;code class=&quot;highlighter-rouge&quot;&gt;InventoryClickEvent&lt;/code&gt; and check items.
+As someone who has frequented the Bukkit Forums and the
+SpigotMC forums for years on end, I’ve seen countless
+threads where &lt;code class=&quot;highlighter-rouge&quot;&gt;NullPointerException&lt;/code&gt; is thrown simply from
+checking the &lt;code class=&quot;highlighter-rouge&quot;&gt;ItemMeta&lt;/code&gt;. Luckily, these days, it gets
+harder and harder to find these threads, thanks to the
+efforts to document nullability in the API.&lt;/p&gt;
+
+&lt;p&gt;Back before the more recent API versions, what was &lt;code class=&quot;highlighter-rouge&quot;&gt;null&lt;/code&gt;
+and what wasn’t was basically guesswork that you needed to
+keep stored in the back of your mind. There are plenty of
+places you can get it - starting from getting the inventory
+slot itself to the &lt;code class=&quot;highlighter-rouge&quot;&gt;ItemMeta&lt;/code&gt; itself, to the individual
+methods like &lt;code class=&quot;highlighter-rouge&quot;&gt;ItemMeta#getDisplayName()&lt;/code&gt;. This was further
+compounded by the inconsistent use of &lt;code class=&quot;highlighter-rouge&quot;&gt;Material#AIR&lt;/code&gt; to
+denote an empty/no item. For example, in
+&lt;code class=&quot;highlighter-rouge&quot;&gt;PlayerInteractEvent&lt;/code&gt;, I believe that using &lt;code class=&quot;highlighter-rouge&quot;&gt;getItem()&lt;/code&gt;
+from the event would return &lt;code class=&quot;highlighter-rouge&quot;&gt;null&lt;/code&gt; for no item, but
+&lt;code class=&quot;highlighter-rouge&quot;&gt;Player#getItemInHand()&lt;/code&gt; would return an &lt;code class=&quot;highlighter-rouge&quot;&gt;AIR&lt;/code&gt; item. In
+fact, &lt;code class=&quot;highlighter-rouge&quot;&gt;Inventory#getItem(int)&lt;/code&gt; would return &lt;code class=&quot;highlighter-rouge&quot;&gt;null&lt;/code&gt; as well,
+and any setter accepted a &lt;code class=&quot;highlighter-rouge&quot;&gt;null&lt;/code&gt; item as an empty itme as
+well so the inconsistent use of the &lt;code class=&quot;highlighter-rouge&quot;&gt;AIR&lt;/code&gt; material
+essentially makes no sense at all in this case.
+Regardless, I digress. Even for more advance programmers,
+the Bukkit inventory API is still difficult to navigate.&lt;/p&gt;
+
+&lt;p&gt;Honestly the best advice I can really give is find one way
+to do things and stick with it. This is a controversial
+view for obvious reasons; you should be experimenting and
+all that. However, when you are writing code at a
+professional level where results are expected and errors
+are only tolerable at the very best, you should leave the
+experimentation and use what you know works.&lt;/p&gt;
+
+&lt;p&gt;Honestly, you don’t need to take it from my mouth how to
+write better code. The “on-board shuttle group” writes
+the code that launches astronauts into space. There is no
+room for error when human lives are on the line.&lt;/p&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;the on-board shuttle group produces grown-up software,
+and the way they do it is by being grown-ups. It may not be
+sexy, it may not be a coding ego-trip — but it is the
+future of software. When you’re ready to take the next
+step — when you have to write perfect software instead of
+software that’s just good enough — then it’s time to grow
+up.&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;(&lt;a href=&quot;https://www.fastcompany.com/28121/they-write-right-stuff&quot;&gt;They Write the Right Stuff&lt;/a&gt;)&lt;/p&gt;
+
+&lt;p&gt;This is especially true for an environment like Bukkit
+development, where tests end at play testing and software
+verification is virtually non-existent. The way you reduce
+bugginess is by writing code right - the first time.&lt;/p&gt;
+
+&lt;h1 id=&quot;innocent-looking-code-might-still-fail&quot;&gt;Innocent-looking Code Might Still Fail!&lt;/h1&gt;
+
+&lt;p&gt;Often, it is the most innocuous piece of code that fails.&lt;/p&gt;
+
+&lt;p&gt;Another anecdoate of mine is where a generator which
+simply fills an inventory with valuable items such as
+mineral (diamond/emerald/etc.) blocks. When it was removed,
+it is possible for someone which you’ve given access to
+the generator to retain the inventory. Although the
+generator was removed, the generator’s inventory was still
+open. Because I assumed that the generator was unreachable
+after removal, all of the items in the inventory would drop
+on the floor so people wouldn’t lose those items. To save a
+bit of performance, I didn’t clear any items from the
+inventory because it could be arbitrarily big. However,
+people doubled their payday by first having a buddy open
+the inventory, before removing the generator. The buddy
+still has access to all the items that dropped, and
+collects both the dropped items as well as the uncleared
+inventory.&lt;/p&gt;
+
+&lt;p&gt;The lesson here is simple: don’t make any assumptions about
+the code you are writing! It helps to try and write your
+code to be &lt;em&gt;correct&lt;/em&gt; the first time around - had I not
+simply assumed the inventory would be unreachable, I would
+have just cleared everything at the end. If someone
+discovers this, it would then just be a UI bug and I’d just
+need to make sure to close all of the
+&lt;code class=&quot;highlighter-rouge&quot;&gt;Inventory#getViewers()&lt;/code&gt; prior to dropping everything.
+Don’t prioritize performance over correctness. Ironically,
+this was &lt;em&gt;still&lt;/em&gt; not even the end of the story, because
+closing the inventories from that collection caused a CME.
+If you want to learn more about that, you can check out the
+&lt;a href=&quot;https://agenttroll.github.io/blog/2019/04/08/lessons-learned-debugging-part-2.html&quot;&gt;second installment&lt;/a&gt;
+in this series :).&lt;/p&gt;
+
+&lt;h1 id=&quot;conclusion&quot;&gt;Conclusion&lt;/h1&gt;
+
+&lt;p&gt;While I don’t often get the chance to say this, I hope
+you’ve learned something new from my own experiences. I
+speak with very people who talk about my blog, so I can
+only speculate as to whether actual people are truly being
+impacted.&lt;/p&gt;
+
+&lt;p&gt;As is customary at the end of every post in this series,
+I leave with the following wisdom from
+&lt;a href=&quot;http://spinroot.com/gerard/pdf/P10.pdf&quot;&gt;The Power of Ten&lt;/a&gt;:&lt;/p&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;If the rules seem Draconian at first, bear in mind that
+they are meant to make it possible to check code where very
+literally your life may depend on its correctness: code
+that is used to control the airplane that you fly on, the
+nuclear power plant a few miles from where you live, or the
+spacecraft that carries astronauts into orbit. The rules
+act like the seat-belt in your car: initially they are
+perhaps a little uncomfortable, but after a while their use
+becomes second-nature and not using them becomes
+unimaginable.&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;Gathering information and learning is one way to
+add to your repertoire of programming knowledge outside of
+literally just writing your own personal projects. As you
+gain more experience, you will write better and better
+software. I promise.&lt;/p&gt;</content><author><name></name></author><summary type="html">This is another one of those “watch out when you’re doing XYZ” rather than a specific thing to do (or not do).</summary></entry><entry><title type="html">Lessons Learned Debugging: Part 5</title><link href="https://agenttroll.github.io/blog/2019/07/02/lessons-learned-debugging-part-5.html" rel="alternate" type="text/html" title="Lessons Learned Debugging: Part 5" /><published>2019-07-02T20:22:15-07:00</published><updated>2019-07-02T20:22:15-07:00</updated><id>https://agenttroll.github.io/blog/2019/07/02/lessons-learned-debugging-part-5</id><content type="html" xml:base="https://agenttroll.github.io/blog/2019/07/02/lessons-learned-debugging-part-5.html">&lt;p&gt;This isn’t a bugginess lesson, but if you’re ever going to
 progress beyond a novice-level plugin developer (or even a
 Java developer for that matter), then you’ll need to figure
 out how to ensure data integrity.&lt;/p&gt;
@@ -2235,88 +2412,4 @@ over the hand-rolled implementation I have here, by the
 way.&lt;/p&gt;
 
 &lt;p&gt;I probably won’t be doing any more posts about robotics
-unless some extenuating circumstance forces me to.&lt;/p&gt;</content><author><name></name></author><summary type="html">While I don’t profess to be an absolute expert at control theory, a lot of the information about the matter that I’ve found online appears to be either inaccessible to the average Joe or simply flat-out unhelpful. Control Theory is often explained with mechanical controllers that don’t really have any application to the software world, and it has been difficult for me personally to comprehend at all what is going on. In light of this, I’ve decided to do a write up about what control theory is from the perspective of an implementor, rather than that of a theorist.</summary></entry><entry><title type="html">SQLite: Not What I Hoped For</title><link href="https://agenttroll.github.io/blog/2018/06/19/sqlite-not-what-i-hoped-for.html" rel="alternate" type="text/html" title="SQLite: Not What I Hoped For" /><published>2018-06-19T12:14:10-07:00</published><updated>2018-06-19T12:14:10-07:00</updated><id>https://agenttroll.github.io/blog/2018/06/19/sqlite-not-what-i-hoped-for</id><content type="html" xml:base="https://agenttroll.github.io/blog/2018/06/19/sqlite-not-what-i-hoped-for.html">&lt;p&gt;An issue with one of the plugins on MineSaga has recently brought to my attention the rather poor decision of using SQLite to store player data. Now we’re not even doing anything complicated with SQLite, it’s literally just used for persistence to track player data that gets updated occasionally. Even factoring in network latency, I don’t believe that SQLite will outperform MySQL for our particular use case.&lt;/p&gt;
-
-&lt;p&gt;In case you came here for the conclusion, and not the fluff, here’s what I learned:&lt;/p&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;SQLite scales terribly&lt;/li&gt;
-  &lt;li&gt;MySQL outperforms SQLite in basically all cases&lt;/li&gt;
-  &lt;li&gt;MySQL scales well with async requests&lt;/li&gt;
-  &lt;li&gt;Index wherever it makes sense&lt;/li&gt;
-  &lt;li&gt;Use &lt;code class=&quot;highlighter-rouge&quot;&gt;INSERT INTO … ON DUPLICATE KEY UPDATE&lt;/code&gt; over &lt;code class=&quot;highlighter-rouge&quot;&gt;REPLACE&lt;/code&gt;&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;h1 id=&quot;background&quot;&gt;Background&lt;/h1&gt;
-
-&lt;p&gt;I was actually planning on writing this post a while back, when Jurassic was just released. As it turns out, procrastination is a force to be reckoned with!&lt;/p&gt;
-
-&lt;p&gt;I believe we actually had to reboot Jurassic several times in order to get rid of the lag problems. About 9 hours in, the console was flooded with exceptions thrown from 9k async threads, all with the same error: &lt;code class=&quot;highlighter-rouge&quot;&gt;SQLITE_BUSY&lt;/code&gt; from my points plugin.&lt;/p&gt;
-
-&lt;p&gt;I actually had a hard time believing that this was possible at first. I was in denial because how in the world could a database that is touted for its &lt;a href=&quot;https://www.sqlite.org/hirely.html&quot;&gt;reliability&lt;/a&gt; fail in such a stupid way? Why did such an obscure problem come up after months of using points in production? How in the world could there have been 9k failures just waiting to happen, when there weren’t even 9k unique players even on the server yet? None of the pieces fit together and I was stumped for a few days. Since the points plugin was actually designed originally to interact with a MySQL database, I imagined there might have been some kind of discrepancy that I did not account for when adding the SQLite feature in order to meet a critical release requirement, considering my relative inexperience with databases.&lt;/p&gt;
-
-&lt;p&gt;At the same time, there was a Minions issue that allowed players to use dropper blocks to duplicate minion eggs due to oversight when writing a dispense handler that was meant to be used for dispenser blocks only. I was dealing with 2 critical bugs at once, but I was told to put minions in the burner; points was kicking everyone off the server due to the laggy saves and minions wasn’t. Since I knew that the MySQL-enabled points worked fine, I decided to leave it with enabling MySQL and praying that the same issue doesn’t come up.&lt;/p&gt;
-
-&lt;h1 id=&quot;core-work&quot;&gt;Core Work&lt;/h1&gt;
-
-&lt;p&gt;On top of the 2 critical bugs affecting the server, I was also working on minor bug fixes for bosses (also put on the burner) as well as polishing up the safety framework (which I will talk about at a later time!) in the core plugin. I already had JUnit tests setup in the core plugin to test the sanity of the database APIs, so where better to start than there to figure out how to reproduce the &lt;code class=&quot;highlighter-rouge&quot;&gt;SQLITE_BUSY&lt;/code&gt; error.&lt;/p&gt;
-
-&lt;p&gt;After 24 hours of time to think after the initial crash, I was beginning to formulate a hypothesis on how the error could have occurred. I figured that with their experience in performance tuning, out good friends at Craftimize might have some ideas that I could work off of. I was fortunate to have them to bounce ideas off, and they suggested that there might have been a single event that spilled over and caused a chain reaction that led to the server eventually lagging out.&lt;/p&gt;
-
-&lt;p&gt;Piqued, I turned this idea around my head for a few hours. I also browsed through the Xerial SQLite driver source, as well as through the SQLite official docs to figure out how this exception would be thrown anyways. Eventually, I was able to boil down the issue to two possible causes, either because the file handle on the SQLite database has not been released yet due to using HikariCP, or because some arbitrary time limit has been exceeded (perhaps being caused by the first cause).&lt;/p&gt;
-
-&lt;p&gt;Since the Core unit test setup essentially used the same HikariCP configuration I used in points, I thought it might be a good idea actually to figure out the performance difference between MySQL and SQLite, seeing as we were using MySQL instead of SQLite now to store points data. The table schema for testing points is extremely simple, and it would make a perfect model to get a few ballpark numbers, as I was especially intrigued by the timeout.&lt;/p&gt;
-
-&lt;h1 id=&quot;the-results&quot;&gt;The Results&lt;/h1&gt;
-
-&lt;p&gt;Since the code is proprietary, you’ll just have to trust me blindly here.&lt;/p&gt;
-
-&lt;p&gt;I decided to start out with around 9k rounds inserting just around 10 entries. This mimics what a server might see with the few players that were on compared to the amount of operations that were going on, also taking into consideration that players can join and leave multiple times and cause multiple database queries with for only a single player. I was hesitant to convert any of it into a transaction because that is simply not how most queries are going to work, they are mostly going to be quite sparse and not all clumped together until an autosave.&lt;/p&gt;
-
-&lt;p&gt;I was mildly surprised to find that SQLite was slower than a local MySQL server. However, that was not entirely unexpected, since SQLite is writing directly to a file and MySQL probably just queues disk writes.&lt;/p&gt;
-
-&lt;p&gt;What I was really surprised by, however, was how &lt;em&gt;fast&lt;/em&gt; MySQL was. Using MySQL was several orders of a magnitude faster than SQLite was, by a factor of about 7x.&lt;/p&gt;
-
-&lt;p&gt;All that said and done, I still was not able to reproduce the bug. Maybe I’ll just have to try harder? Oh well.&lt;/p&gt;
-
-&lt;p&gt;I decided to actually compare both sync and async versions of writing to MySQL and SQLite and see how it might impact write throughput in an even more realistic scenario.&lt;/p&gt;
-
-&lt;p&gt;MySQL async, then sync results got printed out, starting on SQLite async. I was prepared to wait for several minutes so that all 9k entries get processed by the sloth of a DB engine that is SQLite.&lt;/p&gt;
-
-&lt;p&gt;What I was not prepared for was when it threw 9k &lt;code class=&quot;highlighter-rouge&quot;&gt;SQLITE_BUSY&lt;/code&gt; exceptions…&lt;/p&gt;
-
-&lt;h1 id=&quot;found-the-problem&quot;&gt;Found the Problem&lt;/h1&gt;
-
-&lt;p&gt;Let’s put the two and two together now… SQLite worked fine synchronously, even though it took minutes to complete all of its writes. However, adding the async writes to the SQLite database causes the &lt;code class=&quot;highlighter-rouge&quot;&gt;SQLITE_BUSY&lt;/code&gt; error. That can only mean one thing: my HikariCP pool to the SQLite DataSource is the cause of the error. Luckily, I knew the fix for this, having anticipated that this was the probable cause already. A simple call to &lt;code class=&quot;highlighter-rouge&quot;&gt;HikariConfig#setMaximumPoolSize(int)&lt;/code&gt; will limit the pool and prevent additional connections from being created. When the pool was being used, the synchronization provided by the DataSource connection would have been useless because it wouldn’t be able to serialize access to the database from multiple connections.&lt;/p&gt;
-
-&lt;p&gt;As amazingly stupid as the issue might seem, it is only a testament to my poor knowledge of databases. When a connection pool was used, it’s actually quite amazing how the SQLite database was able to protect itself from a potentially dangerous write from two different connections by throwing an error instead of potentially corrupting the database. By limiting the connections to the database to 1, I was able to rerun the test, which passed with flying colors.&lt;/p&gt;
-
-&lt;h1 id=&quot;taking-it-a-step-further&quot;&gt;Taking It a Step Further&lt;/h1&gt;
-
-&lt;p&gt;With all the tests already setup, and my excitement at its peak having solved the crashing issue, I turned my sights to how indexing and database queries might affect the performance of a realistic server scenario. I ended up doing 8 tests for indexed and non-indexed keys, for &lt;code class=&quot;highlighter-rouge&quot;&gt;REPLACE&lt;/code&gt; and &lt;code class=&quot;highlighter-rouge&quot;&gt;INSERT INTO … ON DUPLICATE KEY UPDATE&lt;/code&gt; queries, and for 300 and 30 queries, just for the hell of it.&lt;/p&gt;
-
-&lt;p&gt;Here are the overall results.&lt;/p&gt;
-
-&lt;h4 id=&quot;indexing&quot;&gt;Indexing&lt;/h4&gt;
-
-&lt;p&gt;Indexing had honestly little effect on the results. I did not find any substantial difference between insertions of any volume or query that would have made indexing worthwhile. That said, I would still &lt;strong&gt;always&lt;/strong&gt; add an index to my table because if it doesn’t hurt, might as well have it for the &lt;code class=&quot;highlighter-rouge&quot;&gt;SELECT&lt;/code&gt; lookups.&lt;/p&gt;
-
-&lt;h4 id=&quot;queries&quot;&gt;Queries&lt;/h4&gt;
-
-&lt;p&gt;I only tested &lt;code class=&quot;highlighter-rouge&quot;&gt;INSERT INTO … ON DUPLICATE KEY UPDATE&lt;/code&gt; on MySQL, as SQLite did not have an equivalent query. What I found was that at more realistic, i.e. lower volume queries, there could be a 2x-8x magnitude increase in insertions if the &lt;code class=&quot;highlighter-rouge&quot;&gt;INSERT INTO… ON DUPLICATE KEY UPDATE&lt;/code&gt; was used over &lt;code class=&quot;highlighter-rouge&quot;&gt;REPLACE&lt;/code&gt;. &lt;a href=&quot;http://code.openark.org/blog/mysql/replace-into-think-twice&quot;&gt;This article&lt;/a&gt; seems to backup this claim as well. Therefore, &lt;strong&gt;always&lt;/strong&gt; use &lt;code class=&quot;highlighter-rouge&quot;&gt;INSERT INTO … ON DUPLICATE KEY UPDATE&lt;/code&gt; to perform upserts in MySQL.&lt;/p&gt;
-
-&lt;h4 id=&quot;async-vs-sync&quot;&gt;Async vs Sync&lt;/h4&gt;
-
-&lt;p&gt;Between all insertions done asynchronously in a 4 thread pool and synchronously, I found that although MySQL queries were consistently faster async than sync, except when at low volume. However, &lt;strong&gt;always&lt;/strong&gt; use async firstly because it isn’t a good idea to run queries synchronously on a Bukkit server, and secondly because between 30 and 300 entries, async experiences only a 2x slowdown while sync experiences an 8x slowdown.&lt;/p&gt;
-
-&lt;p&gt;Async and sync makes very little difference on SQLite since the insertions are limited by the fact that all threads share the same connection anyways, but again, &lt;strong&gt;always&lt;/strong&gt; use async, else you will freeze the Bukkit main thread.&lt;/p&gt;
-
-&lt;h4 id=&quot;mysql-vs-sqlite&quot;&gt;MySQL vs SQLite&lt;/h4&gt;
-
-&lt;p&gt;&lt;strong&gt;Always&lt;/strong&gt; use MySQL when possible. Even at low volume of insertions, &lt;code class=&quot;highlighter-rouge&quot;&gt;INSERT INTO … ON DUPLICATE KEY UPDATE&lt;/code&gt; still has a lower performance footprint than an SQLite &lt;code class=&quot;highlighter-rouge&quot;&gt;UPDATE&lt;/code&gt;. At high volume, MySQL scales significantly better than SQLite, being up 5x faster than SQLite for 300 insertions.&lt;/p&gt;
-
-&lt;h1 id=&quot;closing-words&quot;&gt;Closing Words&lt;/h1&gt;
-
-&lt;p&gt;I definitely learned a lot about databases by going through this entire ordeal. While it was very frustrating to find out that my plugin was at fault for crashing, yet again (see my previous blog post for more about crashing), I would not have been motivated enough to go through and test for myself each of the little details involving databases. After all, it is the little details that separates the good from the great.&lt;/p&gt;
-
-&lt;p&gt;There will be lots of exciting things to come, both for MineSaga and for my blog in the coming few weeks as summer commences, so I’m definitely very hyped about that! Stay tuned.&lt;/p&gt;</content><author><name></name></author><summary type="html">An issue with one of the plugins on MineSaga has recently brought to my attention the rather poor decision of using SQLite to store player data. Now we’re not even doing anything complicated with SQLite, it’s literally just used for persistence to track player data that gets updated occasionally. Even factoring in network latency, I don’t believe that SQLite will outperform MySQL for our particular use case.</summary></entry></feed>
+unless some extenuating circumstance forces me to.&lt;/p&gt;</content><author><name></name></author><summary type="html">While I don’t profess to be an absolute expert at control theory, a lot of the information about the matter that I’ve found online appears to be either inaccessible to the average Joe or simply flat-out unhelpful. Control Theory is often explained with mechanical controllers that don’t really have any application to the software world, and it has been difficult for me personally to comprehend at all what is going on. In light of this, I’ve decided to do a write up about what control theory is from the perspective of an implementor, rather than that of a theorist.</summary></entry></feed>
