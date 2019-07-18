@@ -143,21 +143,22 @@ efforts to document nullability in the API.</p>
 
 <p>Back before the more recent API versions, what was <code class="highlighter-rouge">null</code>
 and what wasn’t was basically guesswork that you needed to
-keep stored in the back of your mind. There are plenty of
-places you can get it - starting from getting the inventory
-slot itself to the <code class="highlighter-rouge">ItemMeta</code> itself, to the individual
-methods like <code class="highlighter-rouge">ItemMeta#getDisplayName()</code>. This was further
+keep stored in the back of your mind once you figured it
+out. There are plenty of places you can quickly run into
+trouble - starting from getting the inventory slot itself
+to retrieving the <code class="highlighter-rouge">ItemMeta</code>, to the individual methods
+like <code class="highlighter-rouge">ItemMeta#getDisplayName()</code>. This was further
 compounded by the inconsistent use of <code class="highlighter-rouge">Material#AIR</code> to
 denote an empty/no item. For example, in
 <code class="highlighter-rouge">PlayerInteractEvent</code>, I believe that using <code class="highlighter-rouge">getItem()</code>
-from the event would return <code class="highlighter-rouge">null</code> for no item, but
+from the event would return <code class="highlighter-rouge">null</code> for empty, but
 <code class="highlighter-rouge">Player#getItemInHand()</code> would return an <code class="highlighter-rouge">AIR</code> item. In
 fact, <code class="highlighter-rouge">Inventory#getItem(int)</code> would return <code class="highlighter-rouge">null</code> as well
-and any setter accepted a <code class="highlighter-rouge">null</code> item as an empty item 
-so the inconsistent use of the <code class="highlighter-rouge">AIR</code> material obviously 
-doesn’t make a whole lot of sense. Regardless, I digress. 
-The point is, even for more advance programmers, the Bukkit
-inventory API is still difficult to navigate.</p>
+and any setter accepted a <code class="highlighter-rouge">null</code> item as empty, so the
+inconsistent use of the <code class="highlighter-rouge">AIR</code> material obviously doesn’t
+make a whole lot of sense. Regardless, I digress. The point
+is, even for more advanced programmers, the Bukkit
+inventory API is still difficult terrain to navigate.</p>
 
 <p>Honestly the best advice I can really give is find one way
 to do things and stick with it. This is a controversial
