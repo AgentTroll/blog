@@ -141,11 +141,10 @@ sense. Why is Guice even in this stacktrace? Where does the
 stacktrace even come from? How is the logger looping back
 to Guice in the first place? I mean from the looks of it,
 it kinda looked like it had something to do with logging,
-but there are several things here - it deals with the
-class loader, and Guice had something to do with it. So
-obviously, the knee-jerk reaction was not the right thing
-to do. (I `rm -fR logs/` anyways for good measure, but no
-dice).
+but there are several things out of place here - it deals
+with the class loader, and Guice had something to do with
+it. So obviously, the knee-jerk reaction was incorrect.
+(I `rm -fR logs/` anyways for good measure, but no dice).
 
 So how am I supposed to fix it?
 
@@ -172,7 +171,7 @@ with no answers to it.
 Since I know that Guice is part of the problem, I decided
 to comment out all the initialization it is doing, from
 creating the injector to the usages of
-`Injector#getInstance(...)`. Since I was using a newer 
+`Injector#getInstance(...)`. Since I was using a newer
 Guice version, perhaps simply having the classes in the JAR
 or perhaps the relocation could be messing with something?
 The answer was no, the exception didn't come up with simply
@@ -215,9 +214,13 @@ won't be thrown either. I'm not sure why this even occurs
 in the first place, what the problem is with exceptions
 that require class loading and such. Perhaps it is needed
 to find line numbers or something to display more
-debugging information? It is ironic then that it actually
-hindered the debugging process rather than expediting it.
-I honestly can only speculate.
+debugging information? Perhaps because it ends up having
+to resolve classes through `PluginClassLoader`, and the JAR
+file has already been read, it can't read from the closed
+JAR stream? I honestly can only speculate. That being said,
+it is ironic that something which may have originally been
+intended to expedite the debugging process actually
+hindered it in this case. Go figure.
 
 I'm working on getting the project out as soon as I can.
 This is simply a quick post I decided to write in case
