@@ -70,21 +70,22 @@ efforts to document nullability in the API.
 
 Back before the more recent API versions, what was `null`
 and what wasn't was basically guesswork that you needed to
-keep stored in the back of your mind. There are plenty of
-places you can get it - starting from getting the inventory
-slot itself to the `ItemMeta` itself, to the individual
-methods like `ItemMeta#getDisplayName()`. This was further
+keep stored in the back of your mind once you figured it
+out. There are plenty of places you can quickly run into
+trouble - starting from getting the inventory slot itself
+to retrieving the `ItemMeta`, to the individual methods
+like `ItemMeta#getDisplayName()`. This was further
 compounded by the inconsistent use of `Material#AIR` to
 denote an empty/no item. For example, in
 `PlayerInteractEvent`, I believe that using `getItem()`
-from the event would return `null` for no item, but
+from the event would return `null` for empty, but
 `Player#getItemInHand()` would return an `AIR` item. In
 fact, `Inventory#getItem(int)` would return `null` as well
-and any setter accepted a `null` item as an empty item 
-so the inconsistent use of the `AIR` material obviously 
-doesn't make a whole lot of sense. Regardless, I digress. 
-The point is, even for more advance programmers, the Bukkit
-inventory API is still difficult to navigate.
+and any setter accepted a `null` item as empty, so the
+inconsistent use of the `AIR` material obviously doesn't
+make a whole lot of sense. Regardless, I digress. The point
+is, even for more advanced programmers, the Bukkit
+inventory API is still difficult terrain to navigate.
 
 Honestly the best advice I can really give is find one way
 to do things and stick with it. This is a controversial
