@@ -226,3 +226,15 @@ I'm working on getting the project out as soon as I can.
 This is simply a quick post I decided to write in case
 anyone else also runs into this issue.
 
+# Quick update 2019-07-21 23:47
+
+I figured out that it has something to do with unchecked
+exceptions being thrown; if you wrap all of your code
+that uses `Injector#getInstance(...)` with a try-catch
+block and print with `Exception#printStackTrace()` instead,
+you can print the actual exception. Since
+`#getInstance(...)` should only be used in a few entry
+points, it should be relatively straightforward (if it
+is being used literally everywhere, you've probably missed
+the point of Guice...).
+
