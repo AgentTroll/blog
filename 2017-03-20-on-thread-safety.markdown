@@ -105,7 +105,7 @@ And the output for the two threads are then as follows:
 2
 ```
 
-What is often difficult for novice developers to think about is potential for operations to occur out of order. In the above diagram, although `t1` was `start`ed first, the scheduler might actually begin execiting `t2` before anything even starts in `t1`. This is an ordering issue because threads are not run in an expected order.
+What is often difficult for novice developers to think about is potential for operations to occur out of order. In the above diagram, although `t1` was `start`ed first, the scheduler might actually begin execiting `t2` before anything even starts in `t1`. This is an ordering issue because threads are not run in an expected order. Additionally, although `t2` might be expected to print `1` because it started first in that particular scenario, this might also not be the case because in the time *between* calling `mutate()` and then `read()` to print the new state to the console, another thread might already have called `mutate()` again.
 
 #### Atomicity Issues
 
@@ -202,12 +202,12 @@ Consider the `MutableState` class from the previous section. We can utilize the 
 class SafeMutableState {
     private int state;
 
-    public synchronized void mutate() { 
-        this.state++; 
+    public synchronized void mutate() {
+        this.state++;
     }
 
-    public synchronized int read() { 
-        return this.state; 
+    public synchronized int read() {
+        return this.state;
     }
 }
 ```
@@ -219,15 +219,15 @@ I previously mentioned that the `synchronized` "block" is used to acquire and re
 class SafeMutableState {
     private int state;
 
-    public void mutate() { 
+    public void mutate() {
         synchronized (this) {
-            this.state++; 
+            this.state++;
         }
     }
 
-    public int read() { 
+    public int read() {
         synchronized (this) {
-            return this.state; 
+            return this.state;
         }
     }
 }
@@ -243,7 +243,7 @@ However, this doesn't explain why the `read()` method is `synchronized` as well.
 
 Wherever your code is being called by multiple threads, a `synchronized` block can be used to ensure atomicity by allowing only a single thread to be executing that to ensure atomicity through thread serialization and that the state values read by that method are up to date.
 
-One technical detail previously mentioned is that threads tend to be non-deterministic. There are many things that control thread timing and when threads run what - the OS thread scheduler and the CPU come to mind. The execution order of threads are arbitrary, and `synchronized` blocks cannot control that. When threads queue to wait for a lock, a random thread is selected when the lock becomes available again. It is possible to ensure FIFO order, but that requires a slightly different tool that I'll be covering in a few sections. That being said, `synchronized` blocks can control reorderings to some extent. The compiler and the JIT may try to reorder certain instructions that work in single-threaded code, but will produce surprising results in multithreaded code. I myself don't actually have any examples of this, but it is worth noting that the `synchronized` block cannot be reordered with other instructions outside the block as an optimization (although again, how this is an optimization I'm not exactly sure). A `synchronized` block acts as a kind of barrier for this, meaning that instructions cannot flow past the `synchronized` block; instructions before can be reordered still, but only as long as those instructions stay before the `synchronized` block. This is the same for instructions after the `synchronized` block and even instructions inside the `synchronized` block as well, so long as those instructions do not move outside of the `synchronized` block, of course. 
+One technical detail previously mentioned is that threads tend to be non-deterministic. There are many things that control thread timing and when threads run what - the OS thread scheduler and the CPU come to mind. The execution order of threads are arbitrary, and `synchronized` blocks cannot control that. When threads queue to wait for a lock, a random thread is selected when the lock becomes available again. It is possible to ensure FIFO order, but that requires a slightly different tool that I'll be covering in a few sections. That being said, `synchronized` blocks can control reorderings to some extent. The compiler and the JIT may try to reorder certain instructions that work in single-threaded code, but will produce surprising results in multithreaded code. I myself don't actually have any examples of this, but it is worth noting that the `synchronized` block cannot be reordered with other instructions outside the block as an optimization (although again, how this is an optimization I'm not exactly sure). A `synchronized` block acts as a kind of barrier for this, meaning that instructions cannot flow past the `synchronized` block; instructions before can be reordered still, but only as long as those instructions stay before the `synchronized` block. This is the same for instructions after the `synchronized` block and even instructions inside the `synchronized` block as well, so long as those instructions do not move outside of the `synchronized` block, of course.
 
 #### The `volatile` Keyword
 
@@ -254,12 +254,12 @@ The `volatile` keyword, unlike `synchronized`, is a field modifier. While `synch
 class VolatileMutableState {
     private volatile int state;
 
-    public void mutate() { 
-        this.state++; 
+    public void mutate() {
+        this.state++;
     }
 
-    public int read() { 
-        return this.state; 
+    public int read() {
+        return this.state;
     }
 }
 ```
