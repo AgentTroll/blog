@@ -295,6 +295,18 @@ hindered it in this case. Go figure.</p>
 This is simply a quick post I decided to write in case
 anyone else also runs into this issue.</p>
 
+<h1 id="quick-update-2019-07-21-2347">Quick update 2019-07-21 23:47</h1>
+
+<p>I figured out that it has something to do with unchecked
+exceptions being thrown; if you wrap all of your code
+that uses <code class="highlighter-rouge">Injector#getInstance(...)</code> with a try-catch
+block and print with <code class="highlighter-rouge">Exception#printStackTrace()</code> instead,
+you can print the actual exception. Since
+<code class="highlighter-rouge">#getInstance(...)</code> should only be used in a few entry
+points, it should be relatively straightforward (if it
+is being used literally everywhere, you’ve probably missed
+the point of Guice…).</p>
+
 
   </div>
 
