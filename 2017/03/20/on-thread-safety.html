@@ -186,7 +186,7 @@
 2
 </code></pre></div></div>
 
-<p>What is often difficult for novice developers to think about is potential for operations to occur out of order. In the above diagram, although <code class="highlighter-rouge">t1</code> was <code class="highlighter-rouge">start</code>ed first, the scheduler might actually begin execiting <code class="highlighter-rouge">t2</code> before anything even starts in <code class="highlighter-rouge">t1</code>. This is an ordering issue because threads are not run in an expected order.</p>
+<p>What is often difficult for novice developers to think about is potential for operations to occur out of order. In the above diagram, although <code class="highlighter-rouge">t1</code> was <code class="highlighter-rouge">start</code>ed first, the scheduler might actually begin execiting <code class="highlighter-rouge">t2</code> before anything even starts in <code class="highlighter-rouge">t1</code>. This is an ordering issue because threads are not run in an expected order. Additionally, although <code class="highlighter-rouge">t2</code> might be expected to print <code class="highlighter-rouge">1</code> because it started first in that particular scenario, this might also not be the case because in the time <em>between</em> calling <code class="highlighter-rouge">mutate()</code> and then <code class="highlighter-rouge">read()</code> to print the new state to the console, another thread might already have called <code class="highlighter-rouge">mutate()</code> again.</p>
 
 <h4 id="atomicity-issues">Atomicity Issues</h4>
 
@@ -287,12 +287,12 @@
 <span class="kd">class</span> <span class="nc">SafeMutableState</span> <span class="o">{</span>
     <span class="kd">private</span> <span class="kt">int</span> <span class="n">state</span><span class="o">;</span>
 
-    <span class="kd">public</span> <span class="kd">synchronized</span> <span class="kt">void</span> <span class="nf">mutate</span><span class="o">()</span> <span class="o">{</span> 
-        <span class="k">this</span><span class="o">.</span><span class="na">state</span><span class="o">++;</span> 
+    <span class="kd">public</span> <span class="kd">synchronized</span> <span class="kt">void</span> <span class="nf">mutate</span><span class="o">()</span> <span class="o">{</span>
+        <span class="k">this</span><span class="o">.</span><span class="na">state</span><span class="o">++;</span>
     <span class="o">}</span>
 
-    <span class="kd">public</span> <span class="kd">synchronized</span> <span class="kt">int</span> <span class="nf">read</span><span class="o">()</span> <span class="o">{</span> 
-        <span class="k">return</span> <span class="k">this</span><span class="o">.</span><span class="na">state</span><span class="o">;</span> 
+    <span class="kd">public</span> <span class="kd">synchronized</span> <span class="kt">int</span> <span class="nf">read</span><span class="o">()</span> <span class="o">{</span>
+        <span class="k">return</span> <span class="k">this</span><span class="o">.</span><span class="na">state</span><span class="o">;</span>
     <span class="o">}</span>
 <span class="o">}</span>
 </code></pre></div></div>
@@ -303,15 +303,15 @@
 <span class="kd">class</span> <span class="nc">SafeMutableState</span> <span class="o">{</span>
     <span class="kd">private</span> <span class="kt">int</span> <span class="n">state</span><span class="o">;</span>
 
-    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">mutate</span><span class="o">()</span> <span class="o">{</span> 
+    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">mutate</span><span class="o">()</span> <span class="o">{</span>
         <span class="kd">synchronized</span> <span class="o">(</span><span class="k">this</span><span class="o">)</span> <span class="o">{</span>
-            <span class="k">this</span><span class="o">.</span><span class="na">state</span><span class="o">++;</span> 
+            <span class="k">this</span><span class="o">.</span><span class="na">state</span><span class="o">++;</span>
         <span class="o">}</span>
     <span class="o">}</span>
 
-    <span class="kd">public</span> <span class="kt">int</span> <span class="nf">read</span><span class="o">()</span> <span class="o">{</span> 
+    <span class="kd">public</span> <span class="kt">int</span> <span class="nf">read</span><span class="o">()</span> <span class="o">{</span>
         <span class="kd">synchronized</span> <span class="o">(</span><span class="k">this</span><span class="o">)</span> <span class="o">{</span>
-            <span class="k">return</span> <span class="k">this</span><span class="o">.</span><span class="na">state</span><span class="o">;</span> 
+            <span class="k">return</span> <span class="k">this</span><span class="o">.</span><span class="na">state</span><span class="o">;</span>
         <span class="o">}</span>
     <span class="o">}</span>
 <span class="o">}</span>
@@ -337,12 +337,12 @@
 <span class="kd">class</span> <span class="nc">VolatileMutableState</span> <span class="o">{</span>
     <span class="kd">private</span> <span class="kd">volatile</span> <span class="kt">int</span> <span class="n">state</span><span class="o">;</span>
 
-    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">mutate</span><span class="o">()</span> <span class="o">{</span> 
-        <span class="k">this</span><span class="o">.</span><span class="na">state</span><span class="o">++;</span> 
+    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">mutate</span><span class="o">()</span> <span class="o">{</span>
+        <span class="k">this</span><span class="o">.</span><span class="na">state</span><span class="o">++;</span>
     <span class="o">}</span>
 
-    <span class="kd">public</span> <span class="kt">int</span> <span class="nf">read</span><span class="o">()</span> <span class="o">{</span> 
-        <span class="k">return</span> <span class="k">this</span><span class="o">.</span><span class="na">state</span><span class="o">;</span> 
+    <span class="kd">public</span> <span class="kt">int</span> <span class="nf">read</span><span class="o">()</span> <span class="o">{</span>
+        <span class="k">return</span> <span class="k">this</span><span class="o">.</span><span class="na">state</span><span class="o">;</span>
     <span class="o">}</span>
 <span class="o">}</span>
 </code></pre></div></div>
