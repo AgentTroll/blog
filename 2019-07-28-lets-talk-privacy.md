@@ -6,7 +6,7 @@ date: 2019-07-28T15:41:15-07:00
 
 This post should come with a big red disclaimer that says
 I'm not an expert, but since my screen is redshifted to
-hell, plain black will have to do. I'm just a Java
+hell, so plain black will have to do. I'm just a Java
 programmer with a blog.
 
 With that out of the way, I am subscribed to
