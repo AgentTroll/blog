@@ -165,8 +165,8 @@ bargaining tools if they reveal information that you don't
 want people to know. But let's say that you don't care.
 That does not mean that you shouldn't be entitled to be
 able to control the data advertising companies collect.
-Like I described in the reasons why I personally care about
-privacy, I stated that it was about controlling my
+Like I describe in the reasons why I personally care about
+privacy, I state that it was about controlling my
 information. If you do not care about your information,
 you are implicitly allowing for that information to be
 released about yourself. So although you don't care about
