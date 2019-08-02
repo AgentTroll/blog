@@ -43,6 +43,11 @@
           
             
             
+            <a class="page-link" href="/blog/%5C">Let&#39;s Talk Privacy</a>
+            
+          
+            
+            
             <a class="page-link" href="/blog/about/">About</a>
             
           
@@ -113,7 +118,7 @@ satellite. This is what a 3LE set looks like:</p>
 2 25544  51.6442 332.2030 0008185  74.7737  30.3832 15.51219884176168
 </code></pre></div></div>
 
-<p>A TLE set would just be the same thing but with the line 
+<p>A TLE set would just be the same thing but with the line
 starting with <code class="highlighter-rouge">0</code> removed. For the purposes of
 making things easier to understand, I’ll primarily refer
 to both 3LE and TLE as just TLE.</p>
@@ -122,7 +127,7 @@ to both 3LE and TLE as just TLE.</p>
 for TLE sets is actually surprisingly helpful and
 informative. The main gist is that TLE is a way of
 communicating the position and motion of a satellite
-orbiting the Earth in as few numbers as possible. TLE sets 
+orbiting the Earth in as few numbers as possible. TLE sets
 are readily available from <a href="https://www.space-track.org/#/tle">SpaceTrack.org’s TLE search
 page</a>, and you can look
 for satellites in the <a href="https://www.space-track.org/#/catalog">satellite catalog</a>.
@@ -146,21 +151,21 @@ helpful:</p>
 but how can that data be translated into usable numbers
 that show us where to point a telescope for example?</p>
 
-<p>The first step is to refer to 
+<p>The first step is to refer to
 <a href="https://www.celestrak.com/NORAD/documentation/spacetrk.pdf">SpaceTrack Report #3</a>.
 I’ll let the author(s) summarize:</p>
 
 <blockquote>
-  <p>The NORAD element sets [TLE sets] are “mean” values 
+  <p>The NORAD element sets [TLE sets] are “mean” values
 obtained by removing periodic variations in a particular
 way. In order to obtain good predictions, these periodic
 variations must be reconstructed (by the prediction model)
-in exactly the same way they were removed by NORAD. Hence, 
-inputting NORAD element sets into a different model (even 
-though the model may be more accurate or even a numerical 
-integrator) will result in degraded predictions. The NORAD 
-element sets must be used with one of the models described 
-in this report in order to retain maximum prediction 
+in exactly the same way they were removed by NORAD. Hence,
+inputting NORAD element sets into a different model (even
+though the model may be more accurate or even a numerical
+integrator) will result in degraded predictions. The NORAD
+element sets must be used with one of the models described
+in this report in order to retain maximum prediction
 accuracy</p>
 </blockquote>
 
@@ -170,7 +175,7 @@ from the data given by the TLE data set. Now there are
 5 different models that the report lays out, SGP, SGP4/8
 and SDP4/8. These are collectively known as “simplified
 perturbation models” and take into account atmospheric
-drag, gravitational drag caused by the Earth’s oblate 
+drag, gravitational drag caused by the Earth’s oblate
 shape, the Earth’s spin, and various other factors in order
 to predict the motion of the satellite over time.</p>
 
@@ -196,7 +201,7 @@ different distances, which really confused me. That being
 said, combined with looking at the FORTRAN listings on
 SpaceTrack Report #3 as well as with the LizardTail website
 <a href="https://www.lizard-tail.com/isana/tle/lib/sgp4.js">source</a>
-and the 
+and the
 <a href="https://www.celestrak.com/publications/AIAA/2006-6753/AIAA-2006-6753.pdf">Revisiting Spacetrack Report #3</a>
 code listings in the appendix, I was able to reconstruct
 the entire mathematical model in C code with most of the
@@ -205,11 +210,11 @@ entirely perfect, but the numbers it produces look pretty
 correct to me nonetheless.</p>
 
 <p>Now if you ask me, I’d say that the finer details of the
-model itself aren’t actually that important. I can’t say 
+model itself aren’t actually that important. I can’t say
 for sure what the purpose of each and every calculation is.
 Again, the model takes into account the many different
 variables that affect the gravitational pull and drag
-experienced by a satellite, but that is as far as the 
+experienced by a satellite, but that is as far as the
 extent of my knowledge about the perturbation models goes.</p>
 
 <p>(Apologies to those readers who may have clicked on this to
@@ -223,9 +228,9 @@ love to learn)</p>
 <p>Now having implemented the SGP4 model, you might think that
 we can now extract the data we need. Not so. The SGP4 model
 produces 2 vectors, specifying the position and velocity
-(meters per second) of the satellite. <code class="highlighter-rouge">fate</code> actually 
-provides an additional 2 vectors called “unit orientation 
-vectors.” These are used  to derive the position and 
+(meters per second) of the satellite. <code class="highlighter-rouge">fate</code> actually
+provides an additional 2 vectors called “unit orientation
+vectors.” These are used  to derive the position and
 velocity vectors.</p>
 
 <p>The problem is that the reference frame for the
@@ -246,49 +251,61 @@ highly recommend reading the entirety of the following:</p>
 </ul>
 
 <p>As far as the high-level overview goes, it is worth taking
-a look at what ECI really is. ECI stands for 
+a look at what ECI really is. ECI stands for
 “Earth-centered inertial,” Earth-centered meaning that the
-origin is at the center of the Earth and inertial meaning 
+origin is at the center of the Earth and inertial meaning
 that it doesn’t move with the rotation of the Earth itself.</p>
 
 <p>Calculating the look angle in azimuth rotation from true
 north and inclination angle from the horizon is relatively
-complex because you need to turn yourr own latitude and 
-longitude into ECI coordinates as well and utilize some 
-trigonometry to determine the angle created between the 
+complex because you need to turn your own latitude and
+longitude into ECI coordinates as well and utilize some
+trigonometry to determine the angle created between the
 coordinates. Not so hard, right? Unfortunately, the
-complication comes from the fact that standard longitude
-and latitude considers the Earth as an oblate spheroid, 
-while ECI considers the Earth as a perfect sphere. Further,
-the Earth also spins, which means that your position
-changes as the Earth spins. In order to calculate 
-everything, the current time is taken, and then converted 
-to a single Julian date. This is then converted to 
-Greenwich Mean Sidereal Time (GMST), which allows one to
-calculate the current rotation of the Earth without the 
-fluctuations in a solar day. Armed with this information,
-we can then convert from the standard”geodetic” latitude 
-and longitude into a “geocentric” latitude and longitude,
-and from there, trigonometry is used to obtain the ECI 
-coordinates of the observer.
-<a href="https://github.com/AgentTroll/fate/blob/70311dab1664ffa3278c4af0e3f8f96f859f9efc/eci.c#L12-L22">The implementation</a>
-actually then looks deceptively simple.</p>
+complication comes from the fact that the Earth spins,
+causing a number of issues. Firstly, this means that the
+Earth is not a perfect sphere; it is in fact an oblate
+spheroid that bulges slightly at the equator. Because the
+standard latitude and longitude account for the ellipsoidal
+shape of the Earth, they are said to be geodetic. On the
+other hand, ECI considers the Earth as a perfect sphere.
+If that wasn’t enough, the Earth’s spin also means that
+your position is dependent on time.</p>
+
+<p>In order to calculate everything, the current time is
+taken, and then converted to a single Julian date. This is
+then converted to Greenwich Mean Sidereal Time (GMST),
+which allows one to determine the rotation of the Earth
+without the fluctuations in a solar day. This solves the
+second problem, locating the observer taking into account
+the Earth’s rotation. Now, we can use trigonometry to
+convert from the geodetic latitude and longitude to the
+geocentric ECI coordinates. As a matter of fact, the
+implementation of this part
+<a href="https://github.com/AgentTroll/fate/blob/70311dab1664ffa3278c4af0e3f8f96f859f9efc/eci.c#L12-L22">the implementation</a>
+looks deceptively simple. Now that we’ve solved both
+problems, we then have the coordinates of both the observer
+and the coordinates of the satellite in the same reference
+frame. Since both are in ECI coordinates, we can just use
+simple trigonometry to determine the angle which to point
+an instrument or the angle to look at in order to locate
+the satellite.</p>
 
 <p>Calculating the position of the satellite above the Earth
-(called the sub-point) is a bit more simple. Essentially, 
-we need to reverse the process and convert ECI into 
-geodetic coordinates, but since we already have the ECI
-coordinates, only simple trig is needed once we’ve factored
-in the GMST to figure out the longitude, because the fact
-that the Earth is oblate only affects latitude. Longitude
-runs parallel to the oblateness, so no modification is
-necessary. To calculate geodetic latitude, we first 
-calculate the geocentric latitude, which is rather 
-straightforward trig. We then run a transformation which 
-moves the angle closer and closer to geodetic latitude, 
-until the diffence in improvement to the value becomes 
-smaller than is worth calculating. This value is then close
-enough to the geodetic latitude to accept.</p>
+(called the sub-point) is a bit more simple. Essentially,
+we need to reverse the process of finding look angle and
+convert ECI into geodetic coordinates. Because longitude
+runs parallel to the Earth’s oblateness, we only need to
+factor in the current time in GMST to determine the Earth’s
+rotation. Then, we can compute the longitude with trig.
+To calculate geodetic latitude, we first calculate the
+geocentric latitude, which is rather straightforward trig.
+Since latitude is affected by the Earth’s oblateness, we
+then run a transformation which moves the angle closer
+and closer to geodetic latitude, until the diffence in
+improvement to the value becomes smaller than is worth
+calculating. This value is then close enough to the
+geodetic latitude to accept.</p>
 
 <h1 id="conclusion">Conclusion</h1>
 
@@ -305,14 +322,14 @@ track them and create models for the orbital mechanics that
 affect the motion of the satellites through space.</p>
 
 <p>Not only do I not usually talk about the C language, but I
-didn’t really go into any specifics of it in this 
+didn’t really go into any specifics of it in this
 particular blog post. That being said, I did talk a little
 bit about astronomy and space, which are both topics that
 I’m very curious to learn more about. I’m sure that every
 one of us watched a rocket launch, watched Neil Armstrong
 take humanity’s first steps on another planet, or simply
 read the news about the Opportunity rover. I’m absolutely
-certain that others have been inspired by spaceflight and 
+certain that others have been inspired by spaceflight and
 can relate to wanting to advance space exploration in the
 future, if not the present.</p>
 

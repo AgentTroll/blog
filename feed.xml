@@ -1,4 +1,564 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.6.2">Jekyll</generator><link href="https://agenttroll.github.io/blog/feed.xml" rel="self" type="application/atom+xml" /><link href="https://agenttroll.github.io/blog/" rel="alternate" type="text/html" /><updated>2019-07-22T14:05:46-07:00</updated><id>https://agenttroll.github.io/blog/</id><title type="html">Inside a Troll</title><subtitle>Thoughts of a Java developer</subtitle><entry><title type="html">What The Fuck Does Guice ‘zip file closed’ Exception Mean?</title><link href="https://agenttroll.github.io/blog/2019/07/18/what-the-fuck-does-guice-zip-file-closed-exception-mean.html" rel="alternate" type="text/html" title="What The Fuck Does Guice 'zip file closed' Exception Mean?" /><published>2019-07-18T01:00:15-07:00</published><updated>2019-07-18T01:00:15-07:00</updated><id>https://agenttroll.github.io/blog/2019/07/18/what-the-fuck-does-guice-zip-file-closed-exception-mean</id><content type="html" xml:base="https://agenttroll.github.io/blog/2019/07/18/what-the-fuck-does-guice-zip-file-closed-exception-mean.html">&lt;p&gt;I’ve had a lot of time to work with &lt;a href=&quot;https://github.com/google/guice&quot;&gt;Guice&lt;/a&gt;
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.6.2">Jekyll</generator><link href="https://agenttroll.github.io/blog/feed.xml" rel="self" type="application/atom+xml" /><link href="https://agenttroll.github.io/blog/" rel="alternate" type="text/html" /><updated>2019-08-01T22:37:32-07:00</updated><id>https://agenttroll.github.io/blog/</id><title type="html">Inside a Troll</title><subtitle>Thoughts of a Java developer</subtitle><entry><title type="html">Let’s Talk Privacy</title><link href="https://agenttroll.github.io/blog/2019/07/28/lets-talk-privacy.html" rel="alternate" type="text/html" title="Let's Talk Privacy" /><published>2019-07-28T15:41:15-07:00</published><updated>2019-07-28T15:41:15-07:00</updated><id>https://agenttroll.github.io/blog/2019/07/28/lets-talk-privacy</id><content type="html" xml:base="https://agenttroll.github.io/blog/2019/07/28/lets-talk-privacy.html">&lt;p&gt;This post should come with a big red disclaimer that says
+I’m not an expert, but since my screen is redshifted to
+hell, plain black will have to do. I’m just a Java
+programmer with a blog.&lt;/p&gt;
+
+&lt;p&gt;With that out of the way, I am subscribed to
+&lt;a href=&quot;https://t.me/hackernewslive&quot;&gt;Hacker News Live&lt;/a&gt; channel,
+which posts updates regarding Google Chrome a few times,
+every time with dozens of thumbs-ups and only a few
+thumbs-down votes. A few weeks ago, I decided to just check
+&lt;a href=&quot;https://www.siliconvalley.com/2019/06/21/google-chrome-has-become-surveillance-software-its-time-to-switch/&quot;&gt;the link&lt;/a&gt;,
+which I found to be an interesting read indeed. It’s not
+everyday you see almost 20 thumbs-ups on a single article
+on the Hacker News Live channel, so there must either be a
+really compelling point made or there are anti-Google bots
+on the channel.&lt;/p&gt;
+
+&lt;p&gt;That was the beginning of a pretty long journey.&lt;/p&gt;
+
+&lt;h1 id=&quot;why-privacy-is-important&quot;&gt;Why Privacy is Important&lt;/h1&gt;
+
+&lt;p&gt;If you don’t think privacy is important, then I doubt
+anything I say will change your mind. That being said, I
+think that it is a topic worth being informed on. I’m not
+an expert on this subject, but there are plenty of people
+who are and can convince you of the importance of privacy
+if I fail to do so. I’ll be sure to give links.&lt;/p&gt;
+
+&lt;p&gt;I wrote this
+&lt;a href=&quot;https://twitter.com/AgentTrolldude/status/1154623948039962625&quot;&gt;tweet&lt;/a&gt;
+a few days ago. The first link of course, is to the
+“&lt;a href=&quot;https://en.wikipedia.org/wiki/Nothing_to_hide_argument&quot;&gt;Nothing to hide&lt;/a&gt;”
+argument. The reasoning goes that if you have nothing to
+hide, then you have nothing to fear. You can allow for
+your privacy to be violated because you don’t care about
+what people are going to find. This is far and away the
+most common counterpoint I tend to hear about why people
+shouldn’t care about privacy. This is a vastly flawed
+argument in a number of ways. There are a lot of details
+on the Wikipedia page I linked, but you can find further
+information here:&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;&lt;a href=&quot;https://www.reddit.com/r/privacy/wiki/index#wiki_why_should_i_care_about_privacy.3F&quot;&gt;r/privacy Wiki&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://www.privacytools.io/&quot;&gt;privacytoolsIO Main page&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;The links above are a fantastic starting place to learn
+more about privacy and why you should care. I’ll even
+talk about why I care about privacy myself later on. But
+first, I’ll get back to why “having nothing to hide” is a
+terrible argument. First of all, it is overly presumptuous
+and implies that only criminals should expect privacy. It
+implies that law-abiding citizens should not be afraid of
+having their personal information exposed, because no harm
+can come to them if they can prove that they are completely
+innocent. However, even if you don’t have anything to hide,
+“&lt;a href=&quot;https://www.aclu.org/blog/national-security/secrecy/you-may-have-nothing-hide-you-still-have-something-fear&quot;&gt;you still have something to fear&lt;/a&gt;.”
+If you did not care about your personal information, would
+you be comfortable with someone using your identity to
+&lt;a href=&quot;https://www.reddit.com/r/privacy/comments/3hynvp/how_do_you_counter_the_i_have_nothing_to_hide/&quot;&gt;commit a crime&lt;/a&gt;?
+Would you let someone in to your bathroom to watch you
+shower and use the toilet? Would you invite people passing
+by to watch you sleep? Having nothing to hide is a poor
+argument for not caring about privacy. The truth is, you
+probably do have something to hide. You are not
+infalliable. If you have nothing to hide, you probably need
+to look harder. And even then, you &lt;em&gt;should not have
+something to hide in order to expect privacy&lt;/em&gt;. You expect
+privacy when you are using the bathroom or spending time
+with your family. It would be creepy to have someone
+staring through your window, watching your every move. But
+you don’t have to take my word for it, there are lots of
+arguments for and against having anything to hide and
+whether that entitles you to privacy. Let’s keep moving.&lt;/p&gt;
+
+&lt;p&gt;According to the linked r/privacy wiki:&lt;/p&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;there is an ever increasing portion of our lives which is
+being recorded by corporations and governments, and these
+records can be used to our disadvantage, at any time, now
+or any-time in the future&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;Corporations and governments have an immense amount of
+power armed with the data they have collected from users
+and citizens. If you do have something to hide (which you
+almost certainly do, otherwise, do not ever lock your doors
+again), the question now becomes can they be accountable
+for that data. I believe I read an article which I’m
+currently unable to find about how Google’s reCAPTCHA v3
+technology could even be used to detect Parkinsons based
+on the movement of a user’s mouse. This is a fantastic way
+to inform people who may not have been diagnosed yet. But
+on the other hand, this information may also be
+inadvertently published, for example, to insurance
+companies who will raise your premiums. Even if Google
+never ends up doing this, deducing health conditions based
+simply on mouse movements is a testament to the data
+collection power of Internet corporations. Even if Google
+cannot collect this data, someone else may exploit this
+technology themselves. Even if you don’t care if your rates
+increase, even if you don’t care if everybody in the whole
+world knew you had Parkinsons, it isn’t like it would help
+you to be in that situation. &lt;em&gt;Even if it did help&lt;/em&gt;, it
+might hurt others. Even if companies and governments are
+good stewards of your data, assuming that no nefarious
+employees access that data, assuming that no one is able to
+read your data when you are sending it, assuming that there
+is “no one out to get you,” and assuming a plethora of
+other unrealistic expectations about how your data is
+handled, privacy still matters to you. The mere fact that
+you do not care about your privacy is an expoitable data
+point, because you be expected to give up your data
+needlessly. And this is in the best possible scenario.
+In reality, companies profit off of collecting and selling
+data. Allowing yourself to be complacent is like putting
+your wallet with all of your cash on the ground. Some
+people will try to find to owner or report it to police,
+but others are going to make a profit. Even if you do not
+value your own personal information, &lt;em&gt;someone else will&lt;/em&gt;.
+Your data cannot help you if the government has access to
+both exculpatory information and incriminating information
+if their sole goal is to arrest you. It doesn’t matter if
+you have not committed a crime and it doesn’t matter that
+you have nothing to hide.&lt;/p&gt;
+
+&lt;p&gt;All of this is not to say that your information has been
+or will be used against you. Only that it may be, and that
+it is a very real threat. You may not be impacted yourself,
+but others already have. Look no further than the
+totalitarian governments. If you think that you don’t have
+anything to hide, think again, because chances are, you
+probably do.&lt;/p&gt;
+
+&lt;p&gt;&lt;a href=&quot;https://www.zdnet.com/article/a-case-against-online-privacy/&quot;&gt;One article&lt;/a&gt;
+claims that services that collect data
+“provide […] some value.” Let’s say that you aren’t like
+me and you do care about ads. You think that being tracked,
+having your preferences recorded, and having a slower
+browser is a good thing because you benefit in the end.
+But the argument is severely flawed. The author
+subsequently points fingers at ISPs since they allegedly
+don’t provide you a better service, they give data to
+the cops, and they don’t tell you you are being tracked.
+These are all debunked by Facebook’s
+&lt;a href=&quot;https://www.facebook.com/policy.php&quot;&gt;Data Policy&lt;/a&gt;,
+which states that they also comply with law enforcement,
+and by Comcast’s
+&lt;a href=&quot;https://www.xfinity.com/corporate/customers/policies/customerprivacy#to-provide-and-improve-the-services&quot;&gt;Customer Privacy Notice&lt;/a&gt;,
+which literally says that they collect traffic and use
+the data they collect to improve their services. I’m sure
+other ISPs will have similar policies. But never mind that
+fact, the whole point is that there still is value to be
+gained from expectation of privacy, even if you think you
+benefit from not having that expectation. Again, just
+because the data isn’t being abused right now doesn’t mean
+it won’t be in the future (on the other hand, as I keep
+saying, it doesn’t mean that it &lt;em&gt;will&lt;/em&gt; either). The data
+and the conclusions that can be drawn from it are powerful
+bargaining tools if they reveal information that you don’t
+want people to know. But let’s say that you don’t care.
+That does not mean that you shouldn’t be entitled to be
+able to control the data advertising companies collect.
+Like I described in the reasons why I personally care about
+privacy, I stated that it was about controlling my
+information. If you do not care about your information,
+you are implicitly allowing for that information to be
+released about yourself. So although you don’t care about
+the data being collected itself, you do care about
+controlling it. Even if you don’t do anything to hide
+that data in the first place, your lack of control is in
+of itself your decision. You should have the option halt
+the collection of data if that is your choice as well.
+Allowing your personal data to be collected is as much of
+a decision based on your privacy preference as is not
+allowing it to be.&lt;/p&gt;
+
+&lt;p&gt;There are so many more points an counterpoints that I can’t
+list them all here. Instead, I’ll leave more links so you
+can read them yourself.&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;&lt;a href=&quot;https://pages.gseis.ucla.edu/faculty/agre/arguments.html&quot;&gt;Arguments Against Privacy and What’s Wrong With Them&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://www.livemint.com/Opinion/03L1A2tOAFw6sXpsu4cweL/The-problem-with-the-right-to-privacy.html&quot;&gt;The problem with the right to privacy&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://spreadprivacy.com/three-reasons-why-the-nothing-to-hide-argument-is-flawed/&quot;&gt;Three Reasons Why the “Nothing to Hide” Argument is Flawed&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://www.theatlantic.com/technology/archive/2013/02/why-does-privacy-matter-one-scholars-answer/273521/&quot;&gt;Why Does Privacy Matter? One Scholar’s Answer&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h4 id=&quot;why-i-care&quot;&gt;Why I Care&lt;/h4&gt;
+
+&lt;p&gt;I myself have my own personal reasons to care about
+privacy.&lt;/p&gt;
+
+&lt;p&gt;In no particular order, I care about my privacy because I
+think that it is important for me to control my personal
+information. For example, the front page of my GitHub
+profile has my name right on it, but it’s not like I go
+around on public forums announcing my name. This is a
+deliberate choice. While I’m not keeping my identity
+private, I think an important part of privacy is the
+element of control. I’m not preventing anyone from finding
+out who I am, because I post plenty of that information on
+the web. If people are curious, they can find out more
+about me. There are going to be creeps online of course,
+but from my own personal experience, I feel that having
+this information in public has benefitted me much more than
+it has been a detriment. It has helped me connect with
+people on more than one occaision. But you may be curious,
+how does controlling my data relate to privacy? Here is
+what the
+&lt;a href=&quot;https://iapp.org/about/what-is-privacy/&quot;&gt;IAPP&lt;/a&gt; has to say
+on that matter:&lt;/p&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;Broadly speaking, privacy is the right to be let alone,
+or freedom from interference or intrusion. Information
+privacy is the right to have some control over how your
+personal information is collected and used.&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;By making my information less visible in some contexts and
+more so in others, I am controlling my privacy. However,
+in other contexts, that could also mean hiding my
+information more or less completely. For example, I share
+my Discord information with very few people, same deal with
+my Steam account. I don’t share my passwords with anyone.
+Privacy doesn’t mean that you explicitly need to hide
+anything, only that you are in control of information.&lt;/p&gt;
+
+&lt;p&gt;Secondly, I care about my privacy because I think that some
+of my information shouldn’t fall into the hands of hackers.
+Online accounts often link information such as birthdate,
+phone number, friendships, etc. Many companies have privacy
+policies that say that your information is encrypted or
+stored safely and all of that. However, the IAPP states:&lt;/p&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;While security is necessary for protecting data, it’s not
+sufficient for addressing privacy.&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;And they’re right. There are many examples of this being
+exhibited in the real world, such as in the case of
+&lt;a href=&quot;https://newsroom.fb.com/news/2018/09/security-update/&quot;&gt;Facebook&lt;/a&gt;
+just last year. The truth is, once you give your data to
+a company, it is stored inside of a black box. I don’t
+want to sound like a consspiracy theorist or anything,
+but I don’t want my data to be in the hands of someone
+I don’t know, running software that might have
+vulnerabilities, or servers that are behind on security
+updates. I expect that companies I give my personal
+information to protect that information. Even companies
+proclaim themselves to
+&lt;a href=&quot;https://blog.mozilla.org/firefox/firefox-data-privacy-promise/&quot;&gt;protect your privacy&lt;/a&gt;
+make
+&lt;a href=&quot;https://www.reddit.com/r/firefox/comments/anxfz8/firefox_is_spyware_extension_recommendation/eg1hekf/&quot;&gt;mistakes&lt;/a&gt;
+as well. (See the comments, the post is entirely outrage
+bait and tinfoil hattery).&lt;/p&gt;
+
+&lt;p&gt;The simple fact is, I personally don’t see why companies
+should have access to data that they don’t need. I don’t
+care if they encrypt it, I don’t care if it is anonymized
+or if they never sell it, or if they don’t even have it
+stored in the first place. Why am I sending this data then?
+That would be analogous to going out to lunch and then
+suddenly announcing to people that I have bowel issues. Not
+only would this be completely inappropriate, the
+information I’m giving is completely unecessary because I’m
+going to eat, not going to the doctor. To apply this to a
+browser for example, why is Google Chrome sending
+information back to Google when my browser would work
+completely fine without that data sent anywhere? I don’t
+care what is being sent, why is it even sent in the first
+place?&lt;/p&gt;
+
+&lt;p&gt;Finally, I personally care about my privacy because
+tracking takes up my computer’s resources. Loading ads
+and spyware implanted on websites that are designed to
+track you takes up CPU, RAM, and battery power. If I’m on
+a slow WiFi connection, I want every little bit of
+bandwidth to load the fucking website, not a bunch of ads.
+I’d be happy to donate my money to subscription-based
+services such as reputable news sites and content creators
+if it means getting rid of ads and they get 100% of the
+revenue. Nevermind the fact that advertising companies
+want to collect every bit of data possible about me to
+“tailor” their ads, I literally just don’t want my battery
+to be drained any faster than it already is by being
+tracked.&lt;/p&gt;
+
+&lt;h1 id=&quot;what-you-can-do&quot;&gt;What You Can Do&lt;/h1&gt;
+
+&lt;p&gt;I will warn you before this that when regarding privacy,
+many of the sources that you’ll run into are not shy about
+coming off as tinfoil hatters. I’ve found sources that run
+articles about the fall of capitalism, the end of the
+world, etc., which can be expected of people who tend to be
+paranoid, if not overly so at times. However, privacy and
+security are real issues that governments are interested in
+as well, and I advise that you ignore the more extreme
+conspiracy theorizing and select the portions of the
+articles that are rational, or the ones that match your
+own
+&lt;a href=&quot;https://ssd.eff.org/en/module/your-security-plan&quot;&gt;threat profile&lt;/a&gt;.&lt;/p&gt;
+
+&lt;p&gt;Again, I will reference the r/privacy wiki that I linked
+early in this blog post. It has a lot of references to
+many different tools to minimize or take control of the
+data being collected on you.&lt;/p&gt;
+
+&lt;p&gt;I don’t give a comprehensive list here, but it should be
+enough to give you an idea of my personal preferences and
+where you can find more information. In general, if you
+use any software or website that visits the Internet, you
+should check on its Privacy Policy and look for informed
+opinions about whether or not that service respects your
+privacy.&lt;/p&gt;
+
+&lt;h4 id=&quot;web-browser&quot;&gt;Web Browser&lt;/h4&gt;
+
+&lt;p&gt;Another great resource is the
+&lt;a href=&quot;https://spyware.neocities.org/articles/browsers.html&quot;&gt;Spyware Watchdog&lt;/a&gt;,
+with the linked page going to a comparison of different
+web browsers. I personally use Ungoogled Chromium because
+I prefer a Chromium based browser that had all of the
+spyware disabled right out of the box. I have the following
+extensions installed:&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;Bitwarden&lt;/li&gt;
+  &lt;li&gt;Cookie AutoDelete&lt;/li&gt;
+  &lt;li&gt;Decentraleyes&lt;/li&gt;
+  &lt;li&gt;EditThisCookie&lt;/li&gt;
+  &lt;li&gt;HTTPS Everywhere&lt;/li&gt;
+  &lt;li&gt;NoScript&lt;/li&gt;
+  &lt;li&gt;Privacy Badger&lt;/li&gt;
+  &lt;li&gt;uBlock Origin&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;There are plethora of different extensions for Firefox as
+well, but since I’ve moved on from using Firefox, I won’t
+list them here. I personally prefer the UI on Chromium
+and I liked not having to configure anything.&lt;/p&gt;
+
+&lt;h4 id=&quot;os&quot;&gt;OS&lt;/h4&gt;
+
+&lt;p&gt;If you are not using Linux, I highly recommend switching.
+Since I already use Debian by default, I have little to say
+on this matter. You should read up
+&lt;a href=&quot;https://www.privacytools.io/operating-systems/#os&quot;&gt;here&lt;/a&gt;.&lt;/p&gt;
+
+&lt;h4 id=&quot;search-engine&quot;&gt;Search Engine&lt;/h4&gt;
+
+&lt;p&gt;I personally use StartPage. I’ve used DuckDuckGo in the
+past but I’ve personally found StartPage to be a lot better
+in terms of search results. Your milage may vary. Again,
+see
+&lt;a href=&quot;https://www.privacytools.io/providers/search-engines/&quot;&gt;privacytoolsIO&lt;/a&gt;
+for more alternatives.&lt;/p&gt;
+
+&lt;h4 id=&quot;deleting-accounts&quot;&gt;Deleting Accounts&lt;/h4&gt;
+
+&lt;p&gt;Before writing this article, I had hundreds of logins. I’ve
+sent dozens and dozens of emails to the different sites
+that I’ve had accounts on asking for them to delete accounts
+I no longer use. Before deleting your account, you should
+try to obfuscate some of your personal data if you see fit.
+You can read each website’s privacy policies if you don’t
+know who to contact to delete your account. Deleting your
+account means that the data is (hopefully) removed from
+the service provider’s servers, and you will (hopefully)
+reduce the size of your digital footprint. You can reduce
+the chance of having an account compromised if you don’t
+have as many accounts.&lt;/p&gt;
+
+&lt;h4 id=&quot;spread-the-word&quot;&gt;Spread the Word&lt;/h4&gt;
+
+&lt;p&gt;If you’ve made it this far, you probably at least care
+about privacy enough to think that it is an issue worth
+promoting. Tell your friends, advise them to move away
+from using services that track users and services that do
+not respect their users’ privacy. Privacy is an issue of
+complacency. It is easy to have your rights taken away and
+your freedoms to be violated if you never knew you had them
+in the first place. At worst, at least people will be more
+informed if they do not choose to control their personal
+data.&lt;/p&gt;
+
+&lt;p&gt;These are only some of the ways that I’ve tried to control
+my data and my privacy. There are of course, many more
+ways to improve even what I’ve listed here, and there are
+other services that are worth giving up that the reader
+might be using that I don’t know of. Evaluate what your
+risk profile is, minimize your digital footprint, and
+assert your right to privacy.&lt;/p&gt;
+
+&lt;h1 id=&quot;conclusion&quot;&gt;Conclusion&lt;/h1&gt;
+
+&lt;p&gt;Obviously, this isn’t a programming-related post, but I
+still hope that you’ve learned something nevertheless.
+Privacy is not only about the here and now, but also about
+the future. Now that we are hearing more and more of the
+media publicizing hacks for political gain such as the
+Clinton email leak and the Cambridge Analytica scandal, it
+is more important than ever to take a hard look at how much
+we really value our privacy, and by extension, how much we
+value our democracy. Privacy is obviously a controversial
+issue because it is so politically charged, but I’ve tried
+my best to try to stay neutral on this matter. I don’t
+think it matters what political party you subscribe to, or
+how much you think you care about your privacy, it is an
+important issue in the digital age.&lt;/p&gt;</content><author><name></name></author><summary type="html">This post should come with a big red disclaimer that says I’m not an expert, but since my screen is redshifted to hell, plain black will have to do. I’m just a Java programmer with a blog.</summary></entry><entry><title type="html">Lessons Learned Debugging: Part 7</title><link href="https://agenttroll.github.io/blog/2019/07/24/lessons-learned-debugging-part-7.html" rel="alternate" type="text/html" title="Lessons Learned Debugging: Part 7" /><published>2019-07-24T00:07:20-07:00</published><updated>2019-07-24T00:07:20-07:00</updated><id>https://agenttroll.github.io/blog/2019/07/24/lessons-learned-debugging-part-7</id><content type="html" xml:base="https://agenttroll.github.io/blog/2019/07/24/lessons-learned-debugging-part-7.html">&lt;p&gt;I haven’t explicitly identified it until now, but it seems
+that I have a habit of putting exactly the same thing in my
+introductory paragraph in basically all of the posts in
+this series. This particular lesson doesn’t sound all that
+bad at first, but I can assure you that I have literally
+crashed a server by not following it.&lt;/p&gt;
+
+&lt;h1 id=&quot;strongly-consider-whether-you-can-put-something-in-a-shared-library&quot;&gt;Strongly Consider Whether You Can Put Something In a Shared Library&lt;/h1&gt;
+
+&lt;p&gt;There are so, so many benefits to having a centralized
+core library you can depend on for your plugins with
+virtually no drawbacks whatsoever.&lt;/p&gt;
+
+&lt;p&gt;The first thing that comes to mind, of course, is having
+a set of pre-written classes available to you. For example,
+menus, handy utilities for things such as I/O, databases,
+and data management primitives. Chances are, if you are not
+using a central library, you are writing a significant
+amount of boilerplate in your non-trivial plugins. If that
+is the case, you should consider generifying what you have
+written so that it fits the purpose of multiple plugins.
+Although you might be spending more time now trying to
+write part of your core library and also the plugin that
+currently needs it, you will spend less time writing the
+same boilerplate later on. You can significantly increase
+productivity if you aren’t stuck writing basically the
+same thing for every plugin you write each time you write
+a new plugin. Secondly, it is inevitable that you will
+make mistakes, and as hard as I try to push for care and
+slowing down to think through your code, even I myself
+make mistakes as well. If you are writing similar or even
+the same code on each of your plugins, ALL of your plugins
+need to be updated in the case that you find out you’ve
+been doing it wrong the entire time. On the other hand, if
+all of your plugins depend on just one library, you only
+need to fix the bug once. The counterargument is often that
+you can minimize the impact of a mistake if you spot it
+when you write the same thing again. However, this is
+wishful thinking. This is not how it works in the real
+world. I would strongly argue that writing boilerplate is a
+mindless activity. You are not likely to catch that you are
+making a mistake if you are writing the same code you wrote
+last time. On top of that, the more you get used to the
+same workflow, the more complacent you become, and more
+importantly, the bigger the cost of fixing that said code
+once it breaks. Think of it this way: if you only write the
+code once, then you only have that one chance to make a
+mistake. If you are writing the same code over and over
+again, you take that risk every. Single. Time. Thirdly,
+even if you Ctrl+C and Ctrl+V your code, there are still
+no guarantees. It might work for small snippets of code,
+but once you get to large amounts of boilerplate such as
+when writing inventory GUIs for example, then things start
+to fall apart. You &lt;em&gt;still&lt;/em&gt; suffer from the possibility that
+the snippet you’ve been copying from is also wrong as well.
+You are not only duplicating what works across your entire
+codebase, you are also duplicating anything that
+potentially doesn’t. Again, the impact of a bug can be
+mitigated, but the cost of fixing it cannot. Do yourself a
+favor. When you are writing a lot of boilerplate that can
+be abstracted away, consider putting it on your core
+library.&lt;/p&gt;
+
+&lt;p&gt;A core library is not only good for putting your own code,
+but the code of others as well. You can shade various
+common dependencies into your core. The following argument
+is terrible, for obvious reasons, but you are reducing the
+total JAR sizes of all your plugins if only the one core
+plugin contains a big library. But, for those of you who
+are for some inexplicable reason scared of large JARs, then
+throwing everything into one super JAR file might help
+settle your conscience. For me personally, I need to
+configure certain libraries such as Guice that need their
+own namespaces each time I shade it using Maven, so it
+helps if I don’t even need to write anything extra by
+using a &lt;code class=&quot;highlighter-rouge&quot;&gt;provided&lt;/code&gt; dependency on the central library. This
+isn’t to say that you should put every single dependency in
+your core library, but commonly used libraries like
+HikariCP are always helpful to have lying around,
+especially when a significant portion of your plugin
+ecosystem might depend on it. Again, I’m going back to the
+JAR size argument, but it also can’t hurt to reduce the
+amount of time it takes to download every other plugin if
+only the super JAR takes a long time since it has all the
+libraries shaded into it.&lt;/p&gt;
+
+&lt;p&gt;Finally, a core library can be used to enforce a specific
+standard or policy. For example, if you are including
+MySQL utilities, you can use the &lt;code class=&quot;highlighter-rouge&quot;&gt;config.yml&lt;/code&gt; to provide
+the MySQL credentials to all the plugins using that core
+library. The server owner will not need to configure the
+credentials more than once. Secondly, by having a library
+of different utilities, you can centralize the way a
+certain action is performed. For example, you might want
+to make sure that caching is done in a particular way, or
+that all of the caches used on the various dependent
+plugins are configured to have a specific eviction time.
+By including this into the core library, you can enforce
+that specific policy on all of your plugins. You can even
+have a hierarchy of core plugins if certain developers
+prefer some other ways, or would like to use open-source
+core libraries instead. By changing specific portions of
+their desired library to comply with the “master” core
+library, they can use both the “master” and their custom
+core in conjunction, or simply utilize the custom
+library if the desired features are fully reimplemented.&lt;/p&gt;
+
+&lt;p&gt;It may actually take longer to maintain a core library
+if you are developing it alongside whatever plugin
+you need to complete because you are abstracting away some
+feature, but I can assure you that this effort is well
+worth it. Because your core library matures in the long
+run, it is a net gain rather than a loss as it becomes more
+and more useful. Had I have had the foresight to write my
+boilerplate into a centralized library, I would not have
+crashed servers and caused multitudes of plugins to have
+independent visual glitches as a result of making one
+mistake.&lt;/p&gt;
+
+&lt;h1 id=&quot;conclusion&quot;&gt;Conclusion&lt;/h1&gt;
+
+&lt;p&gt;As has been tradition, I leave with the following from
+&lt;a href=&quot;http://spinroot.com/gerard/pdf/P10.pdf&quot;&gt;The Power of Ten&lt;/a&gt;:&lt;/p&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;If the rules seem Draconian at first, bear in mind that
+they are meant to make it possible to check code where very
+literally your life may depend on its correctness: code
+that is used to control the airplane that you fly on, the
+nuclear power plant a few miles from where you live, or the
+spacecraft that carries astronauts into orbit. The rules
+act like the seat-belt in your car: initially they are
+perhaps a little uncomfortable, but after a while their use
+becomes second-nature and not using them becomes
+unimaginable.&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;I’ve recently become more interested in Internet privacy.
+I consider myself to be relatively informed on the topic,
+but there are a lot of things that I’ve found that I didn’t
+know about within the past few weeks. I’ll be doing a post
+on that soon, because I think it is an issue worth talking
+about. And for readers who don’t think privacy is an
+important issue, I only ask that you hear me out. I’m not a
+popular blogger by any means, so if you are reading my blog
+in the first place, that probably indicates that you don’t
+have anything better to do anyways. I encourage you to use
+that time to become at least a little bit more informed :).&lt;/p&gt;</content><author><name></name></author><summary type="html">I haven’t explicitly identified it until now, but it seems that I have a habit of putting exactly the same thing in my introductory paragraph in basically all of the posts in this series. This particular lesson doesn’t sound all that bad at first, but I can assure you that I have literally crashed a server by not following it.</summary></entry><entry><title type="html">What The Fuck Does Guice ‘zip file closed’ Exception Mean?</title><link href="https://agenttroll.github.io/blog/2019/07/18/what-the-fuck-does-guice-zip-file-closed-exception-mean.html" rel="alternate" type="text/html" title="What The Fuck Does Guice 'zip file closed' Exception Mean?" /><published>2019-07-18T01:00:15-07:00</published><updated>2019-07-18T01:00:15-07:00</updated><id>https://agenttroll.github.io/blog/2019/07/18/what-the-fuck-does-guice-zip-file-closed-exception-mean</id><content type="html" xml:base="https://agenttroll.github.io/blog/2019/07/18/what-the-fuck-does-guice-zip-file-closed-exception-mean.html">&lt;p&gt;I’ve had a lot of time to work with &lt;a href=&quot;https://github.com/google/guice&quot;&gt;Guice&lt;/a&gt;
 when I worked with Skytropia. However, working on a
 personal project with more up-to-date versions of Spigot
 and Guice, I was met with the strangest possible exception.
@@ -948,7 +1508,7 @@ satellite. This is what a 3LE set looks like:&lt;/p&gt;
 2 25544  51.6442 332.2030 0008185  74.7737  30.3832 15.51219884176168
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
 
-&lt;p&gt;A TLE set would just be the same thing but with the line 
+&lt;p&gt;A TLE set would just be the same thing but with the line
 starting with &lt;code class=&quot;highlighter-rouge&quot;&gt;0&lt;/code&gt; removed. For the purposes of
 making things easier to understand, I’ll primarily refer
 to both 3LE and TLE as just TLE.&lt;/p&gt;
@@ -957,7 +1517,7 @@ to both 3LE and TLE as just TLE.&lt;/p&gt;
 for TLE sets is actually surprisingly helpful and
 informative. The main gist is that TLE is a way of
 communicating the position and motion of a satellite
-orbiting the Earth in as few numbers as possible. TLE sets 
+orbiting the Earth in as few numbers as possible. TLE sets
 are readily available from &lt;a href=&quot;https://www.space-track.org/#/tle&quot;&gt;SpaceTrack.org’s TLE search
 page&lt;/a&gt;, and you can look
 for satellites in the &lt;a href=&quot;https://www.space-track.org/#/catalog&quot;&gt;satellite catalog&lt;/a&gt;.
@@ -981,21 +1541,21 @@ helpful:&lt;/p&gt;
 but how can that data be translated into usable numbers
 that show us where to point a telescope for example?&lt;/p&gt;
 
-&lt;p&gt;The first step is to refer to 
+&lt;p&gt;The first step is to refer to
 &lt;a href=&quot;https://www.celestrak.com/NORAD/documentation/spacetrk.pdf&quot;&gt;SpaceTrack Report #3&lt;/a&gt;.
 I’ll let the author(s) summarize:&lt;/p&gt;
 
 &lt;blockquote&gt;
-  &lt;p&gt;The NORAD element sets [TLE sets] are “mean” values 
+  &lt;p&gt;The NORAD element sets [TLE sets] are “mean” values
 obtained by removing periodic variations in a particular
 way. In order to obtain good predictions, these periodic
 variations must be reconstructed (by the prediction model)
-in exactly the same way they were removed by NORAD. Hence, 
-inputting NORAD element sets into a different model (even 
-though the model may be more accurate or even a numerical 
-integrator) will result in degraded predictions. The NORAD 
-element sets must be used with one of the models described 
-in this report in order to retain maximum prediction 
+in exactly the same way they were removed by NORAD. Hence,
+inputting NORAD element sets into a different model (even
+though the model may be more accurate or even a numerical
+integrator) will result in degraded predictions. The NORAD
+element sets must be used with one of the models described
+in this report in order to retain maximum prediction
 accuracy&lt;/p&gt;
 &lt;/blockquote&gt;
 
@@ -1005,7 +1565,7 @@ from the data given by the TLE data set. Now there are
 5 different models that the report lays out, SGP, SGP4/8
 and SDP4/8. These are collectively known as “simplified
 perturbation models” and take into account atmospheric
-drag, gravitational drag caused by the Earth’s oblate 
+drag, gravitational drag caused by the Earth’s oblate
 shape, the Earth’s spin, and various other factors in order
 to predict the motion of the satellite over time.&lt;/p&gt;
 
@@ -1031,7 +1591,7 @@ different distances, which really confused me. That being
 said, combined with looking at the FORTRAN listings on
 SpaceTrack Report #3 as well as with the LizardTail website
 &lt;a href=&quot;https://www.lizard-tail.com/isana/tle/lib/sgp4.js&quot;&gt;source&lt;/a&gt;
-and the 
+and the
 &lt;a href=&quot;https://www.celestrak.com/publications/AIAA/2006-6753/AIAA-2006-6753.pdf&quot;&gt;Revisiting Spacetrack Report #3&lt;/a&gt;
 code listings in the appendix, I was able to reconstruct
 the entire mathematical model in C code with most of the
@@ -1040,11 +1600,11 @@ entirely perfect, but the numbers it produces look pretty
 correct to me nonetheless.&lt;/p&gt;
 
 &lt;p&gt;Now if you ask me, I’d say that the finer details of the
-model itself aren’t actually that important. I can’t say 
+model itself aren’t actually that important. I can’t say
 for sure what the purpose of each and every calculation is.
 Again, the model takes into account the many different
 variables that affect the gravitational pull and drag
-experienced by a satellite, but that is as far as the 
+experienced by a satellite, but that is as far as the
 extent of my knowledge about the perturbation models goes.&lt;/p&gt;
 
 &lt;p&gt;(Apologies to those readers who may have clicked on this to
@@ -1058,9 +1618,9 @@ love to learn)&lt;/p&gt;
 &lt;p&gt;Now having implemented the SGP4 model, you might think that
 we can now extract the data we need. Not so. The SGP4 model
 produces 2 vectors, specifying the position and velocity
-(meters per second) of the satellite. &lt;code class=&quot;highlighter-rouge&quot;&gt;fate&lt;/code&gt; actually 
-provides an additional 2 vectors called “unit orientation 
-vectors.” These are used  to derive the position and 
+(meters per second) of the satellite. &lt;code class=&quot;highlighter-rouge&quot;&gt;fate&lt;/code&gt; actually
+provides an additional 2 vectors called “unit orientation
+vectors.” These are used  to derive the position and
 velocity vectors.&lt;/p&gt;
 
 &lt;p&gt;The problem is that the reference frame for the
@@ -1081,49 +1641,61 @@ highly recommend reading the entirety of the following:&lt;/p&gt;
 &lt;/ul&gt;
 
 &lt;p&gt;As far as the high-level overview goes, it is worth taking
-a look at what ECI really is. ECI stands for 
+a look at what ECI really is. ECI stands for
 “Earth-centered inertial,” Earth-centered meaning that the
-origin is at the center of the Earth and inertial meaning 
+origin is at the center of the Earth and inertial meaning
 that it doesn’t move with the rotation of the Earth itself.&lt;/p&gt;
 
 &lt;p&gt;Calculating the look angle in azimuth rotation from true
 north and inclination angle from the horizon is relatively
-complex because you need to turn yourr own latitude and 
-longitude into ECI coordinates as well and utilize some 
-trigonometry to determine the angle created between the 
+complex because you need to turn your own latitude and
+longitude into ECI coordinates as well and utilize some
+trigonometry to determine the angle created between the
 coordinates. Not so hard, right? Unfortunately, the
-complication comes from the fact that standard longitude
-and latitude considers the Earth as an oblate spheroid, 
-while ECI considers the Earth as a perfect sphere. Further,
-the Earth also spins, which means that your position
-changes as the Earth spins. In order to calculate 
-everything, the current time is taken, and then converted 
-to a single Julian date. This is then converted to 
-Greenwich Mean Sidereal Time (GMST), which allows one to
-calculate the current rotation of the Earth without the 
-fluctuations in a solar day. Armed with this information,
-we can then convert from the standard”geodetic” latitude 
-and longitude into a “geocentric” latitude and longitude,
-and from there, trigonometry is used to obtain the ECI 
-coordinates of the observer.
-&lt;a href=&quot;https://github.com/AgentTroll/fate/blob/70311dab1664ffa3278c4af0e3f8f96f859f9efc/eci.c#L12-L22&quot;&gt;The implementation&lt;/a&gt;
-actually then looks deceptively simple.&lt;/p&gt;
+complication comes from the fact that the Earth spins,
+causing a number of issues. Firstly, this means that the
+Earth is not a perfect sphere; it is in fact an oblate
+spheroid that bulges slightly at the equator. Because the
+standard latitude and longitude account for the ellipsoidal
+shape of the Earth, they are said to be geodetic. On the
+other hand, ECI considers the Earth as a perfect sphere.
+If that wasn’t enough, the Earth’s spin also means that
+your position is dependent on time.&lt;/p&gt;
+
+&lt;p&gt;In order to calculate everything, the current time is
+taken, and then converted to a single Julian date. This is
+then converted to Greenwich Mean Sidereal Time (GMST),
+which allows one to determine the rotation of the Earth
+without the fluctuations in a solar day. This solves the
+second problem, locating the observer taking into account
+the Earth’s rotation. Now, we can use trigonometry to
+convert from the geodetic latitude and longitude to the
+geocentric ECI coordinates. As a matter of fact, the
+implementation of this part
+&lt;a href=&quot;https://github.com/AgentTroll/fate/blob/70311dab1664ffa3278c4af0e3f8f96f859f9efc/eci.c#L12-L22&quot;&gt;the implementation&lt;/a&gt;
+looks deceptively simple. Now that we’ve solved both
+problems, we then have the coordinates of both the observer
+and the coordinates of the satellite in the same reference
+frame. Since both are in ECI coordinates, we can just use
+simple trigonometry to determine the angle which to point
+an instrument or the angle to look at in order to locate
+the satellite.&lt;/p&gt;
 
 &lt;p&gt;Calculating the position of the satellite above the Earth
-(called the sub-point) is a bit more simple. Essentially, 
-we need to reverse the process and convert ECI into 
-geodetic coordinates, but since we already have the ECI
-coordinates, only simple trig is needed once we’ve factored
-in the GMST to figure out the longitude, because the fact
-that the Earth is oblate only affects latitude. Longitude
-runs parallel to the oblateness, so no modification is
-necessary. To calculate geodetic latitude, we first 
-calculate the geocentric latitude, which is rather 
-straightforward trig. We then run a transformation which 
-moves the angle closer and closer to geodetic latitude, 
-until the diffence in improvement to the value becomes 
-smaller than is worth calculating. This value is then close
-enough to the geodetic latitude to accept.&lt;/p&gt;
+(called the sub-point) is a bit more simple. Essentially,
+we need to reverse the process of finding look angle and
+convert ECI into geodetic coordinates. Because longitude
+runs parallel to the Earth’s oblateness, we only need to
+factor in the current time in GMST to determine the Earth’s
+rotation. Then, we can compute the longitude with trig.
+To calculate geodetic latitude, we first calculate the
+geocentric latitude, which is rather straightforward trig.
+Since latitude is affected by the Earth’s oblateness, we
+then run a transformation which moves the angle closer
+and closer to geodetic latitude, until the diffence in
+improvement to the value becomes smaller than is worth
+calculating. This value is then close enough to the
+geodetic latitude to accept.&lt;/p&gt;
 
 &lt;h1 id=&quot;conclusion&quot;&gt;Conclusion&lt;/h1&gt;
 
@@ -1140,14 +1712,14 @@ track them and create models for the orbital mechanics that
 affect the motion of the satellites through space.&lt;/p&gt;
 
 &lt;p&gt;Not only do I not usually talk about the C language, but I
-didn’t really go into any specifics of it in this 
+didn’t really go into any specifics of it in this
 particular blog post. That being said, I did talk a little
 bit about astronomy and space, which are both topics that
 I’m very curious to learn more about. I’m sure that every
 one of us watched a rocket launch, watched Neil Armstrong
 take humanity’s first steps on another planet, or simply
 read the news about the Opportunity rover. I’m absolutely
-certain that others have been inspired by spaceflight and 
+certain that others have been inspired by spaceflight and
 can relate to wanting to advance space exploration in the
 future, if not the present.&lt;/p&gt;
 
@@ -1748,291 +2320,4 @@ unimaginable.&lt;/p&gt;
 &lt;p&gt;While these tips are not necessarily rules that are
 responsible for keeping people alive, incorporating the
 same philosophy into your programming repertoire will help
-you in the long run.&lt;/p&gt;</content><author><name></name></author><summary type="html">One of the recurring problems that will cause you headaches is the throwing of exceptions where you don’t want them to be thrown. Among these exceptions, one of the most elusive is ConcurrentModificationException.</summary></entry><entry><title type="html">Lessons Learned Debugging: Part 1</title><link href="https://agenttroll.github.io/blog/2019/03/20/lessons-learned-debugging-part-1.html" rel="alternate" type="text/html" title="Lessons Learned Debugging: Part 1" /><published>2019-03-20T22:27:00-07:00</published><updated>2019-03-20T22:27:00-07:00</updated><id>https://agenttroll.github.io/blog/2019/03/20/lessons-learned-debugging-part-1</id><content type="html" xml:base="https://agenttroll.github.io/blog/2019/03/20/lessons-learned-debugging-part-1.html">&lt;p&gt;This is going to be among the first in a blog series that
-detail some of my work while at Intermissum to reduce
-bugginess. Not only did I personally run into many
-hardships in order to write better production-quality
-plugins, this series will present me with new challenges in
-the form of figuring out what to share, what not to share,
-as well as what I am not &lt;em&gt;allowed&lt;/em&gt; to share.&lt;/p&gt;
-
-&lt;h1 id=&quot;splitting-up-your-code&quot;&gt;Splitting Up Your Code&lt;/h1&gt;
-
-&lt;p&gt;The first lesson, while it may seem obvious to some, is to
-always split up your code. What I used to do was place a
-large majority of my code in the main class, reasoning that
-the more I can keep in the main class, the less classes and
-therefore the less complexity I will have to deal with.
-There are often &lt;a href=&quot;https://github.com/EnterpriseQualityCoding/FizzBuzzEnterpriseEdition&quot;&gt;memes&lt;/a&gt; 
-that stigmatize complexity or “enterprise” design in a 
-negative light. While monolithic codebases such as the
-Spring framework with sprawling abstractions for each and
-every possible purpose might add credit to this stigma,
-using abstractions and creating purpose-built classes can
-improve your code quality and productivity vastly.&lt;/p&gt;
-
-&lt;p&gt;Some of the many advantages to splitting up your code
-include:&lt;/p&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;Less mental overhead to keep track of where specific
-  code segments are in your file&lt;/li&gt;
-  &lt;li&gt;It is easier to navigate classes that have a purpose
-  rather than through a file that has many purposes&lt;/li&gt;
-  &lt;li&gt;It will be easier to browse and evaluate what the
-  plugin is doing&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;All of these will contribute to less buggy code, because
-you will be less mentally fatigued by housekeeping while
-you are writing the code, as well as being able to more
-quickly debug and walk through the call trace in a logical
-fashion. Splitting up my code in a sensible way was far and
-away one of the most effective steps I took in reducing the
-bugginess of my code.&lt;/p&gt;
-
-&lt;h1 id=&quot;drawbacks&quot;&gt;Drawbacks?&lt;/h1&gt;
-
-&lt;p&gt;You will feel like you are less productive initially if you
-are not used to the workflow. You are going to feel like
-creating new files is such a pain, how you need to set
-everything up, how writing more pragmatic and clean code
-takes up so much space and isn’t as elegant as what you
-would have figured out when writing code that fits into a
-single class.&lt;/p&gt;
-
-&lt;p&gt;You will feel like you’re creating classes all the time and
-not writing enough code. You will feel like there’s so much
-boilerplate, and the gains you are making are marginal.
-But I implore you to trust me on this one. You are clearing
-out mental clutter. You are making less mistakes, because
-you are taking time to really understand the code and how
-it all fits into the big picture. You are slowing down when
-you write code, so you have less bugs down the line to have
-to fix. I cannot stress enough that this is something that
-has been tried and tested dozens upon dozens of times, and
-that I myself have found success in being more watchful
-over my tendency to write spaghetti code.&lt;/p&gt;
-
-&lt;p&gt;You will thank yourself in the future, when you have to
-look back over your code, because it is so much easier to
-understand. You will see that you have gotten better at
-recognizing the responsibility of each component of your
-code. You will become a better engineer, because you will
-have gotten closer to &lt;em&gt;designing&lt;/em&gt; your code rather than
-simply &lt;em&gt;writing&lt;/em&gt; your code. These are skills that you build
-up by changing poor programming practices, so it pays to
-really evaluate yourself now.&lt;/p&gt;
-
-&lt;h1 id=&quot;conclusion&quot;&gt;Conclusion&lt;/h1&gt;
-
-&lt;p&gt;There you go, that’s tip #1 done. These are meant to be
-simple, short, and practical. If you’ve been disappointed,
-then hopefully the next one will offer some insight you
-yourself have missed.&lt;/p&gt;
-
-&lt;p&gt;I leave with the following wisdom from &lt;a href=&quot;http://spinroot.com/gerard/pdf/P10.pdf&quot;&gt;The Power of Ten&lt;/a&gt;:&lt;/p&gt;
-
-&lt;blockquote&gt;
-  &lt;p&gt;If the rules seem Draconian at first, bear in mind that
-they are meant to make it possible to check code where very
-literally your life may depend on its correctness: code 
-that is used to control the airplane that you fly on, the 
-nuclear power plant a few miles from where you live, or the 
-spacecraft that carries astronauts into orbit. The rules 
-act like the seat-belt in your car: initially they are 
-perhaps a little uncomfortable, but after a while their use
-becomes second-nature and not using them becomes 
-unimaginable.&lt;/p&gt;
-&lt;/blockquote&gt;
-
-&lt;p&gt;While these tips are not necessarily rules that are
-responsible for keeping people alive, incorporating the
-same philosophy into your programming repertoire will help
-you in the long run.&lt;/p&gt;</content><author><name></name></author><summary type="html">This is going to be among the first in a blog series that detail some of my work while at Intermissum to reduce bugginess. Not only did I personally run into many hardships in order to write better production-quality plugins, this series will present me with new challenges in the form of figuring out what to share, what not to share, as well as what I am not allowed to share.</summary></entry><entry><title type="html">My Biggest Mistake</title><link href="https://agenttroll.github.io/blog/2019/03/20/my-biggest-mistake.html" rel="alternate" type="text/html" title="My Biggest Mistake" /><published>2019-03-20T22:24:50-07:00</published><updated>2019-03-20T22:24:50-07:00</updated><id>https://agenttroll.github.io/blog/2019/03/20/my-biggest-mistake</id><content type="html" xml:base="https://agenttroll.github.io/blog/2019/03/20/my-biggest-mistake.html">&lt;p&gt;Quick note, this is NOT clickbait.&lt;/p&gt;
-
-&lt;p&gt;I’ve been around the Bukkit server-modding community for a
-while now. Not as long as some people, of course, but still
-a pretty long time nevertheless.&lt;/p&gt;
-
-&lt;p&gt;&lt;img src=&quot;https://agenttroll.github.io/blog/img/feb-28-2013.png&quot; alt=&quot;Bukkit Forums Member Since Feb 28, 2013&quot; /&gt;&lt;/p&gt;
-
-&lt;p&gt;In the 6 years I’ve spent posting thousands of times on
-both the Bukkit Forums and the Spigot forums, I look back
-and regret one singular thing about myself: being a
-self-entitled brat.&lt;/p&gt;
-
-&lt;h1 id=&quot;aggressive-at-best-malicious-at-worst&quot;&gt;Aggressive At Best, Malicious At Worst&lt;/h1&gt;
-
-&lt;p&gt;I would say that a large majority of the posts I’ve made
-involved commenting on someone else’s code. In many, or
-even most of the threads I’ve posted on, I’ve found that
-my responses tend to assume the worst of intentions.
-Here’s just &lt;a href=&quot;https://bukkit.org/threads/exonrunnable-a-new-runnable.390040/#post-3251252&quot;&gt;one example&lt;/a&gt; from late 2015:&lt;/p&gt;
-
-&lt;p&gt;&lt;img src=&quot;https://agenttroll.github.io/blog/img/mistake-exhibit-1.png&quot; alt=&quot;Mistake Exhibit 1&quot; /&gt;&lt;/p&gt;
-
-&lt;p&gt;While I admit that even now I thought that the post to
-which I was responding sounded pretentious, that does not
-justify an equally aggressive response in return. For a
-developer who is not experienced in writing multithreaded
-code (the type of developer that tends to be commonly
-found more often than not), it is understandable that they
-do not understand the performance implications of Timer
-as someone like myself (which isn’t to say that I am an
-expert myself, mind you). In no way was it necessary for me
-to interject with “Oh.”  and “Oh wow!” and even saying
-“BIG performance penalty.” Not only did this kind of
-response bring me down to the level of the aforementioned
-user, it detracted away from the informative aspect of my
-post. It made me sound childish and juvenile, when the
-value of the advice I gave should have been given greater
-emphasis instead of the presentation of my opinion.&lt;/p&gt;
-
-&lt;p&gt;Here’s a continuation of the same post:&lt;/p&gt;
-
-&lt;p&gt;&lt;img src=&quot;https://agenttroll.github.io/blog/img/mistake-exhibit-2.png&quot; alt=&quot;Mistake Exhibit 2&quot; /&gt;&lt;/p&gt;
-
-&lt;p&gt;Again, for a novice user, it makes sense that they are
-making paradigm mistakes, that is simply the nature of
-learning programming. The fact that I latched on to their
-“stupidity” by saying “Just… What is this? You could quite literally […]”
-rather than simply correcting their error indicates that
-my criticism was not constructive by intention. It shows
-that I was more concerned with commenting on the developer
-rather than the code. It wasn’t necessary for me to
-add interjections such as “What is this?” and then
-leading myself into an example that would probably take up
-5 lines rather than the 2 lines that I claimed, assuming
-that the same brace style was used as the author (K&amp;amp;R? No
-clue honestly what you’re supposed to call it lol).&lt;/p&gt;
-
-&lt;p&gt;While the rest of the post is pretty flawed, here’s a
-golden nugget:&lt;/p&gt;
-
-&lt;p&gt;&lt;img src=&quot;https://agenttroll.github.io/blog/img/mistake-exhibit-3.png&quot; alt=&quot;Mistake Exhibit 3&quot; /&gt;&lt;/p&gt;
-
-&lt;p&gt;Goodness, the “WRONG WRONG WRONG WRONG WRONG WRONG WRONG”
-was not necessary at all. No information of use was
-communicated and it shows again that I was interested less
-in the information in the first place, and that I was more
-interested in deriding the “stupidity” of the author, when
-again, these are rookie mistakes. It is completely
-understandable to not be &lt;code class=&quot;highlighter-rouge&quot;&gt;final&lt;/code&gt;izing your fields and
-classes as a novice programmer. The fact that the author
-failed to do this indicated a lack of experience rather than
-ignorance or stupidity as I have portrayed him/her to be.&lt;/p&gt;
-
-&lt;p&gt;Lots of unnecessary information was written that would have
-gone over the author’s head at the end, not sure what
-exactly my intentions were there. I could honestly have
-just said “here’s a benchmark” and then posted results
-(which, as a matter of fact, I had failed to do) and then 
-explained the results rather than making further pretentious
-and unhelpful comments.&lt;/p&gt;
-
-&lt;h1 id=&quot;and-another&quot;&gt;And Another&lt;/h1&gt;
-
-&lt;p&gt;The examples of this same pretentious, bratty attitude
-continues even farther into the past.&lt;/p&gt;
-
-&lt;p&gt;&lt;a href=&quot;https://bukkit.org/threads/moving-packetplayoutparticles-with-entities.373750/#post-3172379&quot;&gt;Here’s another&lt;/a&gt; post.&lt;/p&gt;
-
-&lt;p&gt;&lt;img src=&quot;https://agenttroll.github.io/blog/img/mistake-exhibit-4.png&quot; alt=&quot;Mistake Exhibit 4&quot; /&gt;&lt;/p&gt;
-
-&lt;p&gt;Again, I’m at it again with the long string of repeated
-words with the “NONONONONONONONONONONONONONONONOOONONONONONONONONONONONONO.”&lt;/p&gt;
-
-&lt;p&gt;Once again, adding interjections like this is for yet
-another novice mistake is completely unnecessary. Needing
-to even consider using this to emphasize a point probably
-indicates a lack of imagination on my part. An argument
-should ideally stand on its own without needing to have
-unnecessary “fluff” such as the long string of “NONONO”
-in order to draw attention to it. The fact that I did not
-consider this in the writing of my post again goes to
-show my lack of consideration of the author’s point of
-view.&lt;/p&gt;
-
-&lt;h1 id=&quot;the-finale&quot;&gt;The Finale&lt;/h1&gt;
-
-&lt;p&gt;The many thousands of posts I’ve made number too many to
-all have their place in this blog post, so I’ve selected
-one of my most popular posts, the &lt;a href=&quot;https://bukkit.org/threads/make-a-minigame-plugin.168164/&quot;&gt;minigame tutorial&lt;/a&gt;.&lt;/p&gt;
-
-&lt;p&gt;&lt;img src=&quot;https://agenttroll.github.io/blog/img/mistake-exhibit-5.png&quot; alt=&quot;Mistake Exhibit 5&quot; /&gt;&lt;/p&gt;
-
-&lt;p&gt;This is honestly a completely unnecessary comment. The
-fact is that this is not even a prime candidate for async
-code, so I see no reason for someone to even be considering
-using this in an async context. The targeted audience,
-intermediate level developers, probably aren’t even well
-versed in the use of the scheduler anyways (although if
-you are an intermediate developer and are skilled in the
-use of the Bukkit scheduler, good on you). I think this was
-a feeable attempt to assert my own mastery over threading
-or something, but doing so made me look insecure and again
-detracts from the main point of the post, which should
-have been to educate intermediate-level developers on how
-to take advantage of OOP in order to create a simple
-minigame. It is ironic that I had to include that comment
-in there when the post itself contained a number of bugs
-pointed out by several users, such as &lt;a href=&quot;https://bukkit.org/threads/make-a-minigame-plugin.168164/#post-1814525&quot;&gt;here&lt;/a&gt;,
-&lt;a href=&quot;https://bukkit.org/threads/make-a-minigame-plugin.168164/page-2#post-1822616&quot;&gt;here&lt;/a&gt;,
-and &lt;a href=&quot;https://bukkit.org/threads/make-a-minigame-plugin.168164/page-2#post-1822730&quot;&gt;here&lt;/a&gt;.
-When I myself am having trouble even writing code that
-compiles, others have written their thanks and support,
-even after pointing out egregious errors that I have made.
-When I posted comments that attack users and had aggressive
-undertones, others who might not even be as skilled
-developers as I was wrote insightful and friendly comments
-instead.&lt;/p&gt;
-
-&lt;p&gt;I even had the gall to include this comment prior to
-pasting the post source:&lt;/p&gt;
-
-&lt;p&gt;&lt;img src=&quot;https://agenttroll.github.io/blog/img/mistake-exhibit-6.png&quot; alt=&quot;Mistake Exhibit 6&quot; /&gt;&lt;/p&gt;
-
-&lt;p&gt;When the code fails to compile, and the post itself doesn’t
-even look that good, I told others to source my post for
-its &lt;em&gt;formatting&lt;/em&gt;. I thought so highly of myself, so highly
-of the quality of work that I posted, that I even wanted
-people to credit me for such a trivial aspect of it, an
-aspect that looked terrible anyways.&lt;/p&gt;
-
-&lt;h1 id=&quot;takeaways&quot;&gt;Takeaways&lt;/h1&gt;
-
-&lt;p&gt;The many examples that I’ve posted paint me as a person
-lacking self-awareness, brash, aggressive, and an
-all-around first-class prick. While I’m not a completely
-changed person yet, recognizing my toxicity has been
-something of a revelation for me, and I continue to work
-on actively trying to suppress my propensity for
-passive-aggressiveness. These examples fail to do justice
-for the amount of appalling comments that I’ve made, most
-notably against the Sponge project, comments that I’ve not
-yet had the opportunity to apologize for.&lt;/p&gt;
-
-&lt;h1 id=&quot;closing-words&quot;&gt;Closing Words&lt;/h1&gt;
-
-&lt;p&gt;One of the things that I’ve noticed was the fact that many
-of my most malicious comments were well-received by people,
-garnering several likes, such as in the case of the first
-example. While again, the information was laid out
-somewhere within the post itself, the lack of comment on
-the fact that I was basically bullying the author of the
-resource is something that I now find highly discomforting.&lt;/p&gt;
-
-&lt;p&gt;The people who have been influenced by my comments have
-already been affected, and there’s really nothing I can do
-about it. I believe that by removing or editing out the
-comments I’ve made, I will have destroyed and hidden 
-something that actually happened, and thus those posts will
-remain untouched. And while I cannot change what has
-already been said, I can help prevent people from making
-the same mistake as I did, the mistake of being a complete
-self-entitled brat. Again, this is an issue that I continue
-to deal with writing comments on the Spigot forums, and
-even carefully thinking about my words will not prevent
-everything from slipping through. But by sharing my
-experience, I hope I can continue to improve.&lt;/p&gt;</content><author><name></name></author><summary type="html">Quick note, this is NOT clickbait.</summary></entry></feed>
+you in the long run.&lt;/p&gt;</content><author><name></name></author><summary type="html">One of the recurring problems that will cause you headaches is the throwing of exceptions where you don’t want them to be thrown. Among these exceptions, one of the most elusive is ConcurrentModificationException.</summary></entry></feed>
