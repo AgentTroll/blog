@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.6.2">Jekyll</generator><link href="https://agenttroll.github.io/blog/feed.xml" rel="self" type="application/atom+xml" /><link href="https://agenttroll.github.io/blog/" rel="alternate" type="text/html" /><updated>2019-08-18T23:31:39-07:00</updated><id>https://agenttroll.github.io/blog/</id><title type="html">Inside a Troll</title><subtitle>Thoughts of a Java developer</subtitle><entry><title type="html">Lessons Learned Debugging: Part 8</title><link href="https://agenttroll.github.io/blog/2019/08/09/lessons-learned-debugging-part-8.html" rel="alternate" type="text/html" title="Lessons Learned Debugging: Part 8" /><published>2019-08-09T02:03:35-07:00</published><updated>2019-08-09T02:03:35-07:00</updated><id>https://agenttroll.github.io/blog/2019/08/09/lessons-learned-debugging-part-8</id><content type="html" xml:base="https://agenttroll.github.io/blog/2019/08/09/lessons-learned-debugging-part-8.html">&lt;p&gt;One of the most frustrating things about a large plugin
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.6.2">Jekyll</generator><link href="https://agenttroll.github.io/blog/feed.xml" rel="self" type="application/atom+xml" /><link href="https://agenttroll.github.io/blog/" rel="alternate" type="text/html" /><updated>2019-08-19T02:05:20-07:00</updated><id>https://agenttroll.github.io/blog/</id><title type="html">Inside a Troll</title><subtitle>Thoughts of a Java developer</subtitle><entry><title type="html">Lessons Learned Debugging: Part 8</title><link href="https://agenttroll.github.io/blog/2019/08/09/lessons-learned-debugging-part-8.html" rel="alternate" type="text/html" title="Lessons Learned Debugging: Part 8" /><published>2019-08-09T02:03:35-07:00</published><updated>2019-08-09T02:03:35-07:00</updated><id>https://agenttroll.github.io/blog/2019/08/09/lessons-learned-debugging-part-8</id><content type="html" xml:base="https://agenttroll.github.io/blog/2019/08/09/lessons-learned-debugging-part-8.html">&lt;p&gt;One of the most frustrating things about a large plugin
 ecosystem is that at one point or another, you will need to
 start handling the dependencies between each plugin for
 particular actions - e.g. who gets to break what block and
@@ -6,7 +6,7 @@ where they are allowed. How can you constrain the scope of
 some certain plugin, due to the functionality of another
 plugin, or how can you bypass something?&lt;/p&gt;
 
-&lt;h1 id=&quot;have-one-plugin-handle-umbrella-events&quot;&gt;Have One Plugin Handle Umbrella Events&lt;/h1&gt;
+&lt;h1 id=&quot;have-one-plugin-handle-protection-checks&quot;&gt;Have One Plugin Handle Protection Checks&lt;/h1&gt;
 
 &lt;p&gt;On most servers, you’ll find some sort of system for
 protection, whether it be protecting players from damage
@@ -33,11 +33,10 @@ will become second-nature rather than something that you
 explicitly need to think about.&lt;/p&gt;
 
 &lt;p&gt;Luckily, there is an elegant solution to the potentially
-messy business of interdependent protections. You need what
-I call “umbrella events,” events which span all the
-possible use cases for a particular type of modification
-action. All protection checks can be described by the
-following function:&lt;/p&gt;
+messy business of interdependent protections. You’ll need
+a single plugin to handle protection for your specific
+server ecosystem. All protection checks can be described
+by the following function:&lt;/p&gt;
 
 &lt;div class=&quot;language-java highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;kt&quot;&gt;boolean&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;isAllowed&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;ActionType&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;type&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Object&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;affector&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Object&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;target&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;);&lt;/span&gt;
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
@@ -217,7 +216,7 @@ an elegant, extensible way, how do we handled overriding an
 existing protection plugin?&lt;/p&gt;
 
 &lt;blockquote&gt;
-  &lt;p&gt;Before I get into this section, a small personal 
+  &lt;p&gt;Before I get into this section, a small personal
 anecdote:&lt;/p&gt;
 
   &lt;p&gt;The correct way to write protection event listeners is to
@@ -242,8 +241,8 @@ outside of a mine. However, the mine plugin, which
 handled block break protection registered their listener
 with &lt;code class=&quot;highlighter-rouge&quot;&gt;EventPriority.HIGHEST&lt;/code&gt;, and in the interests of
 keeping &lt;code class=&quot;highlighter-rouge&quot;&gt;EventPriority.MONITOR&lt;/code&gt; clear, I unregistered
-their listener from the &lt;code class=&quot;highlighter-rouge&quot;&gt;BlockBreakEvent&lt;/code&gt;’s 
-&lt;code class=&quot;highlighter-rouge&quot;&gt;HandlerList&lt;/code&gt; and re-registered it under a lower 
+their listener from the &lt;code class=&quot;highlighter-rouge&quot;&gt;BlockBreakEvent&lt;/code&gt;’s
+&lt;code class=&quot;highlighter-rouge&quot;&gt;HandlerList&lt;/code&gt; and re-registered it under a lower
 priority.&lt;/p&gt;
 &lt;/blockquote&gt;
 

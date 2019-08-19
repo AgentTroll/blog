@@ -85,7 +85,7 @@ where they are allowed. How can you constrain the scope of
 some certain plugin, due to the functionality of another
 plugin, or how can you bypass something?</p>
 
-<h1 id="have-one-plugin-handle-umbrella-events">Have One Plugin Handle Umbrella Events</h1>
+<h1 id="have-one-plugin-handle-protection-checks">Have One Plugin Handle Protection Checks</h1>
 
 <p>On most servers, you’ll find some sort of system for
 protection, whether it be protecting players from damage
@@ -112,11 +112,10 @@ will become second-nature rather than something that you
 explicitly need to think about.</p>
 
 <p>Luckily, there is an elegant solution to the potentially
-messy business of interdependent protections. You need what
-I call “umbrella events,” events which span all the
-possible use cases for a particular type of modification
-action. All protection checks can be described by the
-following function:</p>
+messy business of interdependent protections. You’ll need
+a single plugin to handle protection for your specific
+server ecosystem. All protection checks can be described
+by the following function:</p>
 
 <div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kt">boolean</span> <span class="nf">isAllowed</span><span class="o">(</span><span class="n">ActionType</span> <span class="n">type</span><span class="o">,</span> <span class="n">Object</span> <span class="n">affector</span><span class="o">,</span> <span class="n">Object</span> <span class="n">target</span><span class="o">);</span>
 </code></pre></div></div>
@@ -296,7 +295,7 @@ an elegant, extensible way, how do we handled overriding an
 existing protection plugin?</p>
 
 <blockquote>
-  <p>Before I get into this section, a small personal 
+  <p>Before I get into this section, a small personal
 anecdote:</p>
 
   <p>The correct way to write protection event listeners is to
@@ -321,8 +320,8 @@ outside of a mine. However, the mine plugin, which
 handled block break protection registered their listener
 with <code class="highlighter-rouge">EventPriority.HIGHEST</code>, and in the interests of
 keeping <code class="highlighter-rouge">EventPriority.MONITOR</code> clear, I unregistered
-their listener from the <code class="highlighter-rouge">BlockBreakEvent</code>’s 
-<code class="highlighter-rouge">HandlerList</code> and re-registered it under a lower 
+their listener from the <code class="highlighter-rouge">BlockBreakEvent</code>’s
+<code class="highlighter-rouge">HandlerList</code> and re-registered it under a lower
 priority.</p>
 </blockquote>
 
