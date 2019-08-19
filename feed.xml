@@ -1,4 +1,301 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.6.2">Jekyll</generator><link href="https://agenttroll.github.io/blog/feed.xml" rel="self" type="application/atom+xml" /><link href="https://agenttroll.github.io/blog/" rel="alternate" type="text/html" /><updated>2019-08-01T23:03:20-07:00</updated><id>https://agenttroll.github.io/blog/</id><title type="html">Inside a Troll</title><subtitle>Thoughts of a Java developer</subtitle><entry><title type="html">Let’s Talk Privacy</title><link href="https://agenttroll.github.io/blog/2019/07/28/lets-talk-privacy.html" rel="alternate" type="text/html" title="Let's Talk Privacy" /><published>2019-07-28T15:41:15-07:00</published><updated>2019-07-28T15:41:15-07:00</updated><id>https://agenttroll.github.io/blog/2019/07/28/lets-talk-privacy</id><content type="html" xml:base="https://agenttroll.github.io/blog/2019/07/28/lets-talk-privacy.html">&lt;p&gt;This post should come with a big red disclaimer that says
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.6.2">Jekyll</generator><link href="https://agenttroll.github.io/blog/feed.xml" rel="self" type="application/atom+xml" /><link href="https://agenttroll.github.io/blog/" rel="alternate" type="text/html" /><updated>2019-08-18T23:31:39-07:00</updated><id>https://agenttroll.github.io/blog/</id><title type="html">Inside a Troll</title><subtitle>Thoughts of a Java developer</subtitle><entry><title type="html">Lessons Learned Debugging: Part 8</title><link href="https://agenttroll.github.io/blog/2019/08/09/lessons-learned-debugging-part-8.html" rel="alternate" type="text/html" title="Lessons Learned Debugging: Part 8" /><published>2019-08-09T02:03:35-07:00</published><updated>2019-08-09T02:03:35-07:00</updated><id>https://agenttroll.github.io/blog/2019/08/09/lessons-learned-debugging-part-8</id><content type="html" xml:base="https://agenttroll.github.io/blog/2019/08/09/lessons-learned-debugging-part-8.html">&lt;p&gt;One of the most frustrating things about a large plugin
+ecosystem is that at one point or another, you will need to
+start handling the dependencies between each plugin for
+particular actions - e.g. who gets to break what block and
+where they are allowed. How can you constrain the scope of
+some certain plugin, due to the functionality of another
+plugin, or how can you bypass something?&lt;/p&gt;
+
+&lt;h1 id=&quot;have-one-plugin-handle-umbrella-events&quot;&gt;Have One Plugin Handle Umbrella Events&lt;/h1&gt;
+
+&lt;p&gt;On most servers, you’ll find some sort of system for
+protection, whether it be protecting players from damage
+or protecting blocks from being broken. For example, most
+Skyblock servers will disallow all damage to players while
+they are on their island. This is problematic in some cases
+because you actually want players to take damage. In other
+cases, a protection plugin doesn’t handle an edge case
+involving new capabilities you’ve written for, say, a boss
+entity. You’ll find that in order to handle these edge
+cases, it often requires you to write the same code over
+and over again, and that each time you add a new feature
+that needs to interoperate with existing features, these
+edge case handlers are either thrown out the window or
+simply don’t work anymore. I’ve seen bugs introduced almost
+every feature update due to the fact that protection must
+either be checked or overridden for each and every single
+feature independently. If the boilerplate for doing this
+could be eliminated or reduced, then it would be easier to
+write your checks to protection plugins without worrying
+about forgetting something. Doing something that is easy
+means that you’ll do it more often, and before long, it
+will become second-nature rather than something that you
+explicitly need to think about.&lt;/p&gt;
+
+&lt;p&gt;Luckily, there is an elegant solution to the potentially
+messy business of interdependent protections. You need what
+I call “umbrella events,” events which span all the
+possible use cases for a particular type of modification
+action. All protection checks can be described by the
+following function:&lt;/p&gt;
+
+&lt;div class=&quot;language-java highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;kt&quot;&gt;boolean&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;isAllowed&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;ActionType&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;type&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Object&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;affector&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Object&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;target&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;);&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;In many cases, one can boil down &lt;em&gt;all&lt;/em&gt; protection checks to
+a single method. For example, the if you are writing a
+plugin for a skyblock server, then almost all protection
+is determined by which island a player belongs to and what
+island is being affected by that player. Here’s what a
+boiled-down check if an action &lt;code class=&quot;highlighter-rouge&quot;&gt;isAllowed&lt;/code&gt; would look like:&lt;/p&gt;
+
+&lt;div class=&quot;language-java highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;kd&quot;&gt;public&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;boolean&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;isAllowed&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;ActionType&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;type&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Island&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;affector&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Island&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;target&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;affector&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;!=&lt;/span&gt; &lt;span class=&quot;kc&quot;&gt;null&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;amp;&amp;amp;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;affector&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;equals&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;target&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;);&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;For ASkyBlock, a player may belong to a few different
+islands due to co-oping. A server running ASkyBlock might
+want to use this to determine whether something
+&lt;code class=&quot;highlighter-rouge&quot;&gt;isAllowed&lt;/code&gt;:&lt;/p&gt;
+
+&lt;div class=&quot;language-java highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;kd&quot;&gt;public&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;boolean&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;isAllowed&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;ActionType&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;type&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt;
+        &lt;span class=&quot;n&quot;&gt;Stream&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Island&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;affector&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt;
+        &lt;span class=&quot;n&quot;&gt;Island&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;target&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;affector&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;!=&lt;/span&gt; &lt;span class=&quot;kc&quot;&gt;null&lt;/span&gt;
+            &lt;span class=&quot;o&quot;&gt;&amp;amp;&amp;amp;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;affector&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;anyMatch&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;island&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;-&amp;gt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;island&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;equals&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;target&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;));&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;This is our base ruleset. Since all actions, whether they
+be block placement, which islands players can enter, block
+breaking, who can be damaged and when, etc. is determined
+by the island the respective parties belong to, we now only
+need to translate players, entities, and locations to
+islands. In fact, it is conceivable that one can cover
+most, if not all possible use cases with just definitions
+to translate those 3 objects. Further, it is possible
+through the use of &lt;code class=&quot;highlighter-rouge&quot;&gt;ActionType&lt;/code&gt; to make this both type-safe
+and extensible in case plugins want to add their own
+translation methods:&lt;/p&gt;
+
+&lt;div class=&quot;language-java highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;kd&quot;&gt;public&lt;/span&gt; &lt;span class=&quot;kd&quot;&gt;class&lt;/span&gt; &lt;span class=&quot;nc&quot;&gt;ProtectionHandler&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+    &lt;span class=&quot;kd&quot;&gt;private&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;boolean&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;isAllowed&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;ActionType&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;A&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;T&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;type&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt;
+            &lt;span class=&quot;n&quot;&gt;Stream&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Island&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;affector&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt;
+            &lt;span class=&quot;n&quot;&gt;Island&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;target&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+        &lt;span class=&quot;o&quot;&gt;...&lt;/span&gt;
+    &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
+
+    &lt;span class=&quot;kd&quot;&gt;public&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;A&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;T&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;boolean&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;isAllowed&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;ActionType&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;A&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;T&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;type&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;A&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;affector&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;T&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;target&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+        &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;this&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;isAllowed&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;type&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;translateAffector&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;affector&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;),&lt;/span&gt;
+                &lt;span class=&quot;n&quot;&gt;type&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;translateTarget&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;target&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;));&lt;/span&gt;
+    &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
+
+&lt;span class=&quot;kd&quot;&gt;public&lt;/span&gt; &lt;span class=&quot;kd&quot;&gt;abstract&lt;/span&gt; &lt;span class=&quot;kd&quot;&gt;class&lt;/span&gt; &lt;span class=&quot;nc&quot;&gt;ActionType&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;A&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;T&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+    &lt;span class=&quot;kd&quot;&gt;public&lt;/span&gt; &lt;span class=&quot;kd&quot;&gt;static&lt;/span&gt; &lt;span class=&quot;kd&quot;&gt;final&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;ActionType&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Player&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Block&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;PLAYER_PLACE_BLOCK&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;
+            &lt;span class=&quot;k&quot;&gt;new&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;ActionType&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;lt;&amp;gt;()&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+                &lt;span class=&quot;nd&quot;&gt;@Override&lt;/span&gt;
+                &lt;span class=&quot;kd&quot;&gt;public&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Stream&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Island&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;translateAffector&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Player&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;affector&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+                    &lt;span class=&quot;n&quot;&gt;UUID&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;affectorId&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;affector&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;getUniqueId&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;();&lt;/span&gt;
+                    &lt;span class=&quot;n&quot;&gt;Island&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;playerIsland&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;SkyBlockApi&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;getPlayerIsland&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;affectorId&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;);&lt;/span&gt;
+
+                    &lt;span class=&quot;n&quot;&gt;Collection&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Island&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;coopIslands&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;
+                            &lt;span class=&quot;n&quot;&gt;SkyBlockApi&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;getPlayerCoops&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;affectorId&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;);&lt;/span&gt;
+                    &lt;span class=&quot;n&quot;&gt;coopIslands&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;add&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;playerIsland&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;);&lt;/span&gt;
+
+                    &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;coopIslands&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;stream&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;();&lt;/span&gt;
+                &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
+
+                &lt;span class=&quot;nd&quot;&gt;@Override&lt;/span&gt;
+                &lt;span class=&quot;kd&quot;&gt;public&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Island&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;translateTarget&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Block&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;target&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+                    &lt;span class=&quot;n&quot;&gt;Location&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;blockLocation&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;target&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;getLocation&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;();&lt;/span&gt;
+                    &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;SkyBlockApi&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;getIslandAtLocation&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;target&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;);&lt;/span&gt;
+                &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
+            &lt;span class=&quot;o&quot;&gt;};&lt;/span&gt;
+
+    &lt;span class=&quot;kd&quot;&gt;public&lt;/span&gt; &lt;span class=&quot;kd&quot;&gt;abstract&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Stream&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Island&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;translateAffector&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;A&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;affector&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;);&lt;/span&gt;
+    &lt;span class=&quot;kd&quot;&gt;public&lt;/span&gt; &lt;span class=&quot;kd&quot;&gt;abstract&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Island&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;translateTarget&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;T&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;target&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;);&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;The beauty of using this is that the translation methods
+can take into account other factors, such as if there is
+another plugin that controls the finer-grained permissions.
+For example, when I worked at MineSaga, one could enable or
+disable the ability of co-oped players to place blocks. By
+only having to take this into account once through the use
+of &lt;code class=&quot;highlighter-rouge&quot;&gt;ActionType&lt;/code&gt; constants, you no longer need to remember
+to check with that plugin each time you do a protection
+check. Each plugin fewer that you need to check is one
+fewer check you can possibly forget. If you recall my last
+blog post, you can throw all of your protection handling
+code into a
+&lt;a href=&quot;https://agenttroll.github.io/blog/2019/07/24/lessons-learned-debugging-part-7.html&quot;&gt;central library&lt;/a&gt;.
+If you ever add a new plugin that actually adds new
+behavior that the &lt;code class=&quot;highlighter-rouge&quot;&gt;isAllowed&lt;/code&gt; check needs to handle, all
+of your plugins using the protection handler provided by
+the core plugin benefit from a change to just that one
+core plugin to account for that new check. Additionally,
+this means that only new plugins will need to depend on a
+single core plugin that also handles protection. Assuming
+that you don’t need to add any &lt;code class=&quot;highlighter-rouge&quot;&gt;ActionType&lt;/code&gt;s, you can get
+away with not even modifying the core plugin. You can
+focus your efforts on implementing features instead of
+writing hacky and fragile code just to make sure your
+protection ruleset is being honored.&lt;/p&gt;
+
+&lt;p&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;BlockPlaceEvent&lt;/code&gt; is not one of the things that you usually
+need to check with a protection handler, since that
+function is normally handled by whatever protection plugin
+you are using. You can exploit this by calling
+&lt;code class=&quot;highlighter-rouge&quot;&gt;BlockPlaceEvent&lt;/code&gt; for every block that needs to be checked,
+then seeing if it has been cancelled. The framework I’ve
+discussed is useful for cases where there is not an
+existing event handled by protection plugins. For example,
+if a minion (on MineSaga, a zombie entity) “places” a
+block, it would be a good idea to translate the minion’s
+owner UUID to whichever island that player belongs to in
+order to check if the minion &lt;code class=&quot;highlighter-rouge&quot;&gt;isAllowed&lt;/code&gt; to place that
+block:&lt;/p&gt;
+
+&lt;div class=&quot;language-java highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;kd&quot;&gt;public&lt;/span&gt; &lt;span class=&quot;kd&quot;&gt;static&lt;/span&gt; &lt;span class=&quot;kd&quot;&gt;final&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;ActionType&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Minion&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Block&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;MINION_PLACE_BLOCK&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;
+        &lt;span class=&quot;k&quot;&gt;new&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;ActionType&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;lt;&amp;gt;()&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+            &lt;span class=&quot;nd&quot;&gt;@Overide&lt;/span&gt;
+            &lt;span class=&quot;kd&quot;&gt;public&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Stream&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Island&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;translateAffector&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Minion&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;affector&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+                &lt;span class=&quot;n&quot;&gt;UUID&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;ownerId&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;minion&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;getOwner&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;();&lt;/span&gt;
+                &lt;span class=&quot;n&quot;&gt;Island&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;playerIsland&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;SkyBlockApi&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;getPlayerIsland&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;ownerId&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;);&lt;/span&gt;
+
+                &lt;span class=&quot;n&quot;&gt;Collection&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Island&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;coopIslands&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;
+                        &lt;span class=&quot;n&quot;&gt;SkyBlockApi&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;getPlayerCoops&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;ownerId&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;);&lt;/span&gt;
+                &lt;span class=&quot;n&quot;&gt;coopIslands&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;add&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;playerIsland&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;);&lt;/span&gt;
+
+                &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;coopIslands&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;stream&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;();&lt;/span&gt;
+            &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
+
+            &lt;span class=&quot;nd&quot;&gt;@Override&lt;/span&gt;
+            &lt;span class=&quot;kd&quot;&gt;public&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Island&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;translateTarget&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Block&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;target&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+                &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;ActionType&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;PLAYER_PLACE_BLOCK&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;translateTarget&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;target&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;);&lt;/span&gt;
+            &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
+        &lt;span class=&quot;o&quot;&gt;};&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;However, for the sake of completeness, let’s assume for a
+moment that you have a really bad skyblock plugin, or a
+really bad protection plugin that doesn’t handle
+&lt;code class=&quot;highlighter-rouge&quot;&gt;BlockPlaceEvent&lt;/code&gt;. What would, say, a multiblock place event
+listener look like?&lt;/p&gt;
+
+&lt;div class=&quot;language-java highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;nd&quot;&gt;@EventHandler&lt;/span&gt;
+&lt;span class=&quot;kd&quot;&gt;public&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;void&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;onPlace&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;BlockPlaceEvent&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;event&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+    &lt;span class=&quot;o&quot;&gt;...&lt;/span&gt;
+
+    &lt;span class=&quot;n&quot;&gt;Block&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;block&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;event&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;getBlockPlaced&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;();&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;Location&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;start&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;block&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;getLocation&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;();&lt;/span&gt;
+
+    &lt;span class=&quot;n&quot;&gt;ProtectionHandler&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;ph&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;...&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;for&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;kt&quot;&gt;int&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;i&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;i&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;height&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;i&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;++)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+        &lt;span class=&quot;n&quot;&gt;Location&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;newLocation&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;start&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;add&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;i&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;);&lt;/span&gt;
+        &lt;span class=&quot;n&quot;&gt;Block&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;newBlock&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;newLocation&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;getBlock&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;();&lt;/span&gt;
+
+        &lt;span class=&quot;k&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;ph&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;isAllowed&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;ActionType&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;PLAYER_PLACE_BLOCK&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt;
+                &lt;span class=&quot;n&quot;&gt;player&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;newBlock&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;))&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+            &lt;span class=&quot;c1&quot;&gt;// Set block, remove item, etc...&lt;/span&gt;
+        &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
+    &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
+
+    &lt;span class=&quot;o&quot;&gt;...&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;Not so bad!&lt;/p&gt;
+
+&lt;h1 id=&quot;overriding-protections&quot;&gt;Overriding Protections&lt;/h1&gt;
+
+&lt;p&gt;Now that we’ve covered how protection checks can be done in
+an elegant, extensible way, how do we handled overriding an
+existing protection plugin?&lt;/p&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;Before I get into this section, a small personal 
+anecdote:&lt;/p&gt;
+
+  &lt;p&gt;The correct way to write protection event listeners is to
+use an &lt;code class=&quot;highlighter-rouge&quot;&gt;EventPriority.LOW&lt;/code&gt; event handler method so that
+non-protection plugins can use &lt;code class=&quot;highlighter-rouge&quot;&gt;ignoreCancelled&lt;/code&gt; without
+having to change their priority. Unfortunately, I’ve seen
+a number of excessively dumb plugins which set their
+protection listeners to &lt;code class=&quot;highlighter-rouge&quot;&gt;EventPriority.HIGHEST&lt;/code&gt; (or in
+extreme cases, &lt;code class=&quot;highlighter-rouge&quot;&gt;EventPriority.MONITOR&lt;/code&gt;), under the
+assumption that they want their event listener to take
+precedence. For the love of all that is good in this
+world &lt;strong&gt;please stop doing this&lt;/strong&gt;. This causes issues with
+plugins that need to piggyback off of that protection to
+have no way of checking whether or not an event will be
+cancelled without doing hacks like scheduling a task to
+check if the event is cancelled once all event listeners
+have run or refiring the event and storing it to make
+sure it doesn’t get handled in an infinite loop, etc.
+I’ve had to write an enchanted pickaxe plugin that
+shouldn’t run any enchantments if a block was broken
+outside of a mine. However, the mine plugin, which
+handled block break protection registered their listener
+with &lt;code class=&quot;highlighter-rouge&quot;&gt;EventPriority.HIGHEST&lt;/code&gt;, and in the interests of
+keeping &lt;code class=&quot;highlighter-rouge&quot;&gt;EventPriority.MONITOR&lt;/code&gt; clear, I unregistered
+their listener from the &lt;code class=&quot;highlighter-rouge&quot;&gt;BlockBreakEvent&lt;/code&gt;’s 
+&lt;code class=&quot;highlighter-rouge&quot;&gt;HandlerList&lt;/code&gt; and re-registered it under a lower 
+priority.&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;Unlike writing protection checks, overriding protection is
+independent. If we are overriding a protection, that means
+that the protection itself is irrelevant (otherwise, we
+wouldn’t really be overriding anything). Mind you, limits
+can still be placed on where or when overriding is done.
+However, this is up to each individual plugin, so it
+wouldn’t make sense to include this feature in a central
+core plugin.&lt;/p&gt;
+
+&lt;p&gt;Overriding protection listeners can be done in two ways.
+Firstly, you can bypass the listener entirely and manually
+perform some action on its own. For example, if a plugin
+cancels damage events, you can manually set the health of
+an entity instead. Secondly, you can set a listener to a
+higher priority and then use
+&lt;code class=&quot;highlighter-rouge&quot;&gt;Cancellable#setCancelled(boolean)&lt;/code&gt; to &lt;em&gt;uncancel&lt;/em&gt; the
+event if certain conditions are met. If you can’t edit the
+source of a plugin using a scheduler to protect some region
+or entity or block, then you can consider cancelling that
+scheduler task and then running your own task which does
+everything except for whatever protection you are
+overriding.&lt;/p&gt;
+
+&lt;p&gt;The short of it is that overriding a protection is much
+easier than checking for a protection. You don’t need to
+worry about the limitations for the former because you are
+already overriding the protection. However, for the latter,
+I’ve presented a good way of structuring a protection
+handler to reduce boilerplate and reduce the number of bugs
+you are getting from forgetting protection checks.&lt;/p&gt;
+
+&lt;h1 id=&quot;conclusion&quot;&gt;Conclusion&lt;/h1&gt;
+
+&lt;p&gt;I have little else to say except for the tradition of
+leaving readers with the following words from
+&lt;a href=&quot;http://spinroot.com/gerard/pdf/P10.pdf&quot;&gt;The Power of Ten&lt;/a&gt;:&lt;/p&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;If the rules seem Draconian at first, bear in mind that
+they are meant to make it possible to check code where very
+literally your life may depend on its correctness: code
+that is used to control the airplane that you fly on, the
+nuclear power plant a few miles from where you live, or the
+spacecraft that carries astronauts into orbit. The rules
+act like the seat-belt in your car: initially they are
+perhaps a little uncomfortable, but after a while their use
+becomes second-nature and not using them becomes
+unimaginable.&lt;/p&gt;
+&lt;/blockquote&gt;</content><author><name></name></author><summary type="html">One of the most frustrating things about a large plugin ecosystem is that at one point or another, you will need to start handling the dependencies between each plugin for particular actions - e.g. who gets to break what block and where they are allowed. How can you constrain the scope of some certain plugin, due to the functionality of another plugin, or how can you bypass something?</summary></entry><entry><title type="html">Let’s Talk Privacy</title><link href="https://agenttroll.github.io/blog/2019/07/28/lets-talk-privacy.html" rel="alternate" type="text/html" title="Let's Talk Privacy" /><published>2019-07-28T15:41:15-07:00</published><updated>2019-07-28T15:41:15-07:00</updated><id>https://agenttroll.github.io/blog/2019/07/28/lets-talk-privacy</id><content type="html" xml:base="https://agenttroll.github.io/blog/2019/07/28/lets-talk-privacy.html">&lt;p&gt;This post should come with a big red disclaimer that says
 I’m not an expert, but since my screen is redshifted to
 hell, plain black will have to do. I’m just a Java
 programmer with a blog.&lt;/p&gt;
@@ -558,7 +855,22 @@ important issue, I only ask that you hear me out. I’m not a
 popular blogger by any means, so if you are reading my blog
 in the first place, that probably indicates that you don’t
 have anything better to do anyways. I encourage you to use
-that time to become at least a little bit more informed :).&lt;/p&gt;</content><author><name></name></author><summary type="html">I haven’t explicitly identified it until now, but it seems that I have a habit of putting exactly the same thing in my introductory paragraph in basically all of the posts in this series. This particular lesson doesn’t sound all that bad at first, but I can assure you that I have literally crashed a server by not following it.</summary></entry><entry><title type="html">What The Fuck Does Guice ‘zip file closed’ Exception Mean?</title><link href="https://agenttroll.github.io/blog/2019/07/18/what-the-fuck-does-guice-zip-file-closed-exception-mean.html" rel="alternate" type="text/html" title="What The Fuck Does Guice 'zip file closed' Exception Mean?" /><published>2019-07-18T01:00:15-07:00</published><updated>2019-07-18T01:00:15-07:00</updated><id>https://agenttroll.github.io/blog/2019/07/18/what-the-fuck-does-guice-zip-file-closed-exception-mean</id><content type="html" xml:base="https://agenttroll.github.io/blog/2019/07/18/what-the-fuck-does-guice-zip-file-closed-exception-mean.html">&lt;p&gt;I’ve had a lot of time to work with &lt;a href=&quot;https://github.com/google/guice&quot;&gt;Guice&lt;/a&gt;
+that time to become at least a little bit more informed :).&lt;/p&gt;
+
+&lt;h1 id=&quot;addenum-2019-08-14-0315&quot;&gt;Addenum 2019-08-14 03:15&lt;/h1&gt;
+
+&lt;p&gt;I hadn’t actually thought of this earlier, but I’ve
+recently run into another situation where a standardized
+library would have made life a lot easier. Especially in
+teams with several developers, having a core library can
+make life significantly easier because having a single
+standard paradigm for accomplishing one task not only makes
+the code significantly easier to understand and parse, it
+will help reduce bugginess because it will also be easier
+to review. Because you can be assured that some portion of
+the code works, it will make debugging and code review
+significantly easier and cut down drastically on the time
+needed to identify problem points.&lt;/p&gt;</content><author><name></name></author><summary type="html">I haven’t explicitly identified it until now, but it seems that I have a habit of putting exactly the same thing in my introductory paragraph in basically all of the posts in this series. This particular lesson doesn’t sound all that bad at first, but I can assure you that I have literally crashed a server by not following it.</summary></entry><entry><title type="html">What The Fuck Does Guice ‘zip file closed’ Exception Mean?</title><link href="https://agenttroll.github.io/blog/2019/07/18/what-the-fuck-does-guice-zip-file-closed-exception-mean.html" rel="alternate" type="text/html" title="What The Fuck Does Guice 'zip file closed' Exception Mean?" /><published>2019-07-18T01:00:15-07:00</published><updated>2019-07-18T01:00:15-07:00</updated><id>https://agenttroll.github.io/blog/2019/07/18/what-the-fuck-does-guice-zip-file-closed-exception-mean</id><content type="html" xml:base="https://agenttroll.github.io/blog/2019/07/18/what-the-fuck-does-guice-zip-file-closed-exception-mean.html">&lt;p&gt;I’ve had a lot of time to work with &lt;a href=&quot;https://github.com/google/guice&quot;&gt;Guice&lt;/a&gt;
 when I worked with Skytropia. However, working on a
 personal project with more up-to-date versions of Spigot
 and Guice, I was met with the strangest possible exception.
@@ -2072,252 +2384,4 @@ unimaginable.&lt;/p&gt;
 &lt;p&gt;While these tips are not necessarily rules that are
 responsible for keeping people alive, incorporating the
 same philosophy into your programming repertoire will help
-you in the long run.&lt;/p&gt;</content><author><name></name></author><summary type="html">Been another while since I’ve last written something, so here goes for another post in the series.</summary></entry><entry><title type="html">Lessons Learned Debugging: Part 2</title><link href="https://agenttroll.github.io/blog/2019/04/08/lessons-learned-debugging-part-2.html" rel="alternate" type="text/html" title="Lessons Learned Debugging: Part 2" /><published>2019-04-08T22:03:10-07:00</published><updated>2019-04-08T22:03:10-07:00</updated><id>https://agenttroll.github.io/blog/2019/04/08/lessons-learned-debugging-part-2</id><content type="html" xml:base="https://agenttroll.github.io/blog/2019/04/08/lessons-learned-debugging-part-2.html">&lt;p&gt;One of the recurring problems that will cause you headaches
-is the throwing of exceptions where you &lt;em&gt;don’t want them to
-be thrown&lt;/em&gt;. Among these exceptions, one of the most elusive
-is &lt;code class=&quot;highlighter-rouge&quot;&gt;ConcurrentModificationException&lt;/code&gt;.&lt;/p&gt;
-
-&lt;h1 id=&quot;what-is-concurrentmodificationexception&quot;&gt;What is &lt;code class=&quot;highlighter-rouge&quot;&gt;ConcurrentModificationException&lt;/code&gt;?&lt;/h1&gt;
-
-&lt;p&gt;A &lt;code class=&quot;highlighter-rouge&quot;&gt;ConcurrentModificationException&lt;/code&gt;, or a CME, as I will
-refer to it from here on out, is caused by a change, or a
-modification, to a collection while iterating over it.
-The most common example of this happening is through
-something like this:&lt;/p&gt;
-
-&lt;div class=&quot;language-java highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;n&quot;&gt;List&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;String&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;stringList&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;...&lt;/span&gt;
-&lt;span class=&quot;k&quot;&gt;for&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;String&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;string&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;stringList&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
-    &lt;span class=&quot;n&quot;&gt;stringList&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;remove&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;string&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;);&lt;/span&gt;
-&lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;The reason you cannot do this is because it will cause the
-Iterator to lose track of where it is. For example, in a
-collection with 10 elements, if you remove the 3rd item and
-the iterator is on the 4th element, what is the iterator
-supposed to do? Is it supposed to now be on the 5th element
-because everything shifts down? Are you supposed to stay on
-the same 4th element and shift with the removal of the
-item? It’s easier just to avoid the consistency issues and
-throw an exception instead. We will get into how to get
-around this later.&lt;/p&gt;
-
-&lt;p&gt;A for-each loop is simply syntax sugar over an &lt;code class=&quot;highlighter-rouge&quot;&gt;Iterator&lt;/code&gt;.
-In an &lt;code class=&quot;highlighter-rouge&quot;&gt;ArrayList&lt;/code&gt;, the call to &lt;code class=&quot;highlighter-rouge&quot;&gt;Iterator#next()&lt;/code&gt; checks to
-ensure that &lt;code class=&quot;highlighter-rouge&quot;&gt;modCount&lt;/code&gt; has not changed, where &lt;code class=&quot;highlighter-rouge&quot;&gt;modCount&lt;/code&gt; is
-an &lt;code class=&quot;highlighter-rouge&quot;&gt;int&lt;/code&gt; that changes whenever the &lt;code class=&quot;highlighter-rouge&quot;&gt;ArrayList&lt;/code&gt; has a
-modification (such as through the usage of &lt;code class=&quot;highlighter-rouge&quot;&gt;#add(...)&lt;/code&gt;
-or &lt;code class=&quot;highlighter-rouge&quot;&gt;#remove(...)&lt;/code&gt;). From the &lt;a href=&quot;https://hg.openjdk.java.net/jdk8/jdk8/jdk/file/tip/src/share/classes/java/util/ArrayList.java#l884&quot;&gt;ArrayList source&lt;/a&gt;:&lt;/p&gt;
-
-&lt;div class=&quot;language-java highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;kd&quot;&gt;final&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;void&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;checkForComodification&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;()&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
-    &lt;span class=&quot;k&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;modCount&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;!=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;expectedModCount&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;
-        &lt;span class=&quot;k&quot;&gt;throw&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;new&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;ConcurrentModificationException&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;();&lt;/span&gt;
-&lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;expectedModCount&lt;/code&gt; is the value of &lt;code class=&quot;highlighter-rouge&quot;&gt;modCount&lt;/code&gt; when the
-iterator is constructed, or when the for-loop begins. A CME
-is so serious of an exception because often, one can get
-away without throwing the exception during testing. If a
-collection contains only one element, the &lt;code class=&quot;highlighter-rouge&quot;&gt;modCount&lt;/code&gt; will
-change after &lt;code class=&quot;highlighter-rouge&quot;&gt;Itr#checkForComodification()&lt;/code&gt; has been
-called, and no CME will be thrown. This is an issue because
-one might populate a collection with only a single element
-for the purposes of testing. It may be only one player,
-because you are the only one testing the plugin, or it may
-be only one object that you are storing to make sure that
-something works. This is something that tends to slip into
-production because it appears to work during testing.&lt;/p&gt;
-
-&lt;p&gt;As a reminder, this can happen with any collection except
-those that are thread-safe, so a &lt;code class=&quot;highlighter-rouge&quot;&gt;HashSet&lt;/code&gt;, a &lt;code class=&quot;highlighter-rouge&quot;&gt;LinkedList&lt;/code&gt;,
-and &lt;code class=&quot;highlighter-rouge&quot;&gt;HashMap&lt;/code&gt; are all succeptible to throwing a CME if you
-iterate and modify at the same time.&lt;/p&gt;
-
-&lt;h1 id=&quot;be-wary-of-iteration-and-unforeseen-side-effects&quot;&gt;Be Wary of Iteration and Unforeseen Side-Effects&lt;/h1&gt;
-
-&lt;p&gt;One way to avoid making mistakes is to reuse paradigms that
-are well understood, and that is known to already work. On
-the opposite end, it is also imperative to recognize
-certain paradigms that have a tendency to fail. Iteration
-through Collections is one of those paradigms that you
-should be on the lookout for. The simplicity of loops and
-the monotony of perhaps writing them hundreds if not
-thousands of times over can lower one’s guard against them.&lt;/p&gt;
-
-&lt;p&gt;The trick is to proceed with caution when writing loops.
-Ensure that you are truly only reading from them, and never
-modifying the collection in the process.&lt;/p&gt;
-
-&lt;p&gt;There are a few important exceptions to this where you are
-completely safe from CME:&lt;/p&gt;
-
-&lt;ol&gt;
-  &lt;li&gt;You are using an indexed loop. If you remove
-something, you are in control of the loop index, so
-it’s up to you to correct for the index of any item
-shifting (if you are not using an indexed removal,
-that is).&lt;/li&gt;
-  &lt;li&gt;You are using a thread-safe collection. Iterators
-provided by those classes are only weakly-consistent,
-and it can potentially take time for modifications to
-show up. If you are simply throwing away elements,
-there’s really nothing to worry about.&lt;/li&gt;
-  &lt;li&gt;If you are using a safe method of modifying the
-collection such as through &lt;code class=&quot;highlighter-rouge&quot;&gt;Iterator#remove()&lt;/code&gt; or
-using &lt;code class=&quot;highlighter-rouge&quot;&gt;#removeIf(...)&lt;/code&gt;.&lt;/li&gt;
-&lt;/ol&gt;
-
-&lt;p&gt;You will also need to be cautious of side-effects of
-methods called in the loop. For example, the following
-snippet of code will throw a CME:&lt;/p&gt;
-
-&lt;div class=&quot;language-java highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;n&quot;&gt;Inventory&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;inventory&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;;&lt;/span&gt;
-&lt;span class=&quot;k&quot;&gt;for&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;HumanEntity&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;viewer&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;inventory&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;getViewers&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;())&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
-    &lt;span class=&quot;n&quot;&gt;viewer&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;closeInventory&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;();&lt;/span&gt;
-&lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;Upon initial inspection, it looks completely safe, it
-doesn’t appear to be modifying the collection returned by
-&lt;code class=&quot;highlighter-rouge&quot;&gt;Inventory#getViewers()&lt;/code&gt;. However, this is another reason
-why CMEs are so insidious. &lt;code class=&quot;highlighter-rouge&quot;&gt;HumanEntity#closeInventory()&lt;/code&gt;
-interally removes the viewer from the &lt;code class=&quot;highlighter-rouge&quot;&gt;#getViewers()&lt;/code&gt;
-collection, and so by closing the inventory, it will modify
-the collection while you are still in a loop. This is only
-one example from the Bukkit API, but I’m sure there are
-more, I’ve just never personally had to deal with them.&lt;/p&gt;
-
-&lt;p&gt;In this case, where you are not able to change the
-&lt;code class=&quot;highlighter-rouge&quot;&gt;#closeInventory()&lt;/code&gt; method because it is written in the
-API, you would make a copy of that collection and then
-iterate over it:&lt;/p&gt;
-
-&lt;div class=&quot;language-java highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;n&quot;&gt;Inventory&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;inventory&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;;&lt;/span&gt;
-&lt;span class=&quot;k&quot;&gt;for&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;HumanEntity&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;viewer&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;new&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;ArrayList&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;lt;&amp;gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;inventory&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;getViewers&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;()))&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
-    &lt;span class=&quot;n&quot;&gt;viewer&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;closeInventory&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;();&lt;/span&gt;
-&lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;This works because the new collection is a different
-&lt;code class=&quot;highlighter-rouge&quot;&gt;ArrayList&lt;/code&gt; and therefore uses a different iterator than
-the actual collection of viewers. We can remove items from
-the actual collection without affecting the elements in the
-copy, and therefore no CME is thrown.&lt;/p&gt;
-
-&lt;p&gt;It is tempting to use a workaround to creating an entirely
-new deep copy of the collection, such as by using
-&lt;code class=&quot;highlighter-rouge&quot;&gt;Collections#unmodifiableCollection(...)&lt;/code&gt;, or even by using
-Google Guava’s &lt;code class=&quot;highlighter-rouge&quot;&gt;Iterables.concat(...)&lt;/code&gt; to “hack” in a new
-iterator. However, the problem is that both of these are
-non-solutions because they &lt;em&gt;still depend on the underlying
-iterator&lt;/em&gt;. You MUST create a new collection in order for
-this to work.&lt;/p&gt;
-
-&lt;h1 id=&quot;other-solutions&quot;&gt;Other Solutions&lt;/h1&gt;
-
-&lt;p&gt;Instances such as the Inventory example don’t come up too
-often, and sometimes you just need to run some unrelated
-code to process the removed elements, or even just remove
-a few elements from a loop outright.&lt;/p&gt;
-
-&lt;p&gt;Nowadays, the most effective solution would be to use the
-&lt;code class=&quot;highlighter-rouge&quot;&gt;#removeIf(...)&lt;/code&gt; method:&lt;/p&gt;
-
-&lt;div class=&quot;language-java highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;n&quot;&gt;List&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;String&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;list&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;c1&quot;&gt;// ...&lt;/span&gt;
-&lt;span class=&quot;n&quot;&gt;list&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;removeIf&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;string&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;-&amp;gt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;string&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;startsWith&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;remove-me&quot;&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;));&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;You can even use this to process the elements that should
-be removed if you so wish:&lt;/p&gt;
-
-&lt;div class=&quot;language-java highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;n&quot;&gt;List&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;String&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;list&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;c1&quot;&gt;// ...&lt;/span&gt;
-&lt;span class=&quot;n&quot;&gt;Consumer&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;String&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;removeListener&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;c1&quot;&gt;// ...&lt;/span&gt;
-
-&lt;span class=&quot;n&quot;&gt;list&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;removeIf&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;string&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;-&amp;gt;&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
-    &lt;span class=&quot;k&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;string&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;startsWith&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;remove-me&quot;&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;))&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
-        &lt;span class=&quot;n&quot;&gt;removeListener&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;accept&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;string&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;);&lt;/span&gt;
-        &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;kc&quot;&gt;true&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;;&lt;/span&gt;
-    &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
-
-    &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;kc&quot;&gt;false&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;;&lt;/span&gt;
-&lt;span class=&quot;o&quot;&gt;});&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;For those of us stuck on Java 7, or for reasons I might not
-have forseen, you can use &lt;code class=&quot;highlighter-rouge&quot;&gt;Iterator#remove()&lt;/code&gt; in order to
-do the same thing:&lt;/p&gt;
-
-&lt;div class=&quot;language-java highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;n&quot;&gt;List&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;String&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;list&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;c1&quot;&gt;// ...&lt;/span&gt;
-
-&lt;span class=&quot;n&quot;&gt;Iterator&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;String&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;it&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;list&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;iterator&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;();&lt;/span&gt;
-&lt;span class=&quot;k&quot;&gt;while&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;it&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;hasNext&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;())&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
-    &lt;span class=&quot;n&quot;&gt;String&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;string&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;it&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;next&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;();&lt;/span&gt;
-    &lt;span class=&quot;k&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;string&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;startsWith&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;remove-me&quot;&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;))&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
-        &lt;span class=&quot;n&quot;&gt;it&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;remove&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;();&lt;/span&gt;
-    &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
-&lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;This will also allow you to only partially iterate by using
-&lt;code class=&quot;highlighter-rouge&quot;&gt;break&lt;/code&gt; if you so desire. A shortened form that scopes the
-iterator for only a single loop will look like this:&lt;/p&gt;
-
-&lt;div class=&quot;language-java highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;n&quot;&gt;List&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;String&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;list&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;c1&quot;&gt;// ...&lt;/span&gt;
-
-&lt;span class=&quot;k&quot;&gt;for&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Iterator&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;String&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;it&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;list&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;iterator&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;();&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;it&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;hasNext&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;();&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
-    &lt;span class=&quot;n&quot;&gt;String&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;string&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;it&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;next&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;();&lt;/span&gt;
-    &lt;span class=&quot;k&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;string&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;startsWith&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;remove-me&quot;&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;))&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
-        &lt;span class=&quot;n&quot;&gt;it&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;remove&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;();&lt;/span&gt;
-    &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
-&lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;All of these code snippets will have the same effect of
-removing &lt;code class=&quot;highlighter-rouge&quot;&gt;String&lt;/code&gt;s starting with &lt;code class=&quot;highlighter-rouge&quot;&gt;remove-me&lt;/code&gt;, so choose
-whatever one you see fit. Once again, these will not work
-if methods you are calling have the side effect of removing
-the element from the collection anyways, such as 
-demonstrated in the previous section, so you will be stuck
-with having to deep-copy the entire collection for that.&lt;/p&gt;
-
-&lt;p&gt;(I’m not sure why the API designers decided not to produce
-a copy of the collection there. In the modern age of
-Java 8, I would have personally returned a &lt;code class=&quot;highlighter-rouge&quot;&gt;Stream&lt;/code&gt;, but
-that luxury didn’t exist when &lt;code class=&quot;highlighter-rouge&quot;&gt;Inventory&lt;/code&gt; was designed.
-In fact, there should be no reason really why the returned
-collection is mutable, at the very least, it needs to be
-unmodifiable because other cleanup procedures need to be
-run for someone to actually stop “viewing” an inventory.
-Perhaps this could be a PR or something to return a
-deep-copy as a defensive programming measure)&lt;/p&gt;
-
-&lt;h1 id=&quot;conclusion&quot;&gt;Conclusion&lt;/h1&gt;
-
-&lt;p&gt;There are solutions to CME, but it is up to the programmer
-to actually be vigilant, and to never let their guard down
-in spite of the appearance of simplicity of a loop. You
-must train yourself to recognize and check yourself when
-you are writing loops, because a CME might also slip past
-during testing as I’ve discussed before. This paradigm is
-the second lesson in this series of posts.&lt;/p&gt;
-
-&lt;p&gt;I leave with the following wisdom from &lt;a href=&quot;http://spinroot.com/gerard/pdf/P10.pdf&quot;&gt;The Power of Ten&lt;/a&gt;:&lt;/p&gt;
-
-&lt;blockquote&gt;
-  &lt;p&gt;If the rules seem Draconian at first, bear in mind that
-they are meant to make it possible to check code where very
-literally your life may depend on its correctness: code 
-that is used to control the airplane that you fly on, the 
-nuclear power plant a few miles from where you live, or the 
-spacecraft that carries astronauts into orbit. The rules 
-act like the seat-belt in your car: initially they are 
-perhaps a little uncomfortable, but after a while their use
-becomes second-nature and not using them becomes 
-unimaginable.&lt;/p&gt;
-&lt;/blockquote&gt;
-
-&lt;p&gt;While these tips are not necessarily rules that are
-responsible for keeping people alive, incorporating the
-same philosophy into your programming repertoire will help
-you in the long run.&lt;/p&gt;</content><author><name></name></author><summary type="html">One of the recurring problems that will cause you headaches is the throwing of exceptions where you don’t want them to be thrown. Among these exceptions, one of the most elusive is ConcurrentModificationException.</summary></entry></feed>
+you in the long run.&lt;/p&gt;</content><author><name></name></author><summary type="html">Been another while since I’ve last written something, so here goes for another post in the series.</summary></entry></feed>
