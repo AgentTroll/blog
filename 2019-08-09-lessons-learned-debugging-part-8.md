@@ -190,6 +190,14 @@ public static final ActionType<Minion, Block> MINION_PLACE_BLOCK =
         };
 ```
 
+The extensibility of this system is a valuable feature
+because it means that one doesn't need to go through the
+trouble of storing the `Player` object itself in order to
+perform protection checks which depend on the fact that
+the something performing some modification action is a
+player. It could be a boss entity or a minion entity as
+demonstrated by the above snippet.
+
 However, for the sake of completeness, let's assume for a
 moment that you have a really bad skyblock plugin, or a
 really bad protection plugin that doesn't handle
@@ -209,7 +217,7 @@ public void onPlace(BlockPlaceEvent event) {
         Location newLocation = start.add(0, i, 0);
         Block newBlock = newLocation.getBlock();
 
-        if (ph.isAllowed(ActionType.PLAYER_PLACE_BLOCK,
+        if (ph.isAllowed(ActionType.MINION_PLACE_BLOCK,
                 player, newBlock)) {
             // Set block, remove item, etc...
         }
