@@ -12,7 +12,7 @@ where they are allowed. How can you constrain the scope of
 some certain plugin, due to the functionality of another
 plugin, or how can you bypass something?
 
-# Have One Plugin Handle Umbrella Events
+# Have One Plugin Handle Protection Checks
 
 On most servers, you'll find some sort of system for
 protection, whether it be protecting players from damage
@@ -39,11 +39,10 @@ will become second-nature rather than something that you
 explicitly need to think about.
 
 Luckily, there is an elegant solution to the potentially
-messy business of interdependent protections. You need what
-I call "umbrella events," events which span all the
-possible use cases for a particular type of modification
-action. All protection checks can be described by the
-following function:
+messy business of interdependent protections. You'll need
+a single plugin to handle protection for your specific
+server ecosystem. All protection checks can be described
+by the following function:
 
 ``` java
 boolean isAllowed(ActionType type, Object affector, Object target);
@@ -228,9 +227,9 @@ Now that we've covered how protection checks can be done in
 an elegant, extensible way, how do we handled overriding an
 existing protection plugin?
 
-> Before I get into this section, a small personal 
+> Before I get into this section, a small personal
 > anecdote:
-> 
+>
 > The correct way to write protection event listeners is to
 > use an `EventPriority.LOW` event handler method so that
 > non-protection plugins can use `ignoreCancelled` without
@@ -253,8 +252,8 @@ existing protection plugin?
 > handled block break protection registered their listener
 > with `EventPriority.HIGHEST`, and in the interests of
 > keeping `EventPriority.MONITOR` clear, I unregistered
-> their listener from the `BlockBreakEvent`'s 
-> `HandlerList` and re-registered it under a lower 
+> their listener from the `BlockBreakEvent`'s
+> `HandlerList` and re-registered it under a lower
 > priority.
 
 Unlike writing protection checks, overriding protection is
