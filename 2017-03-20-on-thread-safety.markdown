@@ -340,5 +340,106 @@ One niche use of `volatile` is for single-writer thread models. This means that 
 
 One might ask, if `volatile` serves half the purpose of what `synchronized` does, why is it even needed in the first place? And that would be a perfectly valid question. The truth is that you don't *need* to use `volatile`. You can achieve everything with `synchronized` that you could with `volatile`. However, the key here is that `volatile` has a smaller scope. In general, reducing the scope of fields, methods, and even synchronizers is good practice. Not only does it make the code clearer and easier to debug, it helps improve performance as well. `volatile` reads are almost as fast as non-`volatile` reads, and writing to a `volatile` field is essentially always faster than `synchronized`. This isn't to say that `volatile` is completely free, because it most definitely isn't; there are side effects that require the CPU to execute extra instructions and pollute the memory bus, which slows down everything else as well. However, the key is that `synchronized` explicitly causes threads to stop and wait if a lock is already held (referred to as "contending for a lock"), causing *contention*. A thread contending for a lock is also eligible to for *context switching*. On many systems where threads outnumber the available CPU execution cores (which is almost always the case, you can open a process manager to see for yourself), CPUs will devote a certain amount of time to run one thread before switching to complete the instructions of another thread. Context switching has overhead for housekeeping and managing the state of the thread being switched out as well as initializing the state and the caches for the thread being switched in. This, again, isn't to say that `volatile` operations are not ineligible for context switching, but a thread contending for a lock is far more likely to cause a context switch, which further adds to the overhead associated with `synchronized`. As more threads contend for a lock, more time must also be allocated to manage the threads that are waiting for the lock as well. On the other hand, as the number of threads and operations handled by your program increases, `volatile` *scales* significantly better. Contention is such an issue with `synchronized` that an entire class of research is devoted to developing *lock-free* algorithms, those that use `volatile` and other atomic operations without the use of locks. By understanding where to use the two keywords, you can improve the correctness, throughput, and scalability of your application.
 
+# Atomic Types
+
+It wouldn't be a proper discussion of the classic thread-safe counting holder class if I left out atomic types. I'm referring to all the utility classes contained in [java.util.concurrent.atomic](https://docs.oracle.com/en/java/javase/12/docs/api/java.base/java/util/concurrent/atomic/package-summary.html).
+
+Let us revisit our `MutableState`:
+
+``` java
+@NotThreadSafe
+class MutableState {
+    private int state;
+    public void mutate() { this.state++; }
+    public int read() { return this.state; }
+}
+```
+
+Let us now recall that there are three reasons why we cannot safely use `MutableState` in a multithreaded environment:
+
+  1. Changes to `state` may not be visible
+  2. Changes to `state` may not occur atomically
+  3. Changes to `state` may be reordered
+
+We can solve all 3 issues with `synchronized`. We can solve issues 1 and 3 with `volatile`. How can we get the best of both worlds - solving 3 guarantees with `synchronized` while at the same time reducing the scope of synchronization to a field like we can do with `volatile`?
+
+Enter `AtomicInteger`. We can make `MutableState` thread-safe like so:
+
+``` java
+@ThreadSafe
+class AtomicMutableState {
+    private final AtomicInteger state = new AtomicInteger();
+    public void mutate() {
+        this.state.incrementAndGet();
+    }
+    public int read() {
+        return state.get();
+    }
+}
+```
+
+An atomic type solves problem 1 and 2 by acting like as a wrapper over a `volatile` field. However, instead of locking to ensure atomicity, it uses a primitive operation called a compare-and-set (also called compare-and-swap or CAS). A CAS is an atomic instruction that is capable of checking the value of a state and if it matches, loading a new value into its place. A CAS is often implemented at the CPU level as something like a `cmpxchg` instruction. This isn't always the case, however, it often is, and you can expect the throughput of atomic state modifications to be much better than that of a synchronized one in most cases. Again, recall that an entire field of research is devoted to creating lock-free algorithms to improve throughput. Under the hood, an atomic type will do something like the following:
+
+``` java
+volatile int state = ...
+
+boolean compareAndSwap(int oldState, int newState);
+
+public int incrementAndGet() {
+    int oldState;
+    int newState;
+    do {
+        oldState = this.state;
+        newState = oldState + 1;
+    } while (!this.compareAndSwap(oldState, newState));
+
+    return newState;
+}
+```
+
+It works like this: we'll read the `state` into `oldState`. We'll then add 1 to it locally, before we attempt to `compareAndSwap` the old value with the incremented value. If this succeeds, this means that we've atomically switched the old value for that value plus 1. Since we are doing this on a `volatile` state field, we get the benefit of visibility and the ordering guarantees provided by `volatile` as well. However, if the `compareAndSwap` operation fails, that means that the value has changed in the meantime, so the current thread has lost a data race. The loop will start again and try to increment the `state` value that was recently modified by another thread. An atomic type can potentially be slower than a `synchronized` block in cases of unrealistically high contention (basically if the entire purpose of a program were to run `incrementAndGet` in a loop, then it might be worthwhile switching to `synchronized`). That being said, remember that real programs do not experience unrealistically high rates of contention of the sort found in a benchmark. Also remember that even if the loop fails multiple times, a `synchronized` block can also wait for an arbitrarily long time if other threads are given the lock under high contention as well. In general, it is almost always better to go with a lock-free option if performance is concerned, unless you have profiler numbers that prove otherwise.
+
+The paradigm of get-modify-CAS is extremely powerful because it can be used to build much more complicated data structures. For example, when I worked on TridentSDK, I was able to build an atomic ["nibble array"](https://github.com/TridentSDK/Trident/blob/revamp/src/main/java/net/tridentsdk/server/util/NibbleArray.java) by packing bytes into an array of `long`s by using an `AtomicLongArray`:
+
+
+``` java
+public void setByte(int position, byte value) {
+    int nibblePosition = position / 2;
+    int spliceIndex = nibblePosition >> 3;
+    long shift = nibblePosition % BYTES_PER_LONG << 3;
+
+    long oldSpice; // easter egg (play Old Spice theme)
+    long newSplice;
+    if ((position & 1) == 0) {
+        do {
+            oldSpice = this.nibbles.get(spliceIndex);
+            long newByte = oldSpice >>> shift & 0xF0 | value;
+
+            newSplice = oldSpice & ~(0xFFL << shift) | newByte << shift;
+        }
+        while (!this.nibbles.compareAndSet(spliceIndex, oldSpice, newSplice));
+    } else {
+        long shiftedVal = value << 4;
+        do {
+            oldSpice = this.nibbles.get(spliceIndex);
+            long newByte = oldSpice >>> shift & 0x0F | shiftedVal;
+
+            newSplice = oldSpice & ~(0xFFL << shift) | newByte << shift;
+        }
+        while (!this.nibbles.compareAndSet(spliceIndex, oldSpice, newSplice));
+    }
+}
+```
+
+You don't need to fully understand what is going here; the point I'm trying to make is that there are a variety of bit-shifting operations that, taken together, are not atomic. By using a get-modify-CAS paradigm, I can continue to try this on updated values until the thread successfully CAS the values into the state value completely atomically.
+
+In addition to the aforementioned `AtomicInteger` and `AtomicLongArray` classes, there are a variety of other atomic types for `long`, `boolean`, arrays, references, etc. However, before I move on to the next topic, I'd like to spend a brief moment to talk about `Atomic*FieldUpdater` and `LongAdder`. 
+
+From my knowledge, the first of these are mainly used for when memory is a concern. In large collections, if every single object contained an atomic type, then the space taken by the atomic type's object header as well as the value stored by that type can take up a large amount of memory. If this is a concern (meaning that you have measured with a profiler and verified that you are having a problem), then consider using an `Atomic*FieldUpdater`. That way, you will store just the memory for the value in each object, and then move the memory for the atomic type to a `static` field to update each instance. See [this blog post](http://normanmaurer.me/blog/2013/10/28/Lesser-known-concurrent-classes-Part-1/) for some numbers. 
+
+The second class I'd like to talk about is a `LongAdder`. Remember what I said about how atomic types have poor performance under extremely high contention? As a matter of fact, Java 8 introduced `LongAdder` and `DoubleAdder`, which allows you to create highly scalable counters should you need them. They work by internally having a table that counts the amount added by each thread, which are then added up when the value is retrieved. The weakness of this class is that due to the fact that many buckets need to be accumulated to get the final value, so you cannot retrieve the count atomically. If the state is being updated as the `sum()` is computed, the update may or may not be seen. Secondly, you also cannot get the updated value from the `add(...)` method. You must call `add(...)` then call `sum()`, which, is not atomic already. 
+
+At low contention, all atomic types (including `Atomic*FieldUpdater` and `*Adder`) and `synchronized` have basically the same throughput. At high contention, all atomic types have the upper hand, and at very very high contention, `*Adder` and `synchronized` have the upper hand. If memory is an issue, do not use `*Adder` because the internal bucket of values expands for each thread, and do not use the standard `Atomic*` types. Prefer `Atomic*FieldUpdater` for that purpose. Remember that all of these decisions require you to use a profiler to ensure that there is actually an issue. In the majority of cases when you have not yet identified an issue, you should *always* default to using the `Atomic*` types where you can.
+
 `// TODO`
 

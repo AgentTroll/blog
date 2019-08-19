@@ -151,3 +151,18 @@ in the first place, that probably indicates that you don't
 have anything better to do anyways. I encourage you to use
 that time to become at least a little bit more informed :).
 
+# Addenum 2019-08-14 03:15
+
+I hadn't actually thought of this earlier, but I've
+recently run into another situation where a standardized
+library would have made life a lot easier. Especially in
+teams with several developers, having a core library can
+make life significantly easier because having a single
+standard paradigm for accomplishing one task not only makes
+the code significantly easier to understand and parse, it
+will help reduce bugginess because it will also be easier
+to review. Because you can be assured that some portion of
+the code works, it will make debugging and code review
+significantly easier and cut down drastically on the time
+needed to identify problem points.
+
