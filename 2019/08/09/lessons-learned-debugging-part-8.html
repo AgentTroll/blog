@@ -258,6 +258,14 @@ block:</p>
         <span class="o">};</span>
 </code></pre></div></div>
 
+<p>The extensibility of this system is a valuable feature
+because it means that one doesn’t need to go through the
+trouble of storing the <code class="highlighter-rouge">Player</code> object itself in order to
+perform protection checks which depend on the fact that
+the something performing some modification action is a
+player. It could be a boss entity or a minion entity as
+demonstrated by the above snippet.</p>
+
 <p>However, for the sake of completeness, let’s assume for a
 moment that you have a really bad skyblock plugin, or a
 really bad protection plugin that doesn’t handle
@@ -276,7 +284,7 @@ listener look like?</p>
         <span class="n">Location</span> <span class="n">newLocation</span> <span class="o">=</span> <span class="n">start</span><span class="o">.</span><span class="na">add</span><span class="o">(</span><span class="mi">0</span><span class="o">,</span> <span class="n">i</span><span class="o">,</span> <span class="mi">0</span><span class="o">);</span>
         <span class="n">Block</span> <span class="n">newBlock</span> <span class="o">=</span> <span class="n">newLocation</span><span class="o">.</span><span class="na">getBlock</span><span class="o">();</span>
 
-        <span class="k">if</span> <span class="o">(</span><span class="n">ph</span><span class="o">.</span><span class="na">isAllowed</span><span class="o">(</span><span class="n">ActionType</span><span class="o">.</span><span class="na">PLAYER_PLACE_BLOCK</span><span class="o">,</span>
+        <span class="k">if</span> <span class="o">(</span><span class="n">ph</span><span class="o">.</span><span class="na">isAllowed</span><span class="o">(</span><span class="n">ActionType</span><span class="o">.</span><span class="na">MINION_PLACE_BLOCK</span><span class="o">,</span>
                 <span class="n">player</span><span class="o">,</span> <span class="n">newBlock</span><span class="o">))</span> <span class="o">{</span>
             <span class="c1">// Set block, remove item, etc...</span>
         <span class="o">}</span>

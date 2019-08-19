@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.6.2">Jekyll</generator><link href="https://agenttroll.github.io/blog/feed.xml" rel="self" type="application/atom+xml" /><link href="https://agenttroll.github.io/blog/" rel="alternate" type="text/html" /><updated>2019-08-19T02:05:20-07:00</updated><id>https://agenttroll.github.io/blog/</id><title type="html">Inside a Troll</title><subtitle>Thoughts of a Java developer</subtitle><entry><title type="html">Lessons Learned Debugging: Part 8</title><link href="https://agenttroll.github.io/blog/2019/08/09/lessons-learned-debugging-part-8.html" rel="alternate" type="text/html" title="Lessons Learned Debugging: Part 8" /><published>2019-08-09T02:03:35-07:00</published><updated>2019-08-09T02:03:35-07:00</updated><id>https://agenttroll.github.io/blog/2019/08/09/lessons-learned-debugging-part-8</id><content type="html" xml:base="https://agenttroll.github.io/blog/2019/08/09/lessons-learned-debugging-part-8.html">&lt;p&gt;One of the most frustrating things about a large plugin
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.6.2">Jekyll</generator><link href="https://agenttroll.github.io/blog/feed.xml" rel="self" type="application/atom+xml" /><link href="https://agenttroll.github.io/blog/" rel="alternate" type="text/html" /><updated>2019-08-19T02:13:29-07:00</updated><id>https://agenttroll.github.io/blog/</id><title type="html">Inside a Troll</title><subtitle>Thoughts of a Java developer</subtitle><entry><title type="html">Lessons Learned Debugging: Part 8</title><link href="https://agenttroll.github.io/blog/2019/08/09/lessons-learned-debugging-part-8.html" rel="alternate" type="text/html" title="Lessons Learned Debugging: Part 8" /><published>2019-08-09T02:03:35-07:00</published><updated>2019-08-09T02:03:35-07:00</updated><id>https://agenttroll.github.io/blog/2019/08/09/lessons-learned-debugging-part-8</id><content type="html" xml:base="https://agenttroll.github.io/blog/2019/08/09/lessons-learned-debugging-part-8.html">&lt;p&gt;One of the most frustrating things about a large plugin
 ecosystem is that at one point or another, you will need to
 start handling the dependencies between each plugin for
 particular actions - e.g. who gets to break what block and
@@ -179,6 +179,14 @@ block:&lt;/p&gt;
         &lt;span class=&quot;o&quot;&gt;};&lt;/span&gt;
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
 
+&lt;p&gt;The extensibility of this system is a valuable feature
+because it means that one doesn’t need to go through the
+trouble of storing the &lt;code class=&quot;highlighter-rouge&quot;&gt;Player&lt;/code&gt; object itself in order to
+perform protection checks which depend on the fact that
+the something performing some modification action is a
+player. It could be a boss entity or a minion entity as
+demonstrated by the above snippet.&lt;/p&gt;
+
 &lt;p&gt;However, for the sake of completeness, let’s assume for a
 moment that you have a really bad skyblock plugin, or a
 really bad protection plugin that doesn’t handle
@@ -197,7 +205,7 @@ listener look like?&lt;/p&gt;
         &lt;span class=&quot;n&quot;&gt;Location&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;newLocation&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;start&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;add&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;i&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;);&lt;/span&gt;
         &lt;span class=&quot;n&quot;&gt;Block&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;newBlock&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;newLocation&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;getBlock&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;();&lt;/span&gt;
 
-        &lt;span class=&quot;k&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;ph&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;isAllowed&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;ActionType&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;PLAYER_PLACE_BLOCK&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt;
+        &lt;span class=&quot;k&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;ph&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;isAllowed&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;ActionType&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;MINION_PLACE_BLOCK&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt;
                 &lt;span class=&quot;n&quot;&gt;player&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;newBlock&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;))&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
             &lt;span class=&quot;c1&quot;&gt;// Set block, remove item, etc...&lt;/span&gt;
         &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
