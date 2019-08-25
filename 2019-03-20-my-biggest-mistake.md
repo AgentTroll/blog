@@ -191,3 +191,17 @@ to deal with writing comments on the Spigot forums, and
 even carefully thinking about my words will not prevent
 everything from slipping through. But by sharing my
 experience, I hope I can continue to improve.
+
+# Update 2019-08-25 02:12
+
+I realized today that I have inadvertently deleted my
+account because I had removed my Twitch, which I forgot
+had acquired Curse.
+
+So much for leaving the posts up as I had said...
+
+I'm sure there are many examples of this same behavior
+on my SpigotMC profile anyways. The important thing here is
+not the individual posts themselves, but the lesson that
+I've learned and hope to pass on to others.
+
