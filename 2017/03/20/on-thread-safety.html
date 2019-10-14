@@ -9,15 +9,15 @@
 <meta property="og:locale" content="en_US" />
 <meta name="description" content="# AUDIENCE" />
 <meta property="og:description" content="# AUDIENCE" />
-<link rel="canonical" href="http://localhost:4000/blog/2017/03/20/on-thread-safety.html" />
-<meta property="og:url" content="http://localhost:4000/blog/2017/03/20/on-thread-safety.html" />
+<link rel="canonical" href="https://agenttroll.github.io/blog/2017/03/20/on-thread-safety.html" />
+<meta property="og:url" content="https://agenttroll.github.io/blog/2017/03/20/on-thread-safety.html" />
 <meta property="og:site_name" content="Inside a Troll" />
 <meta property="og:type" content="article" />
 <meta property="article:published_time" content="2017-03-20T21:21:17-04:00" />
 <script type="application/ld+json">
-{"url":"http://localhost:4000/blog/2017/03/20/on-thread-safety.html","headline":"On Thread Safety","dateModified":"2017-03-20T21:21:17-04:00","datePublished":"2017-03-20T21:21:17-04:00","mainEntityOfPage":{"@type":"WebPage","@id":"http://localhost:4000/blog/2017/03/20/on-thread-safety.html"},"description":"# AUDIENCE","@type":"BlogPosting","@context":"https://schema.org"}</script>
+{"url":"https://agenttroll.github.io/blog/2017/03/20/on-thread-safety.html","headline":"On Thread Safety","dateModified":"2017-03-20T21:21:17-04:00","datePublished":"2017-03-20T21:21:17-04:00","mainEntityOfPage":{"@type":"WebPage","@id":"https://agenttroll.github.io/blog/2017/03/20/on-thread-safety.html"},"description":"# AUDIENCE","@type":"BlogPosting","@context":"https://schema.org"}</script>
 <!-- End Jekyll SEO tag -->
-<link rel="stylesheet" href="/blog/assets/main.css"><link type="application/atom+xml" rel="alternate" href="http://localhost:4000/blog/feed.xml" title="Inside a Troll" /></head>
+<link rel="stylesheet" href="/blog/assets/main.css"><link type="application/atom+xml" rel="alternate" href="https://agenttroll.github.io/blog/feed.xml" title="Inside a Troll" /></head>
 <body><header class="site-header" role="banner">
 
   <div class="wrapper"><a class="site-title" rel="author" href="/blog/">Inside a Troll</a><nav class="site-nav">
@@ -114,7 +114,7 @@
 
 <p>Consider the following sequence of events from two threads that are reading and mutating the same shared state:</p>
 
-<p><img src="http://localhost:4000/blog/img/Visibility.jpg" alt="Visbility" /></p>
+<p><img src="https://agenttroll.github.io/blog/img/Visibility.jpg" alt="Visbility" /></p>
 
 <p>In the absence of adequate synchronization, the above diagram demonstrates how <code class="highlighter-rouge">Thread 1</code> continues to read <code class="highlighter-rouge">4</code> from a shared state, even after <code class="highlighter-rouge">Thread 2</code> has set it to <code class="highlighter-rouge">5</code>. The value read by <code class="highlighter-rouge">Thread 1</code> might have been cached. Another possibility is that the new value set by <code class="highlighter-rouge">Thread 2</code> might have been cached where only <code class="highlighter-rouge">Thread 2</code> can see it, and therefore <code class="highlighter-rouge">Thread 1</code> continues to read the value from memory when it should be reading from <code class="highlighter-rouge">Thread 2</code>’s cache instead. This is a visibility issue because without the necessary synchronization, it is possible that threads simply don’t even see changes made to a shared state.</p>
 
@@ -146,7 +146,7 @@
 
 <p>This time diagram shows an entirely possible execution ordering between the two threads:</p>
 
-<p><img src="http://localhost:4000/blog/img/ots-race-condition.svg" alt="Race Condition Time Diagram" /></p>
+<p><img src="https://agenttroll.github.io/blog/img/ots-race-condition.svg" alt="Race Condition Time Diagram" /></p>
 
 <p>And the output for the two threads are then as follows:</p>
 
@@ -171,7 +171,7 @@
 
 <p>If we waited for 2 threads increment the state once, then we would expect the <code class="highlighter-rouge">main</code> thread to print out <code class="highlighter-rouge">2</code> in the end. However, because the <code class="highlighter-rouge">++</code> operation isn’t atomic, the following scenario might occur:</p>
 
-<p><img src="http://localhost:4000/blog/img/ots-race-condition-2.svg" alt="Race Condition Time Diagram 2" /></p>
+<p><img src="https://agenttroll.github.io/blog/img/ots-race-condition-2.svg" alt="Race Condition Time Diagram 2" /></p>
 
 <p>In this case, the output may well be <code class="highlighter-rouge">1</code>, but that doesn’t even consider visibility issues. Factoring in visibility issues, you might even print out a <code class="highlighter-rouge">0</code> because the <code class="highlighter-rouge">main</code> thread reads the initial value of the state from its cache.</p>
 
@@ -211,7 +211,7 @@
 
 <p>In order to understand why caching is necessary, it may be helpful to look at a diagram of a typical Intel CPU in relation to main memory:</p>
 
-<p><img src="http://localhost:4000/blog/img/CPU.jpg" alt="CPU" /></p>
+<p><img src="https://agenttroll.github.io/blog/img/CPU.jpg" alt="CPU" /></p>
 
 <p>The primary reason why caching is necessary is because lookups to main memory (or the memory stored in RAM) is several orders of a magnitude slower than lookups to something like a multi-level cache (L1/L2/L3). DRAM memory is slow because it is usually quite large and quite far away from the CPU. On the thread-level, state variables may be cached in either the registers or the multi-level caches, which are both small and localized close to the execution cores, meaning that lookups take significantly less time to transmit data to the execution core. Additionally, SRAM memory used in caches is physically much faster than DRAM memory used for main memory. More SRAM memory isn’t used because it is literally expensive as fuck, it costs $5000 USD for a single gigabyte (&gt;100 times the cost per gigabyte of DRAM) and increasing the physical size of the memory storage would also increase the lookup time simply because data travel time increases.</p>
 

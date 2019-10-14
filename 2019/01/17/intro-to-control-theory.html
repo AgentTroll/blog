@@ -9,15 +9,15 @@
 <meta property="og:locale" content="en_US" />
 <meta name="description" content="While I don’t profess to be an absolute expert at control theory, a lot of the information about the matter that I’ve found online appears to be either inaccessible to the average Joe or simply flat-out unhelpful. Control Theory is often explained with mechanical controllers that don’t really have any application to the software world, and it has been difficult for me personally to comprehend at all what is going on. In light of this, I’ve decided to do a write up about what control theory is from the perspective of an implementor, rather than that of a theorist." />
 <meta property="og:description" content="While I don’t profess to be an absolute expert at control theory, a lot of the information about the matter that I’ve found online appears to be either inaccessible to the average Joe or simply flat-out unhelpful. Control Theory is often explained with mechanical controllers that don’t really have any application to the software world, and it has been difficult for me personally to comprehend at all what is going on. In light of this, I’ve decided to do a write up about what control theory is from the perspective of an implementor, rather than that of a theorist." />
-<link rel="canonical" href="http://localhost:4000/blog/2019/01/17/intro-to-control-theory.html" />
-<meta property="og:url" content="http://localhost:4000/blog/2019/01/17/intro-to-control-theory.html" />
+<link rel="canonical" href="https://agenttroll.github.io/blog/2019/01/17/intro-to-control-theory.html" />
+<meta property="og:url" content="https://agenttroll.github.io/blog/2019/01/17/intro-to-control-theory.html" />
 <meta property="og:site_name" content="Inside a Troll" />
 <meta property="og:type" content="article" />
 <meta property="article:published_time" content="2019-01-17T00:16:20-05:00" />
 <script type="application/ld+json">
-{"url":"http://localhost:4000/blog/2019/01/17/intro-to-control-theory.html","headline":"Intro to Control Theory","dateModified":"2019-01-17T00:16:20-05:00","datePublished":"2019-01-17T00:16:20-05:00","mainEntityOfPage":{"@type":"WebPage","@id":"http://localhost:4000/blog/2019/01/17/intro-to-control-theory.html"},"description":"While I don’t profess to be an absolute expert at control theory, a lot of the information about the matter that I’ve found online appears to be either inaccessible to the average Joe or simply flat-out unhelpful. Control Theory is often explained with mechanical controllers that don’t really have any application to the software world, and it has been difficult for me personally to comprehend at all what is going on. In light of this, I’ve decided to do a write up about what control theory is from the perspective of an implementor, rather than that of a theorist.","@type":"BlogPosting","@context":"https://schema.org"}</script>
+{"url":"https://agenttroll.github.io/blog/2019/01/17/intro-to-control-theory.html","headline":"Intro to Control Theory","dateModified":"2019-01-17T00:16:20-05:00","datePublished":"2019-01-17T00:16:20-05:00","mainEntityOfPage":{"@type":"WebPage","@id":"https://agenttroll.github.io/blog/2019/01/17/intro-to-control-theory.html"},"description":"While I don’t profess to be an absolute expert at control theory, a lot of the information about the matter that I’ve found online appears to be either inaccessible to the average Joe or simply flat-out unhelpful. Control Theory is often explained with mechanical controllers that don’t really have any application to the software world, and it has been difficult for me personally to comprehend at all what is going on. In light of this, I’ve decided to do a write up about what control theory is from the perspective of an implementor, rather than that of a theorist.","@type":"BlogPosting","@context":"https://schema.org"}</script>
 <!-- End Jekyll SEO tag -->
-<link rel="stylesheet" href="/blog/assets/main.css"><link type="application/atom+xml" rel="alternate" href="http://localhost:4000/blog/feed.xml" title="Inside a Troll" /></head>
+<link rel="stylesheet" href="/blog/assets/main.css"><link type="application/atom+xml" rel="alternate" href="https://agenttroll.github.io/blog/feed.xml" title="Inside a Troll" /></head>
 <body><header class="site-header" role="banner">
 
   <div class="wrapper"><a class="site-title" rel="author" href="/blog/">Inside a Troll</a><nav class="site-nav">
@@ -80,7 +80,7 @@ distance. This model, where all the information is
 collected beforehand to compute a command that controls
 a system is called an <em>open loop system</em>.</p>
 
-<p><img src="http://localhost:4000/blog/img/itct-open-loop.svg" alt="Open Loop" /></p>
+<p><img src="https://agenttroll.github.io/blog/img/itct-open-loop.svg" alt="Open Loop" /></p>
 
 <p>However, the problem is that it would be impractical to 
 have to measure or require a human to input the
@@ -95,7 +95,7 @@ overshoot or undershoot of some target. This is called a
 the direction of the system being controlled, and in the
 direction of the software controlling that system as well.</p>
 
-<p><img src="http://localhost:4000/blog/img/itct-closed-loop.svg" alt="Closed Loop" /></p>
+<p><img src="https://agenttroll.github.io/blog/img/itct-closed-loop.svg" alt="Closed Loop" /></p>
 
 <p>And while you will still need to understand certain
 operating parameters of the physical system, you will not
@@ -135,7 +135,7 @@ for the error. This will be repeated at a set time interval
 until the error becomes, or gets close enough to 0, meaning
 that the mechanism has reached its setpoint.</p>
 
-<p><img src="http://localhost:4000/blog/img/itct-abstract-loop.svg" alt="Abstract Loop" /></p>
+<p><img src="https://agenttroll.github.io/blog/img/itct-abstract-loop.svg" alt="Abstract Loop" /></p>
 
 <p>The process of computing the output based on the error
 value is known as PID (sometimes PIDF), where the letters
@@ -231,7 +231,7 @@ temperature or a volume or a distance.</p>
 <p>A system with an overly large P value looks like the 
 following:</p>
 
-<p><img src="http://localhost:4000/blog/img/itct-p-unstable.svg" alt="P unstable loop" /></p>
+<p><img src="https://agenttroll.github.io/blog/img/itct-p-unstable.svg" alt="P unstable loop" /></p>
 
 <p>It is often possible to acheive reasonably good results
 using just the P term. One can adjuts the P gain until a
@@ -258,7 +258,7 @@ then overshoots and starts another oscillation cycle.</p>
 
 <p>This can be seen in a I only term loop here:</p>
 
-<p><img src="http://localhost:4000/blog/img/itct-i-only.svg" alt="I only loop" /></p>
+<p><img src="https://agenttroll.github.io/blog/img/itct-i-only.svg" alt="I only loop" /></p>
 
 <p>The most common type of control loop that I’ve personally
 seen is a PI loop, in which only the P and I terms are
@@ -271,7 +271,7 @@ term.</p>
 demonstrates the ability of a single P term to produce
 relatively decent results:</p>
 
-<p><img src="http://localhost:4000/blog/img/itct-p-stable.svg" alt="P stable" /></p>
+<p><img src="https://agenttroll.github.io/blog/img/itct-p-stable.svg" alt="P stable" /></p>
 
 <p>An I term can be introduced to make a PI controller. This
 will smooth out the motion curve when it reaches the
@@ -279,7 +279,7 @@ setpoint, and prevent a quick decceleration. You can see,
 however, that there is some degree of overshoot when an I
 term is introduced:</p>
 
-<p><img src="http://localhost:4000/blog/img/itct-pi.svg" alt="PI" /></p>
+<p><img src="https://agenttroll.github.io/blog/img/itct-pi.svg" alt="PI" /></p>
 
 <p>According to <a href="http://www.ni.com/en-us/innovations/white-papers/06/pid-theory-explained.html">PID Theory Explained</a>:</p>
 
@@ -313,12 +313,12 @@ reduce the power of the P term.</p>
 <p>It’s probably easier to see it on a graph. Here’s a PD loop
 with the D gain set to <code class="highlighter-rouge">0</code>:</p>
 
-<p><img src="http://localhost:4000/blog/img/itct-pd-0.svg" alt="PD - D = 0" /></p>
+<p><img src="https://agenttroll.github.io/blog/img/itct-pd-0.svg" alt="PD - D = 0" /></p>
 
 <p>Now, compare that to a PD loop with the D gain raised
 slightly:</p>
 
-<p><img src="http://localhost:4000/blog/img/itct-pd-06.svg" alt="PD - D = 0.6" /></p>
+<p><img src="https://agenttroll.github.io/blog/img/itct-pd-06.svg" alt="PD - D = 0.6" /></p>
 
 <p>The D term is problematic sometimes because setting the D
 gain to to high of a value will cause the output to
@@ -326,7 +326,7 @@ oscillate extremely rapidly. This can also happen when
 there are a lot of environmental disturbances that cause
 the D term to overreact:</p>
 
-<p><img src="http://localhost:4000/blog/img/itct-pd-massive.svg" alt="PD - D = massive" /></p>
+<p><img src="https://agenttroll.github.io/blog/img/itct-pd-massive.svg" alt="PD - D = massive" /></p>
 
 <p>In my experience, I tend to see controllers using mostly
 P and I terms, but usually no D term. The Wikipedia page
@@ -345,7 +345,7 @@ tends to “fight” against the other two terms because it
 wants to flatten the motion curve, when the other two terms
 actually want the curve to get closer to the setpoint:</p>
 
-<p><img src="http://localhost:4000/blog/img/itct-pd-07.svg" alt="PD - D = 0.7" /></p>
+<p><img src="https://agenttroll.github.io/blog/img/itct-pd-07.svg" alt="PD - D = 0.7" /></p>
 
 <p>When the D term is used, it tends to be used in a full PID
 loop to control the I term overshoot. PD loops are also
