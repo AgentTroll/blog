@@ -1,4 +1,228 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.6.2">Jekyll</generator><link href="https://agenttroll.github.io/blog/feed.xml" rel="self" type="application/atom+xml" /><link href="https://agenttroll.github.io/blog/" rel="alternate" type="text/html" /><updated>2019-08-25T02:15:07-07:00</updated><id>https://agenttroll.github.io/blog/</id><title type="html">Inside a Troll</title><subtitle>Thoughts of a Java developer</subtitle><entry><title type="html">Lessons Learned Debugging: Part 8</title><link href="https://agenttroll.github.io/blog/2019/08/09/lessons-learned-debugging-part-8.html" rel="alternate" type="text/html" title="Lessons Learned Debugging: Part 8" /><published>2019-08-09T02:03:35-07:00</published><updated>2019-08-09T02:03:35-07:00</updated><id>https://agenttroll.github.io/blog/2019/08/09/lessons-learned-debugging-part-8</id><content type="html" xml:base="https://agenttroll.github.io/blog/2019/08/09/lessons-learned-debugging-part-8.html">&lt;p&gt;One of the most frustrating things about a large plugin
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="4.0.0">Jekyll</generator><link href="http://localhost:4000/blog/feed.xml" rel="self" type="application/atom+xml" /><link href="http://localhost:4000/blog/" rel="alternate" type="text/html" /><updated>2019-10-14T04:14:29-04:00</updated><id>http://localhost:4000/blog/feed.xml</id><title type="html">Inside a Troll</title><subtitle></subtitle><entry><title type="html">Lessons Learned Debugging: Part 9</title><link href="http://localhost:4000/blog/2019/10/14/lessons-learned-debugging-part-9.html" rel="alternate" type="text/html" title="Lessons Learned Debugging: Part 9" /><published>2019-10-14T02:27:30-04:00</published><updated>2019-10-14T02:27:30-04:00</updated><id>http://localhost:4000/blog/2019/10/14/lessons-learned-debugging-part-9</id><content type="html" xml:base="http://localhost:4000/blog/2019/10/14/lessons-learned-debugging-part-9.html">&lt;p&gt;The problem I usually see with novice developers when they
+are debugging is that they test what their code is supposed
+to do, but they are suprised when their code works when it
+isn’t supposed to.&lt;/p&gt;
+
+&lt;h1 id=&quot;check-your-code-isnt-running-inadvertently&quot;&gt;Check Your Code Isn’t Running Inadvertently&lt;/h1&gt;
+
+&lt;p&gt;It sounds ridiculous, but really think about it for a
+moment. The majority of time, you are probably either
+writing or fixing code that runs some kind of process or
+logic. Only 1 or 2 lines of code are checking if all of
+that code is even supposed to be executing. You don’t
+actually spend that much time on it. There are a variety of
+different places this happens. In my case, I often forget
+to check what item type the player is holding whenever a
+&lt;code class=&quot;highlighter-rouge&quot;&gt;PlayerInteractEvent&lt;/code&gt; or &lt;code class=&quot;highlighter-rouge&quot;&gt;BlockPlaceEvent&lt;/code&gt; is being called.
+This leads to the event handler logic being executed for
+every single interaction, or a &lt;code class=&quot;highlighter-rouge&quot;&gt;NullPointerException&lt;/code&gt; being
+thrown if they aren’t even holding anything. Another place
+I’ve been burned by this is when handling
+&lt;code class=&quot;highlighter-rouge&quot;&gt;PlayerCommandPreprocessEvent&lt;/code&gt;, where I’m forgetting to
+check what command is even being run. Every command then
+causes the logic to be executed, even though the intention
+was for only one command or one group of commands to be
+handled.&lt;/p&gt;
+
+&lt;h1 id=&quot;the-debugging-process&quot;&gt;The Debugging Process&lt;/h1&gt;
+
+&lt;p&gt;A large quantity of bugs I’ve found comes just from playing
+the game normally. Usually, when people say they are
+“playtesting,” they are referring to testing one specific
+thing or plugin. However, my argument is that many bugs
+stem from the code running when it isn’t intended to. The
+problem with the aforementioned playtesting is that the
+tester is specifically looking for something to happen
+because they perform some action. The problem with this
+targeted style of playtesting is that you can’t tell
+whether or not say, placing a specific block, will cause
+the plugin to do whatever it needs to do, or if placing
+&lt;em&gt;any&lt;/em&gt; block will cause the plugin to do that as well.&lt;/p&gt;
+
+&lt;p&gt;This is why it is important to actually play the game as
+if the plugin didn’t exist for a certain time period. Sure,
+it takes a little bit more time, and good programmers tend
+to not make any mistakes in this area. However, I believe
+there is merit to this even if you don’t find any bugs.
+When I play someone else’s game and I run into a
+game-breaking bug, I sometimes feel like the developers
+don’t even play their own game. Bugs that are obscure to a
+developer are often obvious to players because it impacts
+standard gameplay. When you say,”that didn’t come up in
+testing,” of course it fucking didn’t, because if you are
+playtesting just to test the plugin, you were playing the
+game in the way that a developer would, not a player. Finding
+the bugs from a development standpoint is important, but you
+need to recognize who your product is targeted towards: the
+player. The point of all this is to say that you should play
+your own game &lt;em&gt;as a player would&lt;/em&gt; for some fixed minimal
+amount of time as a part of the debugging process. It
+doesn’t even need to be that long, 15-30 minutes should do
+it.&lt;/p&gt;
+
+&lt;p&gt;One example of this is when I was writing a hack around
+dispensers firing EXP bottles. However, I didn’t notice
+the fact that droppers could also fire EXP bottles as well.
+This lead to a &lt;code class=&quot;highlighter-rouge&quot;&gt;ClassCastException&lt;/code&gt; as I tried to cast a
+&lt;code class=&quot;highlighter-rouge&quot;&gt;Drpper&lt;/code&gt; to &lt;code class=&quot;highlighter-rouge&quot;&gt;Dispenser&lt;/code&gt;. In hindsight, this was a stupid
+mistake on my part because one should always typecheck
+before doing a cast. However, this is something that would
+have easily been caught if I just played the game on the
+same server that the players used. When I was testing this
+plugin in a controlled test server, I couldn’t account for
+what other players were doing. Had I instead tested on the
+same environment that players were actually using, this
+would have easily been found before being deployed. This
+brings us to another point about how the testing
+environment should as closely replicate the production
+evinronment as possible, but that is a topic for another
+blog post.&lt;/p&gt;
+
+&lt;h1 id=&quot;fix-your-thinking&quot;&gt;Fix Your Thinking&lt;/h1&gt;
+
+&lt;p&gt;On the other hand, fixing the fact that your code might be
+running inadvertently during development rather than
+testing requires a lot of practice. It took me almost a
+full year to really start hitting all the conditions on a
+consistent basis. You need to spend almost as much time
+thinking about the conditions at which you are either going
+to “do” or “not do” any subsequent actions as the amount of
+time you are spending actually writing those actions.&lt;/p&gt;
+
+&lt;p&gt;One thing that helps immensely is to use &lt;code class=&quot;highlighter-rouge&quot;&gt;if-return&lt;/code&gt; blocks
+rather than building a long chain of &lt;code class=&quot;highlighter-rouge&quot;&gt;if&lt;/code&gt;s. For example:&lt;/p&gt;
+
+&lt;div class=&quot;language-java highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;nd&quot;&gt;@EventHandler&lt;/span&gt;
+&lt;span class=&quot;kd&quot;&gt;public&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;void&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;onEvent&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(...)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;(...)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+        &lt;span class=&quot;k&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;(...)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+            &lt;span class=&quot;k&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;(...)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+                &lt;span class=&quot;c1&quot;&gt;// Logic&lt;/span&gt;
+            &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
+        &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
+    &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;Prefer something like this:&lt;/p&gt;
+
+&lt;div class=&quot;language-java highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;nd&quot;&gt;@EventHandler&lt;/span&gt;
+&lt;span class=&quot;kd&quot;&gt;public&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;void&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;onEvent&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(...)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;(!...)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+        &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;;&lt;/span&gt;
+    &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
+
+    &lt;span class=&quot;k&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;(!...)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+        &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;;&lt;/span&gt;
+    &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
+
+    &lt;span class=&quot;k&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;(!...)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+        &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;;&lt;/span&gt;
+    &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
+
+    &lt;span class=&quot;c1&quot;&gt;// Logic&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;Writing your code this way forces you to invert your
+thinking in a way. Instead of thinking, “if this is the
+case, do this,” you need to think “if this shouldn’t
+be done, then return.” This is significantly more effective
+because it drastically simplifies your logic.&lt;/p&gt;
+
+&lt;p&gt;Sure, it takes up more lines of code. Sure, it’s a little
+more writing. However, not only does it separate the
+conditions and control flow from your actual execution
+logic, it reduces the indentation of your code. It makes it
+significantly easier to read. When you isolate your control
+flow in this way, it is easier to see what conditions you
+are constantly checking for. This makes code review so much
+easier. Once you hit some condition that doesn’t hold true,
+you don’t need to think about it anymore since you
+&lt;code class=&quot;highlighter-rouge&quot;&gt;return&lt;/code&gt;.  On the other hand, if you have several nested
+&lt;code class=&quot;highlighter-rouge&quot;&gt;if&lt;/code&gt; statements, the reviewer has to keep all of the
+conditions in their head because all of the previous
+statements impact all of the logic afterwards as well.
+Finally, conditions are common accross many different types
+of event handlers and situations. If you can easily build a
+repertoire of conditions you are checking really often over
+time, it will be harder for you to forget in the future.&lt;/p&gt;
+
+&lt;p&gt;The list of benefits of using &lt;code class=&quot;highlighter-rouge&quot;&gt;if-return&lt;/code&gt; keeps going on
+and on. I cannot stress enough how beneficial this
+technique is.&lt;/p&gt;
+
+&lt;h1 id=&quot;condition-counting&quot;&gt;Condition Counting&lt;/h1&gt;
+
+&lt;p&gt;As an interesting side discussion, I want to include an
+excerpt from
+&lt;a href=&quot;https://www.fastcompany.com/28121/they-write-right-stuff&quot;&gt;They Write the Right Stuff&lt;/a&gt;,
+an article that discusses the lengths that the authors of
+the Space Shuttle software go to in order to ensure that
+their code is bug free:&lt;/p&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;The group has so much data accumulated about how it does
+its work that it has written software programs that model
+the code-writing process. Like computer models predicting
+the weather, the coding models predict how many errors the
+group should make in writing each new version of the
+software. True to form, if the coders and testers find too
+few errors, everyone works the process until reality and the
+predictions match.&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;While I think that bug-finding models of software are a
+little extreme for writing plugins, especially when lives
+aren’t exactly at stake here, I think think there is still
+merit in the idea of expecting there to be some number of
+conditions. As you get more experienced, you’ll probably
+get a feel for how many &lt;code class=&quot;highlighter-rouge&quot;&gt;if-return&lt;/code&gt; statements you should
+be writing. If you think there are too few, your intuition
+might be indicating something. I’m not saying that I can
+clearly advocate for consciously thinking about this, as
+you are writing code. I certainly don’t. I the situations
+vary far too much for this sort of thing to be worthwhile.
+That being said, it would be a lie for me to say that I’ve
+never thought something along the lines of “I don’t think
+that’s enough code.” Something that looks too good to be
+capable of handling all edge cases may well be!&lt;/p&gt;
+
+&lt;h1 id=&quot;conclusion&quot;&gt;Conclusion&lt;/h1&gt;
+
+&lt;p&gt;There are a variety of techniques you can use to mitigate
+the bugs involving logic that shouldn’t be run from
+creeping into your code. This includes playtesting as a
+player would, using &lt;code class=&quot;highlighter-rouge&quot;&gt;if-return&lt;/code&gt; statements, and possibly
+condition counting if you are interested in a little
+exercise.&lt;/p&gt;
+
+&lt;p&gt;These blog posts probably will come with less frequency in
+the coming months since I want to focus on college. I’ve
+also got my current personal project,
+&lt;a href=&quot;https://github.com/AgentTroll/gate&quot;&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;gate&lt;/code&gt;&lt;/a&gt; that I’m
+desparately close to finishing and I want to complete, so
+I’ll probably be focusing on that, then on my newest
+project, &lt;a href=&quot;https://github.com/AgentTroll/liftoff&quot;&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;liftoff&lt;/code&gt;&lt;/a&gt;
+before focusing back on blogging and finishing the
+On Thread Safety post that continually is on TODO…&lt;/p&gt;
+
+&lt;p&gt;As always, I always leave readers with the following quote
+from
+&lt;a href=&quot;http://spinroot.com/gerard/pdf/P10.pdf&quot;&gt;The Power of Ten&lt;/a&gt;:&lt;/p&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;If the rules seem Draconian at first, bear in mind that
+they are meant to make it possible to check code where very
+literally your life may depend on its correctness: code
+that is used to control the airplane that you fly on, the
+nuclear power plant a few miles from where you live, or the
+spacecraft that carries astronauts into orbit. The rules
+act like the seat-belt in your car: initially they are
+perhaps a little uncomfortable, but after a while their use
+becomes second-nature and not using them becomes
+unimaginable.&lt;/p&gt;
+&lt;/blockquote&gt;</content><author><name></name></author><summary type="html">The problem I usually see with novice developers when they are debugging is that they test what their code is supposed to do, but they are suprised when their code works when it isn’t supposed to.</summary></entry><entry><title type="html">Lessons Learned Debugging: Part 8</title><link href="http://localhost:4000/blog/2019/08/09/lessons-learned-debugging-part-8.html" rel="alternate" type="text/html" title="Lessons Learned Debugging: Part 8" /><published>2019-08-09T05:03:35-04:00</published><updated>2019-08-09T05:03:35-04:00</updated><id>http://localhost:4000/blog/2019/08/09/lessons-learned-debugging-part-8</id><content type="html" xml:base="http://localhost:4000/blog/2019/08/09/lessons-learned-debugging-part-8.html">&lt;p&gt;One of the most frustrating things about a large plugin
 ecosystem is that at one point or another, you will need to
 start handling the dependencies between each plugin for
 particular actions - e.g. who gets to break what block and
@@ -38,7 +262,7 @@ a single plugin to handle protection for your specific
 server ecosystem. All protection checks can be described
 by the following function:&lt;/p&gt;
 
-&lt;div class=&quot;language-java highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;kt&quot;&gt;boolean&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;isAllowed&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;ActionType&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;type&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Object&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;affector&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Object&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;target&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;);&lt;/span&gt;
+&lt;div class=&quot;language-java highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;kt&quot;&gt;boolean&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;isAllowed&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nc&quot;&gt;ActionType&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;type&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;nc&quot;&gt;Object&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;affector&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;nc&quot;&gt;Object&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;target&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;);&lt;/span&gt;
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
 
 &lt;p&gt;In many cases, one can boil down &lt;em&gt;all&lt;/em&gt; protection checks to
@@ -48,7 +272,7 @@ is determined by which island a player belongs to and what
 island is being affected by that player. Here’s what a
 boiled-down check if an action &lt;code class=&quot;highlighter-rouge&quot;&gt;isAllowed&lt;/code&gt; would look like:&lt;/p&gt;
 
-&lt;div class=&quot;language-java highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;kd&quot;&gt;public&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;boolean&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;isAllowed&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;ActionType&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;type&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Island&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;affector&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Island&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;target&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+&lt;div class=&quot;language-java highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;kd&quot;&gt;public&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;boolean&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;isAllowed&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nc&quot;&gt;ActionType&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;type&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;nc&quot;&gt;Island&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;affector&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;nc&quot;&gt;Island&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;target&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
     &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;affector&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;!=&lt;/span&gt; &lt;span class=&quot;kc&quot;&gt;null&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;amp;&amp;amp;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;affector&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;equals&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;target&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;);&lt;/span&gt;
 &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
@@ -58,9 +282,9 @@ islands due to co-oping. A server running ASkyBlock might
 want to use this to determine whether something
 &lt;code class=&quot;highlighter-rouge&quot;&gt;isAllowed&lt;/code&gt;:&lt;/p&gt;
 
-&lt;div class=&quot;language-java highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;kd&quot;&gt;public&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;boolean&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;isAllowed&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;ActionType&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;type&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt;
-        &lt;span class=&quot;n&quot;&gt;Stream&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Island&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;affector&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt;
-        &lt;span class=&quot;n&quot;&gt;Island&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;target&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+&lt;div class=&quot;language-java highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;kd&quot;&gt;public&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;boolean&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;isAllowed&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nc&quot;&gt;ActionType&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;type&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt;
+        &lt;span class=&quot;nc&quot;&gt;Stream&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;nc&quot;&gt;Island&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;affector&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt;
+        &lt;span class=&quot;nc&quot;&gt;Island&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;target&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
     &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;affector&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;!=&lt;/span&gt; &lt;span class=&quot;kc&quot;&gt;null&lt;/span&gt;
             &lt;span class=&quot;o&quot;&gt;&amp;amp;&amp;amp;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;affector&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;anyMatch&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;island&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;-&amp;gt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;island&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;equals&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;target&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;));&lt;/span&gt;
 &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
@@ -79,42 +303,42 @@ and extensible in case plugins want to add their own
 translation methods:&lt;/p&gt;
 
 &lt;div class=&quot;language-java highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;kd&quot;&gt;public&lt;/span&gt; &lt;span class=&quot;kd&quot;&gt;class&lt;/span&gt; &lt;span class=&quot;nc&quot;&gt;ProtectionHandler&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
-    &lt;span class=&quot;kd&quot;&gt;private&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;boolean&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;isAllowed&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;ActionType&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;A&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;T&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;type&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt;
-            &lt;span class=&quot;n&quot;&gt;Stream&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Island&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;affector&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt;
-            &lt;span class=&quot;n&quot;&gt;Island&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;target&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+    &lt;span class=&quot;kd&quot;&gt;private&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;boolean&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;isAllowed&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nc&quot;&gt;ActionType&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;no&quot;&gt;A&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;no&quot;&gt;T&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;type&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt;
+            &lt;span class=&quot;nc&quot;&gt;Stream&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;nc&quot;&gt;Island&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;affector&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt;
+            &lt;span class=&quot;nc&quot;&gt;Island&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;target&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
         &lt;span class=&quot;o&quot;&gt;...&lt;/span&gt;
     &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
 
-    &lt;span class=&quot;kd&quot;&gt;public&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;A&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;T&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;boolean&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;isAllowed&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;ActionType&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;A&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;T&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;type&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;A&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;affector&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;T&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;target&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+    &lt;span class=&quot;kd&quot;&gt;public&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;no&quot;&gt;A&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;no&quot;&gt;T&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;boolean&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;isAllowed&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nc&quot;&gt;ActionType&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;no&quot;&gt;A&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;no&quot;&gt;T&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;type&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;no&quot;&gt;A&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;affector&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;no&quot;&gt;T&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;target&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
         &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;this&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;isAllowed&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;type&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;translateAffector&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;affector&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;),&lt;/span&gt;
                 &lt;span class=&quot;n&quot;&gt;type&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;translateTarget&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;target&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;));&lt;/span&gt;
     &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
 &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
 
-&lt;span class=&quot;kd&quot;&gt;public&lt;/span&gt; &lt;span class=&quot;kd&quot;&gt;abstract&lt;/span&gt; &lt;span class=&quot;kd&quot;&gt;class&lt;/span&gt; &lt;span class=&quot;nc&quot;&gt;ActionType&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;A&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;T&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
-    &lt;span class=&quot;kd&quot;&gt;public&lt;/span&gt; &lt;span class=&quot;kd&quot;&gt;static&lt;/span&gt; &lt;span class=&quot;kd&quot;&gt;final&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;ActionType&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Player&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Block&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;PLAYER_PLACE_BLOCK&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;
-            &lt;span class=&quot;k&quot;&gt;new&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;ActionType&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;lt;&amp;gt;()&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+&lt;span class=&quot;kd&quot;&gt;public&lt;/span&gt; &lt;span class=&quot;kd&quot;&gt;abstract&lt;/span&gt; &lt;span class=&quot;kd&quot;&gt;class&lt;/span&gt; &lt;span class=&quot;nc&quot;&gt;ActionType&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;no&quot;&gt;A&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;no&quot;&gt;T&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+    &lt;span class=&quot;kd&quot;&gt;public&lt;/span&gt; &lt;span class=&quot;kd&quot;&gt;static&lt;/span&gt; &lt;span class=&quot;kd&quot;&gt;final&lt;/span&gt; &lt;span class=&quot;nc&quot;&gt;ActionType&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;nc&quot;&gt;Player&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;nc&quot;&gt;Block&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;no&quot;&gt;PLAYER_PLACE_BLOCK&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;
+            &lt;span class=&quot;k&quot;&gt;new&lt;/span&gt; &lt;span class=&quot;nc&quot;&gt;ActionType&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;lt;&amp;gt;()&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
                 &lt;span class=&quot;nd&quot;&gt;@Override&lt;/span&gt;
-                &lt;span class=&quot;kd&quot;&gt;public&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Stream&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Island&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;translateAffector&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Player&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;affector&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
-                    &lt;span class=&quot;n&quot;&gt;UUID&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;affectorId&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;affector&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;getUniqueId&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;();&lt;/span&gt;
-                    &lt;span class=&quot;n&quot;&gt;Island&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;playerIsland&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;SkyBlockApi&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;getPlayerIsland&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;affectorId&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;);&lt;/span&gt;
+                &lt;span class=&quot;kd&quot;&gt;public&lt;/span&gt; &lt;span class=&quot;nc&quot;&gt;Stream&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;nc&quot;&gt;Island&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;translateAffector&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nc&quot;&gt;Player&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;affector&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+                    &lt;span class=&quot;no&quot;&gt;UUID&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;affectorId&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;affector&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;getUniqueId&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;();&lt;/span&gt;
+                    &lt;span class=&quot;nc&quot;&gt;Island&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;playerIsland&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;nc&quot;&gt;SkyBlockApi&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;getPlayerIsland&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;affectorId&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;);&lt;/span&gt;
 
-                    &lt;span class=&quot;n&quot;&gt;Collection&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Island&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;coopIslands&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;
-                            &lt;span class=&quot;n&quot;&gt;SkyBlockApi&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;getPlayerCoops&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;affectorId&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;);&lt;/span&gt;
+                    &lt;span class=&quot;nc&quot;&gt;Collection&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;nc&quot;&gt;Island&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;coopIslands&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;
+                            &lt;span class=&quot;nc&quot;&gt;SkyBlockApi&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;getPlayerCoops&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;affectorId&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;);&lt;/span&gt;
                     &lt;span class=&quot;n&quot;&gt;coopIslands&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;add&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;playerIsland&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;);&lt;/span&gt;
 
                     &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;coopIslands&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;stream&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;();&lt;/span&gt;
                 &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
 
                 &lt;span class=&quot;nd&quot;&gt;@Override&lt;/span&gt;
-                &lt;span class=&quot;kd&quot;&gt;public&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Island&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;translateTarget&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Block&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;target&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
-                    &lt;span class=&quot;n&quot;&gt;Location&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;blockLocation&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;target&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;getLocation&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;();&lt;/span&gt;
-                    &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;SkyBlockApi&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;getIslandAtLocation&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;target&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;);&lt;/span&gt;
+                &lt;span class=&quot;kd&quot;&gt;public&lt;/span&gt; &lt;span class=&quot;nc&quot;&gt;Island&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;translateTarget&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nc&quot;&gt;Block&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;target&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+                    &lt;span class=&quot;nc&quot;&gt;Location&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;blockLocation&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;target&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;getLocation&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;();&lt;/span&gt;
+                    &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;nc&quot;&gt;SkyBlockApi&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;getIslandAtLocation&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;target&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;);&lt;/span&gt;
                 &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
             &lt;span class=&quot;o&quot;&gt;};&lt;/span&gt;
 
-    &lt;span class=&quot;kd&quot;&gt;public&lt;/span&gt; &lt;span class=&quot;kd&quot;&gt;abstract&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Stream&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Island&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;translateAffector&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;A&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;affector&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;);&lt;/span&gt;
-    &lt;span class=&quot;kd&quot;&gt;public&lt;/span&gt; &lt;span class=&quot;kd&quot;&gt;abstract&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Island&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;translateTarget&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;T&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;target&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;);&lt;/span&gt;
+    &lt;span class=&quot;kd&quot;&gt;public&lt;/span&gt; &lt;span class=&quot;kd&quot;&gt;abstract&lt;/span&gt; &lt;span class=&quot;nc&quot;&gt;Stream&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;nc&quot;&gt;Island&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;translateAffector&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;no&quot;&gt;A&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;affector&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;);&lt;/span&gt;
+    &lt;span class=&quot;kd&quot;&gt;public&lt;/span&gt; &lt;span class=&quot;kd&quot;&gt;abstract&lt;/span&gt; &lt;span class=&quot;nc&quot;&gt;Island&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;translateTarget&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;no&quot;&gt;T&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;target&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;);&lt;/span&gt;
 &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
 
@@ -158,23 +382,23 @@ owner UUID to whichever island that player belongs to in
 order to check if the minion &lt;code class=&quot;highlighter-rouge&quot;&gt;isAllowed&lt;/code&gt; to place that
 block:&lt;/p&gt;
 
-&lt;div class=&quot;language-java highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;kd&quot;&gt;public&lt;/span&gt; &lt;span class=&quot;kd&quot;&gt;static&lt;/span&gt; &lt;span class=&quot;kd&quot;&gt;final&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;ActionType&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Minion&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Block&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;MINION_PLACE_BLOCK&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;
-        &lt;span class=&quot;k&quot;&gt;new&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;ActionType&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;lt;&amp;gt;()&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+&lt;div class=&quot;language-java highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;kd&quot;&gt;public&lt;/span&gt; &lt;span class=&quot;kd&quot;&gt;static&lt;/span&gt; &lt;span class=&quot;kd&quot;&gt;final&lt;/span&gt; &lt;span class=&quot;nc&quot;&gt;ActionType&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;nc&quot;&gt;Minion&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;nc&quot;&gt;Block&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;no&quot;&gt;MINION_PLACE_BLOCK&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;
+        &lt;span class=&quot;k&quot;&gt;new&lt;/span&gt; &lt;span class=&quot;nc&quot;&gt;ActionType&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;lt;&amp;gt;()&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
             &lt;span class=&quot;nd&quot;&gt;@Overide&lt;/span&gt;
-            &lt;span class=&quot;kd&quot;&gt;public&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Stream&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Island&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;translateAffector&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Minion&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;affector&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
-                &lt;span class=&quot;n&quot;&gt;UUID&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;ownerId&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;minion&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;getOwner&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;();&lt;/span&gt;
-                &lt;span class=&quot;n&quot;&gt;Island&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;playerIsland&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;SkyBlockApi&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;getPlayerIsland&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;ownerId&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;);&lt;/span&gt;
+            &lt;span class=&quot;kd&quot;&gt;public&lt;/span&gt; &lt;span class=&quot;nc&quot;&gt;Stream&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;nc&quot;&gt;Island&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;translateAffector&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nc&quot;&gt;Minion&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;affector&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+                &lt;span class=&quot;no&quot;&gt;UUID&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;ownerId&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;minion&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;getOwner&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;();&lt;/span&gt;
+                &lt;span class=&quot;nc&quot;&gt;Island&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;playerIsland&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;nc&quot;&gt;SkyBlockApi&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;getPlayerIsland&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;ownerId&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;);&lt;/span&gt;
 
-                &lt;span class=&quot;n&quot;&gt;Collection&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Island&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;coopIslands&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;
-                        &lt;span class=&quot;n&quot;&gt;SkyBlockApi&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;getPlayerCoops&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;ownerId&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;);&lt;/span&gt;
+                &lt;span class=&quot;nc&quot;&gt;Collection&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;nc&quot;&gt;Island&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;coopIslands&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;
+                        &lt;span class=&quot;nc&quot;&gt;SkyBlockApi&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;getPlayerCoops&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;ownerId&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;);&lt;/span&gt;
                 &lt;span class=&quot;n&quot;&gt;coopIslands&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;add&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;playerIsland&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;);&lt;/span&gt;
 
                 &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;coopIslands&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;stream&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;();&lt;/span&gt;
             &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
 
             &lt;span class=&quot;nd&quot;&gt;@Override&lt;/span&gt;
-            &lt;span class=&quot;kd&quot;&gt;public&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Island&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;translateTarget&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Block&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;target&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
-                &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;ActionType&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;PLAYER_PLACE_BLOCK&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;translateTarget&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;target&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;);&lt;/span&gt;
+            &lt;span class=&quot;kd&quot;&gt;public&lt;/span&gt; &lt;span class=&quot;nc&quot;&gt;Island&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;translateTarget&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nc&quot;&gt;Block&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;target&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+                &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;nc&quot;&gt;ActionType&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;PLAYER_PLACE_BLOCK&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;translateTarget&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;target&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;);&lt;/span&gt;
             &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
         &lt;span class=&quot;o&quot;&gt;};&lt;/span&gt;
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
@@ -194,18 +418,18 @@ really bad protection plugin that doesn’t handle
 listener look like?&lt;/p&gt;
 
 &lt;div class=&quot;language-java highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;nd&quot;&gt;@EventHandler&lt;/span&gt;
-&lt;span class=&quot;kd&quot;&gt;public&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;void&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;onPlace&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;BlockPlaceEvent&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;event&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+&lt;span class=&quot;kd&quot;&gt;public&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;void&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;onPlace&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nc&quot;&gt;BlockPlaceEvent&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;event&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
     &lt;span class=&quot;o&quot;&gt;...&lt;/span&gt;
 
-    &lt;span class=&quot;n&quot;&gt;Block&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;block&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;event&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;getBlockPlaced&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;();&lt;/span&gt;
-    &lt;span class=&quot;n&quot;&gt;Location&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;start&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;block&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;getLocation&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;();&lt;/span&gt;
+    &lt;span class=&quot;nc&quot;&gt;Block&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;block&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;event&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;getBlockPlaced&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;();&lt;/span&gt;
+    &lt;span class=&quot;nc&quot;&gt;Location&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;start&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;block&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;getLocation&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;();&lt;/span&gt;
 
-    &lt;span class=&quot;n&quot;&gt;ProtectionHandler&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;ph&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;...&lt;/span&gt;
+    &lt;span class=&quot;nc&quot;&gt;ProtectionHandler&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;ph&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;...&lt;/span&gt;
     &lt;span class=&quot;k&quot;&gt;for&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;kt&quot;&gt;int&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;i&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;i&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;height&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;i&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;++)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
-        &lt;span class=&quot;n&quot;&gt;Location&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;newLocation&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;start&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;add&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;i&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;);&lt;/span&gt;
-        &lt;span class=&quot;n&quot;&gt;Block&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;newBlock&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;newLocation&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;getBlock&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;();&lt;/span&gt;
+        &lt;span class=&quot;nc&quot;&gt;Location&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;newLocation&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;start&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;add&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;i&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;);&lt;/span&gt;
+        &lt;span class=&quot;nc&quot;&gt;Block&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;newBlock&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;newLocation&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;getBlock&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;();&lt;/span&gt;
 
-        &lt;span class=&quot;k&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;ph&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;isAllowed&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;ActionType&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;MINION_PLACE_BLOCK&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt;
+        &lt;span class=&quot;k&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;ph&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;isAllowed&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nc&quot;&gt;ActionType&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;MINION_PLACE_BLOCK&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt;
                 &lt;span class=&quot;n&quot;&gt;player&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;newBlock&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;))&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
             &lt;span class=&quot;c1&quot;&gt;// Set block, remove item, etc...&lt;/span&gt;
         &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
@@ -302,7 +526,7 @@ act like the seat-belt in your car: initially they are
 perhaps a little uncomfortable, but after a while their use
 becomes second-nature and not using them becomes
 unimaginable.&lt;/p&gt;
-&lt;/blockquote&gt;</content><author><name></name></author><summary type="html">One of the most frustrating things about a large plugin ecosystem is that at one point or another, you will need to start handling the dependencies between each plugin for particular actions - e.g. who gets to break what block and where they are allowed. How can you constrain the scope of some certain plugin, due to the functionality of another plugin, or how can you bypass something?</summary></entry><entry><title type="html">Let’s Talk Privacy</title><link href="https://agenttroll.github.io/blog/2019/07/28/lets-talk-privacy.html" rel="alternate" type="text/html" title="Let's Talk Privacy" /><published>2019-07-28T15:41:15-07:00</published><updated>2019-07-28T15:41:15-07:00</updated><id>https://agenttroll.github.io/blog/2019/07/28/lets-talk-privacy</id><content type="html" xml:base="https://agenttroll.github.io/blog/2019/07/28/lets-talk-privacy.html">&lt;p&gt;This post should come with a big red disclaimer that says
+&lt;/blockquote&gt;</content><author><name></name></author><summary type="html">One of the most frustrating things about a large plugin ecosystem is that at one point or another, you will need to start handling the dependencies between each plugin for particular actions - e.g. who gets to break what block and where they are allowed. How can you constrain the scope of some certain plugin, due to the functionality of another plugin, or how can you bypass something?</summary></entry><entry><title type="html">Let’s Talk Privacy</title><link href="http://localhost:4000/blog/2019/07/28/lets-talk-privacy.html" rel="alternate" type="text/html" title="Let's Talk Privacy" /><published>2019-07-28T18:41:15-04:00</published><updated>2019-07-28T18:41:15-04:00</updated><id>http://localhost:4000/blog/2019/07/28/lets-talk-privacy</id><content type="html" xml:base="http://localhost:4000/blog/2019/07/28/lets-talk-privacy.html">&lt;p&gt;This post should come with a big red disclaimer that says
 I’m not an expert, but since my screen is redshifted to
 hell, plain black will have to do. I’m just a Java
 programmer with a blog.&lt;/p&gt;
@@ -715,7 +939,7 @@ issue because it is so politically charged, but I’ve tried
 my best to try to stay neutral on this matter. I don’t
 think it matters what political party you subscribe to, or
 how much you think you care about your privacy, it is an
-important issue in the digital age.&lt;/p&gt;</content><author><name></name></author><summary type="html">This post should come with a big red disclaimer that says I’m not an expert, but since my screen is redshifted to hell, plain black will have to do. I’m just a Java programmer with a blog.</summary></entry><entry><title type="html">Lessons Learned Debugging: Part 7</title><link href="https://agenttroll.github.io/blog/2019/07/24/lessons-learned-debugging-part-7.html" rel="alternate" type="text/html" title="Lessons Learned Debugging: Part 7" /><published>2019-07-24T00:07:20-07:00</published><updated>2019-07-24T00:07:20-07:00</updated><id>https://agenttroll.github.io/blog/2019/07/24/lessons-learned-debugging-part-7</id><content type="html" xml:base="https://agenttroll.github.io/blog/2019/07/24/lessons-learned-debugging-part-7.html">&lt;p&gt;I haven’t explicitly identified it until now, but it seems
+important issue in the digital age.&lt;/p&gt;</content><author><name></name></author><summary type="html">This post should come with a big red disclaimer that says I’m not an expert, but since my screen is redshifted to hell, plain black will have to do. I’m just a Java programmer with a blog.</summary></entry><entry><title type="html">Lessons Learned Debugging: Part 7</title><link href="http://localhost:4000/blog/2019/07/24/lessons-learned-debugging-part-7.html" rel="alternate" type="text/html" title="Lessons Learned Debugging: Part 7" /><published>2019-07-24T03:07:20-04:00</published><updated>2019-07-24T03:07:20-04:00</updated><id>http://localhost:4000/blog/2019/07/24/lessons-learned-debugging-part-7</id><content type="html" xml:base="http://localhost:4000/blog/2019/07/24/lessons-learned-debugging-part-7.html">&lt;p&gt;I haven’t explicitly identified it until now, but it seems
 that I have a habit of putting exactly the same thing in my
 introductory paragraph in basically all of the posts in
 this series. This particular lesson doesn’t sound all that
@@ -874,7 +1098,7 @@ provided by a core plugin makes the code easier for other
 developers to parse and less error prone. Because you can
 be assured that some portion of the code that calls on a
 standardized function works, you can debug and review code
-much faster at a reduced cost.&lt;/p&gt;</content><author><name></name></author><summary type="html">I haven’t explicitly identified it until now, but it seems that I have a habit of putting exactly the same thing in my introductory paragraph in basically all of the posts in this series. This particular lesson doesn’t sound all that bad at first, but I can assure you that I have literally crashed a server by not following it.</summary></entry><entry><title type="html">What The Fuck Does Guice ‘zip file closed’ Exception Mean?</title><link href="https://agenttroll.github.io/blog/2019/07/18/what-the-fuck-does-guice-zip-file-closed-exception-mean.html" rel="alternate" type="text/html" title="What The Fuck Does Guice 'zip file closed' Exception Mean?" /><published>2019-07-18T01:00:15-07:00</published><updated>2019-07-18T01:00:15-07:00</updated><id>https://agenttroll.github.io/blog/2019/07/18/what-the-fuck-does-guice-zip-file-closed-exception-mean</id><content type="html" xml:base="https://agenttroll.github.io/blog/2019/07/18/what-the-fuck-does-guice-zip-file-closed-exception-mean.html">&lt;p&gt;I’ve had a lot of time to work with &lt;a href=&quot;https://github.com/google/guice&quot;&gt;Guice&lt;/a&gt;
+much faster at a reduced cost.&lt;/p&gt;</content><author><name></name></author><summary type="html">I haven’t explicitly identified it until now, but it seems that I have a habit of putting exactly the same thing in my introductory paragraph in basically all of the posts in this series. This particular lesson doesn’t sound all that bad at first, but I can assure you that I have literally crashed a server by not following it.</summary></entry><entry><title type="html">What The Fuck Does Guice ‘zip file closed’ Exception Mean?</title><link href="http://localhost:4000/blog/2019/07/18/what-the-fuck-does-guice-zip-file-closed-exception-mean.html" rel="alternate" type="text/html" title="What The Fuck Does Guice 'zip file closed' Exception Mean?" /><published>2019-07-18T04:00:15-04:00</published><updated>2019-07-18T04:00:15-04:00</updated><id>http://localhost:4000/blog/2019/07/18/what-the-fuck-does-guice-zip-file-closed-exception-mean</id><content type="html" xml:base="http://localhost:4000/blog/2019/07/18/what-the-fuck-does-guice-zip-file-closed-exception-mean.html">&lt;p&gt;I’ve had a lot of time to work with &lt;a href=&quot;https://github.com/google/guice&quot;&gt;Guice&lt;/a&gt;
 when I worked with Skytropia. However, working on a
 personal project with more up-to-date versions of Spigot
 and Guice, I was met with the strangest possible exception.
@@ -1102,7 +1326,7 @@ you can print the actual exception. Since
 &lt;code class=&quot;highlighter-rouge&quot;&gt;#getInstance(...)&lt;/code&gt; should only be used in a few entry
 points, it should be relatively straightforward (if it
 is being used literally everywhere, you’ve probably missed
-the point of Guice…).&lt;/p&gt;</content><author><name></name></author><summary type="html">I’ve had a lot of time to work with Guice when I worked with Skytropia. However, working on a personal project with more up-to-date versions of Spigot and Guice, I was met with the strangest possible exception. But what does it mean? Honestly, I haven’t quite figured it all out myself either.</summary></entry><entry><title type="html">Lessons Learned Debugging: Part 6</title><link href="https://agenttroll.github.io/blog/2019/07/13/lessons-learned-debugging-part-6.html" rel="alternate" type="text/html" title="Lessons Learned Debugging: Part 6" /><published>2019-07-13T20:42:05-07:00</published><updated>2019-07-13T20:42:05-07:00</updated><id>https://agenttroll.github.io/blog/2019/07/13/lessons-learned-debugging-part-6</id><content type="html" xml:base="https://agenttroll.github.io/blog/2019/07/13/lessons-learned-debugging-part-6.html">&lt;p&gt;This is another one of those “watch out when you’re doing
+the point of Guice…).&lt;/p&gt;</content><author><name></name></author><summary type="html">I’ve had a lot of time to work with Guice when I worked with Skytropia. However, working on a personal project with more up-to-date versions of Spigot and Guice, I was met with the strangest possible exception. But what does it mean? Honestly, I haven’t quite figured it all out myself either.</summary></entry><entry><title type="html">Lessons Learned Debugging: Part 6</title><link href="http://localhost:4000/blog/2019/07/13/lessons-learned-debugging-part-6.html" rel="alternate" type="text/html" title="Lessons Learned Debugging: Part 6" /><published>2019-07-13T23:42:05-04:00</published><updated>2019-07-13T23:42:05-04:00</updated><id>http://localhost:4000/blog/2019/07/13/lessons-learned-debugging-part-6</id><content type="html" xml:base="http://localhost:4000/blog/2019/07/13/lessons-learned-debugging-part-6.html">&lt;p&gt;This is another one of those “watch out when you’re doing
 XYZ” rather than a specific thing to do (or not do).&lt;/p&gt;
 
 &lt;h1 id=&quot;be-careful-handling-inventories&quot;&gt;Be Careful Handling Inventories&lt;/h1&gt;
@@ -1280,7 +1504,7 @@ unimaginable.&lt;/p&gt;
 add to your repertoire of programming knowledge outside of
 literally just writing your own personal projects. As you
 gain more experience, you will write better and better
-software. I promise.&lt;/p&gt;</content><author><name></name></author><summary type="html">This is another one of those “watch out when you’re doing XYZ” rather than a specific thing to do (or not do).</summary></entry><entry><title type="html">Lessons Learned Debugging: Part 5</title><link href="https://agenttroll.github.io/blog/2019/07/02/lessons-learned-debugging-part-5.html" rel="alternate" type="text/html" title="Lessons Learned Debugging: Part 5" /><published>2019-07-02T20:22:15-07:00</published><updated>2019-07-02T20:22:15-07:00</updated><id>https://agenttroll.github.io/blog/2019/07/02/lessons-learned-debugging-part-5</id><content type="html" xml:base="https://agenttroll.github.io/blog/2019/07/02/lessons-learned-debugging-part-5.html">&lt;p&gt;This isn’t a bugginess lesson, but if you’re ever going to
+software. I promise.&lt;/p&gt;</content><author><name></name></author><summary type="html">This is another one of those “watch out when you’re doing XYZ” rather than a specific thing to do (or not do).</summary></entry><entry><title type="html">Lessons Learned Debugging: Part 5</title><link href="http://localhost:4000/blog/2019/07/02/lessons-learned-debugging-part-5.html" rel="alternate" type="text/html" title="Lessons Learned Debugging: Part 5" /><published>2019-07-02T23:22:15-04:00</published><updated>2019-07-02T23:22:15-04:00</updated><id>http://localhost:4000/blog/2019/07/02/lessons-learned-debugging-part-5</id><content type="html" xml:base="http://localhost:4000/blog/2019/07/02/lessons-learned-debugging-part-5.html">&lt;p&gt;This isn’t a bugginess lesson, but if you’re ever going to
 progress beyond a novice-level plugin developer (or even a
 Java developer for that matter), then you’ll need to figure
 out how to ensure data integrity.&lt;/p&gt;
@@ -1331,11 +1555,11 @@ completely lost or deleted altogether.&lt;/p&gt;
 failure. For example, the following code is not an 
 effective way to save data:&lt;/p&gt;
 
-&lt;div class=&quot;language-java highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;k&quot;&gt;try&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;BufferedWriter&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;writer&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;...)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
-    &lt;span class=&quot;k&quot;&gt;for&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Data&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;datum&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;this&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;data&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+&lt;div class=&quot;language-java highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;k&quot;&gt;try&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nc&quot;&gt;BufferedWriter&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;writer&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;...)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;for&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nc&quot;&gt;Data&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;datum&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;this&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;data&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
         &lt;span class=&quot;n&quot;&gt;writer&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;write&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;datum&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;serialize&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;());&lt;/span&gt;
     &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
-&lt;span class=&quot;o&quot;&gt;}&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;catch&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;IOException&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;e&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;}&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;catch&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nc&quot;&gt;IOException&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;e&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
     &lt;span class=&quot;n&quot;&gt;e&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;printStackTrace&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;();&lt;/span&gt;
 &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;finally&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
     &lt;span class=&quot;k&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;writer&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;!=&lt;/span&gt; &lt;span class=&quot;kc&quot;&gt;null&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
@@ -1349,19 +1573,19 @@ here. It may not even be possible to open a new
 &lt;code class=&quot;highlighter-rouge&quot;&gt;BufferedWriter&lt;/code&gt; if the OS exhausts the available file 
 handles. A more effective solution looks like this:&lt;/p&gt;
 
-&lt;div class=&quot;language-java highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;k&quot;&gt;try&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;BufferedWriter&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;writer&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;...)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
-    &lt;span class=&quot;k&quot;&gt;for&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Data&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;datum&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;this&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;data&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+&lt;div class=&quot;language-java highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;k&quot;&gt;try&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nc&quot;&gt;BufferedWriter&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;writer&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;...)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;for&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nc&quot;&gt;Data&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;datum&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;this&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;data&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
         &lt;span class=&quot;k&quot;&gt;try&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
-            &lt;span class=&quot;n&quot;&gt;System&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;out&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;println&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;datum&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;serialize&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;());&lt;/span&gt;
-        &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;catch&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Exception&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;e1&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+            &lt;span class=&quot;nc&quot;&gt;System&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;out&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;println&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;datum&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;serialize&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;());&lt;/span&gt;
+        &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;catch&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nc&quot;&gt;Exception&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;e1&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
             &lt;span class=&quot;n&quot;&gt;e1&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;printStackTrace&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;();&lt;/span&gt;
         &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
     &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
-&lt;span class=&quot;o&quot;&gt;}&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;catch&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Exception&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;e&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
-    &lt;span class=&quot;k&quot;&gt;for&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Data&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;datum&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;this&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;data&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;}&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;catch&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nc&quot;&gt;Exception&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;e&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;for&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nc&quot;&gt;Data&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;datum&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;this&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;data&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
         &lt;span class=&quot;k&quot;&gt;try&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
-            &lt;span class=&quot;n&quot;&gt;System&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;out&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;println&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;datum&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;serialize&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;());&lt;/span&gt;
-        &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;catch&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Exception&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;e1&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+            &lt;span class=&quot;nc&quot;&gt;System&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;out&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;println&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;datum&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;serialize&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;());&lt;/span&gt;
+        &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;catch&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nc&quot;&gt;Exception&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;e1&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
             &lt;span class=&quot;n&quot;&gt;e1&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;printStackTrace&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;();&lt;/span&gt;
         &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
     &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
@@ -1396,10 +1620,10 @@ backup of the data, but only in case an exception occurs:&lt;/p&gt;
 &lt;div class=&quot;language-java highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;kd&quot;&gt;public&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;void&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;onEnable&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;()&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
     &lt;span class=&quot;o&quot;&gt;...&lt;/span&gt;
 
-    &lt;span class=&quot;k&quot;&gt;try&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;BufferedReader&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;reader&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;...)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;try&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nc&quot;&gt;BufferedReader&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;reader&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;...)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
         &lt;span class=&quot;o&quot;&gt;...&lt;/span&gt;
-    &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;catch&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Exception&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;e&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
-        &lt;span class=&quot;n&quot;&gt;Files&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;copy&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(...,&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;...);&lt;/span&gt;
+    &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;catch&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nc&quot;&gt;Exception&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;e&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+        &lt;span class=&quot;nc&quot;&gt;Files&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;copy&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(...,&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;...);&lt;/span&gt;
         &lt;span class=&quot;n&quot;&gt;e&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;printStackTrace&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;();&lt;/span&gt;
     &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
 
@@ -1470,7 +1694,7 @@ I’m still open to Bukkit development opportunities, so if
 you’re hiring, check my 
 &lt;a href=&quot;https://agenttroll.github.io/&quot;&gt;main website&lt;/a&gt; under 
 “Professional Experience” to see if I’m still looking for
-work.&lt;/p&gt;</content><author><name></name></author><summary type="html">This isn’t a bugginess lesson, but if you’re ever going to progress beyond a novice-level plugin developer (or even a Java developer for that matter), then you’ll need to figure out how to ensure data integrity.</summary></entry><entry><title type="html">Implementing PBFT in Java</title><link href="https://agenttroll.github.io/blog/2019/06/23/implementing-pbft-in-java.html" rel="alternate" type="text/html" title="Implementing PBFT in Java" /><published>2019-06-23T17:23:35-07:00</published><updated>2019-06-23T17:23:35-07:00</updated><id>https://agenttroll.github.io/blog/2019/06/23/implementing-pbft-in-java</id><content type="html" xml:base="https://agenttroll.github.io/blog/2019/06/23/implementing-pbft-in-java.html">&lt;p&gt;Following up with my &lt;a href=&quot;&quot;&gt;previous post&lt;/a&gt; about one of my 
+work.&lt;/p&gt;</content><author><name></name></author><summary type="html">This isn’t a bugginess lesson, but if you’re ever going to progress beyond a novice-level plugin developer (or even a Java developer for that matter), then you’ll need to figure out how to ensure data integrity.</summary></entry><entry><title type="html">Implementing PBFT in Java</title><link href="http://localhost:4000/blog/2019/06/23/implementing-pbft-in-java.html" rel="alternate" type="text/html" title="Implementing PBFT in Java" /><published>2019-06-23T20:23:35-04:00</published><updated>2019-06-23T20:23:35-04:00</updated><id>http://localhost:4000/blog/2019/06/23/implementing-pbft-in-java</id><content type="html" xml:base="http://localhost:4000/blog/2019/06/23/implementing-pbft-in-java.html">&lt;p&gt;Following up with my &lt;a href=&quot;&quot;&gt;previous post&lt;/a&gt; about one of my 
 prior projects, I have another post about yet another
 project that I’ve recently finished, 
 &lt;a href=&quot;https://github.com/AgentTroll/pbft-java&quot;&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;pbft-java&lt;/code&gt;&lt;/a&gt;.&lt;/p&gt;
@@ -1788,7 +2012,7 @@ wouldn’t be launching anything mission critical.&lt;/p&gt;
 
 &lt;p&gt;I’ll probably go back around to adding new posts in my
 “Lessons Learned Debugging” series for another long stretch
-until I figure out what other things to talk about.&lt;/p&gt;</content><author><name></name></author><summary type="html">Following up with my previous post about one of my prior projects, I have another post about yet another project that I’ve recently finished, pbft-java.</summary></entry><entry><title type="html">TLE - Tracking Satellites in Space</title><link href="https://agenttroll.github.io/blog/2019/06/22/tle-tracking-satellites-in-space.html" rel="alternate" type="text/html" title="TLE - Tracking Satellites in Space" /><published>2019-06-22T17:23:35-07:00</published><updated>2019-06-22T17:23:35-07:00</updated><id>https://agenttroll.github.io/blog/2019/06/22/tle-tracking-satellites-in-space</id><content type="html" xml:base="https://agenttroll.github.io/blog/2019/06/22/tle-tracking-satellites-in-space.html">&lt;p&gt;This is about my &lt;a href=&quot;https://github.com/AgentTroll/fate&quot;&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;fate&lt;/code&gt;&lt;/a&gt;
+until I figure out what other things to talk about.&lt;/p&gt;</content><author><name></name></author><summary type="html">Following up with my previous post about one of my prior projects, I have another post about yet another project that I’ve recently finished, pbft-java.</summary></entry><entry><title type="html">TLE - Tracking Satellites in Space</title><link href="http://localhost:4000/blog/2019/06/22/tle-tracking-satellites-in-space.html" rel="alternate" type="text/html" title="TLE - Tracking Satellites in Space" /><published>2019-06-22T20:23:35-04:00</published><updated>2019-06-22T20:23:35-04:00</updated><id>http://localhost:4000/blog/2019/06/22/tle-tracking-satellites-in-space</id><content type="html" xml:base="http://localhost:4000/blog/2019/06/22/tle-tracking-satellites-in-space.html">&lt;p&gt;This is about my &lt;a href=&quot;https://github.com/AgentTroll/fate&quot;&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;fate&lt;/code&gt;&lt;/a&gt;
 project, something I finished in August of last year. I’ve
 been on a long journey with some other Java-related
 projects more recently, but I’d simply like the chance to
@@ -2039,7 +2263,7 @@ certain that others have been inspired by spaceflight and
 can relate to wanting to advance space exploration in the
 future, if not the present.&lt;/p&gt;
 
-&lt;p&gt;I, for one, certainly would like to.&lt;/p&gt;</content><author><name></name></author><summary type="html">This is about my fate project, something I finished in August of last year. I’ve been on a long journey with some other Java-related projects more recently, but I’d simply like the chance to go back to one of my most significant C projects I’ve ever written. I think it would also be a good chance to revisit what I learned in the process of writing fate as well, because Tim Dodd of Everyday Astronaut posted a video recently that had some discussion about inclination and azimuth, and despite wrangling with that for weeks to understand how it worked, I still had to pause the video and think through what he had said.</summary></entry><entry><title type="html">Lessons Learned Debugging: Part 4</title><link href="https://agenttroll.github.io/blog/2019/06/17/lessons-learned-debugging-part-4.html" rel="alternate" type="text/html" title="Lessons Learned Debugging: Part 4" /><published>2019-06-17T23:26:40-07:00</published><updated>2019-06-17T23:26:40-07:00</updated><id>https://agenttroll.github.io/blog/2019/06/17/lessons-learned-debugging-part-4</id><content type="html" xml:base="https://agenttroll.github.io/blog/2019/06/17/lessons-learned-debugging-part-4.html">&lt;p&gt;I’m bored, let’s write another blog post, see if I can
+&lt;p&gt;I, for one, certainly would like to.&lt;/p&gt;</content><author><name></name></author><summary type="html">This is about my fate project, something I finished in August of last year. I’ve been on a long journey with some other Java-related projects more recently, but I’d simply like the chance to go back to one of my most significant C projects I’ve ever written. I think it would also be a good chance to revisit what I learned in the process of writing fate as well, because Tim Dodd of Everyday Astronaut posted a video recently that had some discussion about inclination and azimuth, and despite wrangling with that for weeks to understand how it worked, I still had to pause the video and think through what he had said.</summary></entry><entry><title type="html">Lessons Learned Debugging: Part 4</title><link href="http://localhost:4000/blog/2019/06/18/lessons-learned-debugging-part-4.html" rel="alternate" type="text/html" title="Lessons Learned Debugging: Part 4" /><published>2019-06-18T02:26:40-04:00</published><updated>2019-06-18T02:26:40-04:00</updated><id>http://localhost:4000/blog/2019/06/18/lessons-learned-debugging-part-4</id><content type="html" xml:base="http://localhost:4000/blog/2019/06/18/lessons-learned-debugging-part-4.html">&lt;p&gt;I’m bored, let’s write another blog post, see if I can
 turn my boredom into something helpful for other
 people.&lt;/p&gt;
 
@@ -2091,11 +2315,11 @@ example, examine the following code:&lt;/p&gt;
 the code when the magic String value is replaced with a
 constant:&lt;/p&gt;
 
-&lt;div class=&quot;language-java highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;kd&quot;&gt;private&lt;/span&gt; &lt;span class=&quot;kd&quot;&gt;static&lt;/span&gt; &lt;span class=&quot;kd&quot;&gt;final&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;String&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;REPLY_FORMAT_CFG_KEY&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&quot;reply&quot;&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;;&lt;/span&gt;
+&lt;div class=&quot;language-java highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;kd&quot;&gt;private&lt;/span&gt; &lt;span class=&quot;kd&quot;&gt;static&lt;/span&gt; &lt;span class=&quot;kd&quot;&gt;final&lt;/span&gt; &lt;span class=&quot;nc&quot;&gt;String&lt;/span&gt; &lt;span class=&quot;no&quot;&gt;REPLY_FORMAT_CFG_KEY&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&quot;reply&quot;&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;;&lt;/span&gt;
 
 &lt;span class=&quot;o&quot;&gt;...&lt;/span&gt;
 
-&lt;span class=&quot;n&quot;&gt;sendMessage&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;REPLY_FORMAT_CFG_KEY&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;message&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;);&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;sendMessage&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;no&quot;&gt;REPLY_FORMAT_CFG_KEY&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;message&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;);&lt;/span&gt;
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
 
 &lt;p&gt;Now when you read over the code, you understand that the
@@ -2159,233 +2383,4 @@ a good start.&lt;/p&gt;
 &lt;p&gt;I’ve also recently finished my 
 &lt;a href=&quot;https://github.com/AgentTroll/pbft-java&quot;&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;pbft-java&lt;/code&gt;&lt;/a&gt;
 project as well, and I’m eager to talk about the different
-decisions I made over the course of the project.&lt;/p&gt;</content><author><name></name></author><summary type="html">I’m bored, let’s write another blog post, see if I can turn my boredom into something helpful for other people.</summary></entry><entry><title type="html">Lessons Learned Debugging: Part 3</title><link href="https://agenttroll.github.io/blog/2019/06/03/lessons-learned-debugging-part-3.html" rel="alternate" type="text/html" title="Lessons Learned Debugging: Part 3" /><published>2019-06-03T18:48:55-07:00</published><updated>2019-06-03T18:48:55-07:00</updated><id>https://agenttroll.github.io/blog/2019/06/03/lessons-learned-debugging-part-3</id><content type="html" xml:base="https://agenttroll.github.io/blog/2019/06/03/lessons-learned-debugging-part-3.html">&lt;p&gt;Been another while since I’ve last written something, so
-here goes for another post in the series.&lt;/p&gt;
-
-&lt;h1 id=&quot;keep-method-line-counts-to-30-lines-or-less&quot;&gt;Keep method line counts to 30 lines or less&lt;/h1&gt;
-
-&lt;p&gt;As a general rule of thumb, your methods should probably
-never, ever exceed 30 SLOC. As a matter of fact, this is
-one of the rules from the “The Power of Ten” article I’ve
-been referencing at the end of every post in this series:&lt;/p&gt;
-
-&lt;blockquote&gt;
-  &lt;p&gt;Rule: No function should be longer than what can be 
-printed on a single sheet of paper in a standard reference 
-format with one line per statement and one line per
-declaration. Typically, this means no more than about 60 
-lines of code per function.&lt;/p&gt;
-
-  &lt;p&gt;Rationale: Each function should be a logical unit in the 
-code that is understandable and verifiable as a unit. It is 
-much harder to understand a logical unit that spans 
-multiple screens on a computer display or multiple pages 
-when printed. Excessively long functions are often a sign 
-of poorly structured code.&lt;/p&gt;
-&lt;/blockquote&gt;
-
-&lt;p&gt;While this rule does say that you can use a maximum of 60
-lines per method, I myself recommend using 30 lines. “The
-Power of Ten” primarily refers to C code, which usually
-more verbose than Java is since it requires more 
-low-level instructions to do the same thing that the Java
-library might provide in a single line. The fact that 
-engineers at NASA can launch satellites into space and 
-control robots on another planet from right here on Earth
-means that you probably can accomplish whatever end-goal
-you have in mind without writing any methods exceeding 30
-lines of code.&lt;/p&gt;
-
-&lt;h1 id=&quot;rationale-points&quot;&gt;Rationale Points&lt;/h1&gt;
-
-&lt;p&gt;Not all of the points in the rationale make much sense for
-us Java developers, however, there same principles still
-apply.&lt;/p&gt;
-
-&lt;h4 id=&quot;it-helps-reduce-clutter&quot;&gt;It Helps Reduce Clutter&lt;/h4&gt;
-
-&lt;p&gt;One of the reasons you should do this piggybacks off of the
-Part 1 post - keeping your methods below a certain number
-of lines helps reduce mental clutter. You can only see a
-limited amount of logic before you’ll need to scroll, which
-means that you will hide some of the context outside of the
-viewport. By keeping the number of SLOC in a method to a 
-minimum, you will have a much easier time reviewing your
-code as you go along because you know that it is doing one
-specific thing. You will boost your productivity because
-you aren’t bogged down with which variables you have
-initialized and what other logic you need to implement, you
-instead focus on the one purpose the method has.&lt;/p&gt;
-
-&lt;h4 id=&quot;keeping-your-methods-short-is-good-design&quot;&gt;Keeping Your Methods Short Is Good Design&lt;/h4&gt;
-
-&lt;p&gt;The second reason is because it is simply good design.
-Methods should do exactly one thing and one thing only.
-Joshua Bloch (author of &lt;em&gt;Effective Java&lt;/em&gt;, former Google 
-Software engineer, current professor at CMU) says that
-API designers (which applies here as well) should adhere
-to the “Principle of Least Astonishment” 
-(&lt;a href=&quot;https://youtu.be/heh4OeB9A-c?t=2910&quot;&gt;How To Design A Good API and Why it Matters&lt;/a&gt;).
-This means that when you read the method name, you should
-never be surprised by what the method is going to do, i.e.
-the method should perform exactly the function it was
-designed to do and nothing more. Too often, I will see
-novice developers write methods with a generic name that
-is doing too much, especially listener methods which are
-like super-methods with the utter amount of logic that
-needs to be performed for a method that is named something
-entirely generic such that you cannot actually &lt;em&gt;tell&lt;/em&gt; what
-is going on.&lt;/p&gt;
-
-&lt;h4 id=&quot;splitting-up-your-methods-encourages-documentation&quot;&gt;Splitting Up Your Methods Encourages Documentation&lt;/h4&gt;
-
-&lt;p&gt;Finally, the third reason is that method names can be used
-as documentation. If you’re doing a little bit of work that
-needs to be explained, you can extract that portion of code
-to a method with a descriptive name rather than adding a
-comment. For example, I myself am guilty of violating this
-lesson a few odd times, one of them involving the code
-needed to parse an item lore. The code looks a little bit
-like this:&lt;/p&gt;
-
-&lt;div class=&quot;language-java highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;kd&quot;&gt;public&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;void&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;parseLore&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;ItemMeta&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;meta&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
-    &lt;span class=&quot;o&quot;&gt;...&lt;/span&gt;
-
-    &lt;span class=&quot;n&quot;&gt;List&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;String&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;newLore&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;new&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;ArrayList&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;lt;&amp;gt;();&lt;/span&gt;
-    &lt;span class=&quot;k&quot;&gt;for&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Enchantment&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;ench&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;this&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;enchantments&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
-        &lt;span class=&quot;n&quot;&gt;String&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;enchName&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;ench&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;getName&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;();&lt;/span&gt;
-        &lt;span class=&quot;n&quot;&gt;newLore&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;add&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;enchName&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;);&lt;/span&gt;
-    &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
-
-    &lt;span class=&quot;k&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;newLore&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;size&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;()&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;15&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
-        &lt;span class=&quot;n&quot;&gt;Collections&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;sort&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;newLore&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;);&lt;/span&gt;
-        &lt;span class=&quot;n&quot;&gt;newLore&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;newLore&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;sublist&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;15&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;);&lt;/span&gt;
-    &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt; 
-
-    &lt;span class=&quot;o&quot;&gt;...&lt;/span&gt;
-&lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;While this snippet looks succinct in its current form,
-this portion of code is embedded within dozens of lines of
-code above and below. In Java, method calls are essentially
-free (or at least so insignificant that if you aren’t an
-engineer working at Oracle it isn’t worth optimizing), and
-you don’t even need to use a method more than once to have
-a method. It costs next to nothing to add another method to
-improve readability, reduce clutter, and to document the
-code. The improved code would look something like so:&lt;/p&gt;
-
-&lt;div class=&quot;language-java highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;kd&quot;&gt;public&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;void&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;parseLore&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;ItemMeta&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;meta&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
-    &lt;span class=&quot;o&quot;&gt;...&lt;/span&gt;
-
-    &lt;span class=&quot;n&quot;&gt;List&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;String&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;newLore&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;this&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;parseAndTrimLore&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;();&lt;/span&gt;
-
-    &lt;span class=&quot;o&quot;&gt;...&lt;/span&gt;
-&lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
-
-&lt;span class=&quot;kd&quot;&gt;private&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;void&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;parseAndTrimLore&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;()&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
-    &lt;span class=&quot;n&quot;&gt;List&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;String&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;newLore&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;new&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;ArrayList&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;lt;&amp;gt;();&lt;/span&gt;
-    &lt;span class=&quot;k&quot;&gt;for&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Enchantment&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;ench&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;this&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;enchantments&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
-        &lt;span class=&quot;n&quot;&gt;String&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;enchName&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;ench&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;getName&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;();&lt;/span&gt;
-        &lt;span class=&quot;n&quot;&gt;newLore&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;add&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;enchName&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;);&lt;/span&gt;
-    &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
-
-    &lt;span class=&quot;k&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;newLore&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;size&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;()&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;15&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
-        &lt;span class=&quot;n&quot;&gt;Collections&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;sort&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;newLore&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;);&lt;/span&gt;
-        &lt;span class=&quot;n&quot;&gt;newLore&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;newLore&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;sublist&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;15&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;);&lt;/span&gt;
-    &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt; 
-
-    &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;newLore&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;;&lt;/span&gt;
-&lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;Now, while reading through &lt;code class=&quot;highlighter-rouge&quot;&gt;#parseLore(ItemMeta)&lt;/code&gt;, you
-immediately know what 9 odd lines of code are doing without
-having to read over it. As an added bonus, you can focus on 
-getting the high-level logic of the &lt;code class=&quot;highlighter-rouge&quot;&gt;#parseLore(ItemMeta)&lt;/code&gt; 
-method down right, before moving on to debugging 
-lower-level methods such as &lt;code class=&quot;highlighter-rouge&quot;&gt;#parseAndTrimLore()&lt;/code&gt;.&lt;/p&gt;
-
-&lt;p&gt;While this isn’t to say that comments are always bad or
-they are always a code smell, but a certain &lt;a href=&quot;https://blog.codinghorror.com/coding-without-comments/&quot;&gt;programming
-mantra&lt;/a&gt; 
-reasons that commenting is a poor practice because it acts
-as a crutch or as an excuse for writing code that isn’t
-understandable. If you focus on writing your code so that
-it is easily understandable, you will reduce the amount of
-bugs in your code because you are forced to slow down and
-think through all the moving parts of your code. It will be
-easier for yourself as well as other developers to do code
-review, because your code is declarative and the intentions
-of the developer are more clear. As the article author puts
-it:&lt;/p&gt;
-
-&lt;blockquote&gt;
-  &lt;p&gt;if your feel your code is too complex to understand 
-without comments, your code is probably just bad&lt;/p&gt;
-&lt;/blockquote&gt;
-
-&lt;h1 id=&quot;in-practice&quot;&gt;In Practice&lt;/h1&gt;
-
-&lt;p&gt;It is important to note that as is with many rules, there
-are exceptions to the rule, both the 30 SLOC limit as well
-as getting rid of all your comments. I personally comment
-my code all the time, but if I’m breaking 30 SLOC, I better
-have a damn good reason for doing so. Otherwise, it is a
-good idea to split a super-method into smaller methods.
-In the future, if I ever refactor my code or if I need to
-modify my super-method to not do something, I can just use
-the existing sub-methods, or remove a call to a sub-method
-respectively without modifying existing code. This helps
-improve extensibility and productivity in the long run,
-even if it takes a bit longer now to extract portions
-of your code into a different method.&lt;/p&gt;
-
-&lt;p&gt;Many IDEs will probably have a linter, or if you aren’t
-running checkstyle or something, you can use SonarQube or
-something of the like attached to your CI pipeline to do
-checks on the SLOC of your methods. IntelliJ IDEA’s linter
-settings for method length is this particular entry here:&lt;/p&gt;
-
-&lt;p&gt;&lt;img src=&quot;https://agenttroll.github.io/blog/img/lld-idea-settings.png&quot; alt=&quot;IDEA Settings Menu&quot; /&gt;&lt;/p&gt;
-
-&lt;p&gt;It’s usually helpful to include along with it lambda length
-as well, probably 15-20 lines for lambdas is a little too
-much (at that point, pull the lambda entire lambda into a
-method, or split the lambda logic into methods).&lt;/p&gt;
-
-&lt;h1 id=&quot;conclusion&quot;&gt;Conclusion&lt;/h1&gt;
-
-&lt;p&gt;This is very similar to the 
-&lt;a href=&quot;https://agenttroll.github.io/blog/2019/03/20/lessons-learned-debugging-part-1.html&quot;&gt;Part 1&lt;/a&gt;
-reasoning in terms of keeping your code short and
-organized. The effect of making changing your programming
-practices is enormous, and in time, you will start to spend
-less time debugging your code. Remember that the majority
-of development time is debugging, not actually writing 
-anything. If you are saving debugging time and instead
-writing your code a little more slowly, but getting it 
-right the first time, you are saving a significant amount
-of time and costs down the road.&lt;/p&gt;
-
-&lt;p&gt;As is customary, I leave with the following wisdom from 
-&lt;a href=&quot;http://spinroot.com/gerard/pdf/P10.pdf&quot;&gt;The Power of Ten&lt;/a&gt;:&lt;/p&gt;
-
-&lt;blockquote&gt;
-  &lt;p&gt;If the rules seem Draconian at first, bear in mind that
-they are meant to make it possible to check code where very
-literally your life may depend on its correctness: code 
-that is used to control the airplane that you fly on, the 
-nuclear power plant a few miles from where you live, or the 
-spacecraft that carries astronauts into orbit. The rules 
-act like the seat-belt in your car: initially they are 
-perhaps a little uncomfortable, but after a while their use
-becomes second-nature and not using them becomes 
-unimaginable.&lt;/p&gt;
-&lt;/blockquote&gt;
-
-&lt;p&gt;While these tips are not necessarily rules that are
-responsible for keeping people alive, incorporating the
-same philosophy into your programming repertoire will help
-you in the long run.&lt;/p&gt;</content><author><name></name></author><summary type="html">Been another while since I’ve last written something, so here goes for another post in the series.</summary></entry></feed>
+decisions I made over the course of the project.&lt;/p&gt;</content><author><name></name></author><summary type="html">I’m bored, let’s write another blog post, see if I can turn my boredom into something helpful for other people.</summary></entry></feed>
