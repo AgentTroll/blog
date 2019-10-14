@@ -70,7 +70,7 @@ One example of this is when I was writing a hack around
 dispensers firing EXP bottles. However, I didn't notice
 the fact that droppers could also fire EXP bottles as well.
 This lead to a `ClassCastException` as I tried to cast a
-`Drpper` to `Dispenser`. In hindsight, this was a stupid
+`Dropper` to `Dispenser`. In hindsight, this was a stupid
 mistake on my part because one should always typecheck
 before doing a cast. However, this is something that would
 have easily been caught if I just played the game on the
