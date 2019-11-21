@@ -188,6 +188,16 @@ can read them yourself.
   - [Three Reasons Why the "Nothing to Hide" Argument is Flawed](https://spreadprivacy.com/three-reasons-why-the-nothing-to-hide-argument-is-flawed/)
   - [Why Does Privacy Matter? One Scholar's Answer](https://www.theatlantic.com/technology/archive/2013/02/why-does-privacy-matter-one-scholars-answer/273521/)
 
+# EDIT 2019-20-11 21:01:25:
+
+I found yet another gem a few days ago but I seem to be
+unable to figure out where it came from. Nevertheless, I
+feel that it is worth putting here: the "I have nothing to
+hide" argument is inherently flawed because your digital
+life and the profiles that Internet companies build on
+their users is so vast and complex that you might not even
+realize that you have something to hide in the first place.
+
 #### Why I Care
 
 I myself have my own personal reasons to care about
@@ -252,8 +262,8 @@ proclaim themselves to
 [protect your privacy](https://blog.mozilla.org/firefox/firefox-data-privacy-promise/)
 make
 [mistakes](https://www.reddit.com/r/firefox/comments/anxfz8/firefox_is_spyware_extension_recommendation/eg1hekf/)
-as well. (See the comments, the post is entirely outrage
-bait and tinfoil hattery).
+as well. (See the comments, the main post is entirely
+outrage bait and spreading FUD).
 
 The simple fact is, I personally don't see why companies
 should have access to data that they don't need. I don't
@@ -261,11 +271,11 @@ care if they encrypt it, I don't care if it is anonymized
 or if they never sell it, or if they don't even have it
 stored in the first place. Why am I sending this data then?
 That would be analogous to going out to lunch and then
-suddenly announcing to people that I have bowel issues. Not
-only would this be completely inappropriate, the
-information I'm giving is completely unecessary because I'm
-going to eat, not going to the doctor. To apply this to a
-browser for example, why is Google Chrome sending
+suddenly informing everyone there of my personal health
+issues. Not only would this be completely inappropriate,
+but the information I'm announcing is completely unecessary
+because I'm going to eat, not going to the doctor. To apply
+this to a browser for example, why is Google Chrome sending
 information back to Google when my browser would work
 completely fine without that data sent anywhere? I don't
 care what is being sent, why is it even sent in the first
@@ -304,7 +314,14 @@ own
 Again, I will reference the r/privacy wiki that I linked
 early in this blog post. It has a lot of references to
 many different tools to minimize or take control of the
-data being collected on you.
+data being collected on you. Another great resource is
+not only looking at other reputable sources of information
+on privacy-respecting software such as
+[PRISM Break](https://prism-break.org/en/), but also
+looking at discussions about privacy and the strengths and
+weaknesses of different services on their GitLab
+[issues](https://gitlab.com/prism-break/prism-break/issues)
+page as well.
 
 I don't give a comprehensive list here, but it should be
 enough to give you an idea of my personal preferences and
@@ -312,7 +329,8 @@ where you can find more information. In general, if you
 use any software or website that visits the Internet, you
 should check on its Privacy Policy and look for informed
 opinions about whether or not that service respects your
-privacy.
+privacy. Being informed is the most powerful defense for
+your freedoms and your right to privacy.
 
 #### Web Browser
 
@@ -338,6 +356,11 @@ well, but since I've moved on from using Firefox, I won't
 list them here. I personally prefer the UI on Chromium
 and I liked not having to configure anything.
 
+As an extended note, be aware that Chromium is **NOT** the
+same as Ungoogled Chromium! Using the stock Chromium is
+just as risky for your privacy as using Google Chrome. You
+can find Ungoogled Chromium [here](https://github.com/Eloston/ungoogled-chromium).
+
 #### OS
 
 If you are not using Linux, I highly recommend switching.
@@ -347,12 +370,19 @@ on this matter. You should read up
 
 #### Search Engine
 
-I personally use StartPage. I've used DuckDuckGo in the
+~~I personally use StartPage. I've used DuckDuckGo in the
 past but I've personally found StartPage to be a lot better
-in terms of search results. Your milage may vary. Again,
+in terms of search results.~~ Your milage may vary. Again,
 see
 [privacytoolsIO](https://www.privacytools.io/providers/search-engines/)
 for more alternatives.
+
+# EDIT 2019-20-11 21:01:25:
+
+StartPage was [delisted](https://blog.privacytools.io/delisting-startpage/)
+privacytoolsIO and I can no longer recommend them in good
+conscience. I now personally use privacytoolsIO's Searx
+instance, which can be found [here](https://search.privacytools.io/).
 
 #### Deleting Accounts
 

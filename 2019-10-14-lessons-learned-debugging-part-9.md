@@ -180,8 +180,8 @@ predictions match.
 
 While I think that bug-finding models of software are a
 little extreme for writing plugins, especially when lives
-aren't exactly at stake here, I think think there is still
-merit in the idea of expecting there to be some number of
+aren't exactly at stake here, I think there is still merit
+in the idea of expecting there to be some number of
 conditions. As you get more experienced, you'll probably
 get a feel for how many `if-return` statements you should
 be writing. If you think there are too few, your intuition
