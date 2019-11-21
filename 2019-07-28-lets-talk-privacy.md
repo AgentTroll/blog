@@ -380,9 +380,10 @@ for more alternatives.
 # EDIT 2019-20-11 21:01:25:
 
 StartPage was [delisted](https://blog.privacytools.io/delisting-startpage/)
-privacytoolsIO and I can no longer recommend them in good
-conscience. I now personally use privacytoolsIO's Searx
-instance, which can be found [here](https://search.privacytools.io/).
+on privacytoolsIO and I can no longer recommend them in
+good conscience. I now personally use privacytoolsIO's
+Searx instance, which can be found
+[here](https://search.privacytools.io/).
 
 #### Deleting Accounts
 
