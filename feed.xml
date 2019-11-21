@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="4.0.0">Jekyll</generator><link href="https://agenttroll.github.io/blog/feed.xml" rel="self" type="application/atom+xml" /><link href="https://agenttroll.github.io/blog/" rel="alternate" type="text/html" /><updated>2019-11-20T21:28:48-05:00</updated><id>https://agenttroll.github.io/blog/feed.xml</id><title type="html">Inside a Troll</title><subtitle></subtitle><entry><title type="html">Lessons Learned Debugging: Part 9</title><link href="https://agenttroll.github.io/blog/2019/10/14/lessons-learned-debugging-part-9.html" rel="alternate" type="text/html" title="Lessons Learned Debugging: Part 9" /><published>2019-10-14T02:27:30-04:00</published><updated>2019-10-14T02:27:30-04:00</updated><id>https://agenttroll.github.io/blog/2019/10/14/lessons-learned-debugging-part-9</id><content type="html" xml:base="https://agenttroll.github.io/blog/2019/10/14/lessons-learned-debugging-part-9.html">&lt;p&gt;The problem I usually see with novice developers when they
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="4.0.0">Jekyll</generator><link href="https://agenttroll.github.io/blog/feed.xml" rel="self" type="application/atom+xml" /><link href="https://agenttroll.github.io/blog/" rel="alternate" type="text/html" /><updated>2019-11-20T21:30:32-05:00</updated><id>https://agenttroll.github.io/blog/feed.xml</id><title type="html">Inside a Troll</title><subtitle></subtitle><entry><title type="html">Lessons Learned Debugging: Part 9</title><link href="https://agenttroll.github.io/blog/2019/10/14/lessons-learned-debugging-part-9.html" rel="alternate" type="text/html" title="Lessons Learned Debugging: Part 9" /><published>2019-10-14T02:27:30-04:00</published><updated>2019-10-14T02:27:30-04:00</updated><id>https://agenttroll.github.io/blog/2019/10/14/lessons-learned-debugging-part-9</id><content type="html" xml:base="https://agenttroll.github.io/blog/2019/10/14/lessons-learned-debugging-part-9.html">&lt;p&gt;The problem I usually see with novice developers when they
 are debugging is that they test what their code is supposed
 to do, but they are suprised when their code works when it
 isn’t supposed to.&lt;/p&gt;
@@ -914,9 +914,10 @@ for more alternatives.&lt;/p&gt;
 &lt;h1 id=&quot;edit-2019-20-11-210125-1&quot;&gt;EDIT 2019-20-11 21:01:25:&lt;/h1&gt;
 
 &lt;p&gt;StartPage was &lt;a href=&quot;https://blog.privacytools.io/delisting-startpage/&quot;&gt;delisted&lt;/a&gt;
-privacytoolsIO and I can no longer recommend them in good
-conscience. I now personally use privacytoolsIO’s Searx
-instance, which can be found &lt;a href=&quot;https://search.privacytools.io/&quot;&gt;here&lt;/a&gt;.&lt;/p&gt;
+on privacytoolsIO and I can no longer recommend them in
+good conscience. I now personally use privacytoolsIO’s
+Searx instance, which can be found
+&lt;a href=&quot;https://search.privacytools.io/&quot;&gt;here&lt;/a&gt;.&lt;/p&gt;
 
 &lt;h4 id=&quot;deleting-accounts&quot;&gt;Deleting Accounts&lt;/h4&gt;
 
