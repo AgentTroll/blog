@@ -1,0 +1,401 @@
+<!DOCTYPE html>
+<html lang="en">
+
+  <head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <title>Lessons Learned Debugging: Part 11</title>
+  <meta name="description" content="I didn’t even realize that I haven’t written a post this year yet. Event handlers are key components of plugins because they are used as an entry point to mo...">
+
+  <link rel="stylesheet" href="/blog/assets/main.css">
+  <link rel="canonical" href="https://agenttroll.github.io/blog/2020/03/21/lessons-learned-debugging-part-11.html">
+  <link rel="alternate" type="application/rss+xml" title="Inside a Troll" href="/blog/feed.xml">
+  
+  
+</head>
+
+
+  <body>
+
+    <header class="site-header" role="banner">
+
+  <div class="wrapper">
+    
+    
+    <a class="site-title" href="/blog/">Inside a Troll</a>
+  
+    
+      <nav class="site-nav">
+        <input type="checkbox" id="nav-trigger" class="nav-trigger" />
+        <label for="nav-trigger">
+          <span class="menu-icon">
+            <svg viewBox="0 0 18 15" width="18px" height="15px">
+              <path fill="#424242" d="M18,1.484c0,0.82-0.665,1.484-1.484,1.484H1.484C0.665,2.969,0,2.304,0,1.484l0,0C0,0.665,0.665,0,1.484,0 h15.031C17.335,0,18,0.665,18,1.484L18,1.484z"/>
+              <path fill="#424242" d="M18,7.516C18,8.335,17.335,9,16.516,9H1.484C0.665,9,0,8.335,0,7.516l0,0c0-0.82,0.665-1.484,1.484-1.484 h15.031C17.335,6.031,18,6.696,18,7.516L18,7.516z"/>
+              <path fill="#424242" d="M18,13.516C18,14.335,17.335,15,16.516,15H1.484C0.665,15,0,14.335,0,13.516l0,0 c0-0.82,0.665-1.484,1.484-1.484h15.031C17.335,12.031,18,12.696,18,13.516L18,13.516z"/>
+            </svg>
+          </span>
+        </label>
+
+        <div class="trigger">
+          
+            
+            
+            <a class="page-link" href="/blog/about/">About</a>
+            
+          
+            
+            
+          
+            
+            
+          
+            
+            
+          
+        </div>
+      </nav>
+    
+  </div>
+</header>
+
+
+    <main class="page-content" aria-label="Content">
+      <div class="wrapper">
+        <article class="post" itemscope itemtype="http://schema.org/BlogPosting">
+
+  <header class="post-header">
+    <h1 class="post-title" itemprop="name headline">Lessons Learned Debugging: Part 11</h1>
+    <p class="post-meta">
+      <time datetime="2020-03-21T19:54:10-07:00" itemprop="datePublished">
+        
+        Mar 21, 2020
+      </time>
+      </p>
+  </header>
+
+  <div class="post-content" itemprop="articleBody">
+    <p>I didn’t even realize that I haven’t written a post this
+year yet. Event handlers are key components of plugins
+because they are used as an entry point to most plugin
+logic. Think of plugins like WorldGuard, minigame plugins
+and other game features like crates, quests etc. All of
+them use event handlers as an intrinsic component of their
+primary function. Yet, many plugin developers, even those
+who should know better, seem to write event handlers that
+break the functionality of other plugins or prevent other
+plugins from being able to listen to events.</p>
+
+<h1 id="event-handlers-should-play-nice">Event Handlers Should Play Nice</h1>
+
+<p>The source for a lot of misunderstanding about how event
+handlers work is the <a href="https://hub.spigotmc.org/javadocs/spigot/org/bukkit/event/EventHandler.html"><code class="highlighter-rouge">@EventHandler</code></a>
+annotation. The purpose of this annotation, first and
+foremost, is to mark methods which are to be called by the
+plugin manager when events are fired. Secondly, it provides
+to options: and <code class="highlighter-rouge">priority</code> and <code class="highlighter-rouge">ignoredCancelled</code>. While
+these options both have defaults, those defaults are not
+always correct. In fact, many developers don’t even know
+what they do or how changing them can impact other plugins.
+Let’s take a look at how using the <code class="highlighter-rouge">@EventHandler</code>
+annotation <em>correctly</em> can help plugins maintain
+compatibility with each other.</p>
+
+<h1 id="event-priorities">Event Priorities</h1>
+
+<p>The <code class="highlighter-rouge">priority</code> option allows developers to tell the plugin
+manager when, with respect to other plugin event handlers,
+they want the event handler to be called. This can be
+thought of as the server storing a list of event handlers
+to be called each time the appropriate event is being
+called. Changing the event priority can allow you to have
+your event handler called prior to other event handlers,
+or cede to other event handlers to be called first. This
+operates on a per-handler basis, meaning that the priority
+of event handlers allows them to be reordered with any
+other event handler, regardless of whether they belong to
+the same plugin or not.</p>
+
+<p>The first common misconception about event priority is that
+it allows you to detect an event earlier. This is false.
+Event handlers with different priorities receive events at
+the same time. For example, an event handler listening for
+<code class="highlighter-rouge">PlayerMoveEvent</code> will not receive <code class="highlighter-rouge">PlayerMoveEvent</code> any
+sooner or respond any faster to a player moving by changing
+the priority of the event. What changes with different
+priorities is the <em>order</em> that event listeners are called,
+<strong>not</strong> <em>when</em>. Ultimately, all events are called with
+something like the following line:</p>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">Bukkit</span><span class="o">.</span><span class="na">getPluginManager</span><span class="o">().</span><span class="na">callEvent</span><span class="o">(</span><span class="n">event</span><span class="o">)</span>
+</code></pre></div></div>
+
+<p>All event handlers are called by
+<code class="highlighter-rouge">PluginManager#callEvent(Event)</code>, so it doesn’t make any
+sense for an event to somehow be fired sooner by changing
+the event handler priority.</p>
+
+<p>The second common misconception about event priority is the
+order that event handlers are called with respect to their
+priority. Many novice developers believe that a
+<code class="highlighter-rouge">EventPriority.LOW</code> event handler is handled after
+<code class="highlighter-rouge">EventPriority.HIGH</code>, event handler. In fact, the opposite
+is true: higher priority events are called <em>later</em> than
+lower priority events. From the JavaDoc page:</p>
+
+<blockquote>
+  <p>First priority to the last priority executed:</p>
+
+  <ol>
+    <li>LOWEST</li>
+    <li>LOW</li>
+    <li>NORMAL</li>
+    <li>HIGH</li>
+    <li>HIGHEST</li>
+    <li>MONITOR</li>
+  </ol>
+</blockquote>
+
+<p>Registered events utilize an <code class="highlighter-rouge">ArrayList</code> to organize event
+handlers of the same priority, so two event handlers with
+<code class="highlighter-rouge">NORMAL</code> priority are executed in insertion order or the
+same order they were registered in.</p>
+
+<p>To understand why this is the case, we need to look at why
+you would even want to change your event priority in the
+first place.</p>
+
+<p>The purpose of a <code class="highlighter-rouge">HIGH</code> priority event handler is such that
+it has a greater precedence over what happens as a result
+of an event being fired. As such, it should fire later than
+a <code class="highlighter-rouge">LOW</code> priority event handler because it would be able to
+override anything that the <code class="highlighter-rouge">LOW</code> priority event handler
+does if it so wishes.</p>
+
+<p>The crux of many compatibility issues is event handlers
+being set to the wrong priority. One personal example is a
+plugin that creates mines that used an event handler set to
+<code class="highlighter-rouge">HIGHEST</code> priority to detect <code class="highlighter-rouge">BlockBreakEvent</code>s. While the
+developer might have thought this was a good idea since
+they might want to override any other plugin when it comes
+to preventing a block in the mine from being broken at
+certain times, this prevented me from being able to use
+<code class="highlighter-rouge">BlockBreakEvent</code> to change whether or not the event would
+be cancelled. There are a number of hacky workarounds to
+this (such as changing the event priority of the plugin or
+renaming your plugin jar file so your plugin loads later or
+incorrectly using the <code class="highlighter-rouge">MONITOR</code> priority), but the point
+still stands: using the wrong priority makes it difficult
+for other plugins to provide additional features and
+functionality.</p>
+
+<p>So what is the correct event priority to use? These are not
+hard and fast rules, obviously, but in general:</p>
+
+<ul>
+  <li>If you don’t know, leave it alone. The default priority
+  is <code class="highlighter-rouge">NORMAL</code>, which is the priority most event handlers
+  should use. This is a safe option regardless of what your
+  event handler does.</li>
+  <li>If you want other plugins to utilize your plugin’s
+  functionality as a principal feature use <code class="highlighter-rouge">LOW</code>. For
+  example, protection plugins should use this because
+  other plugins depend on whether or not an event is
+  allowed (that the event is not cancelled).</li>
+  <li>If you need to override the event handler of another
+  plugin, then it is acceptable to use <code class="highlighter-rouge">HIGH</code> priority</li>
+</ul>
+
+<p>If your plugin <strong>requires</strong> a certain priority for your
+event handler to function correctly on its own (i.e. not
+because some other plugin is being overridden), <strong>it is
+broken</strong>.</p>
+
+<p>Avoid using <code class="highlighter-rouge">HIGHEST</code> and <code class="highlighter-rouge">MONITOR</code> priorities, even if
+you know you are using them correctly. The purpose of a
+<code class="highlighter-rouge">MONITOR</code> event priority is for listeners that do not make
+any changes to the event, e.g. they don’t cancel or modify
+the event the handler listens for in any way. However, this
+precludes other plugins from checking for any state changes
+to your plugin as a result of an event because the
+<code class="highlighter-rouge">MONITOR</code> priority event handlers always run last. As I’ve
+already discussed, a <code class="highlighter-rouge">HIGHEST</code> priority event listener
+requires other event listeners to use <code class="highlighter-rouge">MONITOR</code> in order
+to override them or some other hack, which means that your
+plugin impedes other developers from writing correct,
+well-defined code.</p>
+
+<p>Now just to make sure we are all clear, when I say that
+something is incorrect, I don’t mean it is disallowed or
+that anything bad happens when you do something like
+mutate an event inside a <code class="highlighter-rouge">MONITOR</code> event handler. However,
+compatibility is based on plugins agreeing to follow the
+same “rules.” Breaking these rules without knowing what
+you are doing potentially causes other plugins which do
+follow these rules to break as well. This is why it is you
+responsibility to “play nice” with other plugins by using
+the correct event priorities.</p>
+
+<p>As a side note, I personally believe it is a mistake to use
+an enum as an event priority. Event handlers in different
+plugins can have many layers, even more than there are enum
+constants to use in the <code class="highlighter-rouge">EventPriority</code> enum. The standard
+way to implement priorities is through a numbering system,
+e.g. low priority events use 0 and high priority events use
+something like 100. This allows much wider range of event
+handlers to build off the functionality of other plugins.
+That being said, I do concede that these issues may still
+exist if developers use <code class="highlighter-rouge">Integer.MAX_VALUE</code>, for example,
+and that too many event handlers overriding each other
+generally are very fragile. Nonetheless, food for thought.</p>
+
+<h1 id="ignore-cancelled-events">Ignore Cancelled Events</h1>
+
+<p>Another commonly misused (actually unused would probably be
+more fitting) option is <code class="highlighter-rouge">ignoreCancelled</code>. The purpose of
+this annotation is for that event handlers to be skipped
+when the event is cancelled by some other event handler
+running before it. The default value of <code class="highlighter-rouge">ignoreCancelled</code>
+is <code class="highlighter-rouge">false</code>, meaning that the event handler runs regardless
+of whether the event has been cancelled or not. This is the
+source for some confusion as many people seem to suggest
+checking if an event is being cancelled by another plugin
+when <code class="highlighter-rouge">ignoreCancelled</code> is not specified. As a matter of
+fact, your event handler will run anyway if you do not
+explicitly use <code class="highlighter-rouge">ignoreCancelled = true</code>, so this advice is
+a waste of time at best.</p>
+
+<p>A great many event handlers lack this option when they
+should be using it. For example, event handlers that
+rely on player actions such as <code class="highlighter-rouge">BlockBreakEvent</code> or
+<code class="highlighter-rouge">PlayerInteractEvent</code> that lack <code class="highlighter-rouge">ignoreCancelled = true</code>
+are generally incorrect. These events are commonly
+cancelled by a variety of different plugins, especially
+protection plugins such as WorldGuard. This means that
+logic that should never ever be executed under any
+circumstances, such as spawning a boss inside someone
+else’s territory or land claim occurs even when a
+protection plugin has cancelled the event. This has been
+source of multiple bugs in my personal experience. This
+allows players the possibility of griefing the server and
+potentially throw the server economy into chaos if they
+are able to figure out how to exploit this incorrect
+behavior when it is not correctly handled by the plugin.</p>
+
+<p>The usefulness of <code class="highlighter-rouge">ignoreCancelled</code> comes from the fact
+that you can avoid running any extra logic from an event
+that is going to be cancelled (i.e. so that it seems that
+the event never even occurred in the first place). You can
+boost performance by a considerable amount simply through
+the reduction in the amount of logic being run on top of
+maintaining compatibility with other plugins.</p>
+
+<p>In my opinion, <code class="highlighter-rouge">ignoreCancelled = true</code> should be the
+default. You need a compelling reason to always run an
+event handler even when some other plugin has cancelled
+the event. For example, a logging plugin might not want
+to use <code class="highlighter-rouge">ignoreCancelled = true</code> if they want to log every
+action and the result of that action. Some events also
+cannot be cancelled, which is another reason why it might
+not be necessary to use <code class="highlighter-rouge">ignoreCancelled = true</code>.</p>
+
+<p>In general, prefer to use <code class="highlighter-rouge">ignoreCancelled = true</code>. Once
+you determine that your event handler actually does need to
+run even when the event is cancelled, then you can remove
+this option and use the default of <code class="highlighter-rouge">false</code>.</p>
+
+<h1 id="conclusion">Conclusion</h1>
+
+<p>This has been a pretty text and detail-heavy post, so I
+hope the justification behind the correct <code class="highlighter-rouge">@EventHandler</code>
+options to use is clear enough at this point. I’m still
+working on a few personal projects of mine so the next
+blog post probably won’t be out for another while since I’m
+trying to juggle school along with my own projects
+currently, and potentially some work in the near future if
+I find the time for that.</p>
+
+<p>While event priorities are not often the source for bugs,
+the lack of <code class="highlighter-rouge">ignoreCancelled</code> most definitely has caused a
+few major bugs. My personal opinion is that the latter of
+the two is not set to a sane default, so always make sure
+to <code class="highlighter-rouge">ignoreCancelled = true</code> first and think about it later,
+because it is much easier to debug an event handler that
+doesn’t run than it is to debug an event handler that is
+incorrectly written to handle an edge-case scenario that
+should have been cancelled.</p>
+
+<p>And once again, I leave with the following quote from
+<a href="http://spinroot.com/gerard/pdf/P10.pdf">The Power of Ten</a>:</p>
+
+<blockquote>
+  <p>If the rules seem Draconian at first, bear in mind that
+they are meant to make it possible to check code where very
+literally your life may depend on its correctness: code
+that is used to control the airplane that you fly on, the
+nuclear power plant a few miles from where you live, or the
+spacecraft that carries astronauts into orbit. The rules
+act like the seat-belt in your car: initially they are
+perhaps a little uncomfortable, but after a while their use
+becomes second-nature and not using them becomes
+unimaginable.</p>
+</blockquote>
+
+
+  </div>
+
+  
+</article>
+
+      </div>
+    </main>
+
+    <footer class="site-footer">
+
+  <div class="wrapper">
+
+    <h2 class="footer-heading">Inside a Troll</h2>
+
+    <div class="footer-col-wrapper">
+      <div class="footer-col footer-col-1">
+        <ul class="contact-list">
+          <li>
+            
+              Inside a Troll
+            
+            </li>
+            
+            <li><a href="mailto:caojohnny@protonmail.com">caojohnny@protonmail.com</a></li>
+            
+        </ul>
+      </div>
+
+      <div class="footer-col footer-col-2">
+        <ul class="social-media-list">
+          
+          <li>
+            <a href="https://github.com/AgentTroll"><span class="icon icon--github"><svg viewBox="0 0 16 16" width="16px" height="16px"><path fill="#828282" d="M7.999,0.431c-4.285,0-7.76,3.474-7.76,7.761 c0,3.428,2.223,6.337,5.307,7.363c0.388,0.071,0.53-0.168,0.53-0.374c0-0.184-0.007-0.672-0.01-1.32 c-2.159,0.469-2.614-1.04-2.614-1.04c-0.353-0.896-0.862-1.135-0.862-1.135c-0.705-0.481,0.053-0.472,0.053-0.472 c0.779,0.055,1.189,0.8,1.189,0.8c0.692,1.186,1.816,0.843,2.258,0.645c0.071-0.502,0.271-0.843,0.493-1.037 C4.86,11.425,3.049,10.76,3.049,7.786c0-0.847,0.302-1.54,0.799-2.082C3.768,5.507,3.501,4.718,3.924,3.65 c0,0,0.652-0.209,2.134,0.796C6.677,4.273,7.34,4.187,8,4.184c0.659,0.003,1.323,0.089,1.943,0.261 c1.482-1.004,2.132-0.796,2.132-0.796c0.423,1.068,0.157,1.857,0.077,2.054c0.497,0.542,0.798,1.235,0.798,2.082 c0,2.981-1.814,3.637-3.543,3.829c0.279,0.24,0.527,0.713,0.527,1.437c0,1.037-0.01,1.874-0.01,2.129 c0,0.208,0.14,0.449,0.534,0.373c3.081-1.028,5.302-3.935,5.302-7.362C15.76,3.906,12.285,0.431,7.999,0.431z"/></svg>
+</span><span class="username">AgentTroll</span></a>
+
+          </li>
+          
+
+          
+        </ul>
+      </div>
+
+      <div class="footer-col footer-col-3">
+        <p>Thoughts of a Java developer</p>
+      </div>
+    </div>
+
+  </div>
+
+</footer>
+
+
+  </body>
+
+</html>

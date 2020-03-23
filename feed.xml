@@ -1,4 +1,268 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.6.2">Jekyll</generator><link href="https://agenttroll.github.io/blog/feed.xml" rel="self" type="application/atom+xml" /><link href="https://agenttroll.github.io/blog/" rel="alternate" type="text/html" /><updated>2019-12-24T22:57:59-08:00</updated><id>https://agenttroll.github.io/blog/</id><title type="html">Inside a Troll</title><subtitle>Thoughts of a Java developer</subtitle><entry><title type="html">Lessons Learned Debugging: Part 10</title><link href="https://agenttroll.github.io/blog/2019/12/22/lessons-learned-debugging-part-10.html" rel="alternate" type="text/html" title="Lessons Learned Debugging: Part 10" /><published>2019-12-22T17:19:55-08:00</published><updated>2019-12-22T17:19:55-08:00</updated><id>https://agenttroll.github.io/blog/2019/12/22/lessons-learned-debugging-part-10</id><content type="html" xml:base="https://agenttroll.github.io/blog/2019/12/22/lessons-learned-debugging-part-10.html">&lt;p&gt;This is a follow-up of sorts to
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.6.2">Jekyll</generator><link href="https://agenttroll.github.io/blog/feed.xml" rel="self" type="application/atom+xml" /><link href="https://agenttroll.github.io/blog/" rel="alternate" type="text/html" /><updated>2020-03-23T00:16:37-07:00</updated><id>https://agenttroll.github.io/blog/</id><title type="html">Inside a Troll</title><subtitle>Thoughts of a Java developer</subtitle><entry><title type="html">Lessons Learned Debugging: Part 11</title><link href="https://agenttroll.github.io/blog/2020/03/21/lessons-learned-debugging-part-11.html" rel="alternate" type="text/html" title="Lessons Learned Debugging: Part 11" /><published>2020-03-21T19:54:10-07:00</published><updated>2020-03-21T19:54:10-07:00</updated><id>https://agenttroll.github.io/blog/2020/03/21/lessons-learned-debugging-part-11</id><content type="html" xml:base="https://agenttroll.github.io/blog/2020/03/21/lessons-learned-debugging-part-11.html">&lt;p&gt;I didn’t even realize that I haven’t written a post this
+year yet. Event handlers are key components of plugins
+because they are used as an entry point to most plugin
+logic. Think of plugins like WorldGuard, minigame plugins
+and other game features like crates, quests etc. All of
+them use event handlers as an intrinsic component of their
+primary function. Yet, many plugin developers, even those
+who should know better, seem to write event handlers that
+break the functionality of other plugins or prevent other
+plugins from being able to listen to events.&lt;/p&gt;
+
+&lt;h1 id=&quot;event-handlers-should-play-nice&quot;&gt;Event Handlers Should Play Nice&lt;/h1&gt;
+
+&lt;p&gt;The source for a lot of misunderstanding about how event
+handlers work is the &lt;a href=&quot;https://hub.spigotmc.org/javadocs/spigot/org/bukkit/event/EventHandler.html&quot;&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;@EventHandler&lt;/code&gt;&lt;/a&gt;
+annotation. The purpose of this annotation, first and
+foremost, is to mark methods which are to be called by the
+plugin manager when events are fired. Secondly, it provides
+to options: and &lt;code class=&quot;highlighter-rouge&quot;&gt;priority&lt;/code&gt; and &lt;code class=&quot;highlighter-rouge&quot;&gt;ignoredCancelled&lt;/code&gt;. While
+these options both have defaults, those defaults are not
+always correct. In fact, many developers don’t even know
+what they do or how changing them can impact other plugins.
+Let’s take a look at how using the &lt;code class=&quot;highlighter-rouge&quot;&gt;@EventHandler&lt;/code&gt;
+annotation &lt;em&gt;correctly&lt;/em&gt; can help plugins maintain
+compatibility with each other.&lt;/p&gt;
+
+&lt;h1 id=&quot;event-priorities&quot;&gt;Event Priorities&lt;/h1&gt;
+
+&lt;p&gt;The &lt;code class=&quot;highlighter-rouge&quot;&gt;priority&lt;/code&gt; option allows developers to tell the plugin
+manager when, with respect to other plugin event handlers,
+they want the event handler to be called. This can be
+thought of as the server storing a list of event handlers
+to be called each time the appropriate event is being
+called. Changing the event priority can allow you to have
+your event handler called prior to other event handlers,
+or cede to other event handlers to be called first. This
+operates on a per-handler basis, meaning that the priority
+of event handlers allows them to be reordered with any
+other event handler, regardless of whether they belong to
+the same plugin or not.&lt;/p&gt;
+
+&lt;p&gt;The first common misconception about event priority is that
+it allows you to detect an event earlier. This is false.
+Event handlers with different priorities receive events at
+the same time. For example, an event handler listening for
+&lt;code class=&quot;highlighter-rouge&quot;&gt;PlayerMoveEvent&lt;/code&gt; will not receive &lt;code class=&quot;highlighter-rouge&quot;&gt;PlayerMoveEvent&lt;/code&gt; any
+sooner or respond any faster to a player moving by changing
+the priority of the event. What changes with different
+priorities is the &lt;em&gt;order&lt;/em&gt; that event listeners are called,
+&lt;strong&gt;not&lt;/strong&gt; &lt;em&gt;when&lt;/em&gt;. Ultimately, all events are called with
+something like the following line:&lt;/p&gt;
+
+&lt;div class=&quot;language-java highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;n&quot;&gt;Bukkit&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;getPluginManager&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;().&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;callEvent&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;event&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;All event handlers are called by
+&lt;code class=&quot;highlighter-rouge&quot;&gt;PluginManager#callEvent(Event)&lt;/code&gt;, so it doesn’t make any
+sense for an event to somehow be fired sooner by changing
+the event handler priority.&lt;/p&gt;
+
+&lt;p&gt;The second common misconception about event priority is the
+order that event handlers are called with respect to their
+priority. Many novice developers believe that a
+&lt;code class=&quot;highlighter-rouge&quot;&gt;EventPriority.LOW&lt;/code&gt; event handler is handled after
+&lt;code class=&quot;highlighter-rouge&quot;&gt;EventPriority.HIGH&lt;/code&gt;, event handler. In fact, the opposite
+is true: higher priority events are called &lt;em&gt;later&lt;/em&gt; than
+lower priority events. From the JavaDoc page:&lt;/p&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;First priority to the last priority executed:&lt;/p&gt;
+
+  &lt;ol&gt;
+    &lt;li&gt;LOWEST&lt;/li&gt;
+    &lt;li&gt;LOW&lt;/li&gt;
+    &lt;li&gt;NORMAL&lt;/li&gt;
+    &lt;li&gt;HIGH&lt;/li&gt;
+    &lt;li&gt;HIGHEST&lt;/li&gt;
+    &lt;li&gt;MONITOR&lt;/li&gt;
+  &lt;/ol&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;Registered events utilize an &lt;code class=&quot;highlighter-rouge&quot;&gt;ArrayList&lt;/code&gt; to organize event
+handlers of the same priority, so two event handlers with
+&lt;code class=&quot;highlighter-rouge&quot;&gt;NORMAL&lt;/code&gt; priority are executed in insertion order or the
+same order they were registered in.&lt;/p&gt;
+
+&lt;p&gt;To understand why this is the case, we need to look at why
+you would even want to change your event priority in the
+first place.&lt;/p&gt;
+
+&lt;p&gt;The purpose of a &lt;code class=&quot;highlighter-rouge&quot;&gt;HIGH&lt;/code&gt; priority event handler is such that
+it has a greater precedence over what happens as a result
+of an event being fired. As such, it should fire later than
+a &lt;code class=&quot;highlighter-rouge&quot;&gt;LOW&lt;/code&gt; priority event handler because it would be able to
+override anything that the &lt;code class=&quot;highlighter-rouge&quot;&gt;LOW&lt;/code&gt; priority event handler
+does if it so wishes.&lt;/p&gt;
+
+&lt;p&gt;The crux of many compatibility issues is event handlers
+being set to the wrong priority. One personal example is a
+plugin that creates mines that used an event handler set to
+&lt;code class=&quot;highlighter-rouge&quot;&gt;HIGHEST&lt;/code&gt; priority to detect &lt;code class=&quot;highlighter-rouge&quot;&gt;BlockBreakEvent&lt;/code&gt;s. While the
+developer might have thought this was a good idea since
+they might want to override any other plugin when it comes
+to preventing a block in the mine from being broken at
+certain times, this prevented me from being able to use
+&lt;code class=&quot;highlighter-rouge&quot;&gt;BlockBreakEvent&lt;/code&gt; to change whether or not the event would
+be cancelled. There are a number of hacky workarounds to
+this (such as changing the event priority of the plugin or
+renaming your plugin jar file so your plugin loads later or
+incorrectly using the &lt;code class=&quot;highlighter-rouge&quot;&gt;MONITOR&lt;/code&gt; priority), but the point
+still stands: using the wrong priority makes it difficult
+for other plugins to provide additional features and
+functionality.&lt;/p&gt;
+
+&lt;p&gt;So what is the correct event priority to use? These are not
+hard and fast rules, obviously, but in general:&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;If you don’t know, leave it alone. The default priority
+  is &lt;code class=&quot;highlighter-rouge&quot;&gt;NORMAL&lt;/code&gt;, which is the priority most event handlers
+  should use. This is a safe option regardless of what your
+  event handler does.&lt;/li&gt;
+  &lt;li&gt;If you want other plugins to utilize your plugin’s
+  functionality as a principal feature use &lt;code class=&quot;highlighter-rouge&quot;&gt;LOW&lt;/code&gt;. For
+  example, protection plugins should use this because
+  other plugins depend on whether or not an event is
+  allowed (that the event is not cancelled).&lt;/li&gt;
+  &lt;li&gt;If you need to override the event handler of another
+  plugin, then it is acceptable to use &lt;code class=&quot;highlighter-rouge&quot;&gt;HIGH&lt;/code&gt; priority&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;If your plugin &lt;strong&gt;requires&lt;/strong&gt; a certain priority for your
+event handler to function correctly on its own (i.e. not
+because some other plugin is being overridden), &lt;strong&gt;it is
+broken&lt;/strong&gt;.&lt;/p&gt;
+
+&lt;p&gt;Avoid using &lt;code class=&quot;highlighter-rouge&quot;&gt;HIGHEST&lt;/code&gt; and &lt;code class=&quot;highlighter-rouge&quot;&gt;MONITOR&lt;/code&gt; priorities, even if
+you know you are using them correctly. The purpose of a
+&lt;code class=&quot;highlighter-rouge&quot;&gt;MONITOR&lt;/code&gt; event priority is for listeners that do not make
+any changes to the event, e.g. they don’t cancel or modify
+the event the handler listens for in any way. However, this
+precludes other plugins from checking for any state changes
+to your plugin as a result of an event because the
+&lt;code class=&quot;highlighter-rouge&quot;&gt;MONITOR&lt;/code&gt; priority event handlers always run last. As I’ve
+already discussed, a &lt;code class=&quot;highlighter-rouge&quot;&gt;HIGHEST&lt;/code&gt; priority event listener
+requires other event listeners to use &lt;code class=&quot;highlighter-rouge&quot;&gt;MONITOR&lt;/code&gt; in order
+to override them or some other hack, which means that your
+plugin impedes other developers from writing correct,
+well-defined code.&lt;/p&gt;
+
+&lt;p&gt;Now just to make sure we are all clear, when I say that
+something is incorrect, I don’t mean it is disallowed or
+that anything bad happens when you do something like
+mutate an event inside a &lt;code class=&quot;highlighter-rouge&quot;&gt;MONITOR&lt;/code&gt; event handler. However,
+compatibility is based on plugins agreeing to follow the
+same “rules.” Breaking these rules without knowing what
+you are doing potentially causes other plugins which do
+follow these rules to break as well. This is why it is you
+responsibility to “play nice” with other plugins by using
+the correct event priorities.&lt;/p&gt;
+
+&lt;p&gt;As a side note, I personally believe it is a mistake to use
+an enum as an event priority. Event handlers in different
+plugins can have many layers, even more than there are enum
+constants to use in the &lt;code class=&quot;highlighter-rouge&quot;&gt;EventPriority&lt;/code&gt; enum. The standard
+way to implement priorities is through a numbering system,
+e.g. low priority events use 0 and high priority events use
+something like 100. This allows much wider range of event
+handlers to build off the functionality of other plugins.
+That being said, I do concede that these issues may still
+exist if developers use &lt;code class=&quot;highlighter-rouge&quot;&gt;Integer.MAX_VALUE&lt;/code&gt;, for example,
+and that too many event handlers overriding each other
+generally are very fragile. Nonetheless, food for thought.&lt;/p&gt;
+
+&lt;h1 id=&quot;ignore-cancelled-events&quot;&gt;Ignore Cancelled Events&lt;/h1&gt;
+
+&lt;p&gt;Another commonly misused (actually unused would probably be
+more fitting) option is &lt;code class=&quot;highlighter-rouge&quot;&gt;ignoreCancelled&lt;/code&gt;. The purpose of
+this annotation is for that event handlers to be skipped
+when the event is cancelled by some other event handler
+running before it. The default value of &lt;code class=&quot;highlighter-rouge&quot;&gt;ignoreCancelled&lt;/code&gt;
+is &lt;code class=&quot;highlighter-rouge&quot;&gt;false&lt;/code&gt;, meaning that the event handler runs regardless
+of whether the event has been cancelled or not. This is the
+source for some confusion as many people seem to suggest
+checking if an event is being cancelled by another plugin
+when &lt;code class=&quot;highlighter-rouge&quot;&gt;ignoreCancelled&lt;/code&gt; is not specified. As a matter of
+fact, your event handler will run anyway if you do not
+explicitly use &lt;code class=&quot;highlighter-rouge&quot;&gt;ignoreCancelled = true&lt;/code&gt;, so this advice is
+a waste of time at best.&lt;/p&gt;
+
+&lt;p&gt;A great many event handlers lack this option when they
+should be using it. For example, event handlers that
+rely on player actions such as &lt;code class=&quot;highlighter-rouge&quot;&gt;BlockBreakEvent&lt;/code&gt; or
+&lt;code class=&quot;highlighter-rouge&quot;&gt;PlayerInteractEvent&lt;/code&gt; that lack &lt;code class=&quot;highlighter-rouge&quot;&gt;ignoreCancelled = true&lt;/code&gt;
+are generally incorrect. These events are commonly
+cancelled by a variety of different plugins, especially
+protection plugins such as WorldGuard. This means that
+logic that should never ever be executed under any
+circumstances, such as spawning a boss inside someone
+else’s territory or land claim occurs even when a
+protection plugin has cancelled the event. This has been
+source of multiple bugs in my personal experience. This
+allows players the possibility of griefing the server and
+potentially throw the server economy into chaos if they
+are able to figure out how to exploit this incorrect
+behavior when it is not correctly handled by the plugin.&lt;/p&gt;
+
+&lt;p&gt;The usefulness of &lt;code class=&quot;highlighter-rouge&quot;&gt;ignoreCancelled&lt;/code&gt; comes from the fact
+that you can avoid running any extra logic from an event
+that is going to be cancelled (i.e. so that it seems that
+the event never even occurred in the first place). You can
+boost performance by a considerable amount simply through
+the reduction in the amount of logic being run on top of
+maintaining compatibility with other plugins.&lt;/p&gt;
+
+&lt;p&gt;In my opinion, &lt;code class=&quot;highlighter-rouge&quot;&gt;ignoreCancelled = true&lt;/code&gt; should be the
+default. You need a compelling reason to always run an
+event handler even when some other plugin has cancelled
+the event. For example, a logging plugin might not want
+to use &lt;code class=&quot;highlighter-rouge&quot;&gt;ignoreCancelled = true&lt;/code&gt; if they want to log every
+action and the result of that action. Some events also
+cannot be cancelled, which is another reason why it might
+not be necessary to use &lt;code class=&quot;highlighter-rouge&quot;&gt;ignoreCancelled = true&lt;/code&gt;.&lt;/p&gt;
+
+&lt;p&gt;In general, prefer to use &lt;code class=&quot;highlighter-rouge&quot;&gt;ignoreCancelled = true&lt;/code&gt;. Once
+you determine that your event handler actually does need to
+run even when the event is cancelled, then you can remove
+this option and use the default of &lt;code class=&quot;highlighter-rouge&quot;&gt;false&lt;/code&gt;.&lt;/p&gt;
+
+&lt;h1 id=&quot;conclusion&quot;&gt;Conclusion&lt;/h1&gt;
+
+&lt;p&gt;This has been a pretty text and detail-heavy post, so I
+hope the justification behind the correct &lt;code class=&quot;highlighter-rouge&quot;&gt;@EventHandler&lt;/code&gt;
+options to use is clear enough at this point. I’m still
+working on a few personal projects of mine so the next
+blog post probably won’t be out for another while since I’m
+trying to juggle school along with my own projects
+currently, and potentially some work in the near future if
+I find the time for that.&lt;/p&gt;
+
+&lt;p&gt;While event priorities are not often the source for bugs,
+the lack of &lt;code class=&quot;highlighter-rouge&quot;&gt;ignoreCancelled&lt;/code&gt; most definitely has caused a
+few major bugs. My personal opinion is that the latter of
+the two is not set to a sane default, so always make sure
+to &lt;code class=&quot;highlighter-rouge&quot;&gt;ignoreCancelled = true&lt;/code&gt; first and think about it later,
+because it is much easier to debug an event handler that
+doesn’t run than it is to debug an event handler that is
+incorrectly written to handle an edge-case scenario that
+should have been cancelled.&lt;/p&gt;
+
+&lt;p&gt;And once again, I leave with the following quote from
+&lt;a href=&quot;http://spinroot.com/gerard/pdf/P10.pdf&quot;&gt;The Power of Ten&lt;/a&gt;:&lt;/p&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;If the rules seem Draconian at first, bear in mind that
+they are meant to make it possible to check code where very
+literally your life may depend on its correctness: code
+that is used to control the airplane that you fly on, the
+nuclear power plant a few miles from where you live, or the
+spacecraft that carries astronauts into orbit. The rules
+act like the seat-belt in your car: initially they are
+perhaps a little uncomfortable, but after a while their use
+becomes second-nature and not using them becomes
+unimaginable.&lt;/p&gt;
+&lt;/blockquote&gt;</content><author><name></name></author><summary type="html">I didn’t even realize that I haven’t written a post this year yet. Event handlers are key components of plugins because they are used as an entry point to most plugin logic. Think of plugins like WorldGuard, minigame plugins and other game features like crates, quests etc. All of them use event handlers as an intrinsic component of their primary function. Yet, many plugin developers, even those who should know better, seem to write event handlers that break the functionality of other plugins or prevent other plugins from being able to listen to events.</summary></entry><entry><title type="html">Lessons Learned Debugging: Part 10</title><link href="https://agenttroll.github.io/blog/2019/12/22/lessons-learned-debugging-part-10.html" rel="alternate" type="text/html" title="Lessons Learned Debugging: Part 10" /><published>2019-12-22T17:19:55-08:00</published><updated>2019-12-22T17:19:55-08:00</updated><id>https://agenttroll.github.io/blog/2019/12/22/lessons-learned-debugging-part-10</id><content type="html" xml:base="https://agenttroll.github.io/blog/2019/12/22/lessons-learned-debugging-part-10.html">&lt;p&gt;This is a follow-up of sorts to
 &lt;a href=&quot;https://agenttroll.github.io/blog/2019/07/13/lessons-learned-debugging-part-6.html&quot;&gt;Part 6&lt;/a&gt;
 of this series of posts. I felt that the topic of inventory
 management is so important for most servers that it is
@@ -2205,255 +2469,4 @@ wouldn’t be launching anything mission critical.&lt;/p&gt;
 
 &lt;p&gt;I’ll probably go back around to adding new posts in my
 “Lessons Learned Debugging” series for another long stretch
-until I figure out what other things to talk about.&lt;/p&gt;</content><author><name></name></author><summary type="html">Following up with my previous post about one of my prior projects, I have another post about yet another project that I’ve recently finished, pbft-java.</summary></entry><entry><title type="html">TLE - Tracking Satellites in Space</title><link href="https://agenttroll.github.io/blog/2019/06/22/tle-tracking-satellites-in-space.html" rel="alternate" type="text/html" title="TLE - Tracking Satellites in Space" /><published>2019-06-22T17:23:35-07:00</published><updated>2019-06-22T17:23:35-07:00</updated><id>https://agenttroll.github.io/blog/2019/06/22/tle-tracking-satellites-in-space</id><content type="html" xml:base="https://agenttroll.github.io/blog/2019/06/22/tle-tracking-satellites-in-space.html">&lt;p&gt;This is about my &lt;a href=&quot;https://github.com/AgentTroll/fate&quot;&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;fate&lt;/code&gt;&lt;/a&gt;
-project, something I finished in August of last year. I’ve
-been on a long journey with some other Java-related
-projects more recently, but I’d simply like the chance to
-go back to one of my most significant C projects I’ve ever
-written. I think it would also be a good chance to revisit
-what I learned in the process of writing &lt;code class=&quot;highlighter-rouge&quot;&gt;fate&lt;/code&gt; as well,
-because Tim Dodd of Everyday Astronaut posted a &lt;a href=&quot;https://youtu.be/kB-GKvdydho&quot;&gt;video
-recently&lt;/a&gt; that had some
-discussion about inclination and azimuth, and despite
-wrangling with that for weeks to understand how it worked,
-I still had to pause the video and think through what he
-had said.&lt;/p&gt;
-
-&lt;h1 id=&quot;high-level-overview&quot;&gt;High-level Overview&lt;/h1&gt;
-
-&lt;p&gt;The project is actually very simple on the surface, if you
-have the most recent TLE (more specifically 3LE) data, then
-you can input that into the command line and every second,
-some output will be printed to show you above what point
-the satellite is as well as where to point a telescope or
-your eyes to find the object in the sky.&lt;/p&gt;
-
-&lt;h1 id=&quot;what-is-tle&quot;&gt;What is TLE?&lt;/h1&gt;
-
-&lt;p&gt;TLE stands for two-line element set. You’ll actually notice
-that I use 3LE, which stands for 3-line element set, and it
-is &lt;em&gt;exactly&lt;/em&gt; the same, save for the fact that a 3LE set has
-an additional line at the top that states the name of the
-satellite. This is what a 3LE set looks like:&lt;/p&gt;
-
-&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;0 ISS (ZARYA)
-1 25544U 98067A   19174.05036204  .00001525  00000-0  33398-4 0  9995
-2 25544  51.6442 332.2030 0008185  74.7737  30.3832 15.51219884176168
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;A TLE set would just be the same thing but with the line
-starting with &lt;code class=&quot;highlighter-rouge&quot;&gt;0&lt;/code&gt; removed. For the purposes of
-making things easier to understand, I’ll primarily refer
-to both 3LE and TLE as just TLE.&lt;/p&gt;
-
-&lt;p&gt;The &lt;a href=&quot;https://en.wikipedia.org/wiki/Two-line_element_set&quot;&gt;Wikipedia page&lt;/a&gt;
-for TLE sets is actually surprisingly helpful and
-informative. The main gist is that TLE is a way of
-communicating the position and motion of a satellite
-orbiting the Earth in as few numbers as possible. TLE sets
-are readily available from &lt;a href=&quot;https://www.space-track.org/#/tle&quot;&gt;SpaceTrack.org’s TLE search
-page&lt;/a&gt;, and you can look
-for satellites in the &lt;a href=&quot;https://www.space-track.org/#/catalog&quot;&gt;satellite catalog&lt;/a&gt;.
-The U.S. Air Force 18th Space Control Squadron produces
-the TLE data sets by using a variety of sensing techniques
-and calculating the TLE set data for publication on the
-SpaceTrack website.&lt;/p&gt;
-
-&lt;p&gt;Here are some additional reading items you might find
-helpful:&lt;/p&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;&lt;a href=&quot;https://www.space-track.org/documentation#/faq&quot;&gt;FAQ page&lt;/a&gt;&lt;/li&gt;
-  &lt;li&gt;&lt;a href=&quot;https://www.space-track.org/documentation#tle&quot;&gt;TLE format&lt;/a&gt;&lt;/li&gt;
-  &lt;li&gt;&lt;a href=&quot;https://www.space-track.org/documentation#legend&quot;&gt;Terminology&lt;/a&gt;&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;h1 id=&quot;decoding-tle&quot;&gt;Decoding TLE&lt;/h1&gt;
-
-&lt;p&gt;It’s all well and good that we have the data in TLE format,
-but how can that data be translated into usable numbers
-that show us where to point a telescope for example?&lt;/p&gt;
-
-&lt;p&gt;The first step is to refer to
-&lt;a href=&quot;https://www.celestrak.com/NORAD/documentation/spacetrk.pdf&quot;&gt;SpaceTrack Report #3&lt;/a&gt;.
-I’ll let the author(s) summarize:&lt;/p&gt;
-
-&lt;blockquote&gt;
-  &lt;p&gt;The NORAD element sets [TLE sets] are “mean” values
-obtained by removing periodic variations in a particular
-way. In order to obtain good predictions, these periodic
-variations must be reconstructed (by the prediction model)
-in exactly the same way they were removed by NORAD. Hence,
-inputting NORAD element sets into a different model (even
-though the model may be more accurate or even a numerical
-integrator) will result in degraded predictions. The NORAD
-element sets must be used with one of the models described
-in this report in order to retain maximum prediction
-accuracy&lt;/p&gt;
-&lt;/blockquote&gt;
-
-&lt;p&gt;Essentially, the report lays out the mathematical models
-for reconstructing the orbit of a particular satellite
-from the data given by the TLE data set. Now there are
-5 different models that the report lays out, SGP, SGP4/8
-and SDP4/8. These are collectively known as “simplified
-perturbation models” and take into account atmospheric
-drag, gravitational drag caused by the Earth’s oblate
-shape, the Earth’s spin, and various other factors in order
-to predict the motion of the satellite over time.&lt;/p&gt;
-
-&lt;p&gt;Since my primary goal was to figure out the position of
-the International Space Station, I selected SGP4. As far as
-I am aware, SGP4 and SDP4 are the most commonly used
-models, this can be checked with the &lt;code class=&quot;highlighter-rouge&quot;&gt;MEAN_ELEMENT_THEORY&lt;/code&gt;
-entry for each satellite entry’s OMM data.&lt;/p&gt;
-
-&lt;p&gt;Translating all of the formulae into working C code was
-not super challenging. There is even working FORTRAN that
-I referred to whenever I was having trouble figuring out
-what the intent of a formula was. However, there are quite
-a few variable values that are missing as well as this
-part:&lt;/p&gt;
-
-&lt;blockquote&gt;
-  &lt;p&gt;Solve Kepler’s equation for (E + ω)&lt;/p&gt;
-&lt;/blockquote&gt;
-
-&lt;p&gt;and the changes made to the model with a perigee at
-different distances, which really confused me. That being
-said, combined with looking at the FORTRAN listings on
-SpaceTrack Report #3 as well as with the LizardTail website
-&lt;a href=&quot;https://www.lizard-tail.com/isana/tle/lib/sgp4.js&quot;&gt;source&lt;/a&gt;
-and the
-&lt;a href=&quot;https://www.celestrak.com/publications/AIAA/2006-6753/AIAA-2006-6753.pdf&quot;&gt;Revisiting Spacetrack Report #3&lt;/a&gt;
-code listings in the appendix, I was able to reconstruct
-the entire mathematical model in C code with most of the
-constants updated to the modern values. I don’t think it is
-entirely perfect, but the numbers it produces look pretty
-correct to me nonetheless.&lt;/p&gt;
-
-&lt;p&gt;Now if you ask me, I’d say that the finer details of the
-model itself aren’t actually that important. I can’t say
-for sure what the purpose of each and every calculation is.
-Again, the model takes into account the many different
-variables that affect the gravitational pull and drag
-experienced by a satellite, but that is as far as the
-extent of my knowledge about the perturbation models goes.&lt;/p&gt;
-
-&lt;p&gt;(Apologies to those readers who may have clicked on this to
-get an understanding of how the perturbation models work,
-that’s simply something I never even needed to know to
-implement the model in code. If anyone does understand, I’d
-love to learn)&lt;/p&gt;
-
-&lt;h1 id=&quot;conversion-between-coordinate-systems&quot;&gt;Conversion Between Coordinate Systems&lt;/h1&gt;
-
-&lt;p&gt;Now having implemented the SGP4 model, you might think that
-we can now extract the data we need. Not so. The SGP4 model
-produces 2 vectors, specifying the position and velocity
-(meters per second) of the satellite. &lt;code class=&quot;highlighter-rouge&quot;&gt;fate&lt;/code&gt; actually
-provides an additional 2 vectors called “unit orientation
-vectors.” These are used  to derive the position and
-velocity vectors.&lt;/p&gt;
-
-&lt;p&gt;The problem is that the reference frame for the
-position vector uses the ECI coordinate grid, which means
-that we get 3 values in X, Y, and Z. This doesn’t help me,
-because all I want to know is latitude and longitude to the
-ISS.&lt;/p&gt;
-
-&lt;p&gt;I won’t go into specifics, but these three articles are
-extremely informative and detailed, and even an idiot like
-myself was able to understand what is being discussed. I
-highly recommend reading the entirety of the following:&lt;/p&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;&lt;a href=&quot;https://www.celestrak.com/columns/v02n01/&quot;&gt;Orbital Coordinate Systems, Part I&lt;/a&gt;&lt;/li&gt;
-  &lt;li&gt;&lt;a href=&quot;https://www.celestrak.com/columns/v02n02/&quot;&gt;Orbital Coordinate Systems, Part II&lt;/a&gt;&lt;/li&gt;
-  &lt;li&gt;&lt;a href=&quot;https://www.celestrak.com/columns/v02n03/&quot;&gt;Orbital Coordinate Systems, Part III&lt;/a&gt;&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;As far as the high-level overview goes, it is worth taking
-a look at what ECI really is. ECI stands for
-“Earth-centered inertial,” Earth-centered meaning that the
-origin is at the center of the Earth and inertial meaning
-that it doesn’t move with the rotation of the Earth itself.&lt;/p&gt;
-
-&lt;p&gt;Calculating the look angle in azimuth rotation from true
-north and inclination angle from the horizon is relatively
-complex because you need to turn your own latitude and
-longitude into ECI coordinates as well and utilize some
-trigonometry to determine the angle created between the
-coordinates. Not so hard, right? Unfortunately, the
-complication comes from the fact that the Earth spins,
-causing a number of issues. Firstly, this means that the
-Earth is not a perfect sphere; it is in fact an oblate
-spheroid that bulges slightly at the equator. Because the
-standard latitude and longitude account for the ellipsoidal
-shape of the Earth, they are said to be geodetic. On the
-other hand, ECI considers the Earth as a perfect sphere.
-If that wasn’t enough, the Earth’s spin also means that
-your position is dependent on time.&lt;/p&gt;
-
-&lt;p&gt;In order to calculate everything, the current time is
-taken, and then converted to a single Julian date. This is
-then converted to Greenwich Mean Sidereal Time (GMST),
-which allows one to determine the rotation of the Earth
-without the fluctuations in a solar day. This solves the
-second problem, locating the observer taking into account
-the Earth’s rotation. Now, we can use trigonometry to
-convert from the geodetic latitude and longitude to the
-geocentric ECI coordinates. As a matter of fact, the
-implementation of this part
-&lt;a href=&quot;https://github.com/AgentTroll/fate/blob/70311dab1664ffa3278c4af0e3f8f96f859f9efc/eci.c#L12-L22&quot;&gt;the implementation&lt;/a&gt;
-looks deceptively simple. Now that we’ve solved both
-problems, we then have the coordinates of both the observer
-and the coordinates of the satellite in the same reference
-frame. Since both are in ECI coordinates, we can just use
-simple trigonometry to determine the angle which to point
-an instrument or the angle to look at in order to locate
-the satellite.&lt;/p&gt;
-
-&lt;p&gt;Calculating the position of the satellite above the Earth
-(called the sub-point) is a bit more simple. Essentially,
-we need to reverse the process of finding look angle and
-convert ECI into geodetic coordinates. Because longitude
-runs parallel to the Earth’s oblateness, we only need to
-factor in the current time in GMST to determine the Earth’s
-rotation. Then, we can compute the longitude with trig.
-To calculate geodetic latitude, we first calculate the
-geocentric latitude, which is rather straightforward trig.
-Since latitude is affected by the Earth’s oblateness, we
-then run a transformation which moves the angle closer
-and closer to geodetic latitude, until the diffence in
-improvement to the value becomes smaller than is worth
-calculating. This value is then close enough to the
-geodetic latitude to accept.&lt;/p&gt;
-
-&lt;h1 id=&quot;conclusion&quot;&gt;Conclusion&lt;/h1&gt;
-
-&lt;p&gt;This has only been a high-level overview of the
-calculations needed to convert the available data into a
-usable format, and then converting that format into
-something that is understandable, like geodetic latitude
-and longitude, and the look angles. I myself don’t even
-know all of the specifics. Working on this project was a
-fascinating insight into the work done by astrophysicists
-and mission planners to determine how to get satellites and
-rockets into the correct orbits, and not only that, but to
-track them and create models for the orbital mechanics that
-affect the motion of the satellites through space.&lt;/p&gt;
-
-&lt;p&gt;Not only do I not usually talk about the C language, but I
-didn’t really go into any specifics of it in this
-particular blog post. That being said, I did talk a little
-bit about astronomy and space, which are both topics that
-I’m very curious to learn more about. I’m sure that every
-one of us watched a rocket launch, watched Neil Armstrong
-take humanity’s first steps on another planet, or simply
-read the news about the Opportunity rover. I’m absolutely
-certain that others have been inspired by spaceflight and
-can relate to wanting to advance space exploration in the
-future, if not the present.&lt;/p&gt;
-
-&lt;p&gt;I, for one, certainly would like to.&lt;/p&gt;</content><author><name></name></author><summary type="html">This is about my fate project, something I finished in August of last year. I’ve been on a long journey with some other Java-related projects more recently, but I’d simply like the chance to go back to one of my most significant C projects I’ve ever written. I think it would also be a good chance to revisit what I learned in the process of writing fate as well, because Tim Dodd of Everyday Astronaut posted a video recently that had some discussion about inclination and azimuth, and despite wrangling with that for weeks to understand how it worked, I still had to pause the video and think through what he had said.</summary></entry></feed>
+until I figure out what other things to talk about.&lt;/p&gt;</content><author><name></name></author><summary type="html">Following up with my previous post about one of my prior projects, I have another post about yet another project that I’ve recently finished, pbft-java.</summary></entry></feed>
