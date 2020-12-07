@@ -1,87 +1,57 @@
 <!DOCTYPE html>
-<html lang="en">
-
-  <head>
+<html lang="en"><head>
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1"><!-- Begin Jekyll SEO tag v2.7.1 -->
+<title>Implementing PBFT in Java | Inside a Troll</title>
+<meta name="generator" content="Jekyll v4.1.1" />
+<meta property="og:title" content="Implementing PBFT in Java" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="Following up with my previous post about one of my prior projects, I have another post about yet another project that I’ve recently finished, pbft-java." />
+<meta property="og:description" content="Following up with my previous post about one of my prior projects, I have another post about yet another project that I’ve recently finished, pbft-java." />
+<link rel="canonical" href="https://agenttroll.github.io/blog/2019/06/23/implementing-pbft-in-java.html" />
+<meta property="og:url" content="https://agenttroll.github.io/blog/2019/06/23/implementing-pbft-in-java.html" />
+<meta property="og:site_name" content="Inside a Troll" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2019-06-23T20:23:35-04:00" />
+<meta name="twitter:card" content="summary" />
+<meta property="twitter:title" content="Implementing PBFT in Java" />
+<script type="application/ld+json">
+{"url":"https://agenttroll.github.io/blog/2019/06/23/implementing-pbft-in-java.html","headline":"Implementing PBFT in Java","dateModified":"2019-06-23T20:23:35-04:00","datePublished":"2019-06-23T20:23:35-04:00","description":"Following up with my previous post about one of my prior projects, I have another post about yet another project that I’ve recently finished, pbft-java.","mainEntityOfPage":{"@type":"WebPage","@id":"https://agenttroll.github.io/blog/2019/06/23/implementing-pbft-in-java.html"},"@type":"BlogPosting","@context":"https://schema.org"}</script>
+<!-- End Jekyll SEO tag -->
+<link rel="stylesheet" href="/blog/assets/main.css"><link type="application/atom+xml" rel="alternate" href="https://agenttroll.github.io/blog/feed.xml" title="Inside a Troll" /></head>
+<body><header class="site-header" role="banner">
 
-  <title>Implementing PBFT in Java</title>
-  <meta name="description" content="Following up with my previous post about one of my prior projects, I have another post about yet another project that I’ve recently finished, pbft-java.">
-
-  <link rel="stylesheet" href="/blog/assets/main.css">
-  <link rel="canonical" href="https://agenttroll.github.io/blog/2019/06/23/implementing-pbft-in-java.html">
-  <link rel="alternate" type="application/rss+xml" title="Inside a Troll" href="/blog/feed.xml">
-  
-  
-</head>
-
-
-  <body>
-
-    <header class="site-header" role="banner">
-
-  <div class="wrapper">
-    
-    
-    <a class="site-title" href="/blog/">Inside a Troll</a>
-  
-    
-      <nav class="site-nav">
+  <div class="wrapper"><a class="site-title" rel="author" href="/blog/">Inside a Troll</a><nav class="site-nav">
         <input type="checkbox" id="nav-trigger" class="nav-trigger" />
         <label for="nav-trigger">
           <span class="menu-icon">
             <svg viewBox="0 0 18 15" width="18px" height="15px">
-              <path fill="#424242" d="M18,1.484c0,0.82-0.665,1.484-1.484,1.484H1.484C0.665,2.969,0,2.304,0,1.484l0,0C0,0.665,0.665,0,1.484,0 h15.031C17.335,0,18,0.665,18,1.484L18,1.484z"/>
-              <path fill="#424242" d="M18,7.516C18,8.335,17.335,9,16.516,9H1.484C0.665,9,0,8.335,0,7.516l0,0c0-0.82,0.665-1.484,1.484-1.484 h15.031C17.335,6.031,18,6.696,18,7.516L18,7.516z"/>
-              <path fill="#424242" d="M18,13.516C18,14.335,17.335,15,16.516,15H1.484C0.665,15,0,14.335,0,13.516l0,0 c0-0.82,0.665-1.484,1.484-1.484h15.031C17.335,12.031,18,12.696,18,13.516L18,13.516z"/>
+              <path d="M18,1.484c0,0.82-0.665,1.484-1.484,1.484H1.484C0.665,2.969,0,2.304,0,1.484l0,0C0,0.665,0.665,0,1.484,0 h15.032C17.335,0,18,0.665,18,1.484L18,1.484z M18,7.516C18,8.335,17.335,9,16.516,9H1.484C0.665,9,0,8.335,0,7.516l0,0 c0-0.82,0.665-1.484,1.484-1.484h15.032C17.335,6.031,18,6.696,18,7.516L18,7.516z M18,13.516C18,14.335,17.335,15,16.516,15H1.484 C0.665,15,0,14.335,0,13.516l0,0c0-0.82,0.665-1.483,1.484-1.483h15.032C17.335,12.031,18,12.695,18,13.516L18,13.516z"/>
             </svg>
           </span>
         </label>
 
-        <div class="trigger">
-          
-            
-            
-            <a class="page-link" href="/blog/about/">About</a>
-            
-          
-            
-            
-          
-            
-            
-          
-            
-            
-          
-        </div>
-      </nav>
-    
-  </div>
+        <div class="trigger"><a class="page-link" href="/blog/about">About</a></div>
+      </nav></div>
 </header>
-
-
-    <main class="page-content" aria-label="Content">
+<main class="page-content" aria-label="Content">
       <div class="wrapper">
-        <article class="post" itemscope itemtype="http://schema.org/BlogPosting">
+        <article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
 
   <header class="post-header">
-    <h1 class="post-title" itemprop="name headline">Implementing PBFT in Java</h1>
+    <h1 class="post-title p-name" itemprop="name headline">Implementing PBFT in Java</h1>
     <p class="post-meta">
-      <time datetime="2019-06-23T17:23:35-07:00" itemprop="datePublished">
-        
-        Jun 23, 2019
-      </time>
-      </p>
+      <time class="dt-published" datetime="2019-06-23T20:23:35-04:00" itemprop="datePublished">Jun 23, 2019
+      </time></p>
   </header>
 
-  <div class="post-content" itemprop="articleBody">
+  <div class="post-content e-content" itemprop="articleBody">
     <p>Following up with my
 <a href="https://agenttroll.github.io/blog/2019/06/22/tle-tracking-satellites-in-space.html">previous post</a>
 about one of my prior projects, I have another post about
 yet another project that I’ve recently finished, 
-<a href="https://github.com/AgentTroll/pbft-java"><code class="highlighter-rouge">pbft-java</code></a>.</p>
+<a href="https://github.com/AgentTroll/pbft-java"><code class="language-plaintext highlighter-rouge">pbft-java</code></a>.</p>
 
 <h1 id="what-is-pbft">What is PBFT?</h1>
 
@@ -122,7 +92,7 @@ algorithm, and even then, I am still confused on whether or
 not I even got everything down correctly.</p>
 
 <p>For simplicity, I will refer to the configured fault 
-tolerance to be <code class="highlighter-rouge">f</code> as in the PBFT paper, the number of
+tolerance to be <code class="language-plaintext highlighter-rouge">f</code> as in the PBFT paper, the number of
 replicas that can have Byzantine faults while still 
 allowing a safe consensus to be reached.</p>
 
@@ -133,17 +103,17 @@ capability for one and the other, and the timeout.</p>
 <p>Requests are identified by their timestamp value, which 
 count up from 0 instead of using the actual system clock 
 since it is possible to send more than one message during 
-the time it takes for <code class="highlighter-rouge">System#currentTimeMillis()</code> to 
+the time it takes for <code class="language-plaintext highlighter-rouge">System#currentTimeMillis()</code> to 
 update its value.</p>
 
 <p>Once a REQUEST is sent to what is believed to be the 
-primary, users will call the <code class="highlighter-rouge">Client#checkTimeout()</code> method
+primary, users will call the <code class="language-plaintext highlighter-rouge">Client#checkTimeout()</code> method
 in a loop, which will check to make sure that a REPLY is 
 received within the configured timeout. If it isn’t, then a
 REQUEST is then multicasted to all replicas.</p>
 
 <p>The client continuously waits for a REPLY message from 
-replicas. As soon as it receives the <code class="highlighter-rouge">f + 1</code>th REPLY 
+replicas. As soon as it receives the <code class="language-plaintext highlighter-rouge">f + 1</code>th REPLY 
 message that matches a stored REPLY, then the result is
 accepted and the timer is stopped.</p>
 
@@ -189,7 +159,7 @@ primary assigns to it. The primary adds the multicasted
 PRE-PREPARE message to a new ticket for that REQUEST.</p>
 
 <blockquote>
-  <p>In <code class="highlighter-rouge">pbft-java</code>, I assume that the REQUEST message is 
+  <p>In <code class="language-plaintext highlighter-rouge">pbft-java</code>, I assume that the REQUEST message is 
 included with the PRE-PREPARE message to simplify the 
 encoding process. Users can decide whether or not to follow
 suit, they can always set the REQUEST to null and utilize 
@@ -212,10 +182,10 @@ these two conditions aren’t met, then the replica also
 ignores the message.</p>
 
 <blockquote>
-  <p>Digests are <code class="highlighter-rouge">byte[]</code> arrays in <code class="highlighter-rouge">pbft-java</code>. Additionally,
+  <p>Digests are <code class="language-plaintext highlighter-rouge">byte[]</code> arrays in <code class="language-plaintext highlighter-rouge">pbft-java</code>. Additionally,
 ticketing is used because messages could arrive 
 out-of-order, so I’m not sure if the PBFT paper specifies
-that I should check the <code class="highlighter-rouge">prepared</code> and <code class="highlighter-rouge">committed-local</code>
+that I should check the <code class="language-plaintext highlighter-rouge">prepared</code> and <code class="language-plaintext highlighter-rouge">committed-local</code>
 states every single time.</p>
 </blockquote>
 
@@ -224,8 +194,8 @@ creates a new ticket. It then adds the PRE-PREPARE message
 to the log, and multicasts a PREPARE message to all known 
 replicas, also adding that PREPARE message to the log.</p>
 
-<p>The replica will then attempt to check on the <code class="highlighter-rouge">prepared</code>
-and <code class="highlighter-rouge">committed-local</code> states, executing the response to 
+<p>The replica will then attempt to check on the <code class="language-plaintext highlighter-rouge">prepared</code>
+and <code class="language-plaintext highlighter-rouge">committed-local</code> states, executing the response to 
 those states as necessary. More on that below.</p>
 
 <h4 id="receiving-prepare">Receiving PREPARE</h4>
@@ -237,18 +207,18 @@ otherwise ignoring the message. It will create a new ticket
 if one does not exist already, and append the PREPARE to
 the log.</p>
 
-<p>The relevant condition is <code class="highlighter-rouge">prepared</code>. The ticket will scan
+<p>The relevant condition is <code class="language-plaintext highlighter-rouge">prepared</code>. The ticket will scan
 the messages added to the log for that ticket (again, the
 same view number and the same sequence number). When it
 hits a PRE-PREPARE, it will scan the log to check for
 matching PREPARE messages whose digests also match. If
-the scan hits the <code class="highlighter-rouge">2f</code>th matching PREPARE message, then
-the <code class="highlighter-rouge">prepared</code> state becomes true and the replica responds
+the scan hits the <code class="language-plaintext highlighter-rouge">2f</code>th matching PREPARE message, then
+the <code class="language-plaintext highlighter-rouge">prepared</code> state becomes true and the replica responds
 by multicasting a COMMIT message, adding the COMMIT to the
 log.</p>
 
-<p>The replica will then attempt to check on the <code class="highlighter-rouge">prepared</code>
-and <code class="highlighter-rouge">committed-local</code> states, executing the response to 
+<p>The replica will then attempt to check on the <code class="language-plaintext highlighter-rouge">prepared</code>
+and <code class="language-plaintext highlighter-rouge">committed-local</code> states, executing the response to 
 those states as necessary.</p>
 
 <h4 id="recieving-commit">Recieving COMMIT</h4>
@@ -260,19 +230,19 @@ otherwise ignoring the message. It will create a new ticket
 if one does not exist already, and append the COMMIT to
 the log.</p>
 
-<p>The relevant condition here is <code class="highlighter-rouge">committed-local</code>. If we
-know that the ticket has reached the <code class="highlighter-rouge">prepared</code> phase, we
+<p>The relevant condition here is <code class="language-plaintext highlighter-rouge">committed-local</code>. If we
+know that the ticket has reached the <code class="language-plaintext highlighter-rouge">prepared</code> phase, we
 don’t need to rescan to make sure this is true. The ticket
 then looks for matching COMMIT messages, and if it reaches
-the <code class="highlighter-rouge">2f + 1</code>th COMMIT, it will then execute the 
+the <code class="language-plaintext highlighter-rouge">2f + 1</code>th COMMIT, it will then execute the 
 operation found from the REQUEST message. A REPLY message 
 is sent back to the client with the result of the 
 operation, and the ticket is then moved to the cache in 
 case the same REQUEST is sent again. The client then stops
 the timer for that REQUEST, if available.</p>
 
-<p>The replica will then attempt to check on the <code class="highlighter-rouge">prepared</code>
-and <code class="highlighter-rouge">committed-local</code> states, executing the response to 
+<p>The replica will then attempt to check on the <code class="language-plaintext highlighter-rouge">prepared</code>
+and <code class="language-plaintext highlighter-rouge">committed-local</code> states, executing the response to 
 those states as necessary.</p>
 
 <p>If the sequence number is evenly divisible by some
@@ -282,7 +252,7 @@ CHECKPOINT message and add it to its log.</p>
 <h4 id="receiving-checkpoint">Receiving CHECKPOINT</h4>
 
 <p>When a replica receives a CHECKPOINT, it will add it to its
-log. If the log has <code class="highlighter-rouge">2f + 1</code> CHECKPOINT messages from
+log. If the log has <code class="language-plaintext highlighter-rouge">2f + 1</code> CHECKPOINT messages from
 itself and other replicas with the same sequence number as
 the one that was received, it will then perform a garbage
 collection by throwing away cached REPLY messages less than
@@ -292,7 +262,7 @@ checkpoint and the high water mark to the checkpoint plus
 the configured checkpoint interval.</p>
 
 <blockquote>
-  <p><code class="highlighter-rouge">pbft-java</code> organizes CHECKPOINT messages by the sequence
+  <p><code class="language-plaintext highlighter-rouge">pbft-java</code> organizes CHECKPOINT messages by the sequence
 number, but I <em>believe</em> that it should be based on any 
 CHECKPOINT with a sequence number greater than the given
 checkpoint to make it stable</p>
@@ -304,10 +274,10 @@ checkpoint to make it stable</p>
 a loop. If the timer expires, then the replica will skip 
 all the other timers and become “disgruntled.” It will then
 multicast a VIEW-CHANGE message to vote all replicas into
-view <code class="highlighter-rouge">v + 1</code>, where <code class="highlighter-rouge">v</code> represents the current view number.
+view <code class="language-plaintext highlighter-rouge">v + 1</code>, where <code class="language-plaintext highlighter-rouge">v</code> represents the current view number.
 The timeout will then double, and the timeout check loop 
 continues. If it times out again, the VIEW-CHANGE will then
-vote for <code class="highlighter-rouge">v + 2</code> and the time doubles yet again, and so on.
+vote for <code class="language-plaintext highlighter-rouge">v + 2</code> and the time doubles yet again, and so on.
 A disgruntled replica only accepts 3 messages: CHECKPOINT,
 VIEW-CHANGE, and NEW-VIEW. All other messages are ignored.</p>
 
@@ -315,22 +285,22 @@ VIEW-CHANGE, and NEW-VIEW. All other messages are ignored.</p>
   <p>The PBFT algorithm specifies that the timeout shouldn’t 
 double, but rather should increase by increments of the 
 original timeout, so instead of 1T -&gt; 2T -&gt; 4T, the paper
-specifies that it should be 1T -&gt; 2T -&gt; 3T if <code class="highlighter-rouge">T</code> 
+specifies that it should be 1T -&gt; 2T -&gt; 3T if <code class="language-plaintext highlighter-rouge">T</code> 
 represented the original timeout</p>
 </blockquote>
 
 <h4 id="receiving-view-change">Receiving VIEW-CHANGE</h4>
 
-<p>When the “new primary” (the primary for view <code class="highlighter-rouge">v + 1</code>)
+<p>When the “new primary” (the primary for view <code class="language-plaintext highlighter-rouge">v + 1</code>)
 receives a VIEW-CHANGE message, it will add it to its log.
-If there are <code class="highlighter-rouge">2f</code> VIEW-CHANGE messages in the log from
+If there are <code class="language-plaintext highlighter-rouge">2f</code> VIEW-CHANGE messages in the log from
 different replicas, then the new primary will then 
 multicast a NEW-VIEW message.</p>
 
 <blockquote>
   <p>Technically, a multitude of items aren’t supposed to be 
 included in the actual NEW-VIEW message, however, again,
-for encoding simplicity, <code class="highlighter-rouge">pbft-java</code> requires that the
+for encoding simplicity, <code class="language-plaintext highlighter-rouge">pbft-java</code> requires that the
 NEW-VIEW message includes the full checkpoint proofs as
 well as full PRE-PREPARE messages. If a more orthodox
 implementation is desired, users are encouraged to add
@@ -339,7 +309,7 @@ CHECKPOINTs.</p>
 </blockquote>
 
 <p>If the replica isn’t the “new primary,” it will also add
-the message to its log, but if it has <code class="highlighter-rouge">f + 1</code> VIEW-CHANGE
+the message to its log, but if it has <code class="language-plaintext highlighter-rouge">f + 1</code> VIEW-CHANGE
 messages in its log already from different replicas, then
 it will “bandwagon” and also multicast a VIEW-CHANGE for
 the new view as well.</p>
@@ -358,7 +328,7 @@ as if a checkpoint was proven by CHECKPOINT messages.</p>
 <p>The replica then looks through all of the PRE-PREPARE 
 messages, multicasting a corresponding PREPARE message
 for them once the digest is checked with one generated for
-the request. If the operation is <code class="highlighter-rouge">null</code>, then it is a no-op
+the request. If the operation is <code class="language-plaintext highlighter-rouge">null</code>, then it is a no-op
 and skipped. Both PRE-PREPARE and PREPARE messages are
 added to the log.</p>
 
@@ -398,15 +368,12 @@ wouldn’t be launching anything mission critical.</p>
 “Lessons Learned Debugging” series for another long stretch
 until I figure out what other things to talk about.</p>
 
-  </div>
-
-  
+  </div><a class="u-url" href="/blog/2019/06/23/implementing-pbft-in-java.html" hidden></a>
 </article>
 
       </div>
-    </main>
-
-    <footer class="site-footer">
+    </main><footer class="site-footer h-card">
+  <data class="u-url" href="/blog/"></data>
 
   <div class="wrapper">
 
@@ -415,41 +382,20 @@ until I figure out what other things to talk about.</p>
     <div class="footer-col-wrapper">
       <div class="footer-col footer-col-1">
         <ul class="contact-list">
-          <li>
-            
-              Inside a Troll
-            
-            </li>
-            
-            <li><a href="mailto:caojohnny@protonmail.com">caojohnny@protonmail.com</a></li>
-            
-        </ul>
+          <li class="p-name">Inside a Troll</li><li><a class="u-email" href="mailto:caojohnny@protonmail.com">caojohnny@protonmail.com</a></li></ul>
       </div>
 
-      <div class="footer-col footer-col-2">
-        <ul class="social-media-list">
-          
-          <li>
-            <a href="https://github.com/AgentTroll"><span class="icon icon--github"><svg viewBox="0 0 16 16" width="16px" height="16px"><path fill="#828282" d="M7.999,0.431c-4.285,0-7.76,3.474-7.76,7.761 c0,3.428,2.223,6.337,5.307,7.363c0.388,0.071,0.53-0.168,0.53-0.374c0-0.184-0.007-0.672-0.01-1.32 c-2.159,0.469-2.614-1.04-2.614-1.04c-0.353-0.896-0.862-1.135-0.862-1.135c-0.705-0.481,0.053-0.472,0.053-0.472 c0.779,0.055,1.189,0.8,1.189,0.8c0.692,1.186,1.816,0.843,2.258,0.645c0.071-0.502,0.271-0.843,0.493-1.037 C4.86,11.425,3.049,10.76,3.049,7.786c0-0.847,0.302-1.54,0.799-2.082C3.768,5.507,3.501,4.718,3.924,3.65 c0,0,0.652-0.209,2.134,0.796C6.677,4.273,7.34,4.187,8,4.184c0.659,0.003,1.323,0.089,1.943,0.261 c1.482-1.004,2.132-0.796,2.132-0.796c0.423,1.068,0.157,1.857,0.077,2.054c0.497,0.542,0.798,1.235,0.798,2.082 c0,2.981-1.814,3.637-3.543,3.829c0.279,0.24,0.527,0.713,0.527,1.437c0,1.037-0.01,1.874-0.01,2.129 c0,0.208,0.14,0.449,0.534,0.373c3.081-1.028,5.302-3.935,5.302-7.362C15.76,3.906,12.285,0.431,7.999,0.431z"/></svg>
-</span><span class="username">AgentTroll</span></a>
-
-          </li>
-          
-
-          
-        </ul>
-      </div>
+      <div class="footer-col footer-col-2"><ul class="social-media-list"><li><a href="https://github.com/AgentTroll"><svg class="svg-icon"><use xlink:href="/blog/assets/minima-social-icons.svg#github"></use></svg> <span class="username">AgentTroll</span></a></li></ul>
+</div>
 
       <div class="footer-col footer-col-3">
-        <p>Thoughts of a Java developer</p>
+        <p>Thoughts of a Java Developer</p>
       </div>
     </div>
 
   </div>
 
 </footer>
-
-
-  </body>
+</body>
 
 </html>

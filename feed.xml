@@ -1,4 +1,238 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.6.2">Jekyll</generator><link href="https://agenttroll.github.io/blog/feed.xml" rel="self" type="application/atom+xml" /><link href="https://agenttroll.github.io/blog/" rel="alternate" type="text/html" /><updated>2020-03-23T02:17:08-07:00</updated><id>https://agenttroll.github.io/blog/</id><title type="html">Inside a Troll</title><subtitle>Thoughts of a Java developer</subtitle><entry><title type="html">Lessons Learned Debugging: Part 11</title><link href="https://agenttroll.github.io/blog/2020/03/21/lessons-learned-debugging-part-11.html" rel="alternate" type="text/html" title="Lessons Learned Debugging: Part 11" /><published>2020-03-21T19:54:10-07:00</published><updated>2020-03-21T19:54:10-07:00</updated><id>https://agenttroll.github.io/blog/2020/03/21/lessons-learned-debugging-part-11</id><content type="html" xml:base="https://agenttroll.github.io/blog/2020/03/21/lessons-learned-debugging-part-11.html">&lt;p&gt;I didn’t even realize that I haven’t written a post this
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="4.1.1">Jekyll</generator><link href="https://agenttroll.github.io/blog/feed.xml" rel="self" type="application/atom+xml" /><link href="https://agenttroll.github.io/blog/" rel="alternate" type="text/html" /><updated>2020-12-06T20:09:59-05:00</updated><id>https://agenttroll.github.io/blog/feed.xml</id><title type="html">Inside a Troll</title><subtitle>Thoughts of a Java Developer</subtitle><entry><title type="html">How to be a Good Programmer</title><link href="https://agenttroll.github.io/blog/2020/11/10/how-to-write-good-code.html" rel="alternate" type="text/html" title="How to be a Good Programmer" /><published>2020-11-10T22:41:10-05:00</published><updated>2020-11-10T22:41:10-05:00</updated><id>https://agenttroll.github.io/blog/2020/11/10/how-to-write-good-code</id><content type="html" xml:base="https://agenttroll.github.io/blog/2020/11/10/how-to-write-good-code.html">&lt;p&gt;I’ve spent a lot of time roaming around programming forums
+and working with other developers. The way that many
+developers think about their code is in terms of
+objectives. How can I make this code be better? How can
+I make this code faster? How can I make it more readable?
+Don’t get me wrong - these are all good questions to ask.
+It is a &lt;strong&gt;good&lt;/strong&gt; thing to be concerned with objectives that
+your code fulfills.&lt;/p&gt;
+
+&lt;p&gt;The issue with problematic code is that the problem extends
+beyond just the code itself – those problems often stem
+from the programmer. The way that a programmer thinks and
+approaches problems drastically change the code they
+produce.&lt;/p&gt;
+
+&lt;p&gt;It is really easy to teach people how to fix bad code. It
+is much more difficult to teach them how to become a Good
+Programmer, to the point that most people don’t even
+bother. I don’t mean this as an insult to novice
+developers - in many ways, this is more of a problem with
+people answering questions on programming forums than
+anyone else. We are enamored with the age-old adage: give a
+man a fish, feed him for a day and all that. But the best
+solution we’ve come up with is telling people to “Look it
+up.” “Look at the documentation.” “Read this.” “Read that.”&lt;/p&gt;
+
+&lt;p&gt;Again, don’t get me wrong, it is a &lt;em&gt;good&lt;/em&gt; thing to be
+helpful. It is &lt;em&gt;good&lt;/em&gt; to give resources and to refer people
+who otherwise would not know how to approach
+problem-solving to search engines and the documentation.&lt;/p&gt;
+
+&lt;p&gt;However, this is a surface-level solution to a deeper
+problem. Novice developers don’t know how to be Good
+Programmers.&lt;/p&gt;
+
+&lt;h1 id=&quot;what-is-a-good-programmer&quot;&gt;What is a Good Programmer?&lt;/h1&gt;
+
+&lt;p&gt;Allow me to preface by describing what it means to &lt;em&gt;not&lt;/em&gt; be
+a Good Programmer.&lt;/p&gt;
+
+&lt;p&gt;&lt;em&gt;Not&lt;/em&gt; being a Good Programmer does not mean you are a Bad
+Programmer. But it can.&lt;/p&gt;
+
+&lt;p&gt;A Bad Programmer is unwilling to learn. A Bad Programmer is
+not open to new ideas. A Bad Programmer is resistant to
+critique.&lt;/p&gt;
+
+&lt;p&gt;If you are a Bad Programmer, you can safely close your
+browser tab. I can’t help you.&lt;/p&gt;
+
+&lt;p&gt;However, not all those who are &lt;em&gt;not&lt;/em&gt; Good Programmers are
+Bad Programmers. Novices and intermediate developers can
+become Good Programmers. Even accomplished career software
+engineers can become Good Programmers if they have not
+already.&lt;/p&gt;
+
+&lt;p&gt;Being a Good Programmer means that you are an effective
+thinker. It means you are an effective problem-solver. To
+be a successful developer, you should strive to be a Good
+Programmer.&lt;/p&gt;
+
+&lt;h1 id=&quot;why-is-it-important-to-be-a-good-programmer&quot;&gt;Why is it important to be a Good Programmer?&lt;/h1&gt;
+
+&lt;p&gt;A Good Programmer writes better code.&lt;/p&gt;
+
+&lt;p&gt;A Good Programmer writes fast code.&lt;/p&gt;
+
+&lt;p&gt;A Good Programmer writes less buggy code.&lt;/p&gt;
+
+&lt;p&gt;A Good Programmer is more employable.&lt;/p&gt;
+
+&lt;p&gt;A Good Programmer enjoys their work.&lt;/p&gt;
+
+&lt;h1 id=&quot;what-makes-a-good-programmer&quot;&gt;What makes a Good Programmer?&lt;/h1&gt;
+
+&lt;p&gt;Every item in this list is connected, in more ways than
+one.&lt;/p&gt;
+
+&lt;h4 id=&quot;1-a-good-programmer-does-not-follow-a-list-of-rules&quot;&gt;1. A Good Programmer does not follow a list of rules&lt;/h4&gt;
+
+&lt;p&gt;You do not become a Good Programmer by using a checklist to
+make sure you are doing every single action.&lt;/p&gt;
+
+&lt;h4 id=&quot;2-a-good-programmer-understands-context&quot;&gt;2. A Good Programmer understands context&lt;/h4&gt;
+
+&lt;p&gt;You do not become a Good Programmer if you constantly break
+rules that you are meant to follow.&lt;/p&gt;
+
+&lt;p&gt;This is not a list of rules. This is a list of precepts.
+These are things that are actions that are common amongst
+Good Programmers. A Good Programmer does not refer to this
+list every time they encounter a problem.&lt;/p&gt;
+
+&lt;h4 id=&quot;3-a-good-programmer-uses-rationale&quot;&gt;3. A Good Programmer uses rationale&lt;/h4&gt;
+
+&lt;p&gt;Understanding how things work and why they work improves
+your intution of why it is done.&lt;/p&gt;
+
+&lt;p&gt;If you understand why these precepts exist, you do not need
+to memorize them. You have the intuition that this is
+correct way to approach problem-solving.&lt;/p&gt;
+
+&lt;h4 id=&quot;4-a-good-programmer-understands-nuance&quot;&gt;4. A Good Programmer understands nuance&lt;/h4&gt;
+
+&lt;p&gt;Every rule or solution has an exception.&lt;/p&gt;
+
+&lt;p&gt;Many problems are more detailed than they initially appear.
+It is important to determine whether or not precepts can be
+applied in each scenario.&lt;/p&gt;
+
+&lt;h4 id=&quot;5-a-good-programmer-follows-good-practices&quot;&gt;5. A Good Programmer follows good practices&lt;/h4&gt;
+
+&lt;p&gt;You should remember good practices because they are robust
+ways to solve problems in most cases.&lt;/p&gt;
+
+&lt;p&gt;Good practices exist because Good Programmers understand
+the rationale for using them. Departing from good practices
+&lt;em&gt;requires&lt;/em&gt; you to justify that decision. It is harder to
+justify this departure than to simply use the default
+approach.&lt;/p&gt;
+
+&lt;h4 id=&quot;6-a-good-programmer-communicates-intent&quot;&gt;6. A Good Programmer communicates intent&lt;/h4&gt;
+
+&lt;p&gt;Code should communicate what it is &lt;em&gt;meant&lt;/em&gt; to do.&lt;/p&gt;
+
+&lt;p&gt;Expressive code is easier to read and review. Expressive
+code makes it harder to write buggy code.&lt;/p&gt;
+
+&lt;h4 id=&quot;7-a-good-programmer-understands-bugs&quot;&gt;7. A Good Programmer understands bugs&lt;/h4&gt;
+
+&lt;p&gt;It is important to understand &lt;em&gt;why&lt;/em&gt; the bug arose.&lt;/p&gt;
+
+&lt;p&gt;As the adage goes, debugging is the process of removing
+bugs from the code. Therefore, programming is the process
+of putting them in.&lt;/p&gt;
+
+&lt;p&gt;You are the source of all bugs. Therefore, you should
+understand what lead to &lt;em&gt;you&lt;/em&gt; to write buggy code.&lt;/p&gt;
+
+&lt;h4 id=&quot;8-a-good-programmer-notices-patterns&quot;&gt;8. A Good Programmer notices patterns&lt;/h4&gt;
+
+&lt;p&gt;Patterns are nearly never the result of pure coincidence.&lt;/p&gt;
+
+&lt;p&gt;There is a reason why patterns exist. It is easier to read
+code if you think about it in terms of patterns. Noticing
+patterns can help diagnose bugs.&lt;/p&gt;
+
+&lt;h4 id=&quot;9-a-good-programmer-is-perceptive&quot;&gt;9. A Good Programmer is perceptive&lt;/h4&gt;
+
+&lt;p&gt;Your understanding of the code and its behavior is based
+upon observation.&lt;/p&gt;
+
+&lt;p&gt;In order to understand the code or problems with the code,
+it is necessary to take note of the relevant details and
+collect more information as needed.&lt;/p&gt;
+
+&lt;h4 id=&quot;10-a-good-programmer-is-selective&quot;&gt;10. A Good Programmer is selective&lt;/h4&gt;
+
+&lt;p&gt;More importantly, you should be wary of considering
+irrelevant information and invalid solutions.&lt;/p&gt;
+
+&lt;p&gt;It is easier to reason about code when you are not bogged
+down with superfluous information and constructs.&lt;/p&gt;
+
+&lt;h4 id=&quot;11-a-good-programmer-fixes-high-level-issues-first&quot;&gt;11. A Good Programmer fixes high-level issues first&lt;/h4&gt;
+
+&lt;p&gt;Problems should be prioritized by their scope.&lt;/p&gt;
+
+&lt;p&gt;Lower-level problems are irrelevant if a wider issue
+exists. Fixing high-level problems lead to a greater
+overall benefit for the code.&lt;/p&gt;
+
+&lt;h4 id=&quot;12-a-good-programmer-selects-the-correct-tools&quot;&gt;12. A Good Programmer selects the correct tools&lt;/h4&gt;
+
+&lt;p&gt;You should know when and where to apply different methods
+and techniques.&lt;/p&gt;
+
+&lt;p&gt;The right tools make it easier to write good code. Good
+Programmers avoid using the wrong tools because they cause
+issues.&lt;/p&gt;
+
+&lt;h4 id=&quot;13-a-good-programmer-is-capable-of-cost-benefit-analysis&quot;&gt;13. A Good Programmer is capable of cost-benefit analysis&lt;/h4&gt;
+
+&lt;p&gt;No solution is free of flaws.&lt;/p&gt;
+
+&lt;p&gt;You should be able to evaluate and justify why the benefits
+of using one solution outweigh its costs and the benefits
+of the solutions you did not use.&lt;/p&gt;
+
+&lt;h4 id=&quot;14-a-good-programmer-sees-the-bigger-picture&quot;&gt;14. A Good Programmer sees the bigger picture&lt;/h4&gt;
+
+&lt;p&gt;Your code does not exist in a vacuum.&lt;/p&gt;
+
+&lt;p&gt;You should be able to understand the surrounding context.
+A Good Programmer puts their decisions and their code into
+perspective.&lt;/p&gt;
+
+&lt;h4 id=&quot;15-a-good-programmer-engineers-solutions&quot;&gt;15. A Good Programmer engineers solutions&lt;/h4&gt;
+
+&lt;p&gt;The engineering process is an effective way of solving
+problems.&lt;/p&gt;
+
+&lt;p&gt;You should be able to make realistic assumptions, design
+prototypes, test and verify your solutions and iterate.&lt;/p&gt;
+
+&lt;h4 id=&quot;16-a-good-programmer-builds-off-their-experiences&quot;&gt;16. A Good Programmer builds off their experiences&lt;/h4&gt;
+
+&lt;p&gt;Your experiences are your greatest asset.&lt;/p&gt;
+
+&lt;p&gt;A Good Programmer uses their experiences to inform their
+decisions.&lt;/p&gt;
+
+&lt;h4 id=&quot;17-a-good-programmer-sees-opportunities-to-learn-and-grow&quot;&gt;17. A Good Programmer sees opportunities to learn and grow&lt;/h4&gt;
+
+&lt;p&gt;You should be open to adding new experiences and adapting
+yourself to critique.&lt;/p&gt;
+
+&lt;p&gt;A Good Programmer is never satisfied with their own level
+of knowledge. They continually seek further knowledge and
+feedback.&lt;/p&gt;
+
+&lt;h1 id=&quot;conclusion&quot;&gt;Conclusion&lt;/h1&gt;
+
+&lt;p&gt;These precepts are not all that make a Good Programmer.
+Learning how to apply these precepts requires experience,
+and most importantly, time.&lt;/p&gt;
+
+&lt;p&gt;These are only some of the examples of what many novice
+developers commonly miss, but it is not an exhaustive list.
+Luckily, it was never meant to be.&lt;/p&gt;
+
+&lt;p&gt;Keep these at the back of your mind. Take a look at it
+every once in a while. You have already started on the path
+to becoming a Good Programmer just by thinking beyond just
+the code itself.&lt;/p&gt;</content><author><name></name></author><summary type="html">I’ve spent a lot of time roaming around programming forums and working with other developers. The way that many developers think about their code is in terms of objectives. How can I make this code be better? How can I make this code faster? How can I make it more readable? Don’t get me wrong - these are all good questions to ask. It is a good thing to be concerned with objectives that your code fulfills.</summary></entry><entry><title type="html">Lessons Learned Debugging: Part 11</title><link href="https://agenttroll.github.io/blog/2020/03/21/lessons-learned-debugging-part-11.html" rel="alternate" type="text/html" title="Lessons Learned Debugging: Part 11" /><published>2020-03-21T22:54:10-04:00</published><updated>2020-03-21T22:54:10-04:00</updated><id>https://agenttroll.github.io/blog/2020/03/21/lessons-learned-debugging-part-11</id><content type="html" xml:base="https://agenttroll.github.io/blog/2020/03/21/lessons-learned-debugging-part-11.html">&lt;p&gt;I didn’t even realize that I haven’t written a post this
 year yet. Event handlers are key components of plugins
 because they are used as an entry point to most plugin
 logic. Think of plugins like WorldGuard, minigame plugins
@@ -12,21 +246,21 @@ plugins from being able to listen to events.&lt;/p&gt;
 &lt;h1 id=&quot;event-handlers-should-play-nice&quot;&gt;Event Handlers Should Play Nice&lt;/h1&gt;
 
 &lt;p&gt;The source for a lot of misunderstanding about how event
-handlers work is the &lt;a href=&quot;https://hub.spigotmc.org/javadocs/spigot/org/bukkit/event/EventHandler.html&quot;&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;@EventHandler&lt;/code&gt;&lt;/a&gt;
+handlers work is the &lt;a href=&quot;https://hub.spigotmc.org/javadocs/spigot/org/bukkit/event/EventHandler.html&quot;&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;@EventHandler&lt;/code&gt;&lt;/a&gt;
 annotation. The purpose of this annotation, first and
 foremost, is to mark methods which are to be called by the
 plugin manager when events are fired. Secondly, it provides
-to options: and &lt;code class=&quot;highlighter-rouge&quot;&gt;priority&lt;/code&gt; and &lt;code class=&quot;highlighter-rouge&quot;&gt;ignoredCancelled&lt;/code&gt;. While
+to options: and &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;priority&lt;/code&gt; and &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;ignoredCancelled&lt;/code&gt;. While
 these options both have defaults, those defaults are not
 always correct. In fact, many developers don’t even know
 what they do or how changing them can impact other plugins.
-Let’s take a look at how using the &lt;code class=&quot;highlighter-rouge&quot;&gt;@EventHandler&lt;/code&gt;
+Let’s take a look at how using the &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;@EventHandler&lt;/code&gt;
 annotation &lt;em&gt;correctly&lt;/em&gt; can help plugins maintain
 compatibility with each other.&lt;/p&gt;
 
 &lt;h1 id=&quot;event-priorities&quot;&gt;Event Priorities&lt;/h1&gt;
 
-&lt;p&gt;The &lt;code class=&quot;highlighter-rouge&quot;&gt;priority&lt;/code&gt; option allows developers to tell the plugin
+&lt;p&gt;The &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;priority&lt;/code&gt; option allows developers to tell the plugin
 manager when, with respect to other plugin event handlers,
 they want the event handler to be called. This can be
 thought of as the server storing a list of event handlers
@@ -43,26 +277,26 @@ the same plugin or not.&lt;/p&gt;
 it allows you to detect an event earlier. This is false.
 Event handlers with different priorities receive events at
 the same time. For example, an event handler listening for
-&lt;code class=&quot;highlighter-rouge&quot;&gt;PlayerMoveEvent&lt;/code&gt; will not receive &lt;code class=&quot;highlighter-rouge&quot;&gt;PlayerMoveEvent&lt;/code&gt; any
+&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;PlayerMoveEvent&lt;/code&gt; will not receive &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;PlayerMoveEvent&lt;/code&gt; any
 sooner or respond any faster to a player moving by changing
 the priority of the event. What changes with different
 priorities is the &lt;em&gt;order&lt;/em&gt; that event listeners are called,
 &lt;strong&gt;not&lt;/strong&gt; &lt;em&gt;when&lt;/em&gt;. Ultimately, all events are called with
 something like the following line:&lt;/p&gt;
 
-&lt;div class=&quot;language-java highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;n&quot;&gt;Bukkit&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;getPluginManager&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;().&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;callEvent&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;event&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;
+&lt;div class=&quot;language-java highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;nc&quot;&gt;Bukkit&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;getPluginManager&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;().&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;callEvent&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;event&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
 
 &lt;p&gt;All event handlers are called by
-&lt;code class=&quot;highlighter-rouge&quot;&gt;PluginManager#callEvent(Event)&lt;/code&gt;, so it doesn’t make any
+&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;PluginManager#callEvent(Event)&lt;/code&gt;, so it doesn’t make any
 sense for an event to somehow be fired sooner by changing
 the event handler priority.&lt;/p&gt;
 
 &lt;p&gt;The second common misconception about event priority is the
 order that event handlers are called with respect to their
 priority. Many novice developers believe that a
-&lt;code class=&quot;highlighter-rouge&quot;&gt;EventPriority.LOW&lt;/code&gt; event handler is handled after
-&lt;code class=&quot;highlighter-rouge&quot;&gt;EventPriority.HIGH&lt;/code&gt;, event handler. In fact, the opposite
+&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;EventPriority.LOW&lt;/code&gt; event handler is handled after
+&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;EventPriority.HIGH&lt;/code&gt;, event handler. In fact, the opposite
 is true: higher priority events are called &lt;em&gt;later&lt;/em&gt; than
 lower priority events. From the JavaDoc page:&lt;/p&gt;
 
@@ -79,35 +313,35 @@ lower priority events. From the JavaDoc page:&lt;/p&gt;
   &lt;/ol&gt;
 &lt;/blockquote&gt;
 
-&lt;p&gt;Registered events utilize an &lt;code class=&quot;highlighter-rouge&quot;&gt;ArrayList&lt;/code&gt; to organize event
+&lt;p&gt;Registered events utilize an &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;ArrayList&lt;/code&gt; to organize event
 handlers of the same priority, so two event handlers with
-&lt;code class=&quot;highlighter-rouge&quot;&gt;NORMAL&lt;/code&gt; priority are executed in insertion order or the
+&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;NORMAL&lt;/code&gt; priority are executed in insertion order or the
 same order they were registered in.&lt;/p&gt;
 
 &lt;p&gt;To understand why this is the case, we need to look at why
 you would even want to change your event priority in the
 first place.&lt;/p&gt;
 
-&lt;p&gt;The purpose of a &lt;code class=&quot;highlighter-rouge&quot;&gt;HIGH&lt;/code&gt; priority event handler is such that
+&lt;p&gt;The purpose of a &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;HIGH&lt;/code&gt; priority event handler is such that
 it has a greater precedence over what happens as a result
 of an event being fired. As such, it should fire later than
-a &lt;code class=&quot;highlighter-rouge&quot;&gt;LOW&lt;/code&gt; priority event handler because it would be able to
-override anything that the &lt;code class=&quot;highlighter-rouge&quot;&gt;LOW&lt;/code&gt; priority event handler
+a &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;LOW&lt;/code&gt; priority event handler because it would be able to
+override anything that the &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;LOW&lt;/code&gt; priority event handler
 does if it so wishes.&lt;/p&gt;
 
 &lt;p&gt;The crux of many compatibility issues is event handlers
 being set to the wrong priority. One personal example is a
 plugin that creates mines that used an event handler set to
-&lt;code class=&quot;highlighter-rouge&quot;&gt;HIGHEST&lt;/code&gt; priority to detect &lt;code class=&quot;highlighter-rouge&quot;&gt;BlockBreakEvent&lt;/code&gt;s. While the
+&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;HIGHEST&lt;/code&gt; priority to detect &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;BlockBreakEvent&lt;/code&gt;s. While the
 developer might have thought this was a good idea since
 they might want to override any other plugin when it comes
 to preventing a block in the mine from being broken at
 certain times, this prevented me from being able to use
-&lt;code class=&quot;highlighter-rouge&quot;&gt;BlockBreakEvent&lt;/code&gt; to change whether or not the event would
+&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;BlockBreakEvent&lt;/code&gt; to change whether or not the event would
 be cancelled. There are a number of hacky workarounds to
 this (such as changing the event priority of the plugin or
 renaming your plugin jar file so your plugin loads later or
-incorrectly using the &lt;code class=&quot;highlighter-rouge&quot;&gt;MONITOR&lt;/code&gt; priority), but the point
+incorrectly using the &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;MONITOR&lt;/code&gt; priority), but the point
 still stands: using the wrong priority makes it difficult
 for other plugins to provide additional features and
 functionality.&lt;/p&gt;
@@ -117,16 +351,16 @@ hard and fast rules, obviously, but in general:&lt;/p&gt;
 
 &lt;ul&gt;
   &lt;li&gt;If you don’t know, leave it alone. The default priority
-  is &lt;code class=&quot;highlighter-rouge&quot;&gt;NORMAL&lt;/code&gt;, which is the priority most event handlers
+  is &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;NORMAL&lt;/code&gt;, which is the priority most event handlers
   should use. This is a safe option regardless of what your
   event handler does.&lt;/li&gt;
   &lt;li&gt;If you want other plugins to utilize your plugin’s
-  functionality as a principal feature use &lt;code class=&quot;highlighter-rouge&quot;&gt;LOW&lt;/code&gt;. For
+  functionality as a principal feature use &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;LOW&lt;/code&gt;. For
   example, protection plugins should use this because
   other plugins depend on whether or not an event is
   allowed (that the event is not cancelled).&lt;/li&gt;
   &lt;li&gt;If you need to override the event handler of another
-  plugin, then it is acceptable to use &lt;code class=&quot;highlighter-rouge&quot;&gt;HIGH&lt;/code&gt; priority&lt;/li&gt;
+  plugin, then it is acceptable to use &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;HIGH&lt;/code&gt; priority&lt;/li&gt;
 &lt;/ul&gt;
 
 &lt;p&gt;If your plugin &lt;strong&gt;requires&lt;/strong&gt; a certain priority for your
@@ -134,16 +368,16 @@ event handler to function correctly on its own (i.e. not
 because some other plugin is being overridden), &lt;strong&gt;it is
 broken&lt;/strong&gt;.&lt;/p&gt;
 
-&lt;p&gt;Avoid using &lt;code class=&quot;highlighter-rouge&quot;&gt;HIGHEST&lt;/code&gt; and &lt;code class=&quot;highlighter-rouge&quot;&gt;MONITOR&lt;/code&gt; priorities, even if
+&lt;p&gt;Avoid using &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;HIGHEST&lt;/code&gt; and &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;MONITOR&lt;/code&gt; priorities, even if
 you know you are using them correctly. The purpose of a
-&lt;code class=&quot;highlighter-rouge&quot;&gt;MONITOR&lt;/code&gt; event priority is for listeners that do not make
+&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;MONITOR&lt;/code&gt; event priority is for listeners that do not make
 any changes to the event, e.g. they don’t cancel or modify
 the event the handler listens for in any way. However, this
 precludes other plugins from checking for any state changes
 to your plugin as a result of an event because the
-&lt;code class=&quot;highlighter-rouge&quot;&gt;MONITOR&lt;/code&gt; priority event handlers always run last. As I’ve
-already discussed, a &lt;code class=&quot;highlighter-rouge&quot;&gt;HIGHEST&lt;/code&gt; priority event listener
-requires other event listeners to use &lt;code class=&quot;highlighter-rouge&quot;&gt;MONITOR&lt;/code&gt; in order
+&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;MONITOR&lt;/code&gt; priority event handlers always run last. As I’ve
+already discussed, a &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;HIGHEST&lt;/code&gt; priority event listener
+requires other event listeners to use &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;MONITOR&lt;/code&gt; in order
 to override them or some other hack, which means that your
 plugin impedes other developers from writing correct,
 well-defined code.&lt;/p&gt;
@@ -151,7 +385,7 @@ well-defined code.&lt;/p&gt;
 &lt;p&gt;Now just to make sure we are all clear, when I say that
 something is incorrect, I don’t mean it is disallowed or
 that anything bad happens when you do something like
-mutate an event inside a &lt;code class=&quot;highlighter-rouge&quot;&gt;MONITOR&lt;/code&gt; event handler. However,
+mutate an event inside a &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;MONITOR&lt;/code&gt; event handler. However,
 compatibility is based on plugins agreeing to follow the
 same “rules.” Breaking these rules without knowing what
 you are doing potentially causes other plugins which do
@@ -162,36 +396,36 @@ the correct event priorities.&lt;/p&gt;
 &lt;p&gt;As a side note, I personally believe it is a mistake to use
 an enum as an event priority. Event handlers in different
 plugins can have many layers, even more than there are enum
-constants to use in the &lt;code class=&quot;highlighter-rouge&quot;&gt;EventPriority&lt;/code&gt; enum. The standard
+constants to use in the &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;EventPriority&lt;/code&gt; enum. The standard
 way to implement priorities is through a numbering system,
 e.g. low priority events use 0 and high priority events use
 something like 100. This allows much wider range of event
 handlers to build off the functionality of other plugins.
 That being said, I do concede that these issues may still
-exist if developers use &lt;code class=&quot;highlighter-rouge&quot;&gt;Integer.MAX_VALUE&lt;/code&gt;, for example,
+exist if developers use &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Integer.MAX_VALUE&lt;/code&gt;, for example,
 and that too many event handlers overriding each other
 generally are very fragile. Nonetheless, food for thought.&lt;/p&gt;
 
 &lt;h1 id=&quot;ignore-cancelled-events&quot;&gt;Ignore Cancelled Events&lt;/h1&gt;
 
 &lt;p&gt;Another commonly misused (actually unused would probably be
-more fitting) option is &lt;code class=&quot;highlighter-rouge&quot;&gt;ignoreCancelled&lt;/code&gt;. The purpose of
+more fitting) option is &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;ignoreCancelled&lt;/code&gt;. The purpose of
 this annotation is for that event handlers to be skipped
 when the event is cancelled by some other event handler
-running before it. The default value of &lt;code class=&quot;highlighter-rouge&quot;&gt;ignoreCancelled&lt;/code&gt;
-is &lt;code class=&quot;highlighter-rouge&quot;&gt;false&lt;/code&gt;, meaning that the event handler runs regardless
+running before it. The default value of &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;ignoreCancelled&lt;/code&gt;
+is &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;false&lt;/code&gt;, meaning that the event handler runs regardless
 of whether the event has been cancelled or not. This is the
 source for some confusion as many people seem to suggest
 checking if an event is being cancelled by another plugin
-when &lt;code class=&quot;highlighter-rouge&quot;&gt;ignoreCancelled&lt;/code&gt; is not specified. As a matter of
+when &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;ignoreCancelled&lt;/code&gt; is not specified. As a matter of
 fact, your event handler will run anyway if you do not
-explicitly use &lt;code class=&quot;highlighter-rouge&quot;&gt;ignoreCancelled = true&lt;/code&gt;, so this advice is
+explicitly use &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;ignoreCancelled = true&lt;/code&gt;, so this advice is
 a waste of time at best.&lt;/p&gt;
 
 &lt;p&gt;A great many event handlers lack this option when they
 should be using it. For example, event handlers that
-rely on player actions such as &lt;code class=&quot;highlighter-rouge&quot;&gt;BlockBreakEvent&lt;/code&gt; or
-&lt;code class=&quot;highlighter-rouge&quot;&gt;PlayerInteractEvent&lt;/code&gt; that lack &lt;code class=&quot;highlighter-rouge&quot;&gt;ignoreCancelled = true&lt;/code&gt;
+rely on player actions such as &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;BlockBreakEvent&lt;/code&gt; or
+&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;PlayerInteractEvent&lt;/code&gt; that lack &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;ignoreCancelled = true&lt;/code&gt;
 are generally incorrect. These events are commonly
 cancelled by a variety of different plugins, especially
 protection plugins such as WorldGuard. This means that
@@ -205,7 +439,7 @@ potentially throw the server economy into chaos if they
 are able to figure out how to exploit this incorrect
 behavior when it is not correctly handled by the plugin.&lt;/p&gt;
 
-&lt;p&gt;The usefulness of &lt;code class=&quot;highlighter-rouge&quot;&gt;ignoreCancelled&lt;/code&gt; comes from the fact
+&lt;p&gt;The usefulness of &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;ignoreCancelled&lt;/code&gt; comes from the fact
 that you can avoid running any extra logic from an event
 that is going to be cancelled (i.e. so that it seems that
 the event never even occurred in the first place). You can
@@ -213,24 +447,24 @@ boost performance by a considerable amount simply through
 the reduction in the amount of logic being run on top of
 maintaining compatibility with other plugins.&lt;/p&gt;
 
-&lt;p&gt;In my opinion, &lt;code class=&quot;highlighter-rouge&quot;&gt;ignoreCancelled = true&lt;/code&gt; should be the
+&lt;p&gt;In my opinion, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;ignoreCancelled = true&lt;/code&gt; should be the
 default. You need a compelling reason to always run an
 event handler even when some other plugin has cancelled
 the event. For example, a logging plugin might not want
-to use &lt;code class=&quot;highlighter-rouge&quot;&gt;ignoreCancelled = true&lt;/code&gt; if they want to log every
+to use &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;ignoreCancelled = true&lt;/code&gt; if they want to log every
 action and the result of that action. Some events also
 cannot be cancelled, which is another reason why it might
-not be necessary to use &lt;code class=&quot;highlighter-rouge&quot;&gt;ignoreCancelled = true&lt;/code&gt;.&lt;/p&gt;
+not be necessary to use &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;ignoreCancelled = true&lt;/code&gt;.&lt;/p&gt;
 
-&lt;p&gt;In general, prefer to use &lt;code class=&quot;highlighter-rouge&quot;&gt;ignoreCancelled = true&lt;/code&gt;. Once
+&lt;p&gt;In general, prefer to use &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;ignoreCancelled = true&lt;/code&gt;. Once
 you determine that your event handler actually does need to
 run even when the event is cancelled, then you can remove
-this option and use the default of &lt;code class=&quot;highlighter-rouge&quot;&gt;false&lt;/code&gt;.&lt;/p&gt;
+this option and use the default of &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;false&lt;/code&gt;.&lt;/p&gt;
 
 &lt;h1 id=&quot;conclusion&quot;&gt;Conclusion&lt;/h1&gt;
 
 &lt;p&gt;This has been a pretty text and detail-heavy post, so I
-hope the justification behind the correct &lt;code class=&quot;highlighter-rouge&quot;&gt;@EventHandler&lt;/code&gt;
+hope the justification behind the correct &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;@EventHandler&lt;/code&gt;
 options to use is clear enough at this point. I’m still
 working on a few personal projects of mine so the next
 blog post probably won’t be out for another while since I’m
@@ -239,10 +473,10 @@ currently, and potentially some work in the near future if
 I find the time for that.&lt;/p&gt;
 
 &lt;p&gt;While event priorities are not often the source for bugs,
-the lack of &lt;code class=&quot;highlighter-rouge&quot;&gt;ignoreCancelled&lt;/code&gt; most definitely has caused a
+the lack of &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;ignoreCancelled&lt;/code&gt; most definitely has caused a
 few major bugs. My personal opinion is that the latter of
 the two is not set to a sane default, so always make sure
-to &lt;code class=&quot;highlighter-rouge&quot;&gt;ignoreCancelled = true&lt;/code&gt; first and think about it later,
+to &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;ignoreCancelled = true&lt;/code&gt; first and think about it later,
 because it is much easier to debug an event handler that
 doesn’t run than it is to debug an event handler that is
 incorrectly written to handle an edge-case scenario that
@@ -262,7 +496,7 @@ act like the seat-belt in your car: initially they are
 perhaps a little uncomfortable, but after a while their use
 becomes second-nature and not using them becomes
 unimaginable.&lt;/p&gt;
-&lt;/blockquote&gt;</content><author><name></name></author><summary type="html">I didn’t even realize that I haven’t written a post this year yet. Event handlers are key components of plugins because they are used as an entry point to most plugin logic. Think of plugins like WorldGuard, minigame plugins and other game features like crates, quests etc. All of them use event handlers as an intrinsic component of their primary function. Yet, many plugin developers, even those who should know better, seem to write event handlers that break the functionality of other plugins or prevent other plugins from being able to listen to events.</summary></entry><entry><title type="html">Lessons Learned Debugging: Part 10</title><link href="https://agenttroll.github.io/blog/2019/12/22/lessons-learned-debugging-part-10.html" rel="alternate" type="text/html" title="Lessons Learned Debugging: Part 10" /><published>2019-12-22T17:19:55-08:00</published><updated>2019-12-22T17:19:55-08:00</updated><id>https://agenttroll.github.io/blog/2019/12/22/lessons-learned-debugging-part-10</id><content type="html" xml:base="https://agenttroll.github.io/blog/2019/12/22/lessons-learned-debugging-part-10.html">&lt;p&gt;This is a follow-up of sorts to
+&lt;/blockquote&gt;</content><author><name></name></author><summary type="html">I didn’t even realize that I haven’t written a post this year yet. Event handlers are key components of plugins because they are used as an entry point to most plugin logic. Think of plugins like WorldGuard, minigame plugins and other game features like crates, quests etc. All of them use event handlers as an intrinsic component of their primary function. Yet, many plugin developers, even those who should know better, seem to write event handlers that break the functionality of other plugins or prevent other plugins from being able to listen to events.</summary></entry><entry><title type="html">Lessons Learned Debugging: Part 10</title><link href="https://agenttroll.github.io/blog/2019/12/22/lessons-learned-debugging-part-10.html" rel="alternate" type="text/html" title="Lessons Learned Debugging: Part 10" /><published>2019-12-22T20:19:55-05:00</published><updated>2019-12-22T20:19:55-05:00</updated><id>https://agenttroll.github.io/blog/2019/12/22/lessons-learned-debugging-part-10</id><content type="html" xml:base="https://agenttroll.github.io/blog/2019/12/22/lessons-learned-debugging-part-10.html">&lt;p&gt;This is a follow-up of sorts to
 &lt;a href=&quot;https://agenttroll.github.io/blog/2019/07/13/lessons-learned-debugging-part-6.html&quot;&gt;Part 6&lt;/a&gt;
 of this series of posts. I felt that the topic of inventory
 management is so important for most servers that it is
@@ -386,7 +620,7 @@ players take advantage of gaps in your logic, then you’ll
 never be able to test out this bug. Typically, when writing
 inventory management code, I get a sense that I haven’t
 implemented a sufficient number of protection checks (e.g.
-&lt;code class=&quot;highlighter-rouge&quot;&gt;InventoryMoveItemEvent&lt;/code&gt;, &lt;code class=&quot;highlighter-rouge&quot;&gt;BlockBreakEvent&lt;/code&gt; for blocks,
+&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;InventoryMoveItemEvent&lt;/code&gt;, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;BlockBreakEvent&lt;/code&gt; for blocks,
 checks for where an inventory holder might be located in
 case someone uses pistons, etc).&lt;/p&gt;
 
@@ -424,7 +658,7 @@ act like the seat-belt in your car: initially they are
 perhaps a little uncomfortable, but after a while their use
 becomes second-nature and not using them becomes
 unimaginable.&lt;/p&gt;
-&lt;/blockquote&gt;</content><author><name></name></author><summary type="html">This is a follow-up of sorts to Part 6 of this series of posts. I felt that the topic of inventory management is so important for most servers that it is worth taking a look at a few more ways players get access to items that they shouldn’t have in the first place. These are logical oversights that developers tend to forget about which players exploit in order to get access to those items.</summary></entry><entry><title type="html">Lessons Learned Debugging: Part 9</title><link href="https://agenttroll.github.io/blog/2019/10/14/lessons-learned-debugging-part-9.html" rel="alternate" type="text/html" title="Lessons Learned Debugging: Part 9" /><published>2019-10-13T23:27:30-07:00</published><updated>2019-10-13T23:27:30-07:00</updated><id>https://agenttroll.github.io/blog/2019/10/14/lessons-learned-debugging-part-9</id><content type="html" xml:base="https://agenttroll.github.io/blog/2019/10/14/lessons-learned-debugging-part-9.html">&lt;p&gt;The problem I usually see with novice developers when they
+&lt;/blockquote&gt;</content><author><name></name></author><summary type="html">This is a follow-up of sorts to Part 6 of this series of posts. I felt that the topic of inventory management is so important for most servers that it is worth taking a look at a few more ways players get access to items that they shouldn’t have in the first place. These are logical oversights that developers tend to forget about which players exploit in order to get access to those items.</summary></entry><entry><title type="html">Lessons Learned Debugging: Part 9</title><link href="https://agenttroll.github.io/blog/2019/10/14/lessons-learned-debugging-part-9.html" rel="alternate" type="text/html" title="Lessons Learned Debugging: Part 9" /><published>2019-10-14T02:27:30-04:00</published><updated>2019-10-14T02:27:30-04:00</updated><id>https://agenttroll.github.io/blog/2019/10/14/lessons-learned-debugging-part-9</id><content type="html" xml:base="https://agenttroll.github.io/blog/2019/10/14/lessons-learned-debugging-part-9.html">&lt;p&gt;The problem I usually see with novice developers when they
 are debugging is that they test what their code is supposed
 to do, but they are suprised when their code works when it
 isn’t supposed to.&lt;/p&gt;
@@ -439,12 +673,12 @@ that code is even supposed to be executing. You don’t
 actually spend that much time on it. There are a variety of
 different places this happens. In my case, I often forget
 to check what item type the player is holding whenever a
-&lt;code class=&quot;highlighter-rouge&quot;&gt;PlayerInteractEvent&lt;/code&gt; or &lt;code class=&quot;highlighter-rouge&quot;&gt;BlockPlaceEvent&lt;/code&gt; is being called.
+&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;PlayerInteractEvent&lt;/code&gt; or &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;BlockPlaceEvent&lt;/code&gt; is being called.
 This leads to the event handler logic being executed for
-every single interaction, or a &lt;code class=&quot;highlighter-rouge&quot;&gt;NullPointerException&lt;/code&gt; being
+every single interaction, or a &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;NullPointerException&lt;/code&gt; being
 thrown if they aren’t even holding anything. Another place
 I’ve been burned by this is when handling
-&lt;code class=&quot;highlighter-rouge&quot;&gt;PlayerCommandPreprocessEvent&lt;/code&gt;, where I’m forgetting to
+&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;PlayerCommandPreprocessEvent&lt;/code&gt;, where I’m forgetting to
 check what command is even being run. Every command then
 causes the logic to be executed, even though the intention
 was for only one command or one group of commands to be
@@ -489,8 +723,8 @@ it.&lt;/p&gt;
 &lt;p&gt;One example of this is when I was writing a hack around
 dispensers firing EXP bottles. However, I didn’t notice
 the fact that droppers could also fire EXP bottles as well.
-This lead to a &lt;code class=&quot;highlighter-rouge&quot;&gt;ClassCastException&lt;/code&gt; as I tried to cast a
-&lt;code class=&quot;highlighter-rouge&quot;&gt;Dropper&lt;/code&gt; to &lt;code class=&quot;highlighter-rouge&quot;&gt;Dispenser&lt;/code&gt;. In hindsight, this was a stupid
+This lead to a &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;ClassCastException&lt;/code&gt; as I tried to cast a
+&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Dropper&lt;/code&gt; to &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Dispenser&lt;/code&gt;. In hindsight, this was a stupid
 mistake on my part because one should always typecheck
 before doing a cast. However, this is something that would
 have easily been caught if I just played the game on the
@@ -515,8 +749,8 @@ thinking about the conditions at which you are either going
 to “do” or “not do” any subsequent actions as the amount of
 time you are spending actually writing those actions.&lt;/p&gt;
 
-&lt;p&gt;One thing that helps immensely is to use &lt;code class=&quot;highlighter-rouge&quot;&gt;if-return&lt;/code&gt; blocks
-rather than building a long chain of &lt;code class=&quot;highlighter-rouge&quot;&gt;if&lt;/code&gt;s. For example:&lt;/p&gt;
+&lt;p&gt;One thing that helps immensely is to use &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;if-return&lt;/code&gt; blocks
+rather than building a long chain of &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;if&lt;/code&gt;s. For example:&lt;/p&gt;
 
 &lt;div class=&quot;language-java highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;nd&quot;&gt;@EventHandler&lt;/span&gt;
 &lt;span class=&quot;kd&quot;&gt;public&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;void&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;onEvent&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(...)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
@@ -565,8 +799,8 @@ flow in this way, it is easier to see what conditions you
 are constantly checking for. This makes code review so much
 easier. Once you hit some condition that doesn’t hold true,
 you don’t need to think about it anymore since you
-&lt;code class=&quot;highlighter-rouge&quot;&gt;return&lt;/code&gt;.  On the other hand, if you have several nested
-&lt;code class=&quot;highlighter-rouge&quot;&gt;if&lt;/code&gt; statements, the reviewer has to keep all of the
+&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;return&lt;/code&gt;.  On the other hand, if you have several nested
+&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;if&lt;/code&gt; statements, the reviewer has to keep all of the
 conditions in their head because all of the previous
 statements impact all of the logic afterwards as well.
 Finally, conditions are common accross many different types
@@ -574,7 +808,7 @@ of event handlers and situations. If you can easily build a
 repertoire of conditions you are checking really often over
 time, it will be harder for you to forget in the future.&lt;/p&gt;
 
-&lt;p&gt;The list of benefits of using &lt;code class=&quot;highlighter-rouge&quot;&gt;if-return&lt;/code&gt; keeps going on
+&lt;p&gt;The list of benefits of using &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;if-return&lt;/code&gt; keeps going on
 and on. I cannot stress enough how beneficial this
 technique is.&lt;/p&gt;
 
@@ -603,7 +837,7 @@ little extreme for writing plugins, especially when lives
 aren’t exactly at stake here, I think there is still merit
 in the idea of expecting there to be some number of
 conditions. As you get more experienced, you’ll probably
-get a feel for how many &lt;code class=&quot;highlighter-rouge&quot;&gt;if-return&lt;/code&gt; statements you should
+get a feel for how many &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;if-return&lt;/code&gt; statements you should
 be writing. If you think there are too few, your intuition
 might be indicating something. I’m not saying that I can
 clearly advocate for consciously thinking about this, as
@@ -619,17 +853,17 @@ capable of handling all edge cases may well be!&lt;/p&gt;
 &lt;p&gt;There are a variety of techniques you can use to mitigate
 the bugs involving logic that shouldn’t be run from
 creeping into your code. This includes playtesting as a
-player would, using &lt;code class=&quot;highlighter-rouge&quot;&gt;if-return&lt;/code&gt; statements, and possibly
+player would, using &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;if-return&lt;/code&gt; statements, and possibly
 condition counting if you are interested in a little
 exercise.&lt;/p&gt;
 
 &lt;p&gt;These blog posts probably will come with less frequency in
 the coming months since I want to focus on college. I’ve
 also got my current personal project,
-&lt;a href=&quot;https://github.com/AgentTroll/gate&quot;&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;gate&lt;/code&gt;&lt;/a&gt; that I’m
+&lt;a href=&quot;https://github.com/AgentTroll/gate&quot;&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;gate&lt;/code&gt;&lt;/a&gt; that I’m
 desparately close to finishing and I want to complete, so
 I’ll probably be focusing on that, then on my newest
-project, &lt;a href=&quot;https://github.com/AgentTroll/liftoff&quot;&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;liftoff&lt;/code&gt;&lt;/a&gt;
+project, &lt;a href=&quot;https://github.com/AgentTroll/liftoff&quot;&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;liftoff&lt;/code&gt;&lt;/a&gt;
 before focusing back on blogging and finishing the
 On Thread Safety post that continually is on TODO…&lt;/p&gt;
 
@@ -648,7 +882,7 @@ act like the seat-belt in your car: initially they are
 perhaps a little uncomfortable, but after a while their use
 becomes second-nature and not using them becomes
 unimaginable.&lt;/p&gt;
-&lt;/blockquote&gt;</content><author><name></name></author><summary type="html">The problem I usually see with novice developers when they are debugging is that they test what their code is supposed to do, but they are suprised when their code works when it isn’t supposed to.</summary></entry><entry><title type="html">Lessons Learned Debugging: Part 8</title><link href="https://agenttroll.github.io/blog/2019/08/09/lessons-learned-debugging-part-8.html" rel="alternate" type="text/html" title="Lessons Learned Debugging: Part 8" /><published>2019-08-09T02:03:35-07:00</published><updated>2019-08-09T02:03:35-07:00</updated><id>https://agenttroll.github.io/blog/2019/08/09/lessons-learned-debugging-part-8</id><content type="html" xml:base="https://agenttroll.github.io/blog/2019/08/09/lessons-learned-debugging-part-8.html">&lt;p&gt;One of the most frustrating things about a large plugin
+&lt;/blockquote&gt;</content><author><name></name></author><summary type="html">The problem I usually see with novice developers when they are debugging is that they test what their code is supposed to do, but they are suprised when their code works when it isn’t supposed to.</summary></entry><entry><title type="html">Lessons Learned Debugging: Part 8</title><link href="https://agenttroll.github.io/blog/2019/08/09/lessons-learned-debugging-part-8.html" rel="alternate" type="text/html" title="Lessons Learned Debugging: Part 8" /><published>2019-08-09T05:03:35-04:00</published><updated>2019-08-09T05:03:35-04:00</updated><id>https://agenttroll.github.io/blog/2019/08/09/lessons-learned-debugging-part-8</id><content type="html" xml:base="https://agenttroll.github.io/blog/2019/08/09/lessons-learned-debugging-part-8.html">&lt;p&gt;One of the most frustrating things about a large plugin
 ecosystem is that at one point or another, you will need to
 start handling the dependencies between each plugin for
 particular actions - e.g. who gets to break what block and
@@ -688,7 +922,7 @@ a single plugin to handle protection for your specific
 server ecosystem. All protection checks can be described
 by the following function:&lt;/p&gt;
 
-&lt;div class=&quot;language-java highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;kt&quot;&gt;boolean&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;isAllowed&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;ActionType&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;type&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Object&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;affector&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Object&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;target&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;);&lt;/span&gt;
+&lt;div class=&quot;language-java highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;kt&quot;&gt;boolean&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;isAllowed&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nc&quot;&gt;ActionType&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;type&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;nc&quot;&gt;Object&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;affector&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;nc&quot;&gt;Object&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;target&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;);&lt;/span&gt;
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
 
 &lt;p&gt;In many cases, one can boil down &lt;em&gt;all&lt;/em&gt; protection checks to
@@ -696,9 +930,9 @@ a single method. For example, the if you are writing a
 plugin for a skyblock server, then almost all protection
 is determined by which island a player belongs to and what
 island is being affected by that player. Here’s what a
-boiled-down check if an action &lt;code class=&quot;highlighter-rouge&quot;&gt;isAllowed&lt;/code&gt; would look like:&lt;/p&gt;
+boiled-down check if an action &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;isAllowed&lt;/code&gt; would look like:&lt;/p&gt;
 
-&lt;div class=&quot;language-java highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;kd&quot;&gt;public&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;boolean&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;isAllowed&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;ActionType&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;type&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Island&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;affector&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Island&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;target&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+&lt;div class=&quot;language-java highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;kd&quot;&gt;public&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;boolean&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;isAllowed&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nc&quot;&gt;ActionType&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;type&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;nc&quot;&gt;Island&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;affector&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;nc&quot;&gt;Island&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;target&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
     &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;affector&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;!=&lt;/span&gt; &lt;span class=&quot;kc&quot;&gt;null&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;amp;&amp;amp;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;affector&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;equals&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;target&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;);&lt;/span&gt;
 &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
@@ -706,11 +940,11 @@ boiled-down check if an action &lt;code class=&quot;highlighter-rouge&quot;&gt;i
 &lt;p&gt;For ASkyBlock, a player may belong to a few different
 islands due to co-oping. A server running ASkyBlock might
 want to use this to determine whether something
-&lt;code class=&quot;highlighter-rouge&quot;&gt;isAllowed&lt;/code&gt;:&lt;/p&gt;
+&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;isAllowed&lt;/code&gt;:&lt;/p&gt;
 
-&lt;div class=&quot;language-java highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;kd&quot;&gt;public&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;boolean&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;isAllowed&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;ActionType&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;type&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt;
-        &lt;span class=&quot;n&quot;&gt;Stream&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Island&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;affector&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt;
-        &lt;span class=&quot;n&quot;&gt;Island&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;target&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+&lt;div class=&quot;language-java highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;kd&quot;&gt;public&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;boolean&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;isAllowed&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nc&quot;&gt;ActionType&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;type&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt;
+        &lt;span class=&quot;nc&quot;&gt;Stream&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;nc&quot;&gt;Island&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;affector&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt;
+        &lt;span class=&quot;nc&quot;&gt;Island&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;target&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
     &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;affector&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;!=&lt;/span&gt; &lt;span class=&quot;kc&quot;&gt;null&lt;/span&gt;
             &lt;span class=&quot;o&quot;&gt;&amp;amp;&amp;amp;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;affector&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;anyMatch&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;island&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;-&amp;gt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;island&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;equals&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;target&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;));&lt;/span&gt;
 &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
@@ -724,47 +958,47 @@ need to translate players, entities, and locations to
 islands. In fact, it is conceivable that one can cover
 most, if not all possible use cases with just definitions
 to translate those 3 objects. Further, it is possible
-through the use of &lt;code class=&quot;highlighter-rouge&quot;&gt;ActionType&lt;/code&gt; to make this both type-safe
+through the use of &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;ActionType&lt;/code&gt; to make this both type-safe
 and extensible in case plugins want to add their own
 translation methods:&lt;/p&gt;
 
 &lt;div class=&quot;language-java highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;kd&quot;&gt;public&lt;/span&gt; &lt;span class=&quot;kd&quot;&gt;class&lt;/span&gt; &lt;span class=&quot;nc&quot;&gt;ProtectionHandler&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
-    &lt;span class=&quot;kd&quot;&gt;private&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;boolean&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;isAllowed&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;ActionType&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;A&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;T&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;type&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt;
-            &lt;span class=&quot;n&quot;&gt;Stream&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Island&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;affector&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt;
-            &lt;span class=&quot;n&quot;&gt;Island&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;target&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+    &lt;span class=&quot;kd&quot;&gt;private&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;boolean&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;isAllowed&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nc&quot;&gt;ActionType&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;no&quot;&gt;A&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;no&quot;&gt;T&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;type&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt;
+            &lt;span class=&quot;nc&quot;&gt;Stream&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;nc&quot;&gt;Island&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;affector&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt;
+            &lt;span class=&quot;nc&quot;&gt;Island&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;target&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
         &lt;span class=&quot;o&quot;&gt;...&lt;/span&gt;
     &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
 
-    &lt;span class=&quot;kd&quot;&gt;public&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;A&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;T&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;boolean&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;isAllowed&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;ActionType&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;A&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;T&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;type&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;A&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;affector&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;T&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;target&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+    &lt;span class=&quot;kd&quot;&gt;public&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;no&quot;&gt;A&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;no&quot;&gt;T&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;boolean&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;isAllowed&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nc&quot;&gt;ActionType&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;no&quot;&gt;A&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;no&quot;&gt;T&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;type&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;no&quot;&gt;A&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;affector&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;no&quot;&gt;T&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;target&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
         &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;this&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;isAllowed&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;type&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;translateAffector&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;affector&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;),&lt;/span&gt;
                 &lt;span class=&quot;n&quot;&gt;type&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;translateTarget&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;target&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;));&lt;/span&gt;
     &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
 &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
 
-&lt;span class=&quot;kd&quot;&gt;public&lt;/span&gt; &lt;span class=&quot;kd&quot;&gt;abstract&lt;/span&gt; &lt;span class=&quot;kd&quot;&gt;class&lt;/span&gt; &lt;span class=&quot;nc&quot;&gt;ActionType&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;A&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;T&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
-    &lt;span class=&quot;kd&quot;&gt;public&lt;/span&gt; &lt;span class=&quot;kd&quot;&gt;static&lt;/span&gt; &lt;span class=&quot;kd&quot;&gt;final&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;ActionType&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Player&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Block&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;PLAYER_PLACE_BLOCK&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;
-            &lt;span class=&quot;k&quot;&gt;new&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;ActionType&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;lt;&amp;gt;()&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+&lt;span class=&quot;kd&quot;&gt;public&lt;/span&gt; &lt;span class=&quot;kd&quot;&gt;abstract&lt;/span&gt; &lt;span class=&quot;kd&quot;&gt;class&lt;/span&gt; &lt;span class=&quot;nc&quot;&gt;ActionType&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;no&quot;&gt;A&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;no&quot;&gt;T&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+    &lt;span class=&quot;kd&quot;&gt;public&lt;/span&gt; &lt;span class=&quot;kd&quot;&gt;static&lt;/span&gt; &lt;span class=&quot;kd&quot;&gt;final&lt;/span&gt; &lt;span class=&quot;nc&quot;&gt;ActionType&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;nc&quot;&gt;Player&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;nc&quot;&gt;Block&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;no&quot;&gt;PLAYER_PLACE_BLOCK&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;
+            &lt;span class=&quot;k&quot;&gt;new&lt;/span&gt; &lt;span class=&quot;nc&quot;&gt;ActionType&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;lt;&amp;gt;()&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
                 &lt;span class=&quot;nd&quot;&gt;@Override&lt;/span&gt;
-                &lt;span class=&quot;kd&quot;&gt;public&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Stream&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Island&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;translateAffector&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Player&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;affector&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
-                    &lt;span class=&quot;n&quot;&gt;UUID&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;affectorId&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;affector&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;getUniqueId&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;();&lt;/span&gt;
-                    &lt;span class=&quot;n&quot;&gt;Island&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;playerIsland&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;SkyBlockApi&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;getPlayerIsland&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;affectorId&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;);&lt;/span&gt;
+                &lt;span class=&quot;kd&quot;&gt;public&lt;/span&gt; &lt;span class=&quot;nc&quot;&gt;Stream&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;nc&quot;&gt;Island&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;translateAffector&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nc&quot;&gt;Player&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;affector&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+                    &lt;span class=&quot;no&quot;&gt;UUID&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;affectorId&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;affector&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;getUniqueId&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;();&lt;/span&gt;
+                    &lt;span class=&quot;nc&quot;&gt;Island&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;playerIsland&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;nc&quot;&gt;SkyBlockApi&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;getPlayerIsland&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;affectorId&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;);&lt;/span&gt;
 
-                    &lt;span class=&quot;n&quot;&gt;Collection&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Island&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;coopIslands&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;
-                            &lt;span class=&quot;n&quot;&gt;SkyBlockApi&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;getPlayerCoops&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;affectorId&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;);&lt;/span&gt;
+                    &lt;span class=&quot;nc&quot;&gt;Collection&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;nc&quot;&gt;Island&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;coopIslands&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;
+                            &lt;span class=&quot;nc&quot;&gt;SkyBlockApi&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;getPlayerCoops&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;affectorId&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;);&lt;/span&gt;
                     &lt;span class=&quot;n&quot;&gt;coopIslands&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;add&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;playerIsland&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;);&lt;/span&gt;
 
                     &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;coopIslands&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;stream&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;();&lt;/span&gt;
                 &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
 
                 &lt;span class=&quot;nd&quot;&gt;@Override&lt;/span&gt;
-                &lt;span class=&quot;kd&quot;&gt;public&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Island&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;translateTarget&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Block&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;target&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
-                    &lt;span class=&quot;n&quot;&gt;Location&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;blockLocation&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;target&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;getLocation&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;();&lt;/span&gt;
-                    &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;SkyBlockApi&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;getIslandAtLocation&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;target&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;);&lt;/span&gt;
+                &lt;span class=&quot;kd&quot;&gt;public&lt;/span&gt; &lt;span class=&quot;nc&quot;&gt;Island&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;translateTarget&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nc&quot;&gt;Block&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;target&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+                    &lt;span class=&quot;nc&quot;&gt;Location&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;blockLocation&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;target&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;getLocation&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;();&lt;/span&gt;
+                    &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;nc&quot;&gt;SkyBlockApi&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;getIslandAtLocation&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;target&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;);&lt;/span&gt;
                 &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
             &lt;span class=&quot;o&quot;&gt;};&lt;/span&gt;
 
-    &lt;span class=&quot;kd&quot;&gt;public&lt;/span&gt; &lt;span class=&quot;kd&quot;&gt;abstract&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Stream&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Island&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;translateAffector&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;A&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;affector&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;);&lt;/span&gt;
-    &lt;span class=&quot;kd&quot;&gt;public&lt;/span&gt; &lt;span class=&quot;kd&quot;&gt;abstract&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Island&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;translateTarget&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;T&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;target&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;);&lt;/span&gt;
+    &lt;span class=&quot;kd&quot;&gt;public&lt;/span&gt; &lt;span class=&quot;kd&quot;&gt;abstract&lt;/span&gt; &lt;span class=&quot;nc&quot;&gt;Stream&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;nc&quot;&gt;Island&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;translateAffector&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;no&quot;&gt;A&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;affector&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;);&lt;/span&gt;
+    &lt;span class=&quot;kd&quot;&gt;public&lt;/span&gt; &lt;span class=&quot;kd&quot;&gt;abstract&lt;/span&gt; &lt;span class=&quot;nc&quot;&gt;Island&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;translateTarget&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;no&quot;&gt;T&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;target&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;);&lt;/span&gt;
 &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
 
@@ -774,7 +1008,7 @@ another plugin that controls the finer-grained permissions.
 For example, when I worked at MineSaga, one could enable or
 disable the ability of co-oped players to place blocks. By
 only having to take this into account once through the use
-of &lt;code class=&quot;highlighter-rouge&quot;&gt;ActionType&lt;/code&gt; constants, you no longer need to remember
+of &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;ActionType&lt;/code&gt; constants, you no longer need to remember
 to check with that plugin each time you do a protection
 check. Each plugin fewer that you need to check is one
 fewer check you can possibly forget. If you recall my last
@@ -782,56 +1016,56 @@ blog post, you can throw all of your protection handling
 code into a
 &lt;a href=&quot;https://agenttroll.github.io/blog/2019/07/24/lessons-learned-debugging-part-7.html&quot;&gt;central library&lt;/a&gt;.
 If you ever add a new plugin that actually adds new
-behavior that the &lt;code class=&quot;highlighter-rouge&quot;&gt;isAllowed&lt;/code&gt; check needs to handle, all
+behavior that the &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;isAllowed&lt;/code&gt; check needs to handle, all
 of your plugins using the protection handler provided by
 the core plugin benefit from a change to just that one
 core plugin to account for that new check. Additionally,
 this means that only new plugins will need to depend on a
 single core plugin that also handles protection. Assuming
-that you don’t need to add any &lt;code class=&quot;highlighter-rouge&quot;&gt;ActionType&lt;/code&gt;s, you can get
+that you don’t need to add any &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;ActionType&lt;/code&gt;s, you can get
 away with not even modifying the core plugin. You can
 focus your efforts on implementing features instead of
 writing hacky and fragile code just to make sure your
 protection ruleset is being honored.&lt;/p&gt;
 
-&lt;p&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;BlockPlaceEvent&lt;/code&gt; is not one of the things that you usually
+&lt;p&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;BlockPlaceEvent&lt;/code&gt; is not one of the things that you usually
 need to check with a protection handler, since that
 function is normally handled by whatever protection plugin
 you are using. You can exploit this by calling
-&lt;code class=&quot;highlighter-rouge&quot;&gt;BlockPlaceEvent&lt;/code&gt; for every block that needs to be checked,
+&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;BlockPlaceEvent&lt;/code&gt; for every block that needs to be checked,
 then seeing if it has been cancelled. The framework I’ve
 discussed is useful for cases where there is not an
 existing event handled by protection plugins. For example,
 if a minion (on MineSaga, a zombie entity) “places” a
 block, it would be a good idea to translate the minion’s
 owner UUID to whichever island that player belongs to in
-order to check if the minion &lt;code class=&quot;highlighter-rouge&quot;&gt;isAllowed&lt;/code&gt; to place that
+order to check if the minion &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;isAllowed&lt;/code&gt; to place that
 block:&lt;/p&gt;
 
-&lt;div class=&quot;language-java highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;kd&quot;&gt;public&lt;/span&gt; &lt;span class=&quot;kd&quot;&gt;static&lt;/span&gt; &lt;span class=&quot;kd&quot;&gt;final&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;ActionType&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Minion&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Block&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;MINION_PLACE_BLOCK&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;
-        &lt;span class=&quot;k&quot;&gt;new&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;ActionType&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;lt;&amp;gt;()&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+&lt;div class=&quot;language-java highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;kd&quot;&gt;public&lt;/span&gt; &lt;span class=&quot;kd&quot;&gt;static&lt;/span&gt; &lt;span class=&quot;kd&quot;&gt;final&lt;/span&gt; &lt;span class=&quot;nc&quot;&gt;ActionType&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;nc&quot;&gt;Minion&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;nc&quot;&gt;Block&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;no&quot;&gt;MINION_PLACE_BLOCK&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;
+        &lt;span class=&quot;k&quot;&gt;new&lt;/span&gt; &lt;span class=&quot;nc&quot;&gt;ActionType&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;lt;&amp;gt;()&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
             &lt;span class=&quot;nd&quot;&gt;@Overide&lt;/span&gt;
-            &lt;span class=&quot;kd&quot;&gt;public&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Stream&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Island&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;translateAffector&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Minion&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;affector&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
-                &lt;span class=&quot;n&quot;&gt;UUID&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;ownerId&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;minion&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;getOwner&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;();&lt;/span&gt;
-                &lt;span class=&quot;n&quot;&gt;Island&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;playerIsland&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;SkyBlockApi&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;getPlayerIsland&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;ownerId&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;);&lt;/span&gt;
+            &lt;span class=&quot;kd&quot;&gt;public&lt;/span&gt; &lt;span class=&quot;nc&quot;&gt;Stream&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;nc&quot;&gt;Island&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;translateAffector&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nc&quot;&gt;Minion&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;affector&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+                &lt;span class=&quot;no&quot;&gt;UUID&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;ownerId&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;minion&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;getOwner&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;();&lt;/span&gt;
+                &lt;span class=&quot;nc&quot;&gt;Island&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;playerIsland&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;nc&quot;&gt;SkyBlockApi&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;getPlayerIsland&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;ownerId&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;);&lt;/span&gt;
 
-                &lt;span class=&quot;n&quot;&gt;Collection&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Island&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;coopIslands&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;
-                        &lt;span class=&quot;n&quot;&gt;SkyBlockApi&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;getPlayerCoops&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;ownerId&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;);&lt;/span&gt;
+                &lt;span class=&quot;nc&quot;&gt;Collection&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;nc&quot;&gt;Island&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;coopIslands&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;
+                        &lt;span class=&quot;nc&quot;&gt;SkyBlockApi&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;getPlayerCoops&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;ownerId&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;);&lt;/span&gt;
                 &lt;span class=&quot;n&quot;&gt;coopIslands&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;add&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;playerIsland&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;);&lt;/span&gt;
 
                 &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;coopIslands&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;stream&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;();&lt;/span&gt;
             &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
 
             &lt;span class=&quot;nd&quot;&gt;@Override&lt;/span&gt;
-            &lt;span class=&quot;kd&quot;&gt;public&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Island&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;translateTarget&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Block&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;target&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
-                &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;ActionType&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;PLAYER_PLACE_BLOCK&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;translateTarget&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;target&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;);&lt;/span&gt;
+            &lt;span class=&quot;kd&quot;&gt;public&lt;/span&gt; &lt;span class=&quot;nc&quot;&gt;Island&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;translateTarget&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nc&quot;&gt;Block&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;target&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+                &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;nc&quot;&gt;ActionType&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;PLAYER_PLACE_BLOCK&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;translateTarget&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;target&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;);&lt;/span&gt;
             &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
         &lt;span class=&quot;o&quot;&gt;};&lt;/span&gt;
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
 
 &lt;p&gt;The extensibility of this system is a valuable feature
 because it means that one doesn’t need to go through the
-trouble of storing the &lt;code class=&quot;highlighter-rouge&quot;&gt;Player&lt;/code&gt; object itself in order to
+trouble of storing the &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Player&lt;/code&gt; object itself in order to
 perform protection checks which depend on the fact that
 the something performing some modification action is a
 player. It could be a boss entity or a minion entity as
@@ -840,22 +1074,22 @@ demonstrated by the above snippet.&lt;/p&gt;
 &lt;p&gt;However, for the sake of completeness, let’s assume for a
 moment that you have a really bad skyblock plugin, or a
 really bad protection plugin that doesn’t handle
-&lt;code class=&quot;highlighter-rouge&quot;&gt;BlockPlaceEvent&lt;/code&gt;. What would, say, a multiblock place event
+&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;BlockPlaceEvent&lt;/code&gt;. What would, say, a multiblock place event
 listener look like?&lt;/p&gt;
 
 &lt;div class=&quot;language-java highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;nd&quot;&gt;@EventHandler&lt;/span&gt;
-&lt;span class=&quot;kd&quot;&gt;public&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;void&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;onPlace&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;BlockPlaceEvent&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;event&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+&lt;span class=&quot;kd&quot;&gt;public&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;void&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;onPlace&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nc&quot;&gt;BlockPlaceEvent&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;event&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
     &lt;span class=&quot;o&quot;&gt;...&lt;/span&gt;
 
-    &lt;span class=&quot;n&quot;&gt;Block&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;block&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;event&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;getBlockPlaced&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;();&lt;/span&gt;
-    &lt;span class=&quot;n&quot;&gt;Location&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;start&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;block&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;getLocation&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;();&lt;/span&gt;
+    &lt;span class=&quot;nc&quot;&gt;Block&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;block&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;event&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;getBlockPlaced&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;();&lt;/span&gt;
+    &lt;span class=&quot;nc&quot;&gt;Location&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;start&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;block&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;getLocation&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;();&lt;/span&gt;
 
-    &lt;span class=&quot;n&quot;&gt;ProtectionHandler&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;ph&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;...&lt;/span&gt;
+    &lt;span class=&quot;nc&quot;&gt;ProtectionHandler&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;ph&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;...&lt;/span&gt;
     &lt;span class=&quot;k&quot;&gt;for&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;kt&quot;&gt;int&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;i&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;i&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;height&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;i&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;++)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
-        &lt;span class=&quot;n&quot;&gt;Location&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;newLocation&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;start&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;add&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;i&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;);&lt;/span&gt;
-        &lt;span class=&quot;n&quot;&gt;Block&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;newBlock&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;newLocation&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;getBlock&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;();&lt;/span&gt;
+        &lt;span class=&quot;nc&quot;&gt;Location&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;newLocation&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;start&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;add&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;i&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;);&lt;/span&gt;
+        &lt;span class=&quot;nc&quot;&gt;Block&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;newBlock&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;newLocation&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;getBlock&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;();&lt;/span&gt;
 
-        &lt;span class=&quot;k&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;ph&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;isAllowed&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;ActionType&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;MINION_PLACE_BLOCK&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt;
+        &lt;span class=&quot;k&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;ph&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;isAllowed&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nc&quot;&gt;ActionType&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;MINION_PLACE_BLOCK&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt;
                 &lt;span class=&quot;n&quot;&gt;player&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;newBlock&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;))&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
             &lt;span class=&quot;c1&quot;&gt;// Set block, remove item, etc...&lt;/span&gt;
         &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
@@ -878,12 +1112,12 @@ existing protection plugin?&lt;/p&gt;
 anecdote:&lt;/p&gt;
 
   &lt;p&gt;The correct way to write protection event listeners is to
-use an &lt;code class=&quot;highlighter-rouge&quot;&gt;EventPriority.LOW&lt;/code&gt; event handler method so that
-non-protection plugins can use &lt;code class=&quot;highlighter-rouge&quot;&gt;ignoreCancelled&lt;/code&gt; without
+use an &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;EventPriority.LOW&lt;/code&gt; event handler method so that
+non-protection plugins can use &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;ignoreCancelled&lt;/code&gt; without
 having to change their priority. Unfortunately, I’ve seen
 a number of excessively dumb plugins which set their
-protection listeners to &lt;code class=&quot;highlighter-rouge&quot;&gt;EventPriority.HIGHEST&lt;/code&gt; (or in
-extreme cases, &lt;code class=&quot;highlighter-rouge&quot;&gt;EventPriority.MONITOR&lt;/code&gt;), under the
+protection listeners to &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;EventPriority.HIGHEST&lt;/code&gt; (or in
+extreme cases, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;EventPriority.MONITOR&lt;/code&gt;), under the
 assumption that they want their event listener to take
 precedence. For the love of all that is good in this
 world &lt;strong&gt;please stop doing this&lt;/strong&gt;. This causes issues with
@@ -897,10 +1131,10 @@ I’ve had to write an enchanted pickaxe plugin that
 shouldn’t run any enchantments if a block was broken
 outside of a mine. However, the mine plugin, which
 handled block break protection registered their listener
-with &lt;code class=&quot;highlighter-rouge&quot;&gt;EventPriority.HIGHEST&lt;/code&gt;, and in the interests of
-keeping &lt;code class=&quot;highlighter-rouge&quot;&gt;EventPriority.MONITOR&lt;/code&gt; clear, I unregistered
-their listener from the &lt;code class=&quot;highlighter-rouge&quot;&gt;BlockBreakEvent&lt;/code&gt;’s
-&lt;code class=&quot;highlighter-rouge&quot;&gt;HandlerList&lt;/code&gt; and re-registered it under a lower
+with &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;EventPriority.HIGHEST&lt;/code&gt;, and in the interests of
+keeping &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;EventPriority.MONITOR&lt;/code&gt; clear, I unregistered
+their listener from the &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;BlockBreakEvent&lt;/code&gt;’s
+&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;HandlerList&lt;/code&gt; and re-registered it under a lower
 priority.&lt;/p&gt;
 &lt;/blockquote&gt;
 
@@ -919,7 +1153,7 @@ perform some action on its own. For example, if a plugin
 cancels damage events, you can manually set the health of
 an entity instead. Secondly, you can set a listener to a
 higher priority and then use
-&lt;code class=&quot;highlighter-rouge&quot;&gt;Cancellable#setCancelled(boolean)&lt;/code&gt; to &lt;em&gt;uncancel&lt;/em&gt; the
+&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Cancellable#setCancelled(boolean)&lt;/code&gt; to &lt;em&gt;uncancel&lt;/em&gt; the
 event if certain conditions are met. If you can’t edit the
 source of a plugin using a scheduler to protect some region
 or entity or block, then you can consider cancelling that
@@ -952,7 +1186,7 @@ act like the seat-belt in your car: initially they are
 perhaps a little uncomfortable, but after a while their use
 becomes second-nature and not using them becomes
 unimaginable.&lt;/p&gt;
-&lt;/blockquote&gt;</content><author><name></name></author><summary type="html">One of the most frustrating things about a large plugin ecosystem is that at one point or another, you will need to start handling the dependencies between each plugin for particular actions - e.g. who gets to break what block and where they are allowed. How can you constrain the scope of some certain plugin, due to the functionality of another plugin, or how can you bypass something?</summary></entry><entry><title type="html">Let’s Talk Privacy</title><link href="https://agenttroll.github.io/blog/2019/07/28/lets-talk-privacy.html" rel="alternate" type="text/html" title="Let's Talk Privacy" /><published>2019-07-28T15:41:15-07:00</published><updated>2019-07-28T15:41:15-07:00</updated><id>https://agenttroll.github.io/blog/2019/07/28/lets-talk-privacy</id><content type="html" xml:base="https://agenttroll.github.io/blog/2019/07/28/lets-talk-privacy.html">&lt;p&gt;This post should come with a big red disclaimer that says
+&lt;/blockquote&gt;</content><author><name></name></author><summary type="html">One of the most frustrating things about a large plugin ecosystem is that at one point or another, you will need to start handling the dependencies between each plugin for particular actions - e.g. who gets to break what block and where they are allowed. How can you constrain the scope of some certain plugin, due to the functionality of another plugin, or how can you bypass something?</summary></entry><entry><title type="html">Let’s Talk Privacy</title><link href="https://agenttroll.github.io/blog/2019/07/28/lets-talk-privacy.html" rel="alternate" type="text/html" title="Let’s Talk Privacy" /><published>2019-07-28T18:41:15-04:00</published><updated>2019-07-28T18:41:15-04:00</updated><id>https://agenttroll.github.io/blog/2019/07/28/lets-talk-privacy</id><content type="html" xml:base="https://agenttroll.github.io/blog/2019/07/28/lets-talk-privacy.html">&lt;p&gt;This post should come with a big red disclaimer that says
 I’m not an expert, but since my screen is redshifted to
 hell, plain black will have to do. I’m just a Java
 programmer with a blog.&lt;/p&gt;
@@ -1396,7 +1630,7 @@ issue because it is so politically charged, but I’ve tried
 my best to try to stay neutral on this matter. I don’t
 think it matters what political party you subscribe to, or
 how much you think you care about your privacy, it is an
-important issue in the digital age.&lt;/p&gt;</content><author><name></name></author><summary type="html">This post should come with a big red disclaimer that says I’m not an expert, but since my screen is redshifted to hell, plain black will have to do. I’m just a Java programmer with a blog.</summary></entry><entry><title type="html">Lessons Learned Debugging: Part 7</title><link href="https://agenttroll.github.io/blog/2019/07/24/lessons-learned-debugging-part-7.html" rel="alternate" type="text/html" title="Lessons Learned Debugging: Part 7" /><published>2019-07-24T00:07:20-07:00</published><updated>2019-07-24T00:07:20-07:00</updated><id>https://agenttroll.github.io/blog/2019/07/24/lessons-learned-debugging-part-7</id><content type="html" xml:base="https://agenttroll.github.io/blog/2019/07/24/lessons-learned-debugging-part-7.html">&lt;p&gt;I haven’t explicitly identified it until now, but it seems
+important issue in the digital age.&lt;/p&gt;</content><author><name></name></author><summary type="html">This post should come with a big red disclaimer that says I’m not an expert, but since my screen is redshifted to hell, plain black will have to do. I’m just a Java programmer with a blog.</summary></entry><entry><title type="html">Lessons Learned Debugging: Part 7</title><link href="https://agenttroll.github.io/blog/2019/07/24/lessons-learned-debugging-part-7.html" rel="alternate" type="text/html" title="Lessons Learned Debugging: Part 7" /><published>2019-07-24T03:07:20-04:00</published><updated>2019-07-24T03:07:20-04:00</updated><id>https://agenttroll.github.io/blog/2019/07/24/lessons-learned-debugging-part-7</id><content type="html" xml:base="https://agenttroll.github.io/blog/2019/07/24/lessons-learned-debugging-part-7.html">&lt;p&gt;I haven’t explicitly identified it until now, but it seems
 that I have a habit of putting exactly the same thing in my
 introductory paragraph in basically all of the posts in
 this series. This particular lesson doesn’t sound all that
@@ -1471,7 +1705,7 @@ settle your conscience. For me personally, I need to
 configure certain libraries such as Guice that need their
 own namespaces each time I shade it using Maven, so it
 helps if I don’t even need to write anything extra by
-using a &lt;code class=&quot;highlighter-rouge&quot;&gt;provided&lt;/code&gt; dependency on the central library. This
+using a &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;provided&lt;/code&gt; dependency on the central library. This
 isn’t to say that you should put every single dependency in
 your core library, but commonly used libraries like
 HikariCP are always helpful to have lying around,
@@ -1484,7 +1718,7 @@ libraries shaded into it.&lt;/p&gt;
 
 &lt;p&gt;Finally, a core library can be used to enforce a specific
 standard or policy. For example, if you are including
-MySQL utilities, you can use the &lt;code class=&quot;highlighter-rouge&quot;&gt;config.yml&lt;/code&gt; to provide
+MySQL utilities, you can use the &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;config.yml&lt;/code&gt; to provide
 the MySQL credentials to all the plugins using that core
 library. The server owner will not need to configure the
 credentials more than once. Secondly, by having a library
@@ -1555,7 +1789,7 @@ provided by a core plugin makes the code easier for other
 developers to parse and less error prone. Because you can
 be assured that some portion of the code that calls on a
 standardized function works, you can debug and review code
-much faster at a reduced cost.&lt;/p&gt;</content><author><name></name></author><summary type="html">I haven’t explicitly identified it until now, but it seems that I have a habit of putting exactly the same thing in my introductory paragraph in basically all of the posts in this series. This particular lesson doesn’t sound all that bad at first, but I can assure you that I have literally crashed a server by not following it.</summary></entry><entry><title type="html">What The Fuck Does Guice ‘zip file closed’ Exception Mean?</title><link href="https://agenttroll.github.io/blog/2019/07/18/what-the-fuck-does-guice-zip-file-closed-exception-mean.html" rel="alternate" type="text/html" title="What The Fuck Does Guice 'zip file closed' Exception Mean?" /><published>2019-07-18T01:00:15-07:00</published><updated>2019-07-18T01:00:15-07:00</updated><id>https://agenttroll.github.io/blog/2019/07/18/what-the-fuck-does-guice-zip-file-closed-exception-mean</id><content type="html" xml:base="https://agenttroll.github.io/blog/2019/07/18/what-the-fuck-does-guice-zip-file-closed-exception-mean.html">&lt;p&gt;I’ve had a lot of time to work with &lt;a href=&quot;https://github.com/google/guice&quot;&gt;Guice&lt;/a&gt;
+much faster at a reduced cost.&lt;/p&gt;</content><author><name></name></author><summary type="html">I haven’t explicitly identified it until now, but it seems that I have a habit of putting exactly the same thing in my introductory paragraph in basically all of the posts in this series. This particular lesson doesn’t sound all that bad at first, but I can assure you that I have literally crashed a server by not following it.</summary></entry><entry><title type="html">What The Fuck Does Guice ‘zip file closed’ Exception Mean?</title><link href="https://agenttroll.github.io/blog/2019/07/18/what-the-fuck-does-guice-zip-file-closed-exception-mean.html" rel="alternate" type="text/html" title="What The Fuck Does Guice ‘zip file closed’ Exception Mean?" /><published>2019-07-18T04:00:15-04:00</published><updated>2019-07-18T04:00:15-04:00</updated><id>https://agenttroll.github.io/blog/2019/07/18/what-the-fuck-does-guice-zip-file-closed-exception-mean</id><content type="html" xml:base="https://agenttroll.github.io/blog/2019/07/18/what-the-fuck-does-guice-zip-file-closed-exception-mean.html">&lt;p&gt;I’ve had a lot of time to work with &lt;a href=&quot;https://github.com/google/guice&quot;&gt;Guice&lt;/a&gt;
 when I worked with Skytropia. However, working on a
 personal project with more up-to-date versions of Spigot
 and Guice, I was met with the strangest possible exception.
@@ -1571,17 +1805,17 @@ introductory fluff.&lt;/p&gt;
 &lt;p&gt;Obviously, it would be out of place if I didn’t show what
 I’m running. Here’s the Java/OS info:&lt;/p&gt;
 
-&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;System Info: Java 11 (OpenJDK 64-Bit Server VM 11.0.3+7) Host:  Linux 4.19.0-5-amd64 (amd64)
+&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;System Info: Java 11 (OpenJDK 64-Bit Server VM 11.0.3+7) Host:  Linux 4.19.0-5-amd64 (amd64)
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
 
 &lt;p&gt;Now here’s the server info:&lt;/p&gt;
 
-&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;[01:05:37 INFO]: This server is running Paper version git-Paper-133 (MC: 1.14.3) (Implementing API version 1.14.3-R0.1-SNAPSHOT)
+&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;[01:05:37 INFO]: This server is running Paper version git-Paper-133 (MC: 1.14.3) (Implementing API version 1.14.3-R0.1-SNAPSHOT)
 [01:05:37 INFO]: Previous version: git-Paper-123 (MC: 1.14.3)
 [01:05:37 INFO]: You are 1 version(s) behind
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
 
-&lt;p&gt;And this is my dependencies &lt;code class=&quot;highlighter-rouge&quot;&gt;pom.xml&lt;/code&gt;:&lt;/p&gt;
+&lt;p&gt;And this is my dependencies &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;pom.xml&lt;/code&gt;:&lt;/p&gt;
 
 &lt;div class=&quot;language-xml highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;nt&quot;&gt;&amp;lt;dependency&amp;gt;&lt;/span&gt;
     &lt;span class=&quot;nt&quot;&gt;&amp;lt;groupId&amp;gt;&lt;/span&gt;com.google.inject&lt;span class=&quot;nt&quot;&gt;&amp;lt;/groupId&amp;gt;&lt;/span&gt;
@@ -1604,14 +1838,14 @@ I’m running. Here’s the Java/OS info:&lt;/p&gt;
 &lt;span class=&quot;nt&quot;&gt;&amp;lt;/dependency&amp;gt;&lt;/span&gt;
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
 
-&lt;p&gt;I am using relocations to move &lt;code class=&quot;highlighter-rouge&quot;&gt;com.google.inject&lt;/code&gt; to a
+&lt;p&gt;I am using relocations to move &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;com.google.inject&lt;/code&gt; to a
 different package. It is worth noting that you can get an
 equally strange error if you shade Guice in the same
 namespace, but that applies to all plugins (and the server
 namespace as well, which is why you should NEVER shade
 database drivers in a plugin, relocation doesn’t work). The
 error will obviously look a little bit different, but if I
-recall, it should be an &lt;code class=&quot;highlighter-rouge&quot;&gt;IllegalAccessException&lt;/code&gt; or
+recall, it should be an &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;IllegalAccessException&lt;/code&gt; or
 something similar. That being said, this post is &lt;strong&gt;not&lt;/strong&gt;
 on that topic.&lt;/p&gt;
 
@@ -1620,7 +1854,7 @@ on that topic.&lt;/p&gt;
 &lt;p&gt;Now onto the error. This is what I have been tearing my
 hair over the last hour:&lt;/p&gt;
 
-&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&amp;gt; 2019-07-18 00:30:34,444 Log4j2-TF-1-AsyncLogger[AsyncContext@70dea4e]-1 ERROR An exception occurred processing Appender File com.google.common.util.concurrent.UncheckedExecutionException: java.lang.IllegalStateException: zip file closed
+&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&amp;gt; 2019-07-18 00:30:34,444 Log4j2-TF-1-AsyncLogger[AsyncContext@70dea4e]-1 ERROR An exception occurred processing Appender File com.google.common.util.concurrent.UncheckedExecutionException: java.lang.IllegalStateException: zip file closed
         at com.google.common.cache.LocalCache$Segment.get(LocalCache.java:2217)
         at com.google.common.cache.LocalCache.get(LocalCache.java:4154)
         at com.google.common.cache.LocalCache.getOrLoad(LocalCache.java:4158)
@@ -1691,7 +1925,7 @@ it kinda looked like it had something to do with logging,
 but there are several things out of place here - it deals
 with the class loader, and Guice had something to do with
 it. So obviously, the knee-jerk reaction was incorrect.
-(I &lt;code class=&quot;highlighter-rouge&quot;&gt;rm -fR logs/&lt;/code&gt; anyways for good measure, but no dice).&lt;/p&gt;
+(I &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;rm -fR logs/&lt;/code&gt; anyways for good measure, but no dice).&lt;/p&gt;
 
 &lt;p&gt;So how am I supposed to fix it?&lt;/p&gt;
 
@@ -1706,7 +1940,7 @@ of all, and second, I know for a fact that Java 11 works
 completely fine since I’ve used Guice in the past on Java
 11 platforms. Finally, I know that assisted inject isn’t
 the issue either because I literally commented it out in
-the &lt;code class=&quot;highlighter-rouge&quot;&gt;pom.xml&lt;/code&gt; and made the necessary deletions without
+the &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;pom.xml&lt;/code&gt; and made the necessary deletions without
 effect.&lt;/p&gt;
 
 &lt;p&gt;&lt;a href=&quot;https://stackoverflow.com/q/54174855/3308999&quot;&gt;This&lt;/a&gt; also
@@ -1718,7 +1952,7 @@ with no answers to it.&lt;/p&gt;
 &lt;p&gt;Since I know that Guice is part of the problem, I decided
 to comment out all the initialization it is doing, from
 creating the injector to the usages of
-&lt;code class=&quot;highlighter-rouge&quot;&gt;Injector#getInstance(...)&lt;/code&gt;. Since I was using a newer
+&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Injector#getInstance(...)&lt;/code&gt;. Since I was using a newer
 Guice version, perhaps simply having the classes in the JAR
 or perhaps the relocation could be messing with something?
 The answer was no, the exception didn’t come up with simply
@@ -1727,21 +1961,21 @@ something, obviously there was something wrong with either
 the way I’m configuring or my constructors, or something
 along those lines.&lt;/p&gt;
 
-&lt;p&gt;I uncommented &lt;code class=&quot;highlighter-rouge&quot;&gt;Guice#createInjector(...)&lt;/code&gt; and ran again
+&lt;p&gt;I uncommented &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Guice#createInjector(...)&lt;/code&gt; and ran again
 with no exception. Good, configuration should probably be
 fine as-is unless I forgot something, but I’ll have to
 start uncommenting the usages of
-&lt;code class=&quot;highlighter-rouge&quot;&gt;Injector#getInstance(...)&lt;/code&gt; to know for sure. As I
+&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Injector#getInstance(...)&lt;/code&gt; to know for sure. As I
 uncommented those lines, I finally hit an exception, but
 it wasn’t the big long meaningless one I pasted above, it
 was a readable Guice configuration exception. As it turns
-out, I failed to configure a binding for &lt;code class=&quot;highlighter-rouge&quot;&gt;Plugin&lt;/code&gt;, which I
+out, I failed to configure a binding for &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Plugin&lt;/code&gt;, which I
 used in place of the actual main class. However, using
-&lt;code class=&quot;highlighter-rouge&quot;&gt;Plugin&lt;/code&gt; in the first place was a mistake. The particular
+&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Plugin&lt;/code&gt; in the first place was a mistake. The particular
 class I was working with belonged specifically to the
 project and wasn’t a utility or anything, so it was
 supposed to use the main class rather than a generic
-&lt;code class=&quot;highlighter-rouge&quot;&gt;Plugin&lt;/code&gt;. Since I already had my plugin module correctly
+&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Plugin&lt;/code&gt;. Since I already had my plugin module correctly
 configured, I simply fixed the constructor to take the main
 class instead. Ta da, no more exception. In the end, it
 turns out that by fixing that configuration exception, the
@@ -1762,7 +1996,7 @@ in the first place, what the problem is with exceptions
 that require class loading and such. Perhaps it is needed
 to find line numbers or something to display more
 debugging information? Perhaps because it ends up having
-to resolve classes through &lt;code class=&quot;highlighter-rouge&quot;&gt;PluginClassLoader&lt;/code&gt;, and the JAR
+to resolve classes through &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;PluginClassLoader&lt;/code&gt;, and the JAR
 file has already been read, it can’t read from the closed
 JAR stream? I honestly can only speculate. That being said,
 it is ironic that something which may have originally been
@@ -1777,13 +2011,13 @@ anyone else also runs into this issue.&lt;/p&gt;
 
 &lt;p&gt;I figured out that it has something to do with unchecked
 exceptions being thrown; if you wrap all of your code
-that uses &lt;code class=&quot;highlighter-rouge&quot;&gt;Injector#getInstance(...)&lt;/code&gt; with a try-catch
-block and print with &lt;code class=&quot;highlighter-rouge&quot;&gt;Exception#printStackTrace()&lt;/code&gt; instead,
+that uses &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Injector#getInstance(...)&lt;/code&gt; with a try-catch
+block and print with &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Exception#printStackTrace()&lt;/code&gt; instead,
 you can print the actual exception. Since
-&lt;code class=&quot;highlighter-rouge&quot;&gt;#getInstance(...)&lt;/code&gt; should only be used in a few entry
+&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;#getInstance(...)&lt;/code&gt; should only be used in a few entry
 points, it should be relatively straightforward (if it
 is being used literally everywhere, you’ve probably missed
-the point of Guice…).&lt;/p&gt;</content><author><name></name></author><summary type="html">I’ve had a lot of time to work with Guice when I worked with Skytropia. However, working on a personal project with more up-to-date versions of Spigot and Guice, I was met with the strangest possible exception. But what does it mean? Honestly, I haven’t quite figured it all out myself either.</summary></entry><entry><title type="html">Lessons Learned Debugging: Part 6</title><link href="https://agenttroll.github.io/blog/2019/07/13/lessons-learned-debugging-part-6.html" rel="alternate" type="text/html" title="Lessons Learned Debugging: Part 6" /><published>2019-07-13T20:42:05-07:00</published><updated>2019-07-13T20:42:05-07:00</updated><id>https://agenttroll.github.io/blog/2019/07/13/lessons-learned-debugging-part-6</id><content type="html" xml:base="https://agenttroll.github.io/blog/2019/07/13/lessons-learned-debugging-part-6.html">&lt;p&gt;This is another one of those “watch out when you’re doing
+the point of Guice…).&lt;/p&gt;</content><author><name></name></author><summary type="html">I’ve had a lot of time to work with Guice when I worked with Skytropia. However, working on a personal project with more up-to-date versions of Spigot and Guice, I was met with the strangest possible exception. But what does it mean? Honestly, I haven’t quite figured it all out myself either.</summary></entry><entry><title type="html">Lessons Learned Debugging: Part 6</title><link href="https://agenttroll.github.io/blog/2019/07/13/lessons-learned-debugging-part-6.html" rel="alternate" type="text/html" title="Lessons Learned Debugging: Part 6" /><published>2019-07-13T23:42:05-04:00</published><updated>2019-07-13T23:42:05-04:00</updated><id>https://agenttroll.github.io/blog/2019/07/13/lessons-learned-debugging-part-6</id><content type="html" xml:base="https://agenttroll.github.io/blog/2019/07/13/lessons-learned-debugging-part-6.html">&lt;p&gt;This is another one of those “watch out when you’re doing
 XYZ” rather than a specific thing to do (or not do).&lt;/p&gt;
 
 &lt;h1 id=&quot;be-careful-handling-inventories&quot;&gt;Be Careful Handling Inventories&lt;/h1&gt;
@@ -1794,10 +2028,10 @@ exceptions, duplication bugs (for the uninitiated: bugs
 that allow players to obtain more of an item than intended,
 often disrupting the in-game economy), and even &lt;a href=&quot;https://agenttroll.github.io/blog/2018/04/13/keeping-inventories-open.html&quot;&gt;crash the
 server&lt;/a&gt;
-just handling inventories and &lt;code class=&quot;highlighter-rouge&quot;&gt;ItemStack&lt;/code&gt;s.&lt;/p&gt;
+just handling inventories and &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;ItemStack&lt;/code&gt;s.&lt;/p&gt;
 
-&lt;p&gt;Writing event handlers for &lt;code class=&quot;highlighter-rouge&quot;&gt;InventoryClickEvent&lt;/code&gt; and
-dealing with any use-case for &lt;code class=&quot;highlighter-rouge&quot;&gt;ItemStack&lt;/code&gt; should be
+&lt;p&gt;Writing event handlers for &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;InventoryClickEvent&lt;/code&gt; and
+dealing with any use-case for &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;ItemStack&lt;/code&gt; should be
 approached with caution.&lt;/p&gt;
 
 &lt;h1 id=&quot;exceptions-in-event-handlers&quot;&gt;Exceptions in Event Handlers&lt;/h1&gt;
@@ -1827,41 +2061,41 @@ frequency by taking care to think through the logic and the
 possible edge cases that might occur.&lt;/p&gt;
 
 &lt;p&gt;As a real-life anecdote, one of the duplication bugs I had
-to deal with was a &lt;code class=&quot;highlighter-rouge&quot;&gt;ClassCastException&lt;/code&gt; because I didn’t
+to deal with was a &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;ClassCastException&lt;/code&gt; because I didn’t
 account for the fact that both dispenser and dropper blocks
-could fire &lt;code class=&quot;highlighter-rouge&quot;&gt;BlockDispenseEvent&lt;/code&gt;. What happened was an
+could fire &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;BlockDispenseEvent&lt;/code&gt;. What happened was an
 exception occurred before the item was supposed to be
 removed from the dispenser, which means that it would get
 dispensed as a result of the event failing to be cancelled,
 and the item would not leave the dispenser, which allowed
 people to have an infinite item generator.&lt;/p&gt;
 
-&lt;h1 id=&quot;nullpointerexceptions-galore&quot;&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;NullPointerException&lt;/code&gt;s Galore&lt;/h1&gt;
+&lt;h1 id=&quot;nullpointerexceptions-galore&quot;&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;NullPointerException&lt;/code&gt;s Galore&lt;/h1&gt;
 
 &lt;p&gt;Returning back to the basics, many novice programmers
-struggle to use &lt;code class=&quot;highlighter-rouge&quot;&gt;InventoryClickEvent&lt;/code&gt; and check items.
+struggle to use &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;InventoryClickEvent&lt;/code&gt; and check items.
 As someone who has frequented the Bukkit Forums and the
 SpigotMC forums for years on end, I’ve seen countless
-threads where &lt;code class=&quot;highlighter-rouge&quot;&gt;NullPointerException&lt;/code&gt; is thrown simply from
-checking the &lt;code class=&quot;highlighter-rouge&quot;&gt;ItemMeta&lt;/code&gt;. Luckily, these days, it gets
+threads where &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;NullPointerException&lt;/code&gt; is thrown simply from
+checking the &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;ItemMeta&lt;/code&gt;. Luckily, these days, it gets
 harder and harder to find these threads, thanks to the
 efforts to document nullability in the API.&lt;/p&gt;
 
-&lt;p&gt;Back before the more recent API versions, what was &lt;code class=&quot;highlighter-rouge&quot;&gt;null&lt;/code&gt;
+&lt;p&gt;Back before the more recent API versions, what was &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;null&lt;/code&gt;
 and what wasn’t was basically guesswork that you needed to
 keep stored in the back of your mind once you figured it
 out. There are plenty of places you can quickly run into
 trouble - starting from getting the inventory slot itself
-to retrieving the &lt;code class=&quot;highlighter-rouge&quot;&gt;ItemMeta&lt;/code&gt;, to the individual methods
-like &lt;code class=&quot;highlighter-rouge&quot;&gt;ItemMeta#getDisplayName()&lt;/code&gt;. This was further
-compounded by the inconsistent use of &lt;code class=&quot;highlighter-rouge&quot;&gt;Material#AIR&lt;/code&gt; to
+to retrieving the &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;ItemMeta&lt;/code&gt;, to the individual methods
+like &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;ItemMeta#getDisplayName()&lt;/code&gt;. This was further
+compounded by the inconsistent use of &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Material#AIR&lt;/code&gt; to
 denote an empty/no item. For example, in
-&lt;code class=&quot;highlighter-rouge&quot;&gt;PlayerInteractEvent&lt;/code&gt;, I believe that using &lt;code class=&quot;highlighter-rouge&quot;&gt;getItem()&lt;/code&gt;
-from the event would return &lt;code class=&quot;highlighter-rouge&quot;&gt;null&lt;/code&gt; for empty, but
-&lt;code class=&quot;highlighter-rouge&quot;&gt;Player#getItemInHand()&lt;/code&gt; would return an &lt;code class=&quot;highlighter-rouge&quot;&gt;AIR&lt;/code&gt; item. In
-fact, &lt;code class=&quot;highlighter-rouge&quot;&gt;Inventory#getItem(int)&lt;/code&gt; would return &lt;code class=&quot;highlighter-rouge&quot;&gt;null&lt;/code&gt; as well
-and any setter accepted a &lt;code class=&quot;highlighter-rouge&quot;&gt;null&lt;/code&gt; item as empty, so the
-inconsistent use of the &lt;code class=&quot;highlighter-rouge&quot;&gt;AIR&lt;/code&gt; material obviously doesn’t
+&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;PlayerInteractEvent&lt;/code&gt;, I believe that using &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;getItem()&lt;/code&gt;
+from the event would return &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;null&lt;/code&gt; for empty, but
+&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Player#getItemInHand()&lt;/code&gt; would return an &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;AIR&lt;/code&gt; item. In
+fact, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Inventory#getItem(int)&lt;/code&gt; would return &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;null&lt;/code&gt; as well
+and any setter accepted a &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;null&lt;/code&gt; item as empty, so the
+inconsistent use of the &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;AIR&lt;/code&gt; material obviously doesn’t
 make a whole lot of sense. Regardless, I digress. The point
 is, even for more advanced programmers, the Bukkit
 inventory API is still difficult terrain to navigate.&lt;/p&gt;
@@ -1924,7 +2158,7 @@ simply assumed the inventory would be unreachable, I would
 have just cleared everything at the end. If someone
 discovers this, it would then just be a UI bug and I’d just
 need to make sure to close all of the
-&lt;code class=&quot;highlighter-rouge&quot;&gt;Inventory#getViewers()&lt;/code&gt; prior to dropping everything.
+&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Inventory#getViewers()&lt;/code&gt; prior to dropping everything.
 Don’t prioritize performance over correctness. Ironically,
 this was &lt;em&gt;still&lt;/em&gt; not even the end of the story, because
 closing the inventories from that collection caused a CME.
@@ -1961,7 +2195,7 @@ unimaginable.&lt;/p&gt;
 add to your repertoire of programming knowledge outside of
 literally just writing your own personal projects. As you
 gain more experience, you will write better and better
-software. I promise.&lt;/p&gt;</content><author><name></name></author><summary type="html">This is another one of those “watch out when you’re doing XYZ” rather than a specific thing to do (or not do).</summary></entry><entry><title type="html">Lessons Learned Debugging: Part 5</title><link href="https://agenttroll.github.io/blog/2019/07/02/lessons-learned-debugging-part-5.html" rel="alternate" type="text/html" title="Lessons Learned Debugging: Part 5" /><published>2019-07-02T20:22:15-07:00</published><updated>2019-07-02T20:22:15-07:00</updated><id>https://agenttroll.github.io/blog/2019/07/02/lessons-learned-debugging-part-5</id><content type="html" xml:base="https://agenttroll.github.io/blog/2019/07/02/lessons-learned-debugging-part-5.html">&lt;p&gt;This isn’t a bugginess lesson, but if you’re ever going to
+software. I promise.&lt;/p&gt;</content><author><name></name></author><summary type="html">This is another one of those “watch out when you’re doing XYZ” rather than a specific thing to do (or not do).</summary></entry><entry><title type="html">Lessons Learned Debugging: Part 5</title><link href="https://agenttroll.github.io/blog/2019/07/02/lessons-learned-debugging-part-5.html" rel="alternate" type="text/html" title="Lessons Learned Debugging: Part 5" /><published>2019-07-02T23:22:15-04:00</published><updated>2019-07-02T23:22:15-04:00</updated><id>https://agenttroll.github.io/blog/2019/07/02/lessons-learned-debugging-part-5</id><content type="html" xml:base="https://agenttroll.github.io/blog/2019/07/02/lessons-learned-debugging-part-5.html">&lt;p&gt;This isn’t a bugginess lesson, but if you’re ever going to
 progress beyond a novice-level plugin developer (or even a
 Java developer for that matter), then you’ll need to figure
 out how to ensure data integrity.&lt;/p&gt;
@@ -1993,7 +2227,7 @@ state, which means that the exact properties, settings,
 objects, whatever type of data being stored in your plugin
 at the exact moment in time can be derived from the data 
 that you save. This means that you should act like your 
-plugin is calling then &lt;code class=&quot;highlighter-rouge&quot;&gt;onDisable&lt;/code&gt; method without actually
+plugin is calling then &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;onDisable&lt;/code&gt; method without actually
 having the server shut down every X minutes. It should not
 be up to the developer to decide how long the autosave
 interval is, and therefore, this should be configurable.
@@ -2012,11 +2246,11 @@ completely lost or deleted altogether.&lt;/p&gt;
 failure. For example, the following code is not an 
 effective way to save data:&lt;/p&gt;
 
-&lt;div class=&quot;language-java highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;k&quot;&gt;try&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;BufferedWriter&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;writer&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;...)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
-    &lt;span class=&quot;k&quot;&gt;for&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Data&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;datum&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;this&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;data&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+&lt;div class=&quot;language-java highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;k&quot;&gt;try&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nc&quot;&gt;BufferedWriter&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;writer&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;...)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;for&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nc&quot;&gt;Data&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;datum&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;this&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;data&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
         &lt;span class=&quot;n&quot;&gt;writer&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;write&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;datum&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;serialize&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;());&lt;/span&gt;
     &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
-&lt;span class=&quot;o&quot;&gt;}&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;catch&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;IOException&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;e&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;}&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;catch&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nc&quot;&gt;IOException&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;e&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
     &lt;span class=&quot;n&quot;&gt;e&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;printStackTrace&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;();&lt;/span&gt;
 &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;finally&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
     &lt;span class=&quot;k&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;writer&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;!=&lt;/span&gt; &lt;span class=&quot;kc&quot;&gt;null&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
@@ -2027,22 +2261,22 @@ effective way to save data:&lt;/p&gt;
 
 &lt;p&gt;The problem is that multiple things could possibly go wrong
 here. It may not even be possible to open a new 
-&lt;code class=&quot;highlighter-rouge&quot;&gt;BufferedWriter&lt;/code&gt; if the OS exhausts the available file 
+&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;BufferedWriter&lt;/code&gt; if the OS exhausts the available file 
 handles. A more effective solution looks like this:&lt;/p&gt;
 
-&lt;div class=&quot;language-java highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;k&quot;&gt;try&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;BufferedWriter&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;writer&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;...)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
-    &lt;span class=&quot;k&quot;&gt;for&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Data&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;datum&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;this&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;data&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+&lt;div class=&quot;language-java highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;k&quot;&gt;try&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nc&quot;&gt;BufferedWriter&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;writer&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;...)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;for&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nc&quot;&gt;Data&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;datum&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;this&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;data&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
         &lt;span class=&quot;k&quot;&gt;try&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
-            &lt;span class=&quot;n&quot;&gt;System&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;out&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;println&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;datum&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;serialize&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;());&lt;/span&gt;
-        &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;catch&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Exception&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;e1&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+            &lt;span class=&quot;nc&quot;&gt;System&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;out&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;println&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;datum&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;serialize&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;());&lt;/span&gt;
+        &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;catch&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nc&quot;&gt;Exception&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;e1&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
             &lt;span class=&quot;n&quot;&gt;e1&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;printStackTrace&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;();&lt;/span&gt;
         &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
     &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
-&lt;span class=&quot;o&quot;&gt;}&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;catch&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Exception&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;e&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
-    &lt;span class=&quot;k&quot;&gt;for&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Data&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;datum&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;this&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;data&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;}&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;catch&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nc&quot;&gt;Exception&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;e&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;for&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nc&quot;&gt;Data&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;datum&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;this&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;data&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
         &lt;span class=&quot;k&quot;&gt;try&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
-            &lt;span class=&quot;n&quot;&gt;System&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;out&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;println&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;datum&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;serialize&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;());&lt;/span&gt;
-        &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;catch&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Exception&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;e1&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+            &lt;span class=&quot;nc&quot;&gt;System&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;out&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;println&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;datum&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;serialize&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;());&lt;/span&gt;
+        &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;catch&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nc&quot;&gt;Exception&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;e1&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
             &lt;span class=&quot;n&quot;&gt;e1&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;printStackTrace&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;();&lt;/span&gt;
         &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
     &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
@@ -2054,11 +2288,11 @@ it might possibly be recovered by parsing the log file or
 by piping the console output somewhere (the parser of this
 data need not be written beforehand, but the data itself 
 should at least be available). Additionally, even if 
-individual &lt;code class=&quot;highlighter-rouge&quot;&gt;Data#serialize()&lt;/code&gt; methods fail, it will not
+individual &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Data#serialize()&lt;/code&gt; methods fail, it will not
 prevent other data from being saved.&lt;/p&gt;
 
 &lt;p&gt;Plugins also need to be extremely careful about exceptions
-thrown in the &lt;code class=&quot;highlighter-rouge&quot;&gt;onEnable&lt;/code&gt; method. Because errors during 
+thrown in the &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;onEnable&lt;/code&gt; method. Because errors during 
 startup cause plugins to be disabled (often with empty 
 data), this means that the data file will be overwritten
 because of a parsing error and all the data will disappear.
@@ -2077,10 +2311,10 @@ backup of the data, but only in case an exception occurs:&lt;/p&gt;
 &lt;div class=&quot;language-java highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;kd&quot;&gt;public&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;void&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;onEnable&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;()&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
     &lt;span class=&quot;o&quot;&gt;...&lt;/span&gt;
 
-    &lt;span class=&quot;k&quot;&gt;try&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;BufferedReader&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;reader&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;...)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;try&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nc&quot;&gt;BufferedReader&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;reader&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;...)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
         &lt;span class=&quot;o&quot;&gt;...&lt;/span&gt;
-    &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;catch&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Exception&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;e&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
-        &lt;span class=&quot;n&quot;&gt;Files&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;copy&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(...,&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;...);&lt;/span&gt;
+    &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;catch&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nc&quot;&gt;Exception&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;e&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+        &lt;span class=&quot;nc&quot;&gt;Files&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;copy&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(...,&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;...);&lt;/span&gt;
         &lt;span class=&quot;n&quot;&gt;e&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;printStackTrace&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;();&lt;/span&gt;
     &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
 
@@ -2107,7 +2341,7 @@ loop of crashing the server and starting it up again will
 ensure that the data that is backed up stays until it can
 be properly restored and the error can be properly
 investigated. For example, if you are saving in the 
-&lt;code class=&quot;highlighter-rouge&quot;&gt;onEnable&lt;/code&gt; to the same backup file whenever an exception 
+&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;onEnable&lt;/code&gt; to the same backup file whenever an exception 
 is thrown, then it will do little good for you because the
 autorestart might erase both the original and the backup as
 well if the original is now empty.&lt;/p&gt;
@@ -2151,323 +2385,4 @@ I’m still open to Bukkit development opportunities, so if
 you’re hiring, check my 
 &lt;a href=&quot;https://agenttroll.github.io/&quot;&gt;main website&lt;/a&gt; under 
 “Professional Experience” to see if I’m still looking for
-work.&lt;/p&gt;</content><author><name></name></author><summary type="html">This isn’t a bugginess lesson, but if you’re ever going to progress beyond a novice-level plugin developer (or even a Java developer for that matter), then you’ll need to figure out how to ensure data integrity.</summary></entry><entry><title type="html">Implementing PBFT in Java</title><link href="https://agenttroll.github.io/blog/2019/06/23/implementing-pbft-in-java.html" rel="alternate" type="text/html" title="Implementing PBFT in Java" /><published>2019-06-23T17:23:35-07:00</published><updated>2019-06-23T17:23:35-07:00</updated><id>https://agenttroll.github.io/blog/2019/06/23/implementing-pbft-in-java</id><content type="html" xml:base="https://agenttroll.github.io/blog/2019/06/23/implementing-pbft-in-java.html">&lt;p&gt;Following up with my
-&lt;a href=&quot;https://agenttroll.github.io/blog/2019/06/22/tle-tracking-satellites-in-space.html&quot;&gt;previous post&lt;/a&gt;
-about one of my prior projects, I have another post about
-yet another project that I’ve recently finished, 
-&lt;a href=&quot;https://github.com/AgentTroll/pbft-java&quot;&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;pbft-java&lt;/code&gt;&lt;/a&gt;.&lt;/p&gt;
-
-&lt;h1 id=&quot;what-is-pbft&quot;&gt;What is PBFT?&lt;/h1&gt;
-
-&lt;p&gt;PBFT stands for Practical Byzantine Fault Tolerance. PBFT
-is an algorithm developed by Miguel Castro and Barbara
-Liskov that allows replicated systems to tolerate what are
-called Byzantine faults. Since some readers don’t know what
-a Byzantine fault is, here is what Wikipedia has to say:&lt;/p&gt;
-
-&lt;blockquote&gt;
-  &lt;p&gt;A Byzantine fault […] is a condition of a computer 
-system, particularly distributed computing systems, where 
-components may fail and there is imperfect information on 
-whether a component has failed. The term takes its name 
-from an allegory, the “Byzantine Generals Problem”&lt;/p&gt;
-&lt;/blockquote&gt;
-
-&lt;p&gt;The Wikipedia page on the 
-&lt;a href=&quot;https://en.wikipedia.org/wiki/Two_Generals%27_Problem&quot;&gt;“Two Generals’ Problem”&lt;/a&gt;
-has a good description of what the Byzantine General’s
-Problem is, but the general gist is that a consensus has
-to be made upon a decision or computation where one of the
-parties involved may be compromised, may be malicious, or
-could be faulty. When applied to computing systems, a set
-of replica computers will need to decide on the correct
-course of action even though other computers may send 
-erroneous data or not even send any data at all.&lt;/p&gt;
-
-&lt;p&gt;The PBFT algorithm is described by the paper authored by
-Castro and Liskov, which can be read
-&lt;a href=&quot;http://pmg.csail.mit.edu/papers/osdi99.pdf&quot;&gt;here&lt;/a&gt;.&lt;/p&gt;
-
-&lt;h1 id=&quot;client-implementation&quot;&gt;Client Implementation&lt;/h1&gt;
-
-&lt;p&gt;I personally used a multitude of different sources when
-developing this project as an abstraction to the PBFT 
-algorithm, and even then, I am still confused on whether or
-not I even got everything down correctly.&lt;/p&gt;
-
-&lt;p&gt;For simplicity, I will refer to the configured fault 
-tolerance to be &lt;code class=&quot;highlighter-rouge&quot;&gt;f&lt;/code&gt; as in the PBFT paper, the number of
-replicas that can have Byzantine faults while still 
-allowing a safe consensus to be reached.&lt;/p&gt;
-
-&lt;p&gt;The client implementation is very, very simple. Only two
-messages need to be implemented, the sending and receiving
-capability for one and the other, and the timeout.&lt;/p&gt;
-
-&lt;p&gt;Requests are identified by their timestamp value, which 
-count up from 0 instead of using the actual system clock 
-since it is possible to send more than one message during 
-the time it takes for &lt;code class=&quot;highlighter-rouge&quot;&gt;System#currentTimeMillis()&lt;/code&gt; to 
-update its value.&lt;/p&gt;
-
-&lt;p&gt;Once a REQUEST is sent to what is believed to be the 
-primary, users will call the &lt;code class=&quot;highlighter-rouge&quot;&gt;Client#checkTimeout()&lt;/code&gt; method
-in a loop, which will check to make sure that a REPLY is 
-received within the configured timeout. If it isn’t, then a
-REQUEST is then multicasted to all replicas.&lt;/p&gt;
-
-&lt;p&gt;The client continuously waits for a REPLY message from 
-replicas. As soon as it receives the &lt;code class=&quot;highlighter-rouge&quot;&gt;f + 1&lt;/code&gt;th REPLY 
-message that matches a stored REPLY, then the result is
-accepted and the timer is stopped.&lt;/p&gt;
-
-&lt;h1 id=&quot;replica-implementation&quot;&gt;Replica Implementation&lt;/h1&gt;
-
-&lt;p&gt;Replicas are vastly more complicated and have tons of 
-moving parts that need to be considered for each message.&lt;/p&gt;
-
-&lt;p&gt;In short, what a replica does is wait for REQUEST messages
-and then go through a process to ensure that all other 
-replicas also agree to go through the same process. Then,
-it will send a REPLY message with the computed result. If
-the replica waits for too long, it will try to vote out the
-primary with a VIEW-CHANGE message in hopes of getting 
-things going again.&lt;/p&gt;
-
-&lt;h4 id=&quot;receiving-request&quot;&gt;Receiving REQUEST&lt;/h4&gt;
-
-&lt;p&gt;If the replica already has already responded to a REQUEST
-with the same client ID and the same timestamp, then it
-means that the operation has already completed and it will
-simply resend the cached REPLY for that operation.&lt;/p&gt;
-
-&lt;p&gt;When a replica receives a REQUEST message that it didn’t
-know about before, it will start a timer that will ensure
-that things keep moving. If the replica isn’t the primary,
-then it simply redirects the message to the primary 
-instead.&lt;/p&gt;
-
-&lt;p&gt;If the replica is a primary, then it will ensure that the
-message shouldn’t be bufferred. If the number of requests
-currently being handled is greater than the configured 
-buffer limit, the primary puts it into a FIFO queue to be
-executed at a later time.&lt;/p&gt;
-
-&lt;p&gt;The primary then sends a PRE-PREPARE to all non-primaries
-and relays the request to them, adding the sent message
-to its log.&lt;/p&gt;
-
-&lt;p&gt;Replicas identify accepted REQUEST messages using the
-current view number and the sequence number that the 
-primary assigns to it. The primary adds the multicasted
-PRE-PREPARE message to a new ticket for that REQUEST.&lt;/p&gt;
-
-&lt;blockquote&gt;
-  &lt;p&gt;In &lt;code class=&quot;highlighter-rouge&quot;&gt;pbft-java&lt;/code&gt;, I assume that the REQUEST message is 
-included with the PRE-PREPARE message to simplify the 
-encoding process. Users can decide whether or not to follow
-suit, they can always set the REQUEST to null and utilize 
-their own thing if they want to follow the an orthodox
-implementation.&lt;/p&gt;
-&lt;/blockquote&gt;
-
-&lt;h4 id=&quot;receiving-pre-prepare&quot;&gt;Receiving PRE-PREPARE&lt;/h4&gt;
-
-&lt;p&gt;When a non-primary receives a PRE-PREPARE, it ensures that
-the view number is equal to the view that replica currently
-is in, and that the message sequence ID is between the 
-specified water marks, otherwise it ignores the message.
-The replica then checks to ensure the digest is correct, if
-the replica already has a matching ticket (one that has the
-same view number and sequence number), then it will also
-check to make sure that the new PRE-PREPARE message doesn’t
-have a digest different from the previous PRE-PREPARE. If
-these two conditions aren’t met, then the replica also 
-ignores the message.&lt;/p&gt;
-
-&lt;blockquote&gt;
-  &lt;p&gt;Digests are &lt;code class=&quot;highlighter-rouge&quot;&gt;byte[]&lt;/code&gt; arrays in &lt;code class=&quot;highlighter-rouge&quot;&gt;pbft-java&lt;/code&gt;. Additionally,
-ticketing is used because messages could arrive 
-out-of-order, so I’m not sure if the PBFT paper specifies
-that I should check the &lt;code class=&quot;highlighter-rouge&quot;&gt;prepared&lt;/code&gt; and &lt;code class=&quot;highlighter-rouge&quot;&gt;committed-local&lt;/code&gt;
-states every single time.&lt;/p&gt;
-&lt;/blockquote&gt;
-
-&lt;p&gt;Having accepted the PRE-PREPARE message, the replica then
-creates a new ticket. It then adds the PRE-PREPARE message 
-to the log, and multicasts a PREPARE message to all known 
-replicas, also adding that PREPARE message to the log.&lt;/p&gt;
-
-&lt;p&gt;The replica will then attempt to check on the &lt;code class=&quot;highlighter-rouge&quot;&gt;prepared&lt;/code&gt;
-and &lt;code class=&quot;highlighter-rouge&quot;&gt;committed-local&lt;/code&gt; states, executing the response to 
-those states as necessary. More on that below.&lt;/p&gt;
-
-&lt;h4 id=&quot;receiving-prepare&quot;&gt;Receiving PREPARE&lt;/h4&gt;
-
-&lt;p&gt;When a replica receives a PREPARE, it will also check to
-make sure that the view number is equal to the current view
-number and the sequence number is within the water marks,
-otherwise ignoring the message. It will create a new ticket
-if one does not exist already, and append the PREPARE to
-the log.&lt;/p&gt;
-
-&lt;p&gt;The relevant condition is &lt;code class=&quot;highlighter-rouge&quot;&gt;prepared&lt;/code&gt;. The ticket will scan
-the messages added to the log for that ticket (again, the
-same view number and the same sequence number). When it
-hits a PRE-PREPARE, it will scan the log to check for
-matching PREPARE messages whose digests also match. If
-the scan hits the &lt;code class=&quot;highlighter-rouge&quot;&gt;2f&lt;/code&gt;th matching PREPARE message, then
-the &lt;code class=&quot;highlighter-rouge&quot;&gt;prepared&lt;/code&gt; state becomes true and the replica responds
-by multicasting a COMMIT message, adding the COMMIT to the
-log.&lt;/p&gt;
-
-&lt;p&gt;The replica will then attempt to check on the &lt;code class=&quot;highlighter-rouge&quot;&gt;prepared&lt;/code&gt;
-and &lt;code class=&quot;highlighter-rouge&quot;&gt;committed-local&lt;/code&gt; states, executing the response to 
-those states as necessary.&lt;/p&gt;
-
-&lt;h4 id=&quot;recieving-commit&quot;&gt;Recieving COMMIT&lt;/h4&gt;
-
-&lt;p&gt;When a replica receives a COMMIT, it will also check to
-make sure that the view number is equal to the current view
-number and the sequence number is within the water marks,
-otherwise ignoring the message. It will create a new ticket
-if one does not exist already, and append the COMMIT to
-the log.&lt;/p&gt;
-
-&lt;p&gt;The relevant condition here is &lt;code class=&quot;highlighter-rouge&quot;&gt;committed-local&lt;/code&gt;. If we
-know that the ticket has reached the &lt;code class=&quot;highlighter-rouge&quot;&gt;prepared&lt;/code&gt; phase, we
-don’t need to rescan to make sure this is true. The ticket
-then looks for matching COMMIT messages, and if it reaches
-the &lt;code class=&quot;highlighter-rouge&quot;&gt;2f + 1&lt;/code&gt;th COMMIT, it will then execute the 
-operation found from the REQUEST message. A REPLY message 
-is sent back to the client with the result of the 
-operation, and the ticket is then moved to the cache in 
-case the same REQUEST is sent again. The client then stops
-the timer for that REQUEST, if available.&lt;/p&gt;
-
-&lt;p&gt;The replica will then attempt to check on the &lt;code class=&quot;highlighter-rouge&quot;&gt;prepared&lt;/code&gt;
-and &lt;code class=&quot;highlighter-rouge&quot;&gt;committed-local&lt;/code&gt; states, executing the response to 
-those states as necessary.&lt;/p&gt;
-
-&lt;p&gt;If the sequence number is evenly divisible by some
-configured number, then the replica will also multicast a
-CHECKPOINT message and add it to its log.&lt;/p&gt;
-
-&lt;h4 id=&quot;receiving-checkpoint&quot;&gt;Receiving CHECKPOINT&lt;/h4&gt;
-
-&lt;p&gt;When a replica receives a CHECKPOINT, it will add it to its
-log. If the log has &lt;code class=&quot;highlighter-rouge&quot;&gt;2f + 1&lt;/code&gt; CHECKPOINT messages from
-itself and other replicas with the same sequence number as
-the one that was received, it will then perform a garbage
-collection by throwing away cached REPLY messages less than
-or equal to the checkpoint, all CHECKPOINT messages below
-that checkpoint, and will update the low water mark to the
-checkpoint and the high water mark to the checkpoint plus
-the configured checkpoint interval.&lt;/p&gt;
-
-&lt;blockquote&gt;
-  &lt;p&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;pbft-java&lt;/code&gt; organizes CHECKPOINT messages by the sequence
-number, but I &lt;em&gt;believe&lt;/em&gt; that it should be based on any 
-CHECKPOINT with a sequence number greater than the given
-checkpoint to make it stable&lt;/p&gt;
-&lt;/blockquote&gt;
-
-&lt;h4 id=&quot;what-about-view-changes&quot;&gt;What About View-changes?&lt;/h4&gt;
-
-&lt;p&gt;Replicas will check the timers for all received REQUESTS in
-a loop. If the timer expires, then the replica will skip 
-all the other timers and become “disgruntled.” It will then
-multicast a VIEW-CHANGE message to vote all replicas into
-view &lt;code class=&quot;highlighter-rouge&quot;&gt;v + 1&lt;/code&gt;, where &lt;code class=&quot;highlighter-rouge&quot;&gt;v&lt;/code&gt; represents the current view number.
-The timeout will then double, and the timeout check loop 
-continues. If it times out again, the VIEW-CHANGE will then
-vote for &lt;code class=&quot;highlighter-rouge&quot;&gt;v + 2&lt;/code&gt; and the time doubles yet again, and so on.
-A disgruntled replica only accepts 3 messages: CHECKPOINT,
-VIEW-CHANGE, and NEW-VIEW. All other messages are ignored.&lt;/p&gt;
-
-&lt;blockquote&gt;
-  &lt;p&gt;The PBFT algorithm specifies that the timeout shouldn’t 
-double, but rather should increase by increments of the 
-original timeout, so instead of 1T -&amp;gt; 2T -&amp;gt; 4T, the paper
-specifies that it should be 1T -&amp;gt; 2T -&amp;gt; 3T if &lt;code class=&quot;highlighter-rouge&quot;&gt;T&lt;/code&gt; 
-represented the original timeout&lt;/p&gt;
-&lt;/blockquote&gt;
-
-&lt;h4 id=&quot;receiving-view-change&quot;&gt;Receiving VIEW-CHANGE&lt;/h4&gt;
-
-&lt;p&gt;When the “new primary” (the primary for view &lt;code class=&quot;highlighter-rouge&quot;&gt;v + 1&lt;/code&gt;)
-receives a VIEW-CHANGE message, it will add it to its log.
-If there are &lt;code class=&quot;highlighter-rouge&quot;&gt;2f&lt;/code&gt; VIEW-CHANGE messages in the log from
-different replicas, then the new primary will then 
-multicast a NEW-VIEW message.&lt;/p&gt;
-
-&lt;blockquote&gt;
-  &lt;p&gt;Technically, a multitude of items aren’t supposed to be 
-included in the actual NEW-VIEW message, however, again,
-for encoding simplicity, &lt;code class=&quot;highlighter-rouge&quot;&gt;pbft-java&lt;/code&gt; requires that the
-NEW-VIEW message includes the full checkpoint proofs as
-well as full PRE-PREPARE messages. If a more orthodox
-implementation is desired, users are encouraged to add
-their own messages to retrieve missing REQUESTs and
-CHECKPOINTs.&lt;/p&gt;
-&lt;/blockquote&gt;
-
-&lt;p&gt;If the replica isn’t the “new primary,” it will also add
-the message to its log, but if it has &lt;code class=&quot;highlighter-rouge&quot;&gt;f + 1&lt;/code&gt; VIEW-CHANGE
-messages in its log already from different replicas, then
-it will “bandwagon” and also multicast a VIEW-CHANGE for
-the new view as well.&lt;/p&gt;
-
-&lt;h4 id=&quot;receiving-new-view&quot;&gt;Receiving NEW-VIEW&lt;/h4&gt;
-
-&lt;p&gt;When a replica receives a NEW-VIEW message is received by a
-primary, it will perform a garbage collection by removing
-the VIEW-CHANGE messages still in the log and clear all
-pending requests from the previous view. If the lowest
-proven checkpoint it receives is greater than the current
-low water mark, then the checkpoint is upgraded, the proof
-is inserted into the log, and a garbage collection is done
-as if a checkpoint was proven by CHECKPOINT messages.&lt;/p&gt;
-
-&lt;p&gt;The replica then looks through all of the PRE-PREPARE 
-messages, multicasting a corresponding PREPARE message
-for them once the digest is checked with one generated for
-the request. If the operation is &lt;code class=&quot;highlighter-rouge&quot;&gt;null&lt;/code&gt;, then it is a no-op
-and skipped. Both PRE-PREPARE and PREPARE messages are
-added to the log.&lt;/p&gt;
-
-&lt;p&gt;The replica is then no longer disgruntled, removes all
-outstanding timeouts, and then enters the new view.&lt;/p&gt;
-
-&lt;p&gt;The new primary that is multicasting the NEW-VIEW message
-does all of the above, skipping the portion that handles
-the PRE-PREPARE messages and instead adds those 
-PRE-PREPARES to the log without sending a PREPARE.&lt;/p&gt;
-
-&lt;h1 id=&quot;conclusion&quot;&gt;Conclusion&lt;/h1&gt;
-
-&lt;p&gt;Most of the details for how I interpreted the PBFT protocol
-is laid out here. The finer details of how to structure all
-the data structures needed to store the messages and
-determine quorum sizes still remain, and my implementation
-can be found on GitHub with the link found at the top of
-the post. PBFT is sort of like a gateway algorithm, there
-are implementations of it like I believe Hyperledger and
-other blockchain style applications, but there are other
-BFT algorithms as well.&lt;/p&gt;
-
-&lt;p&gt;I was initially interested in (P)BFT reading up on, as my
-recent post unsurprisingly suggests, about Space(X).
-According to &lt;a href=&quot;https://lwn.net/Articles/540368/&quot;&gt;LWN.net&lt;/a&gt;,
-replication is used for avionics control on the Dragon
-capsules, and the Byzantine Generals’ Problem is used to
-resolve disagreements between the flight computers, so it
-is very cool to see how BFT is applied not only to Earth
-applications, but also in space as well. My particular
-implementation of BFT probably isn’t up-to-par with what
-the SpaceX engineers implemented, however. It definitely
-wouldn’t be launching anything mission critical.&lt;/p&gt;
-
-&lt;p&gt;I’ll probably go back around to adding new posts in my
-“Lessons Learned Debugging” series for another long stretch
-until I figure out what other things to talk about.&lt;/p&gt;</content><author><name></name></author><summary type="html">Following up with my previous post about one of my prior projects, I have another post about yet another project that I’ve recently finished, pbft-java.</summary></entry></feed>
+work.&lt;/p&gt;</content><author><name></name></author><summary type="html">This isn’t a bugginess lesson, but if you’re ever going to progress beyond a novice-level plugin developer (or even a Java developer for that matter), then you’ll need to figure out how to ensure data integrity.</summary></entry></feed>

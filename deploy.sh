@@ -8,3 +8,4 @@ cd ../_posts
 git add .
 git commit -m "Site updated"
 git push origin master
+
