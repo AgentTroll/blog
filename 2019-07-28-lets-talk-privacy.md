@@ -32,10 +32,8 @@ an expert on this subject, but there are plenty of people
 who are and can convince you of the importance of privacy
 if I fail to do so. I'll be sure to give links.
 
-I wrote this
-[tweet](https://twitter.com/AgentTrolldude/status/1154623948039962625)
-a few days ago. The first link of course, is to the
-"[Nothing to hide](https://en.wikipedia.org/wiki/Nothing_to_hide_argument)"
+The classic counter to digital privacy is, of course,
+the "[Nothing to hide](https://en.wikipedia.org/wiki/Nothing_to_hide_argument)"
 argument. The reasoning goes that if you have nothing to
 hide, then you have nothing to fear. You can allow for
 your privacy to be violated because you don't care about

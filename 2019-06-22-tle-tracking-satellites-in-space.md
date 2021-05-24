@@ -4,7 +4,7 @@ title: "TLE - Tracking Satellites in Space"
 date: 2019-06-22T17:23:35-07:00
 ---
 
-This is about my [`fate`](https://github.com/AgentTroll/fate)
+This is about my [`fate`](https://github.com/caojohnny/fate)
 project, something I finished in August of last year. I've
 been on a long journey with some other Java-related
 projects more recently, but I'd simply like the chance to
@@ -197,7 +197,7 @@ the Earth's rotation. Now, we can use trigonometry to
 convert from the geodetic latitude and longitude to the
 geocentric ECI coordinates. As a matter of fact, the
 implementation of this part
-[the implementation](https://github.com/AgentTroll/fate/blob/70311dab1664ffa3278c4af0e3f8f96f859f9efc/eci.c#L12-L22)
+[the implementation](https://github.com/caojohnny/fate/blob/70311dab1664ffa3278c4af0e3f8f96f859f9efc/eci.c#L12-L22)
 looks deceptively simple. Now that we've solved both
 problems, we then have the coordinates of both the observer
 and the coordinates of the satellite in the same reference

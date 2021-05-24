@@ -19,7 +19,7 @@ unpublish.rb:28:in `require': cannot load such file -- octopress/post (LoadError
 
 I don't know ruby so there's nothing I can do about that ¯\\\_(ツ)\_/¯
 
-Anyways, you might see that my huge "[On Thread Safety](https://agenttroll.github.io/blog/2017/03/20/on-thread-safety.html)" post is incomplete, so if you were wondering why, blame Octopress's non-functional `unpublish` command.
+Anyways, you might see that my huge "[On Thread Safety](https://caojohnny.github.io/blog/2017/03/20/on-thread-safety.html)" post is incomplete, so if you were wondering why, blame Octopress's non-functional `unpublish` command.
 
 Other than that, it's the same old Octopress. Good stuff.
 
@@ -29,7 +29,7 @@ Just a minor technicality, an `index.html` file **WILL NOT** be loaded if the si
 
 Even though a GitHub Pages site works on `master`, if you want your index.html to show up on the root URL, then you must use `gh-pages`.
 
-Had I pushed to `master`, I would need to use the URL `https://agenttroll.github.io/blog/index.html`, rather than `https://agenttroll.github.io/blog`.
+Had I pushed to `master`, I would need to use the URL `https://caojohnny.github.io/blog/index.html`, rather than `https://caojohnny.github.io/blog`.
 
 # Conclusion
 

@@ -14,7 +14,7 @@ Bukkit programming. It is surprisingly easy to get
 exceptions, duplication bugs (for the uninitiated: bugs
 that allow players to obtain more of an item than intended,
 often disrupting the in-game economy), and even [crash the
-server](https://agenttroll.github.io/blog/2018/04/13/keeping-inventories-open.html)
+server](https://caojohnny.github.io/blog/2018/04/13/keeping-inventories-open.html)
 just handling inventories and `ItemStack`s.
 
 Writing event handlers for `InventoryClickEvent` and
@@ -24,7 +24,7 @@ approached with caution.
 # Exceptions in Event Handlers
 
 As a reminder from the
-[previous post in this series](https://agenttroll.github.io/blog/2019/07/02/lessons-learned-debugging-part-5.html),
+[previous post in this series](https://caojohnny.github.io/blog/2019/07/02/lessons-learned-debugging-part-5.html),
 exceptions thrown can cause problems. For example, when
 event handlers modify the quantity of items as a result of
 some action, an inadvertent exception may terminate the
@@ -148,7 +148,7 @@ Don't prioritize performance over correctness. Ironically,
 this was *still* not even the end of the story, because
 closing the inventories from that collection caused a CME.
 If you want to learn more about that, you can check out the
-[second installment](https://agenttroll.github.io/blog/2019/04/08/lessons-learned-debugging-part-2.html)
+[second installment](https://caojohnny.github.io/blog/2019/04/08/lessons-learned-debugging-part-2.html)
 in this series :).
 
 # Conclusion

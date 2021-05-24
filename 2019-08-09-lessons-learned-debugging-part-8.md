@@ -140,7 +140,7 @@ check. Each plugin fewer that you need to check is one
 fewer check you can possibly forget. If you recall my last
 blog post, you can throw all of your protection handling
 code into a
-[central library](https://agenttroll.github.io/blog/2019/07/24/lessons-learned-debugging-part-7.html).
+[central library](https://caojohnny.github.io/blog/2019/07/24/lessons-learned-debugging-part-7.html).
 If you ever add a new plugin that actually adds new
 behavior that the `isAllowed` check needs to handle, all
 of your plugins using the protection handler provided by

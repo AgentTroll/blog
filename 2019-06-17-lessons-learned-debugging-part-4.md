@@ -118,10 +118,10 @@ I've been doing a little but of Bukkit stuff, a little bit
 of Java-general stuff here and there, I might do a 
 C-related post later on. I've never really talked about my
 interest in astronomy so a little bit about how my
-[`fate`](https://github.com/AgentTroll/fate) works would be
+[`fate`](https://github.com/caojohnny/fate) works would be
 a good start.
 
 I've also recently finished my 
-[`pbft-java`](https://github.com/AgentTroll/pbft-java)
+[`pbft-java`](https://github.com/caojohnny/pbft-java)
 project as well, and I'm eager to talk about the different
 decisions I made over the course of the project.

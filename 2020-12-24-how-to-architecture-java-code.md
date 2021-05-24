@@ -20,7 +20,7 @@ weight in this observation; however, the point still stands
 that many novices don't really know how to architecture
 their code.
 
-As with my [prior post](https://agenttroll.github.io/blog/2020/11/10/how-to-be-a-good-programmer.html),
+As with my [prior post](https://caojohnny.github.io/blog/2020/11/10/how-to-be-a-good-programmer.html),
 I attempt to show how to *think*. It is easy to memorize
 algorithms, design patterns, whatever. But, it is difficult
 to analyze and structure your code, because you need to
@@ -299,7 +299,7 @@ data fields into wrapper classes. This is a deceptively
 useful way of managing data, you should always create
 wrappers to represent things that have a function outside
 of what the data types suggest. This can be seen in action
-[here](https://github.com/AgentTroll/sched-temporal-test),
+[here](https://github.com/caojohnny/sched-temporal-test),
 where I create a wrapper for a single counter variable
 because it represents more than simply a `long` type; it is
 a counter that only makes sense if you know that it
@@ -350,10 +350,10 @@ along for the ride as well.
 
 At a high-level, you could use Maven modules to separate
 code that is actually meant to be interchangable, such as
-[for NMS](https://github.com/AgentTroll/lagger). At a lower
+[for NMS](https://github.com/caojohnny/lagger). At a lower
 level, you could have separate packages to do something
 similar to the events plugin I discussed earlier. One
-example of this can be found in a [benchmark suite](https://github.com/AgentTroll/microopts/tree/master/src/jmh/java/io/github/agenttroll/microopts),
+example of this can be found in a [benchmark suite](https://github.com/caojohnny/microopts/tree/master/src/jmh/java/io/github/caojohnny/microopts),
 where packages are self-contained and do not use code
 from other packages or "modules."
 

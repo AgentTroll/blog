@@ -5,7 +5,7 @@ date: 2019-12-22T20:19:55-05:00
 ---
 
 This is a follow-up of sorts to
-[Part 6](https://agenttroll.github.io/blog/2019/07/13/lessons-learned-debugging-part-6.html)
+[Part 6](https://caojohnny.github.io/blog/2019/07/13/lessons-learned-debugging-part-6.html)
 of this series of posts. I felt that the topic of inventory
 management is so important for most servers that it is
 worth taking a look at a few more ways players get access
@@ -106,7 +106,7 @@ item they used to spawn the holder.
 
 As far as closing the inventories for each viewer goes,
 I've written yet another blog post about this in the [2nd
-edition](https://agenttroll.github.io/blog/2019/04/08/lessons-learned-debugging-part-2.html)
+edition](https://caojohnny.github.io/blog/2019/04/08/lessons-learned-debugging-part-2.html)
 of this series. Make sure you don't hit any CMEs in the
 closing of inventories, or you may still end up with a
 duplication bug!

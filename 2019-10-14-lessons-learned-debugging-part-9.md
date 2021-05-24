@@ -206,10 +206,10 @@ exercise.
 These blog posts probably will come with less frequency in
 the coming months since I want to focus on college. I've
 also got my current personal project,
-[`gate`](https://github.com/AgentTroll/gate) that I'm
+[`gate`](https://github.com/caojohnny/gate) that I'm
 desparately close to finishing and I want to complete, so
 I'll probably be focusing on that, then on my newest
-project, [`liftoff`](https://github.com/AgentTroll/liftoff)
+project, [`liftoff`](https://github.com/caojohnny/liftoff)
 before focusing back on blogging and finishing the
 On Thread Safety post that continually is on TODO...
 

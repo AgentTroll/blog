@@ -5,10 +5,10 @@ date: 2019-06-23T17:23:35-07:00
 ---
 
 Following up with my
-[previous post](https://agenttroll.github.io/blog/2019/06/22/tle-tracking-satellites-in-space.html)
+[previous post](https://caojohnny.github.io/blog/2019/06/22/tle-tracking-satellites-in-space.html)
 about one of my prior projects, I have another post about
 yet another project that I've recently finished, 
-[`pbft-java`](https://github.com/AgentTroll/pbft-java).
+[`pbft-java`](https://github.com/caojohnny/pbft-java).
 
 # What is PBFT?
 

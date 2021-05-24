@@ -151,7 +151,7 @@ as is tradition, performance is a very complex topic to
 discuss, especially so for data storage.
 
 I have written a test suite between different storage
-methods [here](https://github.com/AgentTroll/data-benchmark)
+methods [here](https://github.com/caojohnny/data-benchmark)
 if you are curious where I get my performance data from or
 if you want to test for yourself what methods work the best
 on your machines. After all, with different kinds of hard
@@ -350,7 +350,7 @@ ensure that the data in non-volatile memory is reasonably
 up-to-date. In general, for any kind of persistent data, I
 will have an autosave timer that will save all of the data
 I have cached to the data store. I discuss this in detail
-in [this](https://agenttroll.github.io/blog/2019/07/02/lessons-learned-debugging-part-5.html)
+in [this](https://caojohnny.github.io/blog/2019/07/02/lessons-learned-debugging-part-5.html)
 blog post, so read through that for more details. 
 
 One relevant consideration that was only mentioned in brief
