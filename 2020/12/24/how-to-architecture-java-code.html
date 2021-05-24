@@ -1,52 +1,82 @@
 <!DOCTYPE html>
-<html lang="en"><head>
+<html lang="en">
+
+  <head>
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <meta name="viewport" content="width=device-width, initial-scale=1"><!-- Begin Jekyll SEO tag v2.7.1 -->
-<title>How to Architecture Java Code | Inside a Troll</title>
-<meta name="generator" content="Jekyll v4.1.1" />
-<meta property="og:title" content="How to Architecture Java Code" />
-<meta property="og:locale" content="en_US" />
-<meta name="description" content="I bring this up a lot, but my experiences trawling through programming forums such as SpigotMC’s Plugin Development section has allowed me to read a lot of code written by novices. Of the many recurring themes that I see, the lack of a solid architecture or a system-level design comes up relatively often." />
-<meta property="og:description" content="I bring this up a lot, but my experiences trawling through programming forums such as SpigotMC’s Plugin Development section has allowed me to read a lot of code written by novices. Of the many recurring themes that I see, the lack of a solid architecture or a system-level design comes up relatively often." />
-<link rel="canonical" href="https://agenttroll.github.io/blog/2020/12/24/how-to-architecture-java-code.html" />
-<meta property="og:url" content="https://agenttroll.github.io/blog/2020/12/24/how-to-architecture-java-code.html" />
-<meta property="og:site_name" content="Inside a Troll" />
-<meta property="og:type" content="article" />
-<meta property="article:published_time" content="2020-12-24T17:00:13-05:00" />
-<meta name="twitter:card" content="summary" />
-<meta property="twitter:title" content="How to Architecture Java Code" />
-<script type="application/ld+json">
-{"url":"https://agenttroll.github.io/blog/2020/12/24/how-to-architecture-java-code.html","headline":"How to Architecture Java Code","dateModified":"2020-12-24T17:00:13-05:00","datePublished":"2020-12-24T17:00:13-05:00","description":"I bring this up a lot, but my experiences trawling through programming forums such as SpigotMC’s Plugin Development section has allowed me to read a lot of code written by novices. Of the many recurring themes that I see, the lack of a solid architecture or a system-level design comes up relatively often.","mainEntityOfPage":{"@type":"WebPage","@id":"https://agenttroll.github.io/blog/2020/12/24/how-to-architecture-java-code.html"},"@type":"BlogPosting","@context":"https://schema.org"}</script>
-<!-- End Jekyll SEO tag -->
-<link rel="stylesheet" href="/blog/assets/main.css"><link type="application/atom+xml" rel="alternate" href="https://agenttroll.github.io/blog/feed.xml" title="Inside a Troll" /></head>
-<body><header class="site-header" role="banner">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
 
-  <div class="wrapper"><a class="site-title" rel="author" href="/blog/">Inside a Troll</a><nav class="site-nav">
+  <title>How to Architecture Java Code</title>
+  <meta name="description" content="I bring this up a lot, but my experiences trawling through programming forums such as SpigotMC’s Plugin Development section has allowed me to read a lot of c...">
+
+  <link rel="stylesheet" href="/blog/assets/main.css">
+  <link rel="canonical" href="https://caojohnny.github.io/blog/2020/12/24/how-to-architecture-java-code.html">
+  <link rel="alternate" type="application/rss+xml" title="Times past, and their stories" href="/blog/feed.xml">
+  
+  
+</head>
+
+
+  <body>
+
+    <header class="site-header" role="banner">
+
+  <div class="wrapper">
+    
+    
+    <a class="site-title" href="/blog/">Times past, and their stories</a>
+  
+    
+      <nav class="site-nav">
         <input type="checkbox" id="nav-trigger" class="nav-trigger" />
         <label for="nav-trigger">
           <span class="menu-icon">
             <svg viewBox="0 0 18 15" width="18px" height="15px">
-              <path d="M18,1.484c0,0.82-0.665,1.484-1.484,1.484H1.484C0.665,2.969,0,2.304,0,1.484l0,0C0,0.665,0.665,0,1.484,0 h15.032C17.335,0,18,0.665,18,1.484L18,1.484z M18,7.516C18,8.335,17.335,9,16.516,9H1.484C0.665,9,0,8.335,0,7.516l0,0 c0-0.82,0.665-1.484,1.484-1.484h15.032C17.335,6.031,18,6.696,18,7.516L18,7.516z M18,13.516C18,14.335,17.335,15,16.516,15H1.484 C0.665,15,0,14.335,0,13.516l0,0c0-0.82,0.665-1.483,1.484-1.483h15.032C17.335,12.031,18,12.695,18,13.516L18,13.516z"/>
+              <path fill="#424242" d="M18,1.484c0,0.82-0.665,1.484-1.484,1.484H1.484C0.665,2.969,0,2.304,0,1.484l0,0C0,0.665,0.665,0,1.484,0 h15.031C17.335,0,18,0.665,18,1.484L18,1.484z"/>
+              <path fill="#424242" d="M18,7.516C18,8.335,17.335,9,16.516,9H1.484C0.665,9,0,8.335,0,7.516l0,0c0-0.82,0.665-1.484,1.484-1.484 h15.031C17.335,6.031,18,6.696,18,7.516L18,7.516z"/>
+              <path fill="#424242" d="M18,13.516C18,14.335,17.335,15,16.516,15H1.484C0.665,15,0,14.335,0,13.516l0,0 c0-0.82,0.665-1.484,1.484-1.484h15.031C17.335,12.031,18,12.696,18,13.516L18,13.516z"/>
             </svg>
           </span>
         </label>
 
-        <div class="trigger"><a class="page-link" href="/blog/about">About</a></div>
-      </nav></div>
+        <div class="trigger">
+          
+            
+            
+            <a class="page-link" href="/blog/about/">About</a>
+            
+          
+            
+            
+          
+            
+            
+          
+            
+            
+          
+        </div>
+      </nav>
+    
+  </div>
 </header>
-<main class="page-content" aria-label="Content">
+
+
+    <main class="page-content" aria-label="Content">
       <div class="wrapper">
-        <article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
+        <article class="post" itemscope itemtype="http://schema.org/BlogPosting">
 
   <header class="post-header">
-    <h1 class="post-title p-name" itemprop="name headline">How to Architecture Java Code</h1>
+    <h1 class="post-title" itemprop="name headline">How to Architecture Java Code</h1>
     <p class="post-meta">
-      <time class="dt-published" datetime="2020-12-24T17:00:13-05:00" itemprop="datePublished">Dec 24, 2020
-      </time></p>
+      <time datetime="2020-12-24T14:00:13-08:00" itemprop="datePublished">
+        
+        Dec 24, 2020
+      </time>
+      </p>
   </header>
 
-  <div class="post-content e-content" itemprop="articleBody">
+  <div class="post-content" itemprop="articleBody">
     <p>I bring this up a lot, but my experiences trawling through
 programming forums such as SpigotMC’s Plugin Development
 section has allowed me to read a lot of code written by
@@ -63,7 +93,7 @@ weight in this observation; however, the point still stands
 that many novices don’t really know how to architecture
 their code.</p>
 
-<p>As with my <a href="https://agenttroll.github.io/blog/2020/11/10/how-to-be-a-good-programmer.html">prior post</a>,
+<p>As with my <a href="https://caojohnny.github.io/blog/2020/11/10/how-to-be-a-good-programmer.html">prior post</a>,
 I attempt to show how to <em>think</em>. It is easy to memorize
 algorithms, design patterns, whatever. But, it is difficult
 to analyze and structure your code, because you need to
@@ -121,14 +151,14 @@ Java program only has a few entry-points, if not only 1.
 What this means is that although your program might have
 many different functions or components, all of them must
 eventually come from a single place, i.e. the
-<code class="language-plaintext highlighter-rouge">main(String[] args)</code> method.</p>
+<code class="highlighter-rouge">main(String[] args)</code> method.</p>
 
 <p>Therefore, there must be a hierarchy of some sort. The
 most fundamental structure is that the program’s
 entry-point sits above every other function of the program.
 A complex program can have multiple “layers” to the
 hierarchy. For example, a Bukkit plugin will have its plugin
-<code class="language-plaintext highlighter-rouge">onEnable()</code> at the top, then followed by perhaps different
+<code class="highlighter-rouge">onEnable()</code> at the top, then followed by perhaps different
 modules, each module will have its own commands and
 listeners, and beneath those might be configuration files
 and different methods of storing data.</p>
@@ -143,22 +173,22 @@ from a design standpoint (though I shouldn’t have to remind
 readers that there are exceptions to every rule - read the
 last post on How to be a Good Programmer!)</p>
 
-<p>For example, consider a <code class="language-plaintext highlighter-rouge">Listener</code> class that keeps track
-of a collection of <code class="language-plaintext highlighter-rouge">Player</code> <code class="language-plaintext highlighter-rouge">UUID</code>s and a <code class="language-plaintext highlighter-rouge">DataManager</code>
+<p>For example, consider a <code class="highlighter-rouge">Listener</code> class that keeps track
+of a collection of <code class="highlighter-rouge">Player</code> <code class="highlighter-rouge">UUID</code>s and a <code class="highlighter-rouge">DataManager</code>
 that is supposed to save that collection of players when
 the server is closed:</p>
 
 <div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">// WARNING: BAD CODE AND BAD DESIGN!</span>
 
-<span class="kd">public</span> <span class="kd">class</span> <span class="nc">PlayerUUIDListener</span> <span class="kd">implements</span> <span class="nc">Listener</span> <span class="o">{</span>
-    <span class="kd">public</span> <span class="kd">static</span> <span class="kd">final</span> <span class="nc">Collection</span><span class="o">&lt;</span><span class="no">UUID</span><span class="o">&gt;</span> <span class="n">playerUuids</span> <span class="o">=</span> <span class="o">...</span>
+<span class="kd">public</span> <span class="kd">class</span> <span class="nc">PlayerUUIDListener</span> <span class="kd">implements</span> <span class="n">Listener</span> <span class="o">{</span>
+    <span class="kd">public</span> <span class="kd">static</span> <span class="kd">final</span> <span class="n">Collection</span><span class="o">&lt;</span><span class="n">UUID</span><span class="o">&gt;</span> <span class="n">playerUuids</span> <span class="o">=</span> <span class="o">...</span>
 
     <span class="o">...</span>
 <span class="o">}</span>
 
 <span class="kd">public</span> <span class="kd">class</span> <span class="nc">DataManager</span> <span class="o">{</span>
     <span class="kd">public</span> <span class="kt">void</span> <span class="nf">save</span><span class="o">()</span> <span class="o">{</span>
-        <span class="k">for</span> <span class="o">(</span><span class="no">UUID</span> <span class="n">playerUuid</span> <span class="o">:</span> <span class="nc">PlayerUUIDListener</span><span class="o">.</span><span class="na">playerUuids</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">for</span> <span class="o">(</span><span class="n">UUID</span> <span class="n">playerUuid</span> <span class="o">:</span> <span class="n">PlayerUUIDListener</span><span class="o">.</span><span class="na">playerUuids</span><span class="o">)</span> <span class="o">{</span>
             <span class="o">...</span>
         <span class="o">}</span>
     <span class="o">}</span>
@@ -168,49 +198,49 @@ the server is closed:</p>
 <p>There are a few issues with this design outside of the
 architecture alone; however, for the sake of brevity, let
 us concentrate on just the architectural issue at hand.
-The <code class="language-plaintext highlighter-rouge">DataManager</code> class manages the lifecycle of another
-class because it accesses the <code class="language-plaintext highlighter-rouge">playerUuids</code> field to save
-it on shutdown. We would expect that <code class="language-plaintext highlighter-rouge">PlayerUUIDListener</code>
-is beneath <code class="language-plaintext highlighter-rouge">DataManager</code> on the class hierarchy, but that
+The <code class="highlighter-rouge">DataManager</code> class manages the lifecycle of another
+class because it accesses the <code class="highlighter-rouge">playerUuids</code> field to save
+it on shutdown. We would expect that <code class="highlighter-rouge">PlayerUUIDListener</code>
+is beneath <code class="highlighter-rouge">DataManager</code> on the class hierarchy, but that
 doesn’t make any sense. If you were to add another class
-that relies upon <code class="language-plaintext highlighter-rouge">playerUuids</code>, then it must either be at
-the same level of <code class="language-plaintext highlighter-rouge">DataManager</code> or both <code class="language-plaintext highlighter-rouge">DataManager</code> and
+that relies upon <code class="highlighter-rouge">playerUuids</code>, then it must either be at
+the same level of <code class="highlighter-rouge">DataManager</code> or both <code class="highlighter-rouge">DataManager</code> and
 the new class must be at the same level as
-<code class="language-plaintext highlighter-rouge">PlayerUUIDListener</code>. These are both undesirable outcomes
+<code class="highlighter-rouge">PlayerUUIDListener</code>. These are both undesirable outcomes
 because they jumble up the organization.</p>
 
 <p>However, we could solve this problem by placing the
-<code class="language-plaintext highlighter-rouge">DataManager</code> beneath the other classes like so:</p>
+<code class="highlighter-rouge">DataManager</code> beneath the other classes like so:</p>
 
 <div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">// WARNING: BAD CODE BUT GOOD DESIGN</span>
 
-<span class="kd">public</span> <span class="kd">class</span> <span class="nc">PlayerUUIDListener</span> <span class="kd">implements</span> <span class="nc">Listener</span> <span class="o">{</span>
+<span class="kd">public</span> <span class="kd">class</span> <span class="nc">PlayerUUIDListener</span> <span class="kd">implements</span> <span class="n">Listener</span> <span class="o">{</span>
     <span class="o">...</span>
 <span class="o">}</span>
 
 <span class="kd">public</span> <span class="kd">class</span> <span class="nc">DataManager</span> <span class="o">{</span>
-    <span class="kd">public</span> <span class="kd">static</span> <span class="kd">final</span> <span class="nc">Collection</span><span class="o">&lt;</span><span class="no">UUID</span><span class="o">&gt;</span> <span class="n">playerUuids</span> <span class="o">=</span> <span class="o">...</span>
+    <span class="kd">public</span> <span class="kd">static</span> <span class="kd">final</span> <span class="n">Collection</span><span class="o">&lt;</span><span class="n">UUID</span><span class="o">&gt;</span> <span class="n">playerUuids</span> <span class="o">=</span> <span class="o">...</span>
 
     <span class="kd">public</span> <span class="kt">void</span> <span class="nf">save</span><span class="o">()</span> <span class="o">{</span>
-        <span class="k">for</span> <span class="o">(</span><span class="no">UUID</span> <span class="n">playerUuid</span> <span class="o">:</span> <span class="n">playerUuids</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">for</span> <span class="o">(</span><span class="n">UUID</span> <span class="n">playerUuid</span> <span class="o">:</span> <span class="n">playerUuids</span><span class="o">)</span> <span class="o">{</span>
             <span class="o">...</span>
         <span class="o">}</span>
     <span class="o">}</span>
 <span class="o">}</span>
 </code></pre></div></div>
 
-<p>That way, any accesses to the <code class="language-plaintext highlighter-rouge">playerUuids</code> from other
-classes strictly defer to <code class="language-plaintext highlighter-rouge">DataManager</code>, where all the
+<p>That way, any accesses to the <code class="highlighter-rouge">playerUuids</code> from other
+classes strictly defer to <code class="highlighter-rouge">DataManager</code>, where all the
 other management code is located. This design makes a lot
 more sense and permits for better encapsulation, which
 would eventually fix the bad code aspect of the snippet:</p>
 
 <div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">// GOOD CODE AND GOOD DESIGN</span>
 
-<span class="kd">public</span> <span class="kd">class</span> <span class="nc">PlayerUUIDListener</span> <span class="kd">implements</span> <span class="nc">Listener</span> <span class="o">{</span>
-    <span class="kd">private</span> <span class="nc">DataManager</span> <span class="n">dataManager</span><span class="o">;</span>
+<span class="kd">public</span> <span class="kd">class</span> <span class="nc">PlayerUUIDListener</span> <span class="kd">implements</span> <span class="n">Listener</span> <span class="o">{</span>
+    <span class="kd">private</span> <span class="n">DataManager</span> <span class="n">dataManager</span><span class="o">;</span>
 
-    <span class="kd">public</span> <span class="nf">PlayerUUIDListener</span><span class="o">(</span><span class="nc">DataManager</span> <span class="n">dataManager</span><span class="o">)</span> <span class="o">{</span>
+    <span class="kd">public</span> <span class="nf">PlayerUUIDListener</span><span class="o">(</span><span class="n">DataManager</span> <span class="n">dataManager</span><span class="o">)</span> <span class="o">{</span>
         <span class="k">this</span><span class="o">.</span><span class="na">dataManager</span> <span class="o">=</span> <span class="n">dataManager</span><span class="o">;</span>
     <span class="o">}</span>
 
@@ -218,14 +248,14 @@ would eventually fix the bad code aspect of the snippet:</p>
 <span class="o">}</span>
 
 <span class="kd">public</span> <span class="kd">class</span> <span class="nc">DataManager</span> <span class="o">{</span>
-    <span class="kd">private</span> <span class="kd">final</span> <span class="nc">Collection</span><span class="o">&lt;</span><span class="no">UUID</span><span class="o">&gt;</span> <span class="n">playerUuids</span> <span class="o">=</span> <span class="o">...</span>
+    <span class="kd">private</span> <span class="kd">final</span> <span class="n">Collection</span><span class="o">&lt;</span><span class="n">UUID</span><span class="o">&gt;</span> <span class="n">playerUuids</span> <span class="o">=</span> <span class="o">...</span>
 
-    <span class="kd">public</span> <span class="nc">Collection</span><span class="o">&lt;</span><span class="no">UUID</span><span class="o">&gt;</span> <span class="nf">getPlayerUuids</span><span class="o">()</span> <span class="o">{</span>
-        <span class="k">return</span> <span class="nc">Collections</span><span class="o">.</span><span class="na">unmodifiableList</span><span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="na">playerUuids</span><span class="o">);</span>
+    <span class="kd">public</span> <span class="n">Collection</span><span class="o">&lt;</span><span class="n">UUID</span><span class="o">&gt;</span> <span class="nf">getPlayerUuids</span><span class="o">()</span> <span class="o">{</span>
+        <span class="k">return</span> <span class="n">Collections</span><span class="o">.</span><span class="na">unmodifiableList</span><span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="na">playerUuids</span><span class="o">);</span>
     <span class="o">}</span>
 
     <span class="kd">public</span> <span class="kt">void</span> <span class="nf">save</span><span class="o">()</span> <span class="o">{</span>
-        <span class="k">for</span> <span class="o">(</span><span class="no">UUID</span> <span class="n">playerUuid</span> <span class="o">:</span> <span class="k">this</span><span class="o">.</span><span class="na">playerUuids</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">for</span> <span class="o">(</span><span class="n">UUID</span> <span class="n">playerUuid</span> <span class="o">:</span> <span class="k">this</span><span class="o">.</span><span class="na">playerUuids</span><span class="o">)</span> <span class="o">{</span>
             <span class="o">...</span>
         <span class="o">}</span>
     <span class="o">}</span>
@@ -261,13 +291,13 @@ following:</p>
 <span class="o">}</span>
 </code></pre></div></div>
 
-<p>When I start writing my <code class="language-plaintext highlighter-rouge">PlayerUUIDListener</code>, I could do
+<p>When I start writing my <code class="highlighter-rouge">PlayerUUIDListener</code>, I could do
 something like:</p>
 
 <div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">// WARNING: QUESTIONABLE DESIGN</span>
 
 <span class="kd">public</span> <span class="kd">interface</span> <span class="nc">DataManager</span> <span class="o">{</span>
-    <span class="nc">Collection</span><span class="o">&lt;</span><span class="no">UUID</span><span class="o">&gt;</span> <span class="nf">getPlayerUuids</span><span class="o">();</span>
+    <span class="n">Collection</span><span class="o">&lt;</span><span class="n">UUID</span><span class="o">&gt;</span> <span class="nf">getPlayerUuids</span><span class="o">();</span>
     <span class="kt">void</span> <span class="nf">save</span><span class="o">();</span>
 <span class="o">}</span>
 </code></pre></div></div>
@@ -275,19 +305,19 @@ something like:</p>
 <p>However, that depends on what I’m doing. Here, I have
 provided a generic method of getting a collection. This is
 a step in the right direction, as many novices would return
-a concrete <code class="language-plaintext highlighter-rouge">List&lt;UUID</code> or even <code class="language-plaintext highlighter-rouge">ArrayList&lt;UUID&gt;</code> for
+a concrete <code class="highlighter-rouge">List&lt;UUID</code> or even <code class="highlighter-rouge">ArrayList&lt;UUID&gt;</code> for
 example. On the other hand, what if I wanted to specify an
 index-accessible collection? One option is I could use a
-<code class="language-plaintext highlighter-rouge">List&lt;UUID&gt;</code>.</p>
+<code class="highlighter-rouge">List&lt;UUID&gt;</code>.</p>
 
-<p>However, a <code class="language-plaintext highlighter-rouge">List&lt;E&gt;</code> provides the <code class="language-plaintext highlighter-rouge">add(...)</code> method, which
+<p>However, a <code class="highlighter-rouge">List&lt;E&gt;</code> provides the <code class="highlighter-rouge">add(...)</code> method, which
 is unenforcable at compile-time. In certain circumstances,
 I may even consider doing something like:</p>
 
 <div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">// POTENTIALLY BETTER DESIGN</span>
 
 <span class="kd">public</span> <span class="kd">interface</span> <span class="nc">DataManager</span> <span class="o">{</span>
-    <span class="no">UUID</span> <span class="nf">getPlayerUuid</span><span class="o">(</span><span class="kt">int</span> <span class="n">index</span><span class="o">);</span>
+    <span class="n">UUID</span> <span class="nf">getPlayerUuid</span><span class="o">(</span><span class="kt">int</span> <span class="n">index</span><span class="o">);</span>
     <span class="kt">void</span> <span class="nf">save</span><span class="o">();</span>
 <span class="o">}</span>
 </code></pre></div></div>
@@ -305,12 +335,12 @@ code for your specific purpose.</p>
 
 <p>Once I have completed writing all of my other classes, I
 will generally write some dummy code in the place of the
-<code class="language-plaintext highlighter-rouge">DataManager</code> and provide that through dependency-injection
+<code class="highlighter-rouge">DataManager</code> and provide that through dependency-injection
 so I can easily swap between implementations:</p>
 
-<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">public</span> <span class="kd">class</span> <span class="nc">DataManagerImpl</span> <span class="kd">implements</span> <span class="nc">DataManager</span> <span class="o">{</span>
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">public</span> <span class="kd">class</span> <span class="nc">DataManagerImpl</span> <span class="kd">implements</span> <span class="n">DataManager</span> <span class="o">{</span>
     <span class="nd">@Override</span>
-    <span class="kd">public</span> <span class="no">UUID</span> <span class="nf">getPlayerUuid</span><span class="o">(</span><span class="kt">int</span> <span class="n">index</span><span class="o">)</span> <span class="o">{</span>
+    <span class="kd">public</span> <span class="n">UUID</span> <span class="nf">getPlayerUuid</span><span class="o">(</span><span class="kt">int</span> <span class="n">index</span><span class="o">)</span> <span class="o">{</span>
         <span class="o">...</span>
     <span class="o">}</span>
 
@@ -334,9 +364,9 @@ data fields into wrapper classes. This is a deceptively
 useful way of managing data, you should always create
 wrappers to represent things that have a function outside
 of what the data types suggest. This can be seen in action
-<a href="https://github.com/AgentTroll/sched-temporal-test">here</a>,
+<a href="https://github.com/caojohnny/sched-temporal-test">here</a>,
 where I create a wrapper for a single counter variable
-because it represents more than simply a <code class="language-plaintext highlighter-rouge">long</code> type; it is
+because it represents more than simply a <code class="highlighter-rouge">long</code> type; it is
 a counter that only makes sense if you know that it
 represents in-game ticks.</p>
 
@@ -385,10 +415,10 @@ along for the ride as well.</p>
 
 <p>At a high-level, you could use Maven modules to separate
 code that is actually meant to be interchangable, such as
-<a href="https://github.com/AgentTroll/lagger">for NMS</a>. At a lower
+<a href="https://github.com/caojohnny/lagger">for NMS</a>. At a lower
 level, you could have separate packages to do something
 similar to the events plugin I discussed earlier. One
-example of this can be found in a <a href="https://github.com/AgentTroll/microopts/tree/master/src/jmh/java/io/github/agenttroll/microopts">benchmark suite</a>,
+example of this can be found in a <a href="https://github.com/caojohnny/microopts/tree/master/src/jmh/java/io/github/caojohnny/microopts">benchmark suite</a>,
 where packages are self-contained and do not use code
 from other packages or “modules.”</p>
 
@@ -410,34 +440,58 @@ for ways to critique your own code as well as for others to
 critique your code for you.</p>
 
 
-  </div><a class="u-url" href="/blog/2020/12/24/how-to-architecture-java-code.html" hidden></a>
+  </div>
+
+  
 </article>
 
       </div>
-    </main><footer class="site-footer h-card">
-  <data class="u-url" href="/blog/"></data>
+    </main>
+
+    <footer class="site-footer">
 
   <div class="wrapper">
 
-    <h2 class="footer-heading">Inside a Troll</h2>
+    <h2 class="footer-heading">Times past, and their stories</h2>
 
     <div class="footer-col-wrapper">
       <div class="footer-col footer-col-1">
         <ul class="contact-list">
-          <li class="p-name">Inside a Troll</li><li><a class="u-email" href="mailto:caojohnny@protonmail.com">caojohnny@protonmail.com</a></li></ul>
+          <li>
+            
+              Times past, and their stories
+            
+            </li>
+            
+            <li><a href="mailto:caojohnny@protonmail.com">caojohnny@protonmail.com</a></li>
+            
+        </ul>
       </div>
 
-      <div class="footer-col footer-col-2"><ul class="social-media-list"><li><a href="https://github.com/AgentTroll"><svg class="svg-icon"><use xlink:href="/blog/assets/minima-social-icons.svg#github"></use></svg> <span class="username">AgentTroll</span></a></li></ul>
-</div>
+      <div class="footer-col footer-col-2">
+        <ul class="social-media-list">
+          
+          <li>
+            <a href="https://github.com/caojohnny"><span class="icon icon--github"><svg viewBox="0 0 16 16" width="16px" height="16px"><path fill="#828282" d="M7.999,0.431c-4.285,0-7.76,3.474-7.76,7.761 c0,3.428,2.223,6.337,5.307,7.363c0.388,0.071,0.53-0.168,0.53-0.374c0-0.184-0.007-0.672-0.01-1.32 c-2.159,0.469-2.614-1.04-2.614-1.04c-0.353-0.896-0.862-1.135-0.862-1.135c-0.705-0.481,0.053-0.472,0.053-0.472 c0.779,0.055,1.189,0.8,1.189,0.8c0.692,1.186,1.816,0.843,2.258,0.645c0.071-0.502,0.271-0.843,0.493-1.037 C4.86,11.425,3.049,10.76,3.049,7.786c0-0.847,0.302-1.54,0.799-2.082C3.768,5.507,3.501,4.718,3.924,3.65 c0,0,0.652-0.209,2.134,0.796C6.677,4.273,7.34,4.187,8,4.184c0.659,0.003,1.323,0.089,1.943,0.261 c1.482-1.004,2.132-0.796,2.132-0.796c0.423,1.068,0.157,1.857,0.077,2.054c0.497,0.542,0.798,1.235,0.798,2.082 c0,2.981-1.814,3.637-3.543,3.829c0.279,0.24,0.527,0.713,0.527,1.437c0,1.037-0.01,1.874-0.01,2.129 c0,0.208,0.14,0.449,0.534,0.373c3.081-1.028,5.302-3.935,5.302-7.362C15.76,3.906,12.285,0.431,7.999,0.431z"/></svg>
+</span><span class="username">caojohnny</span></a>
+
+          </li>
+          
+
+          
+        </ul>
+      </div>
 
       <div class="footer-col footer-col-3">
-        <p>Thoughts of a Java Developer</p>
+        <p>A brain dump of things that I&#39;ve learned</p>
       </div>
     </div>
 
   </div>
 
 </footer>
-</body>
+
+
+  </body>
 
 </html>

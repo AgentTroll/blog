@@ -1,52 +1,82 @@
 <!DOCTYPE html>
-<html lang="en"><head>
+<html lang="en">
+
+  <head>
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <meta name="viewport" content="width=device-width, initial-scale=1"><!-- Begin Jekyll SEO tag v2.7.1 -->
-<title>Intro to Control Theory | Inside a Troll</title>
-<meta name="generator" content="Jekyll v4.1.1" />
-<meta property="og:title" content="Intro to Control Theory" />
-<meta property="og:locale" content="en_US" />
-<meta name="description" content="While I don’t profess to be an absolute expert at control theory, a lot of the information about the matter that I’ve found online appears to be either inaccessible to the average Joe or simply flat-out unhelpful. Control Theory is often explained with mechanical controllers that don’t really have any application to the software world, and it has been difficult for me personally to comprehend at all what is going on. In light of this, I’ve decided to do a write up about what control theory is from the perspective of an implementor, rather than that of a theorist." />
-<meta property="og:description" content="While I don’t profess to be an absolute expert at control theory, a lot of the information about the matter that I’ve found online appears to be either inaccessible to the average Joe or simply flat-out unhelpful. Control Theory is often explained with mechanical controllers that don’t really have any application to the software world, and it has been difficult for me personally to comprehend at all what is going on. In light of this, I’ve decided to do a write up about what control theory is from the perspective of an implementor, rather than that of a theorist." />
-<link rel="canonical" href="https://agenttroll.github.io/blog/2019/01/17/intro-to-control-theory.html" />
-<meta property="og:url" content="https://agenttroll.github.io/blog/2019/01/17/intro-to-control-theory.html" />
-<meta property="og:site_name" content="Inside a Troll" />
-<meta property="og:type" content="article" />
-<meta property="article:published_time" content="2019-01-17T00:16:20-05:00" />
-<meta name="twitter:card" content="summary" />
-<meta property="twitter:title" content="Intro to Control Theory" />
-<script type="application/ld+json">
-{"url":"https://agenttroll.github.io/blog/2019/01/17/intro-to-control-theory.html","headline":"Intro to Control Theory","dateModified":"2019-01-17T00:16:20-05:00","datePublished":"2019-01-17T00:16:20-05:00","description":"While I don’t profess to be an absolute expert at control theory, a lot of the information about the matter that I’ve found online appears to be either inaccessible to the average Joe or simply flat-out unhelpful. Control Theory is often explained with mechanical controllers that don’t really have any application to the software world, and it has been difficult for me personally to comprehend at all what is going on. In light of this, I’ve decided to do a write up about what control theory is from the perspective of an implementor, rather than that of a theorist.","mainEntityOfPage":{"@type":"WebPage","@id":"https://agenttroll.github.io/blog/2019/01/17/intro-to-control-theory.html"},"@type":"BlogPosting","@context":"https://schema.org"}</script>
-<!-- End Jekyll SEO tag -->
-<link rel="stylesheet" href="/blog/assets/main.css"><link type="application/atom+xml" rel="alternate" href="https://agenttroll.github.io/blog/feed.xml" title="Inside a Troll" /></head>
-<body><header class="site-header" role="banner">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
 
-  <div class="wrapper"><a class="site-title" rel="author" href="/blog/">Inside a Troll</a><nav class="site-nav">
+  <title>Intro to Control Theory</title>
+  <meta name="description" content="While I don’t profess to be an absolute expert at control theory, a lot of the information about the matter that I’ve found online appears to be either inacc...">
+
+  <link rel="stylesheet" href="/blog/assets/main.css">
+  <link rel="canonical" href="https://caojohnny.github.io/blog/2019/01/16/intro-to-control-theory.html">
+  <link rel="alternate" type="application/rss+xml" title="Times past, and their stories" href="/blog/feed.xml">
+  
+  
+</head>
+
+
+  <body>
+
+    <header class="site-header" role="banner">
+
+  <div class="wrapper">
+    
+    
+    <a class="site-title" href="/blog/">Times past, and their stories</a>
+  
+    
+      <nav class="site-nav">
         <input type="checkbox" id="nav-trigger" class="nav-trigger" />
         <label for="nav-trigger">
           <span class="menu-icon">
             <svg viewBox="0 0 18 15" width="18px" height="15px">
-              <path d="M18,1.484c0,0.82-0.665,1.484-1.484,1.484H1.484C0.665,2.969,0,2.304,0,1.484l0,0C0,0.665,0.665,0,1.484,0 h15.032C17.335,0,18,0.665,18,1.484L18,1.484z M18,7.516C18,8.335,17.335,9,16.516,9H1.484C0.665,9,0,8.335,0,7.516l0,0 c0-0.82,0.665-1.484,1.484-1.484h15.032C17.335,6.031,18,6.696,18,7.516L18,7.516z M18,13.516C18,14.335,17.335,15,16.516,15H1.484 C0.665,15,0,14.335,0,13.516l0,0c0-0.82,0.665-1.483,1.484-1.483h15.032C17.335,12.031,18,12.695,18,13.516L18,13.516z"/>
+              <path fill="#424242" d="M18,1.484c0,0.82-0.665,1.484-1.484,1.484H1.484C0.665,2.969,0,2.304,0,1.484l0,0C0,0.665,0.665,0,1.484,0 h15.031C17.335,0,18,0.665,18,1.484L18,1.484z"/>
+              <path fill="#424242" d="M18,7.516C18,8.335,17.335,9,16.516,9H1.484C0.665,9,0,8.335,0,7.516l0,0c0-0.82,0.665-1.484,1.484-1.484 h15.031C17.335,6.031,18,6.696,18,7.516L18,7.516z"/>
+              <path fill="#424242" d="M18,13.516C18,14.335,17.335,15,16.516,15H1.484C0.665,15,0,14.335,0,13.516l0,0 c0-0.82,0.665-1.484,1.484-1.484h15.031C17.335,12.031,18,12.696,18,13.516L18,13.516z"/>
             </svg>
           </span>
         </label>
 
-        <div class="trigger"><a class="page-link" href="/blog/about">About</a></div>
-      </nav></div>
+        <div class="trigger">
+          
+            
+            
+            <a class="page-link" href="/blog/about/">About</a>
+            
+          
+            
+            
+          
+            
+            
+          
+            
+            
+          
+        </div>
+      </nav>
+    
+  </div>
 </header>
-<main class="page-content" aria-label="Content">
+
+
+    <main class="page-content" aria-label="Content">
       <div class="wrapper">
-        <article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
+        <article class="post" itemscope itemtype="http://schema.org/BlogPosting">
 
   <header class="post-header">
-    <h1 class="post-title p-name" itemprop="name headline">Intro to Control Theory</h1>
+    <h1 class="post-title" itemprop="name headline">Intro to Control Theory</h1>
     <p class="post-meta">
-      <time class="dt-published" datetime="2019-01-17T00:16:20-05:00" itemprop="datePublished">Jan 17, 2019
-      </time></p>
+      <time datetime="2019-01-16T21:16:20-08:00" itemprop="datePublished">
+        
+        Jan 16, 2019
+      </time>
+      </p>
   </header>
 
-  <div class="post-content e-content" itemprop="articleBody">
+  <div class="post-content" itemprop="articleBody">
     <p>While I don’t profess to be an absolute expert at control theory, a lot of the information about the matter
 that I’ve found online appears to be either inaccessible to the average Joe or simply flat-out unhelpful. 
 Control Theory is often explained with mechanical controllers that don’t really have any application to the
@@ -82,7 +112,7 @@ distance. This model, where all the information is
 collected beforehand to compute a command that controls
 a system is called an <em>open loop system</em>.</p>
 
-<p><img src="https://agenttroll.github.io/blog/img/itct-open-loop.svg" alt="Open Loop" /></p>
+<p><img src="https://caojohnny.github.io/blog/img/itct-open-loop.svg" alt="Open Loop" /></p>
 
 <p>However, the problem is that it would be impractical to 
 have to measure or require a human to input the
@@ -97,7 +127,7 @@ overshoot or undershoot of some target. This is called a
 the direction of the system being controlled, and in the
 direction of the software controlling that system as well.</p>
 
-<p><img src="https://agenttroll.github.io/blog/img/itct-closed-loop.svg" alt="Closed Loop" /></p>
+<p><img src="https://caojohnny.github.io/blog/img/itct-closed-loop.svg" alt="Closed Loop" /></p>
 
 <p>And while you will still need to understand certain
 operating parameters of the physical system, you will not
@@ -137,7 +167,7 @@ for the error. This will be repeated at a set time interval
 until the error becomes, or gets close enough to 0, meaning
 that the mechanism has reached its setpoint.</p>
 
-<p><img src="https://agenttroll.github.io/blog/img/itct-abstract-loop.svg" alt="Abstract Loop" /></p>
+<p><img src="https://caojohnny.github.io/blog/img/itct-abstract-loop.svg" alt="Abstract Loop" /></p>
 
 <p>The process of computing the output based on the error
 value is known as PID (sometimes PIDF), where the letters
@@ -206,11 +236,11 @@ at which a wheel turns, or decrease the temperature of a
 heating element to reduce the speed at which heat is
 distrubuted into a room.</p>
 
-<h4 id="the-p-term">The <code class="language-plaintext highlighter-rouge">P</code> term</h4>
+<h4 id="the-p-term">The <code class="highlighter-rouge">P</code> term</h4>
 
 <p>The P term looks like the following:</p>
 
-<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>K_p*e(t)
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>K_p*e(t)
 </code></pre></div></div>
 
 <p>Meaning that it is derived from the proportional gain
@@ -233,18 +263,18 @@ temperature or a volume or a distance.</p>
 <p>A system with an overly large P value looks like the 
 following:</p>
 
-<p><img src="https://agenttroll.github.io/blog/img/itct-p-unstable.svg" alt="P unstable loop" /></p>
+<p><img src="https://caojohnny.github.io/blog/img/itct-p-unstable.svg" alt="P unstable loop" /></p>
 
 <p>It is often possible to acheive reasonably good results
 using just the P term. One can adjuts the P gain until a
 decent motion curve is produced, leaving all other gains
 to 0. This is simply called a “P controller” or “P loop.”</p>
 
-<h4 id="the-i-term">The <code class="language-plaintext highlighter-rouge">I</code> term</h4>
+<h4 id="the-i-term">The <code class="highlighter-rouge">I</code> term</h4>
 
 <p>The I term looks like the following:</p>
 
-<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>K_i*integrate(0, t, e(T), T)
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>K_i*integrate(0, t, e(T), T)
 </code></pre></div></div>
 
 <p>Meaning that it is derived from multiplying the integral
@@ -260,7 +290,7 @@ then overshoots and starts another oscillation cycle.</p>
 
 <p>This can be seen in a I only term loop here:</p>
 
-<p><img src="https://agenttroll.github.io/blog/img/itct-i-only.svg" alt="I only loop" /></p>
+<p><img src="https://caojohnny.github.io/blog/img/itct-i-only.svg" alt="I only loop" /></p>
 
 <p>The most common type of control loop that I’ve personally
 seen is a PI loop, in which only the P and I terms are
@@ -273,7 +303,7 @@ term.</p>
 demonstrates the ability of a single P term to produce
 relatively decent results:</p>
 
-<p><img src="https://agenttroll.github.io/blog/img/itct-p-stable.svg" alt="P stable" /></p>
+<p><img src="https://caojohnny.github.io/blog/img/itct-p-stable.svg" alt="P stable" /></p>
 
 <p>An I term can be introduced to make a PI controller. This
 will smooth out the motion curve when it reaches the
@@ -281,7 +311,7 @@ setpoint, and prevent a quick decceleration. You can see,
 however, that there is some degree of overshoot when an I
 term is introduced:</p>
 
-<p><img src="https://agenttroll.github.io/blog/img/itct-pi.svg" alt="PI" /></p>
+<p><img src="https://caojohnny.github.io/blog/img/itct-pi.svg" alt="PI" /></p>
 
 <p>According to <a href="http://www.ni.com/en-us/innovations/white-papers/06/pid-theory-explained.html">PID Theory Explained</a>:</p>
 
@@ -290,11 +320,11 @@ term is introduced:</p>
 system so that it could respond to changes immediately</p>
 </blockquote>
 
-<h4 id="the-d-term">The <code class="language-plaintext highlighter-rouge">D</code> term</h4>
+<h4 id="the-d-term">The <code class="highlighter-rouge">D</code> term</h4>
 
 <p>The D term looks like the following:</p>
 
-<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>K_d*derive(e(t), t)
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>K_d*derive(e(t), t)
 </code></pre></div></div>
 
 <p>Meaning that it is derived from the product of the
@@ -313,14 +343,14 @@ mechanisms that require the output to be adjusted to
 reduce the power of the P term.</p>
 
 <p>It’s probably easier to see it on a graph. Here’s a PD loop
-with the D gain set to <code class="language-plaintext highlighter-rouge">0</code>:</p>
+with the D gain set to <code class="highlighter-rouge">0</code>:</p>
 
-<p><img src="https://agenttroll.github.io/blog/img/itct-pd-0.svg" alt="PD - D = 0" /></p>
+<p><img src="https://caojohnny.github.io/blog/img/itct-pd-0.svg" alt="PD - D = 0" /></p>
 
 <p>Now, compare that to a PD loop with the D gain raised
 slightly:</p>
 
-<p><img src="https://agenttroll.github.io/blog/img/itct-pd-06.svg" alt="PD - D = 0.6" /></p>
+<p><img src="https://caojohnny.github.io/blog/img/itct-pd-06.svg" alt="PD - D = 0.6" /></p>
 
 <p>The D term is problematic sometimes because setting the D
 gain to to high of a value will cause the output to
@@ -328,7 +358,7 @@ oscillate extremely rapidly. This can also happen when
 there are a lot of environmental disturbances that cause
 the D term to overreact:</p>
 
-<p><img src="https://agenttroll.github.io/blog/img/itct-pd-massive.svg" alt="PD - D = massive" /></p>
+<p><img src="https://caojohnny.github.io/blog/img/itct-pd-massive.svg" alt="PD - D = massive" /></p>
 
 <p>In my experience, I tend to see controllers using mostly
 P and I terms, but usually no D term. The Wikipedia page
@@ -347,14 +377,14 @@ tends to “fight” against the other two terms because it
 wants to flatten the motion curve, when the other two terms
 actually want the curve to get closer to the setpoint:</p>
 
-<p><img src="https://agenttroll.github.io/blog/img/itct-pd-07.svg" alt="PD - D = 0.7" /></p>
+<p><img src="https://caojohnny.github.io/blog/img/itct-pd-07.svg" alt="PD - D = 0.7" /></p>
 
 <p>When the D term is used, it tends to be used in a full PID
 loop to control the I term overshoot. PD loops are also
 found in the wild, but again, anything with a D term tends
 to be quite rare compared to P and PI loops.</p>
 
-<h4 id="the-f-term">The <code class="language-plaintext highlighter-rouge">F</code> term</h4>
+<h4 id="the-f-term">The <code class="highlighter-rouge">F</code> term</h4>
 
 <p>The F term is special because it is often left out of the
 “PID” initialism. In part, this is due to the fact that
@@ -362,7 +392,7 @@ feed-forward is the application of a constant output,
 regardless of the state of the mechanism. The actual
 equation for a full PIDF loop looks like the following:</p>
 
-<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>u(t) = K_p*e(t) + K_i*integrate(0, t, e(T), T) + K_d*derive(e(t), t) + K_f*SP
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>u(t) = K_p*e(t) + K_i*integrate(0, t, e(T), T) + K_d*derive(e(t), t) + K_f*SP
 </code></pre></div></div>
 
 <p>Where the F term is derived from the product of the
@@ -415,7 +445,7 @@ daunting than the implementation in code.</p>
 
 <p>We can imagine the PID loop as looking something like this:</p>
 
-<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nc">PidfController</span> <span class="n">controller</span> <span class="o">=</span> <span class="c1">// ...</span>
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">PidfController</span> <span class="n">controller</span> <span class="o">=</span> <span class="c1">// ...</span>
 
 <span class="c1">// Begin the loop by setting a target</span>
 <span class="n">controller</span><span class="o">.</span><span class="na">setSetpoint</span><span class="o">(</span><span class="n">setpoint</span><span class="o">);</span>
@@ -436,7 +466,7 @@ daunting than the implementation in code.</p>
     <span class="n">mechanism</span><span class="o">.</span><span class="na">setOutput</span><span class="o">(</span><span class="n">output</span><span class="o">);</span>
 
     <span class="c1">// Wait a constant time interval before repeating </span>
-    <span class="nc">Thread</span><span class="o">.</span><span class="na">sleep</span><span class="o">(</span><span class="no">INTERVAL</span><span class="o">);</span>
+    <span class="n">Thread</span><span class="o">.</span><span class="na">sleep</span><span class="o">(</span><span class="n">INTERVAL</span><span class="o">);</span>
 <span class="o">}</span>
 </code></pre></div></div>
 
@@ -445,10 +475,10 @@ controller stops once the error is close enough to 0, in
 general it’s a poor idea to directly compare floating point
 numbers anyways, so you probably get the idea)</p>
 
-<p>To write the <code class="language-plaintext highlighter-rouge">PidfController</code>, the easiest step is to 
+<p>To write the <code class="highlighter-rouge">PidfController</code>, the easiest step is to 
 firstly define our gain and interval constants:</p>
 
-<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">static</span> <span class="kd">final</span> <span class="kt">double</span> <span class="no">INTERVAL</span><span class="o">;</span>
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">static</span> <span class="kd">final</span> <span class="kt">double</span> <span class="n">INTERVAL</span><span class="o">;</span>
 
 <span class="kt">double</span> <span class="n">pGain</span><span class="o">;</span>
 <span class="kt">double</span> <span class="n">iGain</span><span class="o">;</span>
@@ -499,7 +529,7 @@ interval time each time the loop runs:</p>
 
 <span class="kt">double</span> <span class="nf">computeIntegral</span><span class="o">()</span> <span class="o">{</span>
     <span class="kt">double</span> <span class="n">error</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="na">computeError</span><span class="o">();</span>
-    <span class="k">this</span><span class="o">.</span><span class="na">accumulatedError</span> <span class="o">+=</span> <span class="n">error</span> <span class="o">*</span> <span class="no">INTERVAL</span><span class="o">;</span>
+    <span class="k">this</span><span class="o">.</span><span class="na">accumulatedError</span> <span class="o">+=</span> <span class="n">error</span> <span class="o">*</span> <span class="n">INTERVAL</span><span class="o">;</span>
 
     <span class="k">return</span> <span class="k">this</span><span class="o">.</span><span class="na">iGain</span> <span class="o">*</span> <span class="k">this</span><span class="o">.</span><span class="na">accumulatedError</span><span class="o">;</span>
 <span class="o">}</span>
@@ -514,7 +544,7 @@ interval time:</p>
 
 <span class="kt">double</span> <span class="nf">computeDerivative</span><span class="o">()</span> <span class="o">{</span>
     <span class="kt">double</span> <span class="n">error</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="na">computeError</span><span class="o">();</span>
-    <span class="kt">double</span> <span class="n">derivative</span> <span class="o">=</span> <span class="o">(</span><span class="n">error</span> <span class="o">-</span> <span class="k">this</span><span class="o">.</span><span class="na">lastError</span><span class="o">)</span> <span class="o">/</span> <span class="no">INTERVAL</span><span class="o">;</span>
+    <span class="kt">double</span> <span class="n">derivative</span> <span class="o">=</span> <span class="o">(</span><span class="n">error</span> <span class="o">-</span> <span class="k">this</span><span class="o">.</span><span class="na">lastError</span><span class="o">)</span> <span class="o">/</span> <span class="n">INTERVAL</span><span class="o">;</span>
 
     <span class="k">this</span><span class="o">.</span><span class="na">lastError</span> <span class="o">=</span> <span class="n">error</span><span class="o">;</span>
 
@@ -543,7 +573,7 @@ interval time:</p>
 class:</p>
 
 <div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">public</span> <span class="kd">class</span> <span class="nc">PidfController</span> <span class="o">{</span>
-    <span class="kd">private</span> <span class="kd">static</span> <span class="kd">final</span> <span class="kt">double</span> <span class="no">INTERVAL</span> <span class="o">=</span> <span class="mf">0.5</span><span class="o">;</span>
+    <span class="kd">private</span> <span class="kd">static</span> <span class="kd">final</span> <span class="kt">double</span> <span class="n">INTERVAL</span> <span class="o">=</span> <span class="mf">0.5</span><span class="o">;</span>
 
     <span class="kd">private</span> <span class="kd">final</span> <span class="kt">double</span> <span class="n">pGain</span><span class="o">;</span>
     <span class="kd">private</span> <span class="kd">final</span> <span class="kt">double</span> <span class="n">iGain</span><span class="o">;</span>
@@ -582,14 +612,14 @@ class:</p>
 
     <span class="kd">private</span> <span class="kt">double</span> <span class="nf">computeIntegral</span><span class="o">()</span> <span class="o">{</span>
         <span class="kt">double</span> <span class="n">error</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="na">computeError</span><span class="o">();</span>
-        <span class="k">this</span><span class="o">.</span><span class="na">accumulatedError</span> <span class="o">+=</span> <span class="n">error</span> <span class="o">*</span> <span class="no">INTERVAL</span><span class="o">;</span>
+        <span class="k">this</span><span class="o">.</span><span class="na">accumulatedError</span> <span class="o">+=</span> <span class="n">error</span> <span class="o">*</span> <span class="n">INTERVAL</span><span class="o">;</span>
 
         <span class="k">return</span> <span class="k">this</span><span class="o">.</span><span class="na">iGain</span> <span class="o">*</span> <span class="k">this</span><span class="o">.</span><span class="na">accumulatedError</span><span class="o">;</span>
     <span class="o">}</span>
 
     <span class="kd">private</span> <span class="kt">double</span> <span class="nf">computeDerivative</span><span class="o">()</span> <span class="o">{</span>
         <span class="kt">double</span> <span class="n">error</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="na">computeError</span><span class="o">();</span>
-        <span class="kt">double</span> <span class="n">derivative</span> <span class="o">=</span> <span class="o">(</span><span class="n">error</span> <span class="o">-</span> <span class="k">this</span><span class="o">.</span><span class="na">lastError</span><span class="o">)</span> <span class="o">/</span> <span class="no">INTERVAL</span><span class="o">;</span>
+        <span class="kt">double</span> <span class="n">derivative</span> <span class="o">=</span> <span class="o">(</span><span class="n">error</span> <span class="o">-</span> <span class="k">this</span><span class="o">.</span><span class="na">lastError</span><span class="o">)</span> <span class="o">/</span> <span class="n">INTERVAL</span><span class="o">;</span>
 
         <span class="k">this</span><span class="o">.</span><span class="na">lastError</span> <span class="o">=</span> <span class="n">error</span><span class="o">;</span>
 
@@ -609,12 +639,12 @@ class:</p>
 <span class="o">}</span>
 </code></pre></div></div>
 
-<p>Users should change the <code class="language-plaintext highlighter-rouge">INTERVAL</code> time as they see 
+<p>Users should change the <code class="highlighter-rouge">INTERVAL</code> time as they see 
 appropriate.</p>
 
 <p>It should be noted that all the gain values can even be
 changed during the PID loop, and so it is not necessary for
-them to be <code class="language-plaintext highlighter-rouge">final</code>. The <code class="language-plaintext highlighter-rouge">INTERVAL</code> time doesn’t even need
+them to be <code class="highlighter-rouge">final</code>. The <code class="highlighter-rouge">INTERVAL</code> time doesn’t even need
 to be constant, so long as one takes into account the time
 that elapses between each iteration of the PID loop. That
 being said, this is simply just the bare-bones minimum
@@ -648,7 +678,7 @@ corrections, but I’m definitely not the right person to ask
 if you need clarification, as I’ve done my best already to 
 try and clarify everything up front.</p>
 
-<p>For FRC Robots, you definitely want to use <code class="language-plaintext highlighter-rouge">PIDController</code>
+<p>For FRC Robots, you definitely want to use <code class="highlighter-rouge">PIDController</code>
 over the hand-rolled implementation I have here, by the
 way.</p>
 
@@ -656,34 +686,58 @@ way.</p>
 unless some extenuating circumstance forces me to.</p>
 
 
-  </div><a class="u-url" href="/blog/2019/01/17/intro-to-control-theory.html" hidden></a>
+  </div>
+
+  
 </article>
 
       </div>
-    </main><footer class="site-footer h-card">
-  <data class="u-url" href="/blog/"></data>
+    </main>
+
+    <footer class="site-footer">
 
   <div class="wrapper">
 
-    <h2 class="footer-heading">Inside a Troll</h2>
+    <h2 class="footer-heading">Times past, and their stories</h2>
 
     <div class="footer-col-wrapper">
       <div class="footer-col footer-col-1">
         <ul class="contact-list">
-          <li class="p-name">Inside a Troll</li><li><a class="u-email" href="mailto:caojohnny@protonmail.com">caojohnny@protonmail.com</a></li></ul>
+          <li>
+            
+              Times past, and their stories
+            
+            </li>
+            
+            <li><a href="mailto:caojohnny@protonmail.com">caojohnny@protonmail.com</a></li>
+            
+        </ul>
       </div>
 
-      <div class="footer-col footer-col-2"><ul class="social-media-list"><li><a href="https://github.com/AgentTroll"><svg class="svg-icon"><use xlink:href="/blog/assets/minima-social-icons.svg#github"></use></svg> <span class="username">AgentTroll</span></a></li></ul>
-</div>
+      <div class="footer-col footer-col-2">
+        <ul class="social-media-list">
+          
+          <li>
+            <a href="https://github.com/caojohnny"><span class="icon icon--github"><svg viewBox="0 0 16 16" width="16px" height="16px"><path fill="#828282" d="M7.999,0.431c-4.285,0-7.76,3.474-7.76,7.761 c0,3.428,2.223,6.337,5.307,7.363c0.388,0.071,0.53-0.168,0.53-0.374c0-0.184-0.007-0.672-0.01-1.32 c-2.159,0.469-2.614-1.04-2.614-1.04c-0.353-0.896-0.862-1.135-0.862-1.135c-0.705-0.481,0.053-0.472,0.053-0.472 c0.779,0.055,1.189,0.8,1.189,0.8c0.692,1.186,1.816,0.843,2.258,0.645c0.071-0.502,0.271-0.843,0.493-1.037 C4.86,11.425,3.049,10.76,3.049,7.786c0-0.847,0.302-1.54,0.799-2.082C3.768,5.507,3.501,4.718,3.924,3.65 c0,0,0.652-0.209,2.134,0.796C6.677,4.273,7.34,4.187,8,4.184c0.659,0.003,1.323,0.089,1.943,0.261 c1.482-1.004,2.132-0.796,2.132-0.796c0.423,1.068,0.157,1.857,0.077,2.054c0.497,0.542,0.798,1.235,0.798,2.082 c0,2.981-1.814,3.637-3.543,3.829c0.279,0.24,0.527,0.713,0.527,1.437c0,1.037-0.01,1.874-0.01,2.129 c0,0.208,0.14,0.449,0.534,0.373c3.081-1.028,5.302-3.935,5.302-7.362C15.76,3.906,12.285,0.431,7.999,0.431z"/></svg>
+</span><span class="username">caojohnny</span></a>
+
+          </li>
+          
+
+          
+        </ul>
+      </div>
 
       <div class="footer-col footer-col-3">
-        <p>Thoughts of a Java Developer</p>
+        <p>A brain dump of things that I&#39;ve learned</p>
       </div>
     </div>
 
   </div>
 
 </footer>
-</body>
+
+
+  </body>
 
 </html>
